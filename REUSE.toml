@@ -1,0 +1,13 @@
+version = 1
+
+[[annotations]]
+path = ["src/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Bertrand Kempf"
+SPDX-License-Identifier = "EUPL-1.2"
+
+[[annotations]]
+path = ["data/**", "docs/**", "README.md", "CONTRIBUTING.md", "NOTICE", "CLAUDE.md", ".gitignore"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Bertrand Kempf"
+SPDX-License-Identifier = "CC-BY-4.0"
