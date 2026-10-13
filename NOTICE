@@ -10,7 +10,7 @@ Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur
    Licence : Creative Commons Attribution 3.0 Luxembourg (CC BY 3.0 LU) — https://creativecommons.org/licenses/by/3.0/lu/
    Les libellés des critères RAAM sont reproduits sans modification dans src/ruxaam.html. Ils restent sous CC BY 3.0 LU.
    Modifications de RUXAL : sélection des critères, regroupement par thèmes RUXAL, ajout de niveaux WCAG, de gravités et de textes explicatifs originaux.
-   Le RAAM et le RAWEB dérivent de documents de la DINUM (RGAA) : voir la page de licence du SIP pour leur statut.
+   La licence du RAAM publiée par le SIP précise que le référentiel est une œuvre dérivée de documents de la DINUM : voir https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile/blob/main/LICENSE.md
    RUXAL n'est ni approuvé ni certifié par le SIP ou l'OSAPS.
 
 2. WCAG 2.1 — © W3C (MIT, ERCIM, Keio, Beihang)
@@ -29,3 +29,8 @@ Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur
    Greffons de jsPDF inclus, avec leurs en-têtes de copyright conservés dans le fichier : Aras Abbasi, Steven Spungin, Youssef Beddad, James Robb, Dominik Homberger, Eduardo Menezes de Morais, Jussi Utunen, et notice « Adobe Systems Incorporated » (2008) pour les données de glyphes.
    html2canvas, DOMPurify et canvg ne sont pas embarqués : jsPDF les mentionne comme dépendances facultatives.
    Ces éléments restent sous leur propre licence ; l'EUPL-1.2 ne couvre que le code original de RUXAL.
+
+6. Échelle de gravité — Deque Systems (axe-core)
+   Source : https://github.com/dequelabs/axe-core/blob/develop/doc/issue_impact.md (dépôt axe-core, licence MPL-2.0)
+   Les quatre niveaux de gravité de RUXAL (Critique, Sérieux, Modéré, Mineur) reprennent l'échelle d'impact d'axe-core (critical, serious, moderate, minor). Seuls les noms des niveaux sont repris ; les définitions sont formulées par RUXAL. Aucun code d'axe-core n'est embarqué.
+   Cette gravité n'est pas normative : voir docs/gravite.md. RUXAL n'est ni approuvé ni certifié par Deque Systems.

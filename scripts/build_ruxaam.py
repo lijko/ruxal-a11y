@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 HTML = ROOT / 'src' / 'ruxaam.html'
 DEBUT = '  // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>'
 FIN = '  // <<< FIN_DONNEES >>>'
-GRAVITES = {'bloquant', 'majeur', 'mineur'}
+GRAVITES = {'critique', 'serieux', 'modere', 'mineur'}  # voir docs/gravite.md
 
 
 def charger(nom):

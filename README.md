@@ -9,6 +9,8 @@ Trois types d'audit : l'**audit rapide** (critères du référentiel), la **fonc
 
 RUXAL n'est **pas un audit de conformité** et ne produit aucune déclaration d'accessibilité : c'est un outil de pré-diagnostic, qui complète l'audit réalisé par un expert.
 
+**Gravité** : chaque critère porte une gravité par défaut (Critique, Sérieux, Modéré, Mineur), qui sert à trier les non-conformités et à prioriser les tickets. Elle **n'est pas normative** : ni le RAAM ni WCAG 2.x n'en définissent. L'échelle est propre à RUXAL, inspirée de l'échelle d'impact de Deque (axe-core) ; le brouillon WCAG 3 du W3C, encore instable, n'est pas utilisé. Détail dans [`docs/gravite.md`](docs/gravite.md).
+
 Outils : **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web), **RUXAPDF** (PDF).
 
 **EN** — RUXAL is a family of standalone HTML tools that help **prepare and prioritise an accessibility audit**, ahead of a full audit. Each tool looks at what you are reviewing (a screen, a feature or a journey) in two ways:
@@ -19,6 +21,8 @@ Outils : **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web), **RUXAPDF** (PDF).
 Three audit types: **quick audit** (standard criteria), **primary feature** (close, back, menu, navigation, form, notification) and **scenario** (complex journey, criteria + UX reading). Results can be exported as CSV.
 
 RUXAL is **not a compliance audit** and produces no accessibility statement: it is a pre-diagnosis tool that complements an expert's audit.
+
+**Severity**: each criterion has a default severity (Critical, Serious, Moderate, Minor), used to sort issues and prioritise tickets. It is **not normative**: neither RAAM nor WCAG 2.x define severity. The scale is RUXAL's own, inspired by Deque's axe-core impact levels; the unstable WCAG 3 draft is not used. See [`docs/gravite.md`](docs/gravite.md).
 
 Tools: **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web), **RUXAPDF** (PDF).
 
@@ -36,7 +40,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 | `data/criteres-raam.json` | 59 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) | CC BY 3.0 LU |
 | `data/bonnes-pratiques.json` | bonnes pratiques hors RAAM (hors taux) | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
-| `data/textes-ruxal.json` | gravité, texte d'impact et consigne de test de chaque critère | CC BY 4.0 |
+| `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère | CC BY 4.0 |
 
 Après toute modification de `data/`, régénérer l'outil (Python 3, sans dépendance) :
 
@@ -62,7 +66,7 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 Le détail par fichier est dans `REUSE.toml`. Les textes complets sont dans `LICENSES/`.
 
 ## Attributions
-Voir `NOTICE`. Cet outil n'est ni approuvé ni certifié par le W3C, la DINUM, le SIP ou l'OSAPS.
+Voir `NOTICE`. Cet outil n'est ni approuvé ni certifié par le W3C, le SIP, l'OSAPS ou Deque Systems.
 
 ## Contribuer / Contributing
 Voir `CONTRIBUTING.md`.

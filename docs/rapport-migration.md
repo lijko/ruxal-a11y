@@ -4,6 +4,8 @@ SPDX-License-Identifier: CC-BY-4.0
 -->
 # Rapport de migration — RUXAAM 1.17
 
+> **Mise à jour (version 1.18)** : les gravités citées dans ce rapport sont celles de l'ancienne échelle à trois niveaux (bloquant, majeur, mineur). L'outil utilise désormais une échelle à quatre niveaux, non normative et inspirée de Deque : voir [`gravite.md`](gravite.md), qui donne la correspondance et les gravités à confirmer.
+
 Passage des anciens critères reformulés de `src/ruxaam.html` (identifiants `c01`…`c62`) aux données de `data/` :
 59 critères officiels du RAAM 1.1 (`data/criteres-raam.json`, intitulés du SIP non modifiés, CC BY 3.0 LU),
 3 bonnes pratiques hors RAAM (`data/bonnes-pratiques.json`) et les textes originaux RUXAL (`data/textes-ruxal.json`, CC BY 4.0).
