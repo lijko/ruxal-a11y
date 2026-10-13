@@ -19,7 +19,7 @@ L'origine de chaque texte est tracée dans le champ `origine` de ce fichier.
 - 1 critère : explication reprise, impact nouveau.
 - 15 critères : textes entièrement nouveaux.
 - 3 bonnes pratiques (bp1, bp2, bp3) : textes, gravités et sources repris tels quels.
-- 15 gravités à confirmer (toutes sur des critères aux textes nouveaux).
+- 16 gravités à confirmer : 15 sur des critères aux textes nouveaux, plus RAAM 9.6.
 - Identifiants : `raam-x-y` et `bpN`. Les sessions enregistrées avec les anciens identifiants ne sont pas reprises (accepté) ; testé : leurs réponses sont ignorées sans erreur.
 
 ## Textes réutilisés (43)
@@ -95,7 +95,7 @@ Aucun ancien critère ne portait ce numéro, ou l'ancien texte ne correspondait 
 | RAAM 9.11 | majeur |
 | RAAM 12.3 | bloquant |
 
-## Gravités à confirmer (15)
+## Gravités à confirmer (16)
 Proposées pendant la migration, à relire. Repères : bloquant = empêche d'accomplir la tâche ; majeur = la rend difficile ; mineur = gêne.
 
 | Critère | WCAG (niveau) | Gravité proposée |
@@ -115,6 +115,7 @@ Proposées pendant la migration, à relire. Repères : bloquant = empêche d'acc
 | RAAM 9.10 | 3.3.3 (AA) | **majeur** |
 | RAAM 9.11 | 3.3.4 (AA) | **majeur** |
 | RAAM 12.3 | EN 301 549 seul (A) | **bloquant** |
+| RAAM 9.6 | 1.3.1 / 3.3.2 (A) | **mineur** (ancienne gravité ; « majeur » proposé : des choix Oui/Non annoncés sans leur question rendent le champ impossible à remplir seul au lecteur d'écran) |
 
 ## Anciens critères non repris (15)
 Leur numéro ou leur sens ne correspondait à aucun des 59 intitulés officiels retenus (voir `docs/comparaison-raam-ruxaam.csv`). Leurs textes ne sont pas réutilisés.
@@ -134,6 +135,26 @@ Leur numéro ou leur sens ne correspondait à aucun des 59 intitulés officiels 
 - c36 (ancien n° 9.6) : Chaque légende associée à un regroupement de champs est pertinente.
 - c41 (ancien n° 8.7) : Les contenus additionnels apparaissant au survol, à la prise de focus ou à l'activation d'un composant sont, si nécessaire, atteignables au clavier.
 - c53 (ancien n° 11.16) : Pour chaque application intégrant une fonctionnalité de répétition de touche, le délai avant répétition et l'intervalle entre les répétitions peuvent être réglés à au moins 2 secondes.
+
+## Relecture contre la méthodologie RAAM (13 octobre 2026)
+Chaque consigne « Comment vérifier » a été comparée à la méthodologie de test officielle du critère (`fr/json/methodologies.json` du dépôt du SIP). Les intitulés ne changent pas. La méthodologie n'est pas reproduite dans le dépôt : les consignes restent des textes originaux RUXAL, de même sens.
+
+- 51 consignes retouchées, 8 inchangées (1.6, 2.3, 3.5, 5.4, 11.2, 11.7, 11.12, 11.13). Le champ `origine` de `data/textes-ruxal.json` indique « revu selon la méthodologie RAAM 1.1 ».
+- Écarts de sens corrigés :
+  - **6.2** : l'ancienne consigne testait les titres, qui relèvent du 7.1. Le RAAM vérifie que le rôle annoncé d'un élément non interactif correspond à sa nature (un paragraphe annoncé « bouton »).
+  - **9.6** : vérifier que le groupe est **identifié** (nom annoncé sur le premier champ), pas seulement regroupé.
+  - **10.1 et 10.2** : l'ordre doit être cohérent, il n'a pas à suivre strictement l'ordre visuel. On reteste aussi après une mise à jour du contenu.
+  - **11.11** : il s'agit d'actions **simultanées** (deux touches, la voix et le toucher). Les gestes à plusieurs doigts relèvent du 11.10.
+  - **5.2** : tester avec le lecteur d'écran **et** un clavier externe, pas l'un ou l'autre.
+  - **8.5, 8.4 et 10.3** : test au clavier externe, en vérifiant que le focus du système est préservé.
+  - **7.2** : le lecteur d'écran doit annoncer « liste ».
+  - **4.3** : le titre doit être annoncé ; le RAAM n'exige pas qu'il soit visible.
+  - **3.13** : il s'agit de la présence des commandes ; leur usage au clavier relève de 5.1 et 5.2.
+  - **9.9** : le message d'erreur est annoncé à la prise de focus sur le champ.
+  - **9.10** : le message donne un exemple concret de valeur attendue.
+- Conditions alternatives ajoutées : 1.2 (information donnée par un élément voisin), 1.5 (code SMS, e-mail), 3.12 (son de 3 secondes au plus), 11.1 (avertissement avec 20 secondes pour prolonger), 11.8 (masquer ou afficher sans mouvement ; une pause pendant l'appui ne suffit pas), 11.15 (alternative biométrique d'un autre type).
+- Impacts réalignés sur ces consignes : 6.2, 9.6, 10.1, 10.2, 11.11.
+- Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
 ## Changements dans l'outil
 - Critères injectés depuis `data/` entre les marqueurs `DEBUT_DONNEES` / `FIN_DONNEES` ; le script valide les données (texte manquant, thème ou gravité inconnus, doublon).
