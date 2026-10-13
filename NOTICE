@@ -8,8 +8,8 @@ Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur
    Source : Service information et presse (SIP), Luxembourg — https://accessibilite.public.lu
    Dépôt du RAAM : https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile
    Licence : Creative Commons Attribution 3.0 Luxembourg (CC BY 3.0 LU) — https://creativecommons.org/licenses/by/3.0/lu/
-   Les libellés des critères de src/ruxaam.html sont des reformulations des critères du RAAM 1.1 ; ils seront remplacés par les intitulés officiels, attribués au SIP sous CC BY 3.0 LU.
-   Modifications de RUXAL : sélection des critères, regroupement par thèmes RUXAL, gravités et textes d'impact et d'explication originaux.
+   Les libellés des critères RAAM sont reproduits sans modification dans src/ruxaam.html. Ils restent sous CC BY 3.0 LU.
+   Modifications de RUXAL : sélection des critères, regroupement par thèmes RUXAL, ajout de niveaux WCAG, de gravités et de textes explicatifs originaux.
    Le RAAM et le RAWEB dérivent de documents de la DINUM (RGAA) : voir la page de licence du SIP pour leur statut.
    RUXAL n'est ni approuvé ni certifié par le SIP ou l'OSAPS.
 
