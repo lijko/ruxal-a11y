@@ -1,0 +1,33 @@
+{
+  "note": "Taxonomie RUXAL, adaptable. Texte original.",
+  "themes": [
+    {
+      "nom": "Navigation & Structure",
+      "description": "Tout ce qui permet ou empêche d'atteindre un élément ou un contenu, notamment au clavier ; structure de l'écran."
+    },
+    {
+      "nom": "Composants Interactifs",
+      "description": "Boutons, contrôles, messages de statut, gestes et limites de temps."
+    },
+    {
+      "nom": "Images & Médias",
+      "description": "Alternatives aux images, aux médias et au son."
+    },
+    {
+      "nom": "Couleurs & Contrastes",
+      "description": "Couleur, contrastes, forme, taille et position."
+    },
+    {
+      "nom": "Contenu & Lisibilité",
+      "description": "Lisibilité du texte, agrandissement, tableaux, mouvement, orientation."
+    },
+    {
+      "nom": "Fondations Techniques",
+      "description": "Langue, éléments décoratifs, respect des réglages d'accessibilité du système."
+    },
+    {
+      "nom": "Formulaires",
+      "description": "Étiquettes, champs, erreurs et aide à la saisie."
+    }
+  ]
+}

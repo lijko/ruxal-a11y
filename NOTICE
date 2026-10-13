@@ -1,19 +1,31 @@
 RUXAL — Revue UX Accessibilité
 Copyright (c) 2026 Bertrand Kempf
 
-Ce projet référence les documents suivants. Leurs droits appartiennent à leurs auteurs respectifs.
-[À COMPLÉTER après vérification des licences]
+Le code original de RUXAL est sous licence EUPL-1.2. Les données et la documentation originales sont sous licence CC BY 4.0.
+Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur licence d'origine.
 
-- RAAM 1.1 (Référentiel d'accessibilité des applications mobiles), DINUM — licence à vérifier : https://accessibilite.numerique.gouv.fr
-- RAWEB / RAPDF, Luxembourg — licence à vérifier
-- WCAG 2.1, © W3C (MIT, ERCIM, Keio, Beihang) — W3C Document License : https://www.w3.org/Consortium/Legal/2015/doc-license
-  Cet outil n'est ni approuvé ni certifié par le W3C. Les formulations des critères sont des reformulations propres.
-- Heuristiques d'utilisabilité, Nielsen Norman Group — référencées par lien uniquement : https://www.nngroup.com/articles/ten-usability-heuristics/
-- Grille « Audit simplifié », SIP — statut de réutilisation à confirmer.
+1. Référentiels officiels luxembourgeois (RAAM 1.1, RAWEB, RAPDF)
+   Source : Service information et presse (SIP), Luxembourg — https://accessibilite.public.lu
+   Dépôt du RAAM : https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile
+   Licence : Creative Commons Attribution 3.0 Luxembourg (CC BY 3.0 LU) — https://creativecommons.org/licenses/by/3.0/lu/
+   Les libellés des critères de src/ruxaam.html sont des reformulations des critères du RAAM 1.1 ; ils seront remplacés par les intitulés officiels, attribués au SIP sous CC BY 3.0 LU.
+   Modifications de RUXAL : sélection des critères, regroupement par thèmes RUXAL, gravités et textes d'impact et d'explication originaux.
+   Le RAAM et le RAWEB dérivent de documents de la DINUM (RGAA) : voir la page de licence du SIP pour leur statut.
+   RUXAL n'est ni approuvé ni certifié par le SIP ou l'OSAPS.
 
-Bibliothèques tierces embarquées dans src/ruxaam.html (leurs en-têtes de licence d'origine y sont conservés ; licences exactes à vérifier une par une avant publication) :
-- jsPDF 2.5.1 et ses greffons — © James Hall et contributeurs (MIT)
-- html2canvas
-- DOMPurify
-- canvg
-Ces bibliothèques restent sous leur propre licence ; la licence EUPL-1.2 ne s'applique qu'au code original de RUXAL.
+2. WCAG 2.1 — © W3C (MIT, ERCIM, Keio, Beihang)
+   Seuls les numéros de critères de succès et les niveaux A/AA/AAA sont repris. Les textes d'impact et d'explication sont originaux.
+   Licence du document : https://www.w3.org/Consortium/Legal/2015/doc-license
+   RUXAL n'est ni approuvé ni certifié par le W3C.
+
+3. Heuristiques d'utilisabilité — Nielsen Norman Group
+   Les questions de la couche UX sont formulées par RUXAL. Les heuristiques d'origine sont référencées par lien : https://www.nngroup.com/articles/ten-usability-heuristics/
+
+4. Grille « Audit simplifié » du SIP
+   Statut de réutilisation à confirmer auprès du SIP avant publication.
+
+5. Bibliothèque tierce embarquée dans src/ruxaam.html
+   jsPDF 2.5.1 — © 2010-2021 James Hall et contributeurs — licence MIT.
+   Greffons de jsPDF inclus, avec leurs en-têtes de copyright conservés dans le fichier : Aras Abbasi, Steven Spungin, Youssef Beddad, James Robb, Dominik Homberger, Eduardo Menezes de Morais, Jussi Utunen, et notice « Adobe Systems Incorporated » (2008) pour les données de glyphes.
+   html2canvas, DOMPurify et canvg ne sont pas embarqués : jsPDF les mentionne comme dépendances facultatives.
+   Ces éléments restent sous leur propre licence ; l'EUPL-1.2 ne couvre que le code original de RUXAL.

@@ -25,6 +25,8 @@ Contexte et règles pour travailler sur ce dépôt public. Langue de travail : f
 ## Licences et attribution
 - Code (`src/`) : EUPL-1.2. Données et documentation (`data/`, `docs/`) : CC BY 4.0. Détail dans `REUSE.toml`, textes dans `LICENSES/`.
 - Ajouter l'en-tête SPDX à tout nouveau fichier.
+- Les libellés des critères RAAM/RAWEB/RAPDF sont © SIP Luxembourg sous **CC BY 3.0 LU** (attribution obligatoire, voir `NOTICE`). Un fichier de `data/` qui les contient reste sous cette licence, pas sous CC BY 4.0 : le marquer `LicenseRef-CC-BY-3.0-LU` et ajouter le texte dans `LICENSES/`. Les textes d'impact, d'explication et les questions UX sont originaux.
+- Jamais de bibliothèque tierce ajoutée sans l'inscrire dans `NOTICE` avec sa licence.
 - Ne pas recopier le texte intégral de WCAG ni des heuristiques de Nielsen Norman : formulations propres, lien vers la source, attribution dans `NOTICE`.
 - **Ne jamais versionner de données confidentielles ni de matériel appartenant à un client ou employeur** (captures, documents internes, tickets, logos), sans accord écrit.
 
