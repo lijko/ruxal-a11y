@@ -10,3 +10,10 @@ Ce projet référence les documents suivants. Leurs droits appartiennent à leur
   Cet outil n'est ni approuvé ni certifié par le W3C. Les formulations des critères sont des reformulations propres.
 - Heuristiques d'utilisabilité, Nielsen Norman Group — référencées par lien uniquement : https://www.nngroup.com/articles/ten-usability-heuristics/
 - Grille « Audit simplifié », SIP — statut de réutilisation à confirmer.
+
+Bibliothèques tierces embarquées dans src/ruxaam.html (leurs en-têtes de licence d'origine y sont conservés ; licences exactes à vérifier une par une avant publication) :
+- jsPDF 2.5.1 et ses greffons — © James Hall et contributeurs (MIT)
+- html2canvas
+- DOMPurify
+- canvg
+Ces bibliothèques restent sous leur propre licence ; la licence EUPL-1.2 ne s'applique qu'au code original de RUXAL.
