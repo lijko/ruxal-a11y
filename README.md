@@ -28,6 +28,26 @@ Projet en cours de préparation pour publication. / Project being prepared for p
 ## Utilisation / Usage
 Ouvrir le fichier HTML de l'outil dans un navigateur. / Open the tool's HTML file in a browser.
 
+## Données et génération / Data and build
+Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
+
+| Fichier | Contenu | Licence |
+|---|---|---|
+| `data/criteres-raam.json` | 59 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) | CC BY 3.0 LU |
+| `data/bonnes-pratiques.json` | bonnes pratiques hors RAAM (hors taux) | CC BY 4.0 |
+| `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
+| `data/textes-ruxal.json` | gravité, texte d'impact et consigne de test de chaque critère | CC BY 4.0 |
+
+Après toute modification de `data/`, régénérer l'outil (Python 3, sans dépendance) :
+
+```bash
+python3 scripts/build_ruxaam.py
+```
+
+Le script valide les données (texte manquant, thème ou gravité inconnus, identifiant en double) puis remplace le bloc compris entre les marqueurs `DEBUT_DONNEES` et `FIN_DONNEES` de `src/ruxaam.html`. Ne pas modifier ce bloc à la main. `python3 scripts/build_ruxaam.py --check` vérifie que le HTML est à jour (code retour 1 sinon), utile avant un commit.
+
+Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonne pratique. / Stable ids: `raam-1-2` for RAAM criterion 1.2, `bp1` for a best practice. **EN** — edit `data/`, then run the script above to inject the data into the standalone HTML file.
+
 ## Structure
 - `src/` : outils (code)
 - `data/` : critères, thèmes, couche POUR/heuristiques (données)

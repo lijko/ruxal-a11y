@@ -7,7 +7,7 @@ SPDX-FileCopyrightText = "2026 Bertrand Kempf"
 SPDX-License-Identifier = "EUPL-1.2"
 
 [[annotations]]
-path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "docs/.gitkeep", "README.md", "CONTRIBUTING.md", "NOTICE", "CLAUDE.md", ".gitignore"]
+path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "docs/.gitkeep", "docs/rapport-migration.md", "README.md", "CONTRIBUTING.md", "NOTICE", "CLAUDE.md", ".gitignore"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Bertrand Kempf"
 SPDX-License-Identifier = "CC-BY-4.0"
