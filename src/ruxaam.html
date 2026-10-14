@@ -1550,11 +1550,13 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var onRef = state.view === 'referentiel';
     $tabstrip.style.display = (onAide || onRef) ? 'none' : '';
     if(!onAide && !onRef) renderTabstrip();
-    if($btnAide) $btnAide.classList.toggle('active', onAide);
-    if($btnReferentiel) $btnReferentiel.classList.toggle('active', onRef);
+    // aria-current : l'entrée active n'était signalée que visuellement (classe active).
+    function marquerActif(btn, actif){ if(!btn) return; btn.classList.toggle('active', actif); if(actif) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current'); }
+    marquerActif($btnAide, onAide);
+    marquerActif($btnReferentiel, onRef);
     // « Audit » (ex-Tableau de bord) reste allumé tant qu'on n'est pas sur l'écran d'aide — y compris à
     // l'intérieur d'un onglet — car il représente toute la zone de travail de l'audit, par opposition à l'aide.
-    if($btnDashboard) $btnDashboard.classList.toggle('active', !onAide && !onRef);
+    marquerActif($btnDashboard, !onAide && !onRef);
 
     if(state.view === 'dashboard') renderDashboard();
     else if(state.view === 'scenario') renderScenario();
@@ -1570,7 +1572,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
   function renderTabstrip(){
     var html = '';
-    html += '<button type="button" class="tab tab-dashboard'+(state.view==='dashboard'?' active':'')+'" data-action="goto-dashboard">' +
+    html += '<button type="button" class="tab tab-dashboard'+(state.view==='dashboard'?' active':'')+'" data-action="goto-dashboard"'+(state.view==='dashboard'?' aria-current="page"':'')+'>' +
             '<span class="tab-name">Tableau de bord</span><span class="tab-meta">'+state.onglets.length+' onglet(s)</span></button>';
     state.onglets.forEach(function(o){
       // Le taux affiché doit suivre l'approche réelle de l'onglet : taux RAAM pour un onglet avec SIP,
@@ -1600,7 +1602,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         : '<span class="mono">'+(isSipTab ? raamLabelTab : uxLabelTab)+'</span>';
       html += '<div class="tab-wrap">' +
         '<div class="tab tab-onglet'+(state.view===o.id?' active':'')+'">' +
-          '<button type="button" class="tab-main" data-action="goto-onglet" data-id="'+o.id+'">' +
+          '<button type="button" class="tab-main" data-action="goto-onglet" data-id="'+o.id+'"'+(state.view===o.id?' aria-current="page"':'')+'>' +
             '<span class="tab-name">'+escapeHtml(o.nom)+'</span>' +
             '<span class="tab-meta">' + metaHtml + '</span>' +
           '</button>' +
@@ -1610,7 +1612,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       '</div>';
     });
     var creatingTab = (state.view==='scenario' || state.view==='nouvel-onglet');
-    html += '<button type="button" class="tab-add'+(creatingTab?' active':'')+'" data-action="goto-scenario">+ Nouvel onglet</button>';
+    html += '<button type="button" class="tab-add'+(creatingTab?' active':'')+'" data-action="goto-scenario"'+(creatingTab?' aria-current="page"':'')+'>+ Nouvel onglet</button>';
     $tabstrip.innerHTML = html;
   }
 
