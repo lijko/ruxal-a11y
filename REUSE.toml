@@ -3,8 +3,8 @@ version = 1
 [[annotations]]
 path = ["src/**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Bertrand Kempf"
-SPDX-License-Identifier = "EUPL-1.2"
+SPDX-FileCopyrightText = ["2026 Bertrand Kempf", "Service information et presse (SIP), Luxembourg (critères RAAM)", "2010-2021 James Hall et contributeurs (jsPDF)"]
+SPDX-License-Identifier = "EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU AND MIT"
 
 [[annotations]]
 path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "docs/.gitkeep", "docs/rapport-migration.md", "docs/gravite.md", "README.md", "CONTRIBUTING.md", "NOTICE", ".gitignore"]

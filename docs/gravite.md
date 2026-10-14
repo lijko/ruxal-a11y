@@ -41,7 +41,6 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 - **6.2, 7.1, 8.6, 9.7, 9.8, 9.10, 10.1, 11.12** : Sérieux → Modéré. Un contournement existe (explorer l'écran, recommencer la saisie, annuler l'action).
 - **9.6 champs de même nature** : Mineur → Sérieux. Des choix « Oui / Non » annoncés sans leur question rendent le champ impossible à remplir seul au lecteur d'écran.
 - **bp1 taille des zones tactiles** : Sérieux → Modéré (recommandation des plateformes, critère AAA en WCAG 2.1).
-- **3.1 transcription d'un contenu seulement audio** (critère ajouté) : Critique, par cohérence avec 3.7 (sous-titres) : sans transcription, une personne sourde n'a aucun accès au contenu.
 
 | Critère | Gravité | Ancienne (v1.17) |
 |---|---|---|
@@ -55,7 +54,6 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 | RAAM 2.1 | Sérieux | majeur |
 | RAAM 2.2 | Sérieux | bloquant |
 | RAAM 2.3 | Sérieux | majeur |
-| RAAM 3.1 | Critique | — (critère ajouté) |
 | RAAM 3.5 | Sérieux | bloquant |
 | RAAM 3.7 | Critique | bloquant |
 | RAAM 3.9 | Sérieux | majeur |

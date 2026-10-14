@@ -37,7 +37,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 
 | Fichier | Contenu | Licence |
 |---|---|---|
-| `data/criteres-raam.json` | 60 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) ; 25 « si présent », chacun rattaché à un déclencheur | CC BY 3.0 LU |
+| `data/criteres-raam.json` | 59 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) ; 24 « si présent », chacun rattaché à un déclencheur | CC BY 3.0 LU |
 | `data/bonnes-pratiques.json` | bonnes pratiques hors RAAM (hors taux) | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
@@ -56,6 +56,7 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 - `src/` : outils (code)
 - `data/` : critères, thèmes, couche POUR/heuristiques (données)
 - `docs/` : documentation
+- `scripts/` : génération des outils à partir de `data/`
 
 ## Licences / Licences
 | Contenu | Licence |

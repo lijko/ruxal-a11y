@@ -162,24 +162,6 @@
       "statut": "cœur"
     },
     {
-      "raam": "3.1",
-      "theme_raam_numero": 3,
-      "theme_raam": "Multimédia",
-      "intitule": "Chaque média temporel pré-enregistré seulement audio a-t-il, si nécessaire, une transcription textuelle adjacente clairement identifiable (hors cas particuliers) ?",
-      "niveau": "A",
-      "wcag": [
-        "1.2.1 Contenus seulement audio et seulement vidéo (pré-enregistrés) (A)",
-        "1.2.3 Audio-description ou version de remplacement pour un média temporel (pré-enregistré) (A)"
-      ],
-      "en301549": [
-        "11.1.2.1.1 Audio-only and Video-only (Pre-recorded)",
-        "11.1.2.3.1 Audio Description or Media Alternative (Pre-recorded)"
-      ],
-      "theme_ruxal": "Images & Médias",
-      "statut": "si présent",
-      "declencheur": "media-temporel"
-    },
-    {
       "raam": "3.5",
       "theme_raam_numero": 3,
       "theme_raam": "Multimédia",

@@ -164,18 +164,6 @@
         "prefixe_corrige": false
       }
     },
-    "raam-3-1": {
-      "raam": "3.1",
-      "gravite": "critique",
-      "gravite_v1_17": null,
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 3.1 (WCAG 1.2.1 / 1.2.3) — sans transcription, une personne sourde ou malentendante n'a aucun accès au contenu d'un podcast, d'un message vocal ou d'un extrait sonore porteur d'information.",
-      "explication": "Pour chaque contenu seulement audio (podcast, message vocal, extrait sonore porteur d'information), cherche une transcription textuelle : affichée juste à côté et clairement repérable, ou ouverte par un bouton ou un lien voisin. Un son décoratif n'est pas concerné. Ne concerne que les écrans qui contiennent un contenu audio.",
-      "origine": {
-        "impact": "nouveau (ajout du critère, 13 oct. 2026)",
-        "explication": "nouveau, selon la méthodologie RAAM 1.1"
-      }
-    },
     "raam-3-5": {
       "raam": "3.5",
       "gravite": "serieux",
@@ -397,10 +385,10 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 8.2 (WCAG 1.4.4) — sans agrandissement de texte possible ou correctement supporté, les personnes malvoyantes ne peuvent pas lire le contenu confortablement ; un agrandissement mal géré par l'application peut aussi tronquer du texte ou casser des éléments d'interface.",
-      "explication": "Augmente la taille de police au maximum dans les réglages d'accessibilité de l'appareil (grandes tailles du texte dynamique sur iOS, taille de police sur Android ; avant Android 14, combine-la avec la taille d'affichage), puis relance l'app si besoin : tout le texte doit s'agrandir et rester lisible, rien ne doit disparaître et les fonctionnalités doivent rester utilisables. Un texte qui ne grossit pas doit pouvoir être affiché autrement (appui long, par exemple).",
+      "explication": "Augmente la taille de police dans les réglages d'accessibilité de l'appareil : sur iOS, active « Police plus grande » et monte au palier 190 % ; sur Android, mets la taille de police au maximum pour approcher 200 % (avant Android 14, combine-la avec la taille d'affichage). Relance l'app si besoin : tout le texte doit s'agrandir et rester lisible, rien ne doit disparaître et les fonctionnalités doivent rester utilisables. Un texte qui ne grossit pas doit pouvoir être affiché autrement (appui long, par exemple).",
       "origine": {
         "impact": "repris de c56",
-        "explication": "repris de c56, revu selon la méthodologie RAAM 1.1",
+        "explication": "repris de c56, revu selon la méthodologie RAAM 1.1, paliers officiels précisés (14 oct. 2026)",
         "prefixe_corrige": false
       }
     },
@@ -689,10 +677,10 @@
       "gravite_v1_17": "bloquant",
       "gravite_a_confirmer": false,
       "impact": "RAAM 11.7 (WCAG 2.3.1) — un contenu clignotant au-delà du seuil autorisé peut déclencher une crise chez les personnes photosensibles : un risque pour la sécurité de l'utilisateur, pas seulement un inconfort.",
-      "explication": "Repère tout contenu clignotant rapidement (plus de 3 fois par seconde) sur une grande zone de l'écran — un vrai risque de crise chez les personnes photosensibles, pas juste un défaut esthétique.",
+      "explication": "Repère tout contenu clignotant rapidement (plus de 3 fois par seconde) sur une grande zone de l'écran — un vrai risque de crise chez les personnes photosensibles, pas juste un défaut esthétique. Un flash reste admis s'il est inférieur ou égal à 3 par seconde, ou si la surface cumulée qui clignote est inférieure à 21 824 pixels (une petite zone).",
       "origine": {
         "impact": "repris de c43",
-        "explication": "repris de c43",
+        "explication": "repris de c43, seuils officiels ajoutés (14 oct. 2026)",
         "prefixe_corrige": false
       }
     },

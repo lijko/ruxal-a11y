@@ -158,6 +158,18 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Impacts réalignés sur ces consignes : 6.2, 9.6, 10.1, 10.2, 11.11.
 - Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
+## Revue de cohérence avec le RAAM (14 octobre 2026, version 1.21)
+1. **Retrait du RAAM 3.1** (transcription d'un contenu seulement audio, ajouté le 13 octobre) : retiré des données, des textes, de `gravite.md` et de la sélection. Résultat : **59 critères RAAM, dont 24 « si présent », plus 3 bonnes pratiques**.
+2. **Consignes de test** :
+   - **8.2** : les paliers officiels remplacent « au maximum ». Sur iOS, « Police plus grande » au palier 190 % ; sur Android, la taille de police au maximum pour approcher 200 % ; avant Android 14, on la combine avec la taille d'affichage.
+   - **11.7** : ajout des seuils admis, 3 flashs par seconde au plus ou une surface cumulée inférieure à 21 824 pixels.
+3. **Licences** :
+   - `src/ruxaam.html` est déclaré sous `EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU AND MIT` (code RUXAL, critères RAAM, jsPDF), dans son en-tête SPDX et dans `REUSE.toml`, avec les trois titulaires de droits ;
+   - ajout de `LICENSES/MIT.txt` ;
+   - NOTICE précise que les intitulés, niveaux et références WCAG / EN 301 549 sont reproduits sans modification dans `data/criteres-raam.json` et `src/ruxaam.html`, et que les références WCAG sont reprises telles que publiées dans le RAAM.
+4. **Attribution visible** : un pied de page dans l'outil (critères du SIP sous CC BY 3.0 LU, modifications RUXAL, code EUPL-1.2), et une ligne d'attribution en tête du PDF du Référentiel.
+5. Documentation : README (59 critères, dossier `scripts/`), mentions de `CLAUDE.md` remplacées (fichier supprimé du dépôt).
+
 ## Déclencheurs des critères « si présent » (14 octobre 2026, version 1.20)
 
 > **Mise à jour (14 octobre 2026)** : les questions « Cet écran contient-il… ? » en tête d'onglet ont été **retirées**, jugées trop compliquées à l'usage, avec les règles qui en dépendaient (passage automatique en NA, correction des réponses contredites). Restent : le champ `declencheur` dans les données, la pastille « Si présent · <déclencheur> » et la mention dans les consignes. Les critères non applicables se mettent en NA à la main. Ajout d'un bouton « Haut de page », qui apparaît après défilement, remonte en haut et place le focus sur le titre de l'outil.
@@ -199,7 +211,7 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 
 ### Restant à discuter
 - **Cohérence du « si présent »** (réglé en 1.20, voir ci-dessus) : le statut ne suivait pas une règle unique. 1.4 (CAPTCHA) est « si présent » mais 1.5 (CAPTCHA) est « cœur » ; 3.1, 3.5 et 3.9 (médias) sont « si présent » mais 3.7, 3.12 et 3.13 (médias) sont « cœur » ; 4.3 (tableau) est « si présent » mais 4.5 (tableau) est « cœur ». Proposition : « si présent » = tout critère qui ne porte que sur un type de contenu absent de beaucoup d'écrans (CAPTCHA, médias, tableaux, liens dans un texte).
-- **Couche POUR / heuristiques** : CLAUDE.md demande qu'elle soit stockée dans un fichier de données séparé ; elle est encore écrite dans `src/ruxaam.html`.
+- **Couche POUR / heuristiques** : il est prévu qu'elle soit stockée dans un fichier de données séparé ; elle est encore écrite dans `src/ruxaam.html`.
 - **NOTICE** indique que les intitulés RAAM sont reproduits « dans src/ruxaam.html » ; ils le sont aussi dans `data/criteres-raam.json`.
 - **Non testé** : VoiceOver et TalkBack réels, zoom navigateur à 200 % et 400 %, contrastes de toutes les couleurs de l'interface.
 
@@ -213,7 +225,7 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - `python3 scripts/build_ruxaam.py --check` : à jour, 59 critères RAAM (8 « si présent ») + 3 bonnes pratiques.
 - Navigateur (mode clair et sombre) : aucune erreur de console ; page Référentiel = 62 fiches, 7 thèmes dans l'ordre, 8 pastilles « Si présent », 3 « Hors RAAM ».
 - Audit rapide sur 3 écrans : tout C, 8 critères en NA, 2 critères RAAM NC (2.2 sur tous les écrans, 5.2 sur un seul), bp1 NC → taux 96 % (49/51), bp1 hors taux. Export liste CSV = 62 lignes + en-tête ; export Jira = 3 tickets ; export JSON valide.
-- Non fait : test manuel au clavier et au lecteur d'écran (exigé avant fusion par CLAUDE.md).
+- Non fait : test manuel au clavier et au lecteur d'écran (exigé avant fusion, voir CONTRIBUTING.md).
 
 ## Limites
 - Les textes nouveaux et les gravités proposées n'ont pas été relus par un auditeur ou une auditrice.
