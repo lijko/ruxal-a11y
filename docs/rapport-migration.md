@@ -158,6 +158,29 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Impacts réalignés sur ces consignes : 6.2, 9.6, 10.1, 10.2, 11.11.
 - Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
+## Contrôle global (13 octobre 2026, version 1.19)
+
+### Corrigé
+- **Ajout du RAAM 3.1** (transcription d'un contenu seulement audio), en « si présent », gravité Critique : 60 critères RAAM, dont 9 « si présent », plus 3 bonnes pratiques.
+- **Intitulés officiels** : 39 intitulés avaient perdu l'apostrophe typographique (’) du référentiel, remplacée par une apostrophe droite. Ils sont rétablis à l'identique ; un contrôle automatique compare désormais chaque intitulé, niveau et référence WCAG / EN 301 549 au dépôt officiel (aucun écart restant).
+- **Comparabilité avec le SIP** : l'outil affirmait que son taux était « comparable au SIP » et que la liste CSV était « à coller dans le fichier SIP ». L'audit rapide du SIP repose sur le RAWEB : il sert ici de modèle (échantillon, sélection de critères essentiels), pas de base de comparaison. Les textes de l'outil le disent maintenant.
+- **Libellé « SIP »** affiché à côté du nom des onglets (nom interne de l'approche) : remplacé par « RAAM ».
+- **Marquage « si présent »** : 1.4 et 1.6 n'avaient pas la mention « Ne concerne que… » dans leur consigne.
+- **Gravités** : acceptées comme base de discussion (voir `gravite.md`).
+- **Accessibilité de l'outil lui-même** :
+  - langue de la page non déclarée (`lang="fr"` ajouté) et absence de titre de niveau 1 ;
+  - après chaque clic, le focus retombait au début de la page : au clavier ou au lecteur d'écran, chaque statut saisi renvoyait en haut. Le focus est maintenant conservé, et placé sur le titre quand la vue change ;
+  - boutons de statut : état sélectionné indiqué seulement par la couleur, sans nom de groupe. Ils annoncent désormais leur sens (« NC, non conforme »), leur état (`aria-pressed`) et le critère et l'écran concernés ; même chose pour les réponses POUR/UX ;
+  - commentaires par écran sans étiquette : étiquette ajoutée ;
+  - thèmes et critères exposés comme titres (niveaux 3 et 4) pour naviguer au lecteur d'écran.
+- Testé dans le navigateur : clavier réel (Tab, Entrée), mode clair et sombre, largeur 375 px sans défilement horizontal, taux, exports CSV, Jira, JSON et PDF, aucune erreur de console.
+
+### Restant à discuter
+- **Cohérence du « si présent »** : le statut ne suit pas une règle unique. 1.4 (CAPTCHA) est « si présent » mais 1.5 (CAPTCHA) est « cœur » ; 3.1, 3.5 et 3.9 (médias) sont « si présent » mais 3.7, 3.12 et 3.13 (médias) sont « cœur » ; 4.3 (tableau) est « si présent » mais 4.5 (tableau) est « cœur ». Proposition : « si présent » = tout critère qui ne porte que sur un type de contenu absent de beaucoup d'écrans (CAPTCHA, médias, tableaux, liens dans un texte).
+- **Couche POUR / heuristiques** : CLAUDE.md demande qu'elle soit stockée dans un fichier de données séparé ; elle est encore écrite dans `src/ruxaam.html`.
+- **NOTICE** indique que les intitulés RAAM sont reproduits « dans src/ruxaam.html » ; ils le sont aussi dans `data/criteres-raam.json`.
+- **Non testé** : VoiceOver et TalkBack réels, zoom navigateur à 200 % et 400 %, contrastes de toutes les couleurs de l'interface.
+
 ## Changements dans l'outil
 - Critères injectés depuis `data/` entre les marqueurs `DEBUT_DONNEES` / `FIN_DONNEES` ; le script valide les données (texte manquant, thème ou gravité inconnus, doublon).
 - Ordre des thèmes RUXAL lu dans `data/themes-ruxal.json` ; la table de correspondance des noms de thèmes pour l'export Jira, devenue inutile, est supprimée.

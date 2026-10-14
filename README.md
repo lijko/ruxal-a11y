@@ -37,7 +37,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 
 | Fichier | Contenu | Licence |
 |---|---|---|
-| `data/criteres-raam.json` | 59 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) | CC BY 3.0 LU |
+| `data/criteres-raam.json` | 60 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) | CC BY 3.0 LU |
 | `data/bonnes-pratiques.json` | bonnes pratiques hors RAAM (hors taux) | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère | CC BY 4.0 |

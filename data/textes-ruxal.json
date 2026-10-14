@@ -1,5 +1,5 @@
 {
-  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAAM 1.1 de data/criteres-raam.json et aux bonnes pratiques de data/bonnes-pratiques.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAAM x.y (références WCAG ou EN 301 549) — conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, inspirée de l'échelle d'impact de Deque (axe-core) ; gravite_v1_17 = ancienne gravité à trois niveaux ; gravite_a_confirmer = proposée, à relire. Explications relues le 2026-10-13 contre la méthodologie de test du RAAM 1.1 (fr/json/methodologies.json du dépôt officiel) : même sens, formulation propre à RUXAL.",
+  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAAM 1.1 de data/criteres-raam.json et aux bonnes pratiques de data/bonnes-pratiques.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAAM x.y (références WCAG ou EN 301 549) — conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, inspirée de l'échelle d'impact de Deque (axe-core) ; gravite_v1_17 = ancienne gravité à trois niveaux ; gravite_a_confirmer = proposée, à relire. Toutes les gravités sont acceptées comme base de discussion (13 oct. 2026), sans relecture critère par critère. Explications relues le 2026-10-13 contre la méthodologie de test du RAAM 1.1 (fr/json/methodologies.json du dépôt officiel) : même sens, formulation propre à RUXAL.",
   "licence": "CC BY 4.0",
   "verification_sources": "2026-10-12",
   "criteres": {
@@ -7,7 +7,7 @@
       "raam": "1.1",
       "gravite": "mineur",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 1.1 (WCAG 1.1.1) — une image décorative non masquée est annoncée inutilement par le lecteur d'écran (nom de fichier, « image »), ce qui alourdit l'écoute sans apporter d'information.",
       "explication": "Avec VoiceOver ou TalkBack, parcours l'écran : une image purement décorative (fond, séparateur, illustration d'ambiance) ne doit pas pouvoir être atteinte, ni être annoncée par un autre élément. Si elle est lue avec un nom de fichier ou juste « image », c'est qu'elle n'est pas masquée correctement.",
       "origine": {
@@ -48,7 +48,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 1.4 (WCAG 1.1.1) — sans alternative identifiant sa nature, l'utilisateur ne comprend pas qu'il fait face à un CAPTCHA ni ce qui est attendu de lui.",
-      "explication": "Avec le lecteur d'écran, place-toi sur le CAPTCHA imagé : ce qui est annoncé doit permettre de comprendre sa fonction (par exemple un code à recopier) — pas juste décrire l'image.",
+      "explication": "Avec le lecteur d'écran, place-toi sur le CAPTCHA imagé : ce qui est annoncé doit permettre de comprendre sa fonction (par exemple un code à recopier) — pas juste décrire l'image. Ne concerne que les écrans qui contiennent un CAPTCHA.",
       "origine": {
         "impact": "repris de c04",
         "explication": "repris de c04, revu selon la méthodologie RAAM 1.1",
@@ -72,9 +72,9 @@
       "raam": "1.6",
       "gravite": "modere",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 1.6 (WCAG 1.1.1) — sans description détaillée pour une image complexe (graphique, schéma), l'utilisateur de lecteur d'écran n'accède qu'à une partie de l'information.",
-      "explication": "Pour un graphique complexe (diagramme, carte, infographie), une description détaillée doit être accessible en plus du texte alternatif court — via un bouton, un lien adjacent, ou restituée directement par la technologie d'assistance.",
+      "explication": "Pour un graphique complexe (diagramme, carte, infographie), une description détaillée doit être accessible en plus du texte alternatif court — via un bouton, un lien adjacent, ou restituée directement par la technologie d'assistance. Ne concerne que les écrans qui contiennent une image complexe.",
       "origine": {
         "impact": "repris de c06",
         "explication": "repris de c06",
@@ -85,7 +85,7 @@
       "raam": "1.8",
       "gravite": "modere",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 1.8 (WCAG 1.4.5) — un texte affiché sous forme d'image ne grossit pas avec la taille de police du système, devient flou au zoom et ne peut pas être adapté (couleurs, police) par les personnes malvoyantes ou dyslexiques.",
       "explication": "Repère les textes qui sont en fait des images (bannière, bouton graphique, titre stylisé) : un élément annoncé « image » par VoiceOver ou TalkBack qui contient du texte est un indice, un texte qui ne grossit pas avec la taille de police du système en est un autre. Ce texte doit pouvoir être remplacé par du vrai texte adaptable (taille, couleur, graisse), sauf si l'effet visuel ne peut pas être reproduit en texte stylé (un logo, par exemple).",
       "origine": {
@@ -110,7 +110,7 @@
       "raam": "2.2",
       "gravite": "serieux",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 2.2 (WCAG 1.4.3) — un contraste insuffisant rend le texte illisible pour les personnes malvoyantes ou en conditions de luminosité difficile.",
       "explication": "Mesure le contraste avec un outil (Colour Contrast Analyser sur une capture ou une recopie de l'écran ; l'audit automatique de l'inspecteur d'accessibilité ne suffit pas seul) : au moins 4.5:1 pour le texte courant, 3:1 pour le grand texte (24 px, ou 18,5 px en gras). Pense aux textes dans les images et les vidéos. Si l'application ou le système (« Augmenter le contraste » sur iOS) propose un mode plus contrasté, évalue l'écran dans ce mode.",
       "origine": {
@@ -132,11 +132,23 @@
         "prefixe_corrige": false
       }
     },
+    "raam-3-1": {
+      "raam": "3.1",
+      "gravite": "critique",
+      "gravite_v1_17": null,
+      "gravite_a_confirmer": false,
+      "impact": "RAAM 3.1 (WCAG 1.2.1 / 1.2.3) — sans transcription, une personne sourde ou malentendante n'a aucun accès au contenu d'un podcast, d'un message vocal ou d'un extrait sonore porteur d'information.",
+      "explication": "Pour chaque contenu seulement audio (podcast, message vocal, extrait sonore porteur d'information), cherche une transcription textuelle : affichée juste à côté et clairement repérable, ou ouverte par un bouton ou un lien voisin. Un son décoratif n'est pas concerné. Ne concerne que les écrans qui contiennent un contenu audio.",
+      "origine": {
+        "impact": "nouveau (ajout du critère, 13 oct. 2026)",
+        "explication": "nouveau, selon la méthodologie RAAM 1.1"
+      }
+    },
     "raam-3-5": {
       "raam": "3.5",
       "gravite": "serieux",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 3.5 (WCAG 1.2.3) — sans transcription ni version audiodécrite, une personne aveugle ou sourdaveugle ne reçoit pas les informations seulement visuelles d'une vidéo (texte incrusté, actions, changements de scène).",
       "explication": "Pour chaque vidéo pré-enregistrée avec du son, cherche une alternative (transcription complète ou version audiodécrite) atteignable depuis le lecteur, y compris avec VoiceOver ou TalkBack. Ne concerne que les écrans qui contiennent une vidéo.",
       "origine": {
@@ -161,7 +173,7 @@
       "raam": "3.9",
       "gravite": "serieux",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 3.9 (WCAG 1.2.5) — sans audiodescription, les informations visuelles importantes d'une vidéo (personnes, actions, textes incrustés) échappent aux personnes aveugles ou malvoyantes, même quand la bande son est accessible.",
       "explication": "Écoute la vidéo écran masqué (rideau d'écran de VoiceOver, ou luminosité au minimum) : si des informations utiles ne passent que par l'image, une audiodescription synchronisée doit être proposée, dans le lecteur ou via une version audiodécrite accessible depuis un bouton ou un lien voisin. Ne concerne que les écrans qui contiennent une vidéo.",
       "origine": {
@@ -186,7 +198,7 @@
       "raam": "3.13",
       "gravite": "serieux",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 3.13 (WCAG 2.1.1 / 2.1.2) — sans commandes de lecture (pause, arrêt, son, sous-titres), l'utilisateur ne peut ni suivre le média à son rythme ni le couper quand il couvre la voix du lecteur d'écran ; si ces commandes ne sont pas atteignables sans le toucher précis, il reste bloqué.",
       "explication": "Pour chaque vidéo ou audio, vérifie que les commandes nécessaires existent : lecture, pause ou arrêt, coupure du son s'il y a une piste sonore, activation et désactivation de l'audiodescription et des sous-titres quand le média en possède (des sous-titres incrustés dans l'image doivent s'afficher dès la lecture). Leur utilisation au lecteur d'écran et au clavier se vérifie avec RAAM 5.1 et 5.2.",
       "origine": {
@@ -198,7 +210,7 @@
       "raam": "4.3",
       "gravite": "mineur",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 4.3 (WCAG 1.3.1) — sans titre, l'utilisateur de lecteur d'écran ne sait pas ce que contient un tableau avant de l'avoir parcouru cellule par cellule, ce qui rend la lecture longue et déroutante.",
       "explication": "Pour chaque tableau de données (tarifs, horaires, relevés), active VoiceOver ou TalkBack et atteins le tableau : un titre qui décrit son contenu doit être annoncé à ce moment-là. Ne concerne que les écrans qui contiennent un tableau.",
       "origine": {
@@ -223,7 +235,7 @@
       "raam": "5.1",
       "gravite": "critique",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 5.1 (WCAG 2.4.4 / 2.5.3 / 4.1.2) — un composant dont le nom, le rôle ou l'état n'est pas restitué (bouton annoncé comme du texte, onglet sans état sélectionné, icône muette) ne peut être ni compris ni utilisé avec un lecteur d'écran ou une commande vocale.",
       "explication": "Avec VoiceOver ou TalkBack, parcours chaque élément interactif : le lecteur doit annoncer un nom compréhensible, un rôle pertinent (bouton, lien, onglet, case à cocher…), un état quand il y en a un (sélectionné, désactivé, déplié) et une valeur le cas échéant (potentiomètre). Change l'état ou la valeur : le changement doit être annoncé. Le nom annoncé doit contenir le texte visible ; l'affichage des noms du Contrôle vocal d'iOS permet de le vérifier vite.",
       "origine": {
@@ -248,7 +260,7 @@
       "raam": "5.3",
       "gravite": "serieux",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 5.3 (WCAG 3.2.1 / 3.2.2) — un changement de contexte imprévu (nouvel écran, ouverture d'une autre application, focus déplacé) déclenché par la simple prise de focus ou par une saisie désoriente l'utilisateur de lecteur d'écran ou de clavier, qui ne comprend pas ce qui vient de se passer.",
       "explication": "Repère ce qui change le contexte : nouvel écran à la sélection dans une liste, champs mis à jour pendant la saisie, partie essentielle de l'écran rafraîchie sans action, lecture lancée automatiquement, focus déplacé ailleurs. Chaque changement doit être déclenché par un bouton ou un lien explicite, ou annoncé par un texte avant qu'il se produise.",
       "origine": {
@@ -299,7 +311,7 @@
       "raam": "6.2",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 6.2 (WCAG 1.3.1) — un élément annoncé avec un rôle qu'il n'a pas (un texte annoncé « bouton », par exemple) trompe l'utilisateur de lecteur d'écran, qui tente d'activer ce qui ne réagit pas ou se fait une idée fausse de la structure de l'écran.",
       "explication": "Avec VoiceOver ou TalkBack, parcours les éléments non interactifs (textes, tableaux, images) : le rôle annoncé doit correspondre à ce qu'ils sont. Un simple paragraphe annoncé « bouton », par exemple, est une erreur. Sur iOS, l'inspecteur d'accessibilité d'Xcode (champ « Traits ») permet de le confirmer.",
       "origine": {
@@ -312,7 +324,7 @@
       "raam": "7.1",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 7.1 (WCAG 1.3.1 / 2.4.6 / 4.1.2) — sans titres structurants, les utilisateurs de lecteur d'écran qui naviguent par titres perdent tout moyen rapide de repérer l'organisation du contenu.",
       "explication": "Avec le rotor de VoiceOver (« En-têtes ») ou le menu de lecture de TalkBack (« Titres »), parcours les titres : chaque texte qui structure visuellement l'écran doit être atteint et annoncé comme titre, et chaque titre doit être utile et décrire la section qu'il introduit.",
       "origine": {
@@ -325,7 +337,7 @@
       "raam": "7.2",
       "gravite": "mineur",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 7.2 (WCAG 1.3.1) — une liste seulement présentée comme telle visuellement perd son regroupement pour l'utilisateur de lecteur d'écran, qui ne perçoit plus les éléments comme un ensemble.",
       "explication": "Repère les éléments présentés visuellement comme une liste (menu, résultats, étapes) : en y arrivant avec VoiceOver ou TalkBack, le lecteur doit annoncer qu'il s'agit d'une liste. Des éléments simplement empilés, sans cette annonce, ne suffisent pas.",
       "origine": {
@@ -364,7 +376,7 @@
       "raam": "8.3",
       "gravite": "modere",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 8.3 (WCAG 1.4.1) — un lien placé dans un paragraphe et signalé seulement par une couleur proche de celle du texte se confond avec lui : les personnes daltoniennes ou malvoyantes ne savent pas qu'il est activable.",
       "explication": "Pour un lien ou un bouton placé dans une phrase et signalé seulement par sa couleur (ni souligné, ni en gras), mesure le contraste entre sa couleur et celle du texte voisin : 3:1 au moins. Si l'application propose un mode plus contrasté, évalue-le dans ce mode. Ne concerne que ce type de composant.",
       "origine": {
@@ -376,7 +388,7 @@
       "raam": "8.4",
       "gravite": "modere",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 8.4 (WCAG 1.4.1) — si seul un changement de couleur signale qu'un lien placé dans un texte a le focus ou est survolé, l'utilisateur de clavier externe ou de pointeur qui distingue mal les couleurs ne voit pas où il se trouve.",
       "explication": "Pour un lien ou un bouton placé dans une phrase et signalé seulement par sa couleur : avec un clavier externe, vérifie que le focus du système reste visible dessus ; avec une souris ou un trackpad, que son survol est signalé autrement que par la couleur (soulignement, gras). Ne concerne que ce type de composant.",
       "origine": {
@@ -388,7 +400,7 @@
       "raam": "8.5",
       "gravite": "serieux",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 8.5 (WCAG 1.4.1 / 2.4.7) — sans indicateur de focus visible, les utilisateurs au clavier seul perdent totalement leur position à l'écran.",
       "explication": "Connecte un clavier externe (navigation au clavier activée et, sur iOS, tous les styles de focus disponibles) et parcours l'application : l'indicateur de focus du système doit rester visible sur chaque élément, sans être masqué ni supprimé par l'application.",
       "origine": {
@@ -401,7 +413,7 @@
       "raam": "8.6",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 8.6 (WCAG 1.3.3 / 1.4.1) — une information reposant uniquement sur la forme, la taille ou la position (« le bouton à droite ») échappe aux utilisateurs de lecteur d'écran ou en zoom important.",
       "explication": "Repère les informations données seulement par la forme, la taille ou la position (« le bouton à droite », une icône placée à gauche pour signaler l'élément actif) : un autre moyen doit donner la même information, de préférence un texte visible par tous, à défaut une information annoncée par le lecteur d'écran.",
       "origine": {
@@ -414,7 +426,7 @@
       "raam": "8.7",
       "gravite": "modere",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 8.7 (WCAG 1.4.13) — une infobulle ou un menu qui apparaît au focus ou au survol et qu'on ne peut pas masquer, ou qui disparaît trop vite, cache une partie de l'écran agrandi ou ne laisse pas le temps de lire l'information.",
       "explication": "Avec un clavier externe, puis avec une souris ou un trackpad, fais apparaître chaque infobulle ou contenu additionnel : il doit pouvoir être masqué par une touche (Échap sur iOS, la touche Retour configurée sur Android), pouvoir être survolé par le pointeur, et rester affiché tant que le focus ou le pointeur est sur le composant ou sur le contenu (ou tant qu'il reste valable).",
       "origine": {
@@ -426,7 +438,7 @@
       "raam": "9.1",
       "gravite": "serieux",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.1 (WCAG 2.4.6) — sans étiquette visible (seulement un texte indicatif qui disparaît à la saisie), l'utilisateur oublie ce qu'il doit saisir et ne peut plus relire ni vérifier ses réponses, ce qui pénalise notamment les personnes ayant des troubles de la mémoire ou de l'attention.",
       "explication": "Chaque champ (saisie, bouton radio, case à cocher) doit avoir une étiquette visible juste à côté, qui reste affichée pendant la saisie — un placeholder qui disparaît dès qu'on tape ne suffit pas.",
       "origine": {
@@ -439,7 +451,7 @@
       "raam": "9.2",
       "gravite": "critique",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.2 (WCAG 1.3.1 / 3.3.2 / 4.1.2) — un champ sans nom accessible est annoncé « champ de texte » sans autre précision : l'utilisateur de lecteur d'écran ne sait pas quoi saisir et ne peut pas remplir le formulaire seul.",
       "explication": "Avec VoiceOver ou TalkBack, place le focus sur chaque champ (y compris listes de choix, cases et interrupteurs) : une étiquette doit être annoncée avec le champ lui-même, pas lue à part avant ou après. Sur iOS, l'affichage des noms du Contrôle vocal permet aussi de repérer vite un champ sans étiquette.",
       "origine": {
@@ -464,7 +476,7 @@
       "raam": "9.4",
       "gravite": "mineur",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.4 (WCAG 3.3.2) — une étiquette éloignée de son champ oblige à deviner quel texte décrit quel champ, surtout avec le zoom ou une loupe, où l'on ne voit qu'une partie de l'écran.",
       "explication": "Vérifie que chaque étiquette visible est collée au champ qu'elle décrit, sans espace ni élément intercalé qui pourrait la faire attribuer à un autre champ. Ne concerne que les écrans qui contiennent un formulaire.",
       "origine": {
@@ -489,7 +501,7 @@
       "raam": "9.6",
       "gravite": "serieux",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.6 (WCAG 1.3.1 / 3.3.2) — si un groupe de champs liés n'est pas identifié, l'utilisateur de lecteur d'écran entend « Oui », « Non » ou « 12 » sans savoir à quelle question ou à quelle donnée ces champs se rapportent.",
       "explication": "Repère les champs qui forment un ensemble (suites de chiffres d'une carte bancaire, jour/mois/année, choix Oui/Non d'une même question). Avec VoiceOver ou TalkBack, place le focus sur le premier champ du groupe : la nature du groupe (la question, « Date de naissance »…) doit être annoncée et compréhensible.",
       "origine": {
@@ -502,7 +514,7 @@
       "raam": "9.7",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.7 (WCAG 3.3.2) — un champ obligatoire non signalé (ou signalé par une couleur ou un symbole muet) provoque des erreurs de soumission que l'utilisateur ne comprend pas.",
       "explication": "Valide le formulaire vide pour repérer les champs obligatoires. Pour chacun, le caractère obligatoire doit être indiqué visiblement près du champ ET annoncé par le lecteur d'écran en arrivant sur le champ. Un repère non textuel (astérisque, icône) doit être expliqué avant sa première utilisation ; une couleur seule ne suffit pas.",
       "origine": {
@@ -515,7 +527,7 @@
       "raam": "9.8",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.8 (WCAG 3.3.2) — sans indication du format attendu (ex. date JJ/MM/AAAA, longueur d'un code), l'utilisateur ne sait pas comment saisir sa donnée et multiplie les erreurs.",
       "explication": "Pour un champ qui attend un format précis (date, téléphone, code), le format doit être indiqué par un texte visible près du champ et annoncé par le lecteur d'écran en arrivant sur le champ — un exemple en placeholder qui disparaît à la saisie ne suffit pas. Saisir une valeur mal formée puis valider aide à repérer les champs concernés.",
       "origine": {
@@ -541,7 +553,7 @@
       "raam": "9.10",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.10 (WCAG 3.3.3) — un message qui signale une erreur sans dire comment la corriger oblige l'utilisateur à procéder par essais successifs, ce qui pénalise particulièrement les personnes ayant des troubles cognitifs ou utilisant un lecteur d'écran.",
       "explication": "Saisis volontairement des valeurs incorrectes (e-mail mal formé, date invalide) puis valide : pour chaque champ dont le format est contrôlé, le message d'erreur doit donner un exemple concret de valeur attendue (une adresse e-mail modèle, par exemple), visible et annoncé par VoiceOver ou TalkBack.",
       "origine": {
@@ -553,7 +565,7 @@
       "raam": "9.11",
       "gravite": "serieux",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.11 (WCAG 3.3.4) — sans possibilité de vérifier, corriger ou annuler, une erreur de saisie dans un paiement, un contrat ou une suppression de données devient définitive, avec des conséquences financières ou juridiques pour l'utilisateur.",
       "explication": "Sur les formulaires sensibles (paiement, données juridiques ou personnelles, réponses à un examen, suppression de données), vérifie qu'au moins un mécanisme existe : corriger ou annuler pendant la saisie (l'annulation de la plateforme n'est pas bloquée), confirmer explicitement avant l'envoi (étape de récapitulatif, case de confirmation), ou récupérer des données supprimées.",
       "origine": {
@@ -565,7 +577,7 @@
       "raam": "9.12",
       "gravite": "mineur",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 9.12 (WCAG 1.3.5) — sans identification du type de champ, l'utilisateur ne bénéficie pas du remplissage automatique ni des claviers adaptés (numérique, email), ce qui alourdit la saisie pour les personnes ayant des troubles moteurs ou cognitifs.",
       "explication": "Un champ e-mail, téléphone ou nom doit afficher directement le clavier adapté (@ visible, pavé numérique) et accepter le remplissage automatique du système : des suggestions pertinentes doivent apparaître (sur Android, active d'abord le service de saisie automatique).",
       "origine": {
@@ -578,7 +590,7 @@
       "raam": "10.1",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 10.1 (WCAG 2.4.3) — un ordre de tabulation illogique désoriente les utilisateurs au clavier, qui perdent le fil de l'écran.",
       "explication": "Connecte un clavier externe et parcours l'écran avec Tab : l'ordre doit rester logique et compréhensible (il n'a pas à suivre strictement la lecture de gauche à droite), y compris après l'affichage d'un contenu masqué ou mis à jour.",
       "origine": {
@@ -708,7 +720,7 @@
       "raam": "11.12",
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 11.12 (WCAG 2.5.2) — sans possibilité d'annulation, une activation accidentelle par effleurement (tremblement, geste imprécis) déclenche irrémédiablement l'action, ce qui pénalise notamment les personnes ayant des troubles moteurs.",
       "explication": "Après avoir posé le doigt sur une cible, l'utilisateur doit pouvoir annuler l'action en faisant glisser hors de la cible avant de relâcher — un rattrapage utile contre les appuis accidentels (tremblement, glissade).",
       "origine": {
@@ -747,7 +759,7 @@
       "raam": "12.3",
       "gravite": "critique",
       "gravite_v1_17": "bloquant",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "RAAM 12.3 (EN 301 549 11.6.2) — si l'application bloque ou neutralise les réglages d'accessibilité du système (lecteur d'écran, taille du texte, contraste renforcé, réduction des animations, zoom), les personnes qui en dépendent ne peuvent plus l'utiliser.",
       "explication": "Active tour à tour les réglages d'accessibilité de l'appareil (VoiceOver ou TalkBack, grande taille de texte, zoom, contraste augmenté, réduction des animations, Contrôle vocal ou Voice Access, Switch Access) et utilise l'application : aucun ne doit être désactivé, bloqué ou contourné. Vérifie aussi que ses gestes, sa commande vocale ou ses raccourcis clavier n'entrent pas en conflit avec ceux de ces fonctionnalités.",
       "origine": {
@@ -760,7 +772,7 @@
     "bp1": {
       "gravite": "modere",
       "gravite_v1_17": "majeur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "Une zone trop petite, ou collée à sa voisine, provoque des appuis ratés ou involontaires, surtout pour les personnes ayant des tremblements, une préhension limitée ou des doigts larges.",
       "explication": "Mesure la zone tactile réelle de chaque contrôle (pas seulement l'icône visible) avec l'inspecteur d'accessibilité de la plateforme. Une petite icône peut rester conforme si sa zone tactile est agrandie par du remplissage. Sur Android (Compose), les composants standard imposent déjà ce minimum : ce sont les composants personnalisés, les icônes seules et les liens dans un texte qu'il faut vérifier. Les WCAG 2.2 (2.5.8) acceptent une cible plus petite (24 px) si l'espacement avec les voisines suffit.",
       "note": "Recommandation des plateformes, pas une exigence du RAAM 1.1 : le référentiel repose sur les WCAG 2.1, où la taille de cible n'est qu'un critère AAA (2.5.5). Les pages Apple exigent JavaScript : leur texte a été relu sur la copie miroir developer-mdn.apple.com.",
@@ -812,7 +824,7 @@
     "bp3": {
       "gravite": "modere",
       "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": true,
+      "gravite_a_confirmer": false,
       "impact": "Le focus retombe en haut de l'écran ou sur un élément sans rapport : l'utilisateur de lecteur d'écran ou de clavier perd sa position et doit reparcourir l'écran depuis le début.",
       "explication": "Avec le lecteur d'écran ou un clavier externe, ouvre une modale depuis un bouton puis ferme-la : le focus doit revenir sur ce bouton (ou, s'il n'existe plus, sur un élément logique proche). Un focus perdu ou renvoyé au début de l'écran est à signaler ; selon l'appréciation de l'auditeur, il peut aussi se rattacher au critère 10.1 (ordre de parcours du focus).",
       "note": "Aucun critère du RAAM 1.1 ne l'exige. Pattern issu du web (WAI-ARIA Authoring Practices) : je n'ai pas vérifié d'équivalent normatif sur iOS ou Android, où l'on s'appuie sur le comportement attendu de la plateforme.",
