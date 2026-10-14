@@ -267,6 +267,7 @@ Ce fichier embarque des bibliotheques tierces sous leurs propres licences : voir
   .decl-table .seg-toggle{display:inline-flex;}
   .decl-table .seg-btn{min-width:44px;}
   .decl-l{display:none;}
+  .theme-na-note{align-self:center; margin-left:8px; font-size:11.5px; font-weight:600; color:var(--ink-soft); text-transform:none; letter-spacing:0;}
   @media (max-width:560px){ .decl-q{display:none;} .decl-l{display:inline;} .decl-table tbody th{min-width:110px;} }
 
   /* Sous-onglets "type d'audit" (RAAM / UX·POUR) en tête de la page d'un onglet : toujours affichés, même
@@ -1432,6 +1433,13 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function critsForTheme(o, theme){
     return CRITERES.filter(function(c){ return (o.theming==='ruxal' ? c.theme_ruxal : c.theme_raam) === theme; });
   }
+  // Thème sans rien à évaluer : tous ses critères sont NA sur tous les écrans (cas typique : « Non » à la question
+  // « Cet écran contient-il au moins un champ de saisie ? » sur chaque écran, qui vide le thème Formulaires).
+  // Il disparaît des raccourcis et du sommaire, et reste dans la liste, replié et marqué non applicable.
+  function themeEntierementNA(o, theme){
+    var crits = critsForTheme(o, theme);
+    return crits.length > 0 && crits.every(function(c){ return statutCritere(o, c.id).display === 'NA'; });
+  }
 
   // Mêmes paliers d'appréciation pour le taux RAAM ET le score POUR/UX (partagé pour rester cohérent visuellement
   // entre les deux, même s'ils ne se mélangent jamais dans le calcul lui-même).
@@ -2327,7 +2335,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           '<button type="button" class="theme-group-toggle" data-action="toggle-theme" data-theme="'+escapeHtml(theme)+'" aria-expanded="'+(open?'true':'false')+'" title="'+(open?'Replier ce thème':'Déplier ce thème')+'">' +
             '<span class="theme-group-chevron">'+ICON_CHEVRON+'</span>' +
             '<span class="theme-group-name">'+escapeHtml(theme)+'</span>' +
-          '</button></span>' +
+          '</button>' +
+          (themeEntierementNA(o, theme) ? '<span class="theme-na-note">non applicable sur tous les écrans</span>' : '') +
+          '</span>' +
           '<span class="line"></span>' +
           '<div class="statut-toggle theme-bulk-toggle" role="group" aria-label="'+escapeHtml(theme)+' : statut pour tous les critères et tous les écrans">' +
             STATUTS.map(function(s){ return '<button type="button" class="statut-btn" data-action="set-statut-theme" data-theme="'+escapeHtml(theme)+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" title="Régler '+s+' pour tous les critères de ce thème, sur tous les écrans">'+s+'</button>'; }).join('') +
@@ -2363,6 +2373,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function renderThemeShortcuts(o){
     var order = getThemeOrderPresent(o);
     return '<div class="theme-shortcuts">' + order.map(function(theme, i){
+      if(themeEntierementNA(o, theme)) return '';
       return '<button type="button" class="theme-shortcut" data-action="jump-theme" data-theme-index="'+i+'">'+escapeHtml(theme)+'</button>';
     }).join('') + '</div>';
   }
@@ -2373,6 +2384,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return '<nav class="theme-sommaire" aria-label="Sommaire des thèmes">' +
       '<div class="theme-sommaire-title">Sommaire</div>' +
       order.map(function(theme, i){
+        if(themeEntierementNA(o, theme)) return '';
         return '<button type="button" class="theme-sommaire-link" data-action="jump-theme" data-theme-index="'+i+'">'+escapeHtml(theme)+'</button>';
       }).join('') +
     '</nav>';

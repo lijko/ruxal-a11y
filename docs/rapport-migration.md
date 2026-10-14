@@ -175,6 +175,7 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 
   Les critères restent visibles, avec la pastille « Si présent · <déclencheur> ».
 - Le script de génération refuse tout déclencheur hors liste, tout critère « si présent » sans déclencheur, et tout déclencheur sur un critère « cœur ».
+- Un thème dont tous les critères sont NA sur tous les écrans (typiquement Formulaires, quand chaque écran répond « Non » à la question sur les champs de saisie) disparaît des raccourcis et du sommaire. Il reste dans la liste, replié, avec la mention « non applicable sur tous les écrans ».
 
 ## Contrôle global (13 octobre 2026, version 1.19)
 
