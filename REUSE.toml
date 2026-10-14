@@ -1,0 +1,25 @@
+version = 1
+
+[[annotations]]
+path = ["src/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Bertrand Kempf"
+SPDX-License-Identifier = "EUPL-1.2"
+
+[[annotations]]
+path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "docs/.gitkeep", "docs/rapport-migration.md", "docs/gravite.md", "README.md", "CONTRIBUTING.md", "NOTICE", ".gitignore"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Bertrand Kempf"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = ["data/criteres-raam.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Service information et presse (SIP), Luxembourg"
+SPDX-License-Identifier = "LicenseRef-CC-BY-3.0-LU"
+
+[[annotations]]
+path = ["docs/comparaison-raam-ruxaam.csv", "docs/selection-audit-rapide-mobile.csv"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Bertrand Kempf; Service information et presse (SIP), Luxembourg"
+SPDX-License-Identifier = "CC-BY-4.0 AND LicenseRef-CC-BY-3.0-LU"
