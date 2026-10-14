@@ -1,9 +1,11 @@
 <!doctype html>
 <!--
-SPDX-FileCopyrightText: 2026 Bertrand Kempf
-SPDX-License-Identifier: EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU AND MIT
 RUXAAM - Revue UX Accessibilite (mobile, RAAM 1.1)
-Ce fichier embarque des bibliotheques tierces sous leurs propres licences : voir NOTICE.
+Copyright (c) 2026 Bertrand Kempf - EUPL-1.2 (voir LICENSE)
+Criteres RAAM 1.1 : (c) Service information et presse (SIP), Luxembourg - CC BY 3.0 LU
+  https://creativecommons.org/licenses/by/3.0/lu/ (intitules, niveaux et references reproduits sans modification)
+jsPDF 2.5.1 embarque : (c) 2010-2021 James Hall et contributeurs - licence MIT (en-tetes conserves plus bas)
+Details : README.md
 -->
 <html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Atelier RUXAAM</title>
@@ -688,7 +690,7 @@ Ce fichier embarque des bibliotheques tierces sous leurs propres licences : voir
   <main id="main"></main>
 
   <footer class="app-footer">
-    <p>Critères : RAAM 1.1, Service information et presse (SIP), Luxembourg, <a href="https://creativecommons.org/licenses/by/3.0/lu/" target="_blank" rel="noopener noreferrer">CC BY 3.0 LU</a>. Sélection, thèmes, gravités et textes de test : RUXAL (modifications). Code : EUPL-1.2. Voir NOTICE.</p>
+    <p>Critères : RAAM 1.1, Service information et presse (SIP), Luxembourg, <a href="https://creativecommons.org/licenses/by/3.0/lu/" target="_blank" rel="noopener noreferrer">CC BY 3.0 LU</a>. Sélection, thèmes, gravités et textes de test : RUXAL (modifications). Code : EUPL-1.2. Voir README.</p>
   </footer>
 
   <button type="button" class="btn-haut" id="btnHaut" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Haut de page</button>
@@ -1101,7 +1103,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   "use strict";
 
   // ---------- Critères ----------
-  // Source de vérité : les fichiers JSON de data/, injectés ci-dessous par scripts/build_ruxaam.py (voir README).
+  // Bloc de données généré depuis les fichiers JSON du dépôt de développement (ruxal-a11y) ; dans le dépôt simplifié, ce fichier est copié tel quel.
   // - data/criteres-raam.json : 59 critères officiels du RAAM 1.1, intitulés du SIP reproduits sans modification
   //   (CC BY 3.0 LU). Champ « niveau_wcag » = niveau officiel A/AA ; « siPresent » = critère à évaluer seulement
   //   si l'écran contient l'élément concerné (sinon NA).
@@ -1233,8 +1235,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Modèles de départ, proposés uniquement pour le type d'audit "Fonctionnalité primaire" — juste un pré-remplissage
   // du nom, tout reste modifiable ensuite.
   var PRESETS = [
-    {id:'controles', label:'Contrôles globaux', nom:'Contrôles globaux', hint:"Fermer un écran, revenir en arrière, naviguer entre les étapes, accéder au menu."},
-    {id:'navigation', label:'Navigation', nom:'Navigation', hint:"Navigation principale, secondaire, de parcours, entre autres."},
+    {id:'navigation', label:'Navigation', nom:'Navigation', hint:"Navigation principale, secondaire, de parcours ; fermer un écran, revenir en arrière, passer d'une étape à l'autre, ouvrir le menu."},
     {id:'formulaire', label:'Formulaire', nom:'Formulaire', hint:"Champs, étiquettes, erreurs de saisie, validation."},
     {id:'notification', label:'Notification', nom:'Notification', hint:"Notifications, messages de retour, alertes et confirmations."},
     {id:'autre', label:'Autre', nom:'', hint:""}
@@ -1650,7 +1651,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function renderAideContent(){
     var points = [
       {t:"Qu'est-ce que RUXAAM ?", d:"Outil de pré-diagnostic accessibilité mobile, basé sur le référentiel RAAM 1.1. Son audit rapide reprend la démarche de l'audit rapide du SIP (un échantillon d'écrans, une sélection de critères essentiels), appliquée aux critères du RAAM. Ce n'est pas un audit de conformité, et son taux n'est pas comparable à celui d'un audit rapide RAWEB."},
-      {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAAM. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAAM (échantillon d'écrans indépendants), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : contrôles globaux, navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet."},
+      {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAAM. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAAM (échantillon d'écrans indépendants), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet."},
       {t:"Deux approches, selon le type d'audit", d:"Le référentiel officiel (RAAM) est toujours actif : c'est lui qui donne le taux de conformité. Pour les types Scénario et Fonctionnalité primaire, l'évaluation POUR/WCAG et heuristiques UX s'y ajoute automatiquement, sans rien à cocher ; l'Audit rapide RAAM n'a que le RAAM. Le score UX n'entre jamais dans le taux."},
       {t:"4 statuts, une règle simple", d:"C (Conforme), NC (Non Conforme), NT (Non Testé) et NA (Non Applicable), par critère et par écran. Un critère n'est validé que s'il l'est sur tous les écrans de l'onglet — un seul écran en échec invalide le critère pour l'ensemble (règle du pire cas, comme le RAAM). Les critères « si présent » dépendent d'un contenu (CAPTCHA, image complexe, média, tableau, lien coloré dans un texte, formulaire) : si l'écran ne le contient pas, mets-les en NA."},
       {t:"Le bloc heuristique a son propre score, jamais mélangé au taux", d:"Les questions POUR/WCAG/UX se répondent en Succès, Difficile, Échec ou N/A (avec un commentaire pour expliquer un Difficile ou un Échec) — pour les types Scénario et Fonctionnalité primaire. Elles donnent un Score POUR/UX séparé, affiché à côté du taux de conformité RAAM mais jamais fondu avec lui : le taux ne dépend que des critères RAAM."},
