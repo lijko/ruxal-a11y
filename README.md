@@ -63,7 +63,7 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 | Code (`src/`) | EUPL-1.2 |
 | Données et documentation (`data/`, `docs/`) | CC BY 4.0 |
 
-Les textes complets des licences sont dans `LICENSES/`.
+Le détail par fichier est dans `REUSE.toml`. Les textes complets des licences sont dans `LICENSES/`.
 
 ## Attributions
 Voir `NOTICE`. Cet outil n'est ni approuvé ni certifié par le W3C, le SIP, l'OSAPS ou Deque Systems.
