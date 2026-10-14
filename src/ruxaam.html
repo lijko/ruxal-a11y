@@ -1234,6 +1234,22 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var r = setDeclencheur(o, ecranId, c.declencheur, 'oui');
     if(bilan){ bilan.push({ecran: ecranId, decl: c.declencheur, remis: r.remis}); }
   }
+  // À l'ouverture et à l'import : une sauvegarde faite avant cette règle (ou modifiée à la main) peut contenir un
+  // « Non » contredit par un critère lié évalué. On applique la même règle que pour une saisie manuelle.
+  function reconcilierDeclencheurs(){
+    var n = 0;
+    (state.onglets || []).forEach(function(o){
+      if(!o || !o.declencheurs || !o.resultats) return;
+      Object.keys(o.declencheurs).forEach(function(ecranId){
+        Object.keys(o.declencheurs[ecranId] || {}).forEach(function(declId){
+          if(o.declencheurs[ecranId][declId] !== 'non') return;
+          var contredit = CRITERES.some(function(c){ return c.declencheur === declId && getResultat(o, ecranId, c.id) !== 'NA'; });
+          if(contredit){ setDeclencheur(o, ecranId, declId, 'oui'); n++; }
+        });
+      });
+    });
+    return n;
+  }
   function messageBilanDeclencheurs(o, bilan){
     if(!bilan.length) return '';
     var parDecl = {}, remis = 0;
@@ -1355,6 +1371,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   state.view = 'aide';
   if(!state.ticketsJira || typeof state.ticketsJira !== 'object') state.ticketsJira = {};
   if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
+  reconcilierDeclencheurs();
 
   function saveState(){
     try{ localStorage.setItem('atelier-ruxal-state', JSON.stringify(state)); }catch(e){ /* stockage indisponible : on continue sans persistance */ }
@@ -2745,11 +2762,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       state = incoming;
       if(!state.ticketsJira || typeof state.ticketsJira !== 'object') state.ticketsJira = {};
       if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
+      var corriges = reconcilierDeclencheurs();
       confirmDeleteId = null; resetArmed = false;
       state.view = 'dashboard';
       saveState();
       render();
-      setImportStatus('Sauvegarde importée : '+state.onglets.length+' onglet(s) rechargé(s).', false);
+      setImportStatus('Sauvegarde importée : '+state.onglets.length+' onglet(s) rechargé(s).'+(corriges ? ' '+corriges+' réponse'+(corriges>1?'s':'')+' « Non » contredite'+(corriges>1?'s':'')+' par un critère évalué, passée'+(corriges>1?'s':'')+' à « Oui ».' : ''), false);
     };
     reader.onerror = function(){ setImportStatus('Échec de la lecture du fichier.', true); };
     reader.readAsText(file);
