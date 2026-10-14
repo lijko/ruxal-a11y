@@ -25,8 +25,8 @@
     },
     {
       "id": "composant-texte",
-      "libelle": "Lien ou bouton dans un texte",
-      "question": "Cet écran contient-il un lien ou un bouton placé dans un texte ?"
+      "libelle": "Lien coloré dans un texte",
+      "question": "Cet écran contient-il, dans un texte, un lien repérable seulement par sa couleur (ni souligné, ni en gras) ?"
     },
     {
       "id": "formulaire",

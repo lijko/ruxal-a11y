@@ -164,7 +164,7 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
   - **image complexe** : 1.6 ;
   - **média temporel ou son qui se lance seul** : 3.1, 3.5, 3.7, 3.9, 3.12, 3.13 ;
   - **tableau de données** : 4.3, 4.5 ;
-  - **lien ou bouton dans un texte** : 8.3, 8.4 ;
+  - **lien coloré dans un texte** (lien repérable seulement par sa couleur, ni souligné ni en gras) : 8.3, 8.4 ;
   - **formulaire** (au moins un champ de saisie) : 9.1 à 9.12.
 - 16 critères passent de « cœur » à « si présent » : 1.5, 3.7, 3.12, 3.13, 4.5, 9.1 à 9.3 et 9.5 à 9.12. Cela règle l'incohérence relevée au contrôle global.
 - La question du déclencheur média mentionne aussi « un son qui se lance seul », pour le 3.12 : un son automatique peut exister sans lecteur audio ou vidéo à l'écran.
