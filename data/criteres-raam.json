@@ -2,7 +2,7 @@
   "source": "RAAM 1.1 — Service information et presse (SIP), Luxembourg — https://accessibilite.public.lu/fr/raam1.1/",
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile",
   "licence": "CC BY 3.0 LU",
-  "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal et statut sont ajoutés par RUXAL.",
+  "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal, statut et declencheur sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si l'écran contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxal.json).",
   "criteres": [
     {
       "raam": "1.1",
@@ -62,7 +62,8 @@
         "11.1.1.1.1 Non-text Content"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "captcha"
     },
     {
       "raam": "1.5",
@@ -77,7 +78,8 @@
         "11.1.1.1.1 Non-text Content"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "captcha"
     },
     {
       "raam": "1.6",
@@ -92,7 +94,8 @@
         "11.1.1.1.1 Non-text Content"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "image-complexe"
     },
     {
       "raam": "1.8",
@@ -173,7 +176,8 @@
         "11.1.2.3.1 Audio Description or Media Alternative (Pre-recorded)"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "media-temporel"
     },
     {
       "raam": "3.5",
@@ -188,7 +192,8 @@
         "11.1.2.3.1 Audio Description or Media Alternative (Pre-recorded)"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "media-temporel"
     },
     {
       "raam": "3.7",
@@ -205,7 +210,8 @@
         "11.1.2.4 Captions (live)"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "media-temporel"
     },
     {
       "raam": "3.9",
@@ -220,7 +226,8 @@
         "11.1.2.5 Audio Description (Pre-recorded)"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "media-temporel"
     },
     {
       "raam": "3.12",
@@ -235,7 +242,8 @@
         "11.1.4.2 Audio Control"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "media-temporel"
     },
     {
       "raam": "3.13",
@@ -254,7 +262,8 @@
         "11.2.1.2 No Keyboard Trap"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "media-temporel"
     },
     {
       "raam": "4.3",
@@ -270,7 +279,8 @@
         "11.5.2.5 Object information"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "tableau-donnees"
     },
     {
       "raam": "4.5",
@@ -287,7 +297,8 @@
         "11.5.2.6 Row, column, and headers"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "tableau-donnees"
     },
     {
       "raam": "5.1",
@@ -508,7 +519,8 @@
         "11.1.4.1 Use of Colour"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "composant-texte"
     },
     {
       "raam": "8.4",
@@ -523,7 +535,8 @@
         "11.1.4.1 Use of Colour"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "composant-texte"
     },
     {
       "raam": "8.5",
@@ -588,7 +601,8 @@
         "11.2.4.6 Headings and Labels"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.2",
@@ -610,7 +624,8 @@
         "11.5.2.8 Label relationships"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.3",
@@ -630,7 +645,8 @@
         "11.5.2.5 Object information"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.4",
@@ -645,7 +661,8 @@
         "11.3.3.2 Labels or Instructions (A)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "si présent"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.5",
@@ -664,7 +681,8 @@
         "11.5.2.8 Label relationships"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.6",
@@ -681,7 +699,8 @@
         "11.3.3.2 Labels or Instructions"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.7",
@@ -696,7 +715,8 @@
         "11.3.3.2 Labels or Instructions (A)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.8",
@@ -711,7 +731,8 @@
         "11.3.3.2 Labels or Instructions (A)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.9",
@@ -726,7 +747,8 @@
         "11.3.3.1.1 Error Identification (A)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.10",
@@ -741,7 +763,8 @@
         "11.3.3.3 Error Suggestion (AA)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.11",
@@ -756,7 +779,8 @@
         "11.3.3.4 Error Prevention (Legal, Financial, Data) (AA)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "9.12",
@@ -771,7 +795,8 @@
         "11.1.3.5.1 Identify Input Purpose (AA)"
       ],
       "theme_ruxal": "Formulaires",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "formulaire"
     },
     {
       "raam": "10.1",

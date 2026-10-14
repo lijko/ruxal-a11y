@@ -158,6 +158,24 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Impacts réalignés sur ces consignes : 6.2, 9.6, 10.1, 10.2, 11.11.
 - Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
+## Déclencheurs des critères « si présent » (14 octobre 2026, version 1.20)
+- 25 critères « si présent », 35 « cœur ». Chaque critère « si présent » est rattaché à un déclencheur, dans une liste fermée de six (champ `declencheur` de `data/criteres-raam.json`) :
+  - **CAPTCHA** : 1.4, 1.5 ;
+  - **image complexe** : 1.6 ;
+  - **média temporel ou son qui se lance seul** : 3.1, 3.5, 3.7, 3.9, 3.12, 3.13 ;
+  - **tableau de données** : 4.3, 4.5 ;
+  - **lien ou bouton dans un texte** : 8.3, 8.4 ;
+  - **formulaire** (au moins un champ de saisie) : 9.1 à 9.12.
+- 16 critères passent de « cœur » à « si présent » : 1.5, 3.7, 3.12, 3.13, 4.5, 9.1 à 9.3 et 9.5 à 9.12. Cela règle l'incohérence relevée au contrôle global.
+- La question du déclencheur média mentionne aussi « un son qui se lance seul », pour le 3.12 : un son automatique peut exister sans lecteur audio ou vidéo à l'écran.
+- Dans l'outil, en tête de chaque onglet RAAM, une question par déclencheur et par écran :
+  - « Non » passe les critères liés en NA pour cet écran, y compris ceux déjà évalués, et un message le signale ;
+  - « Oui » après un « Non » les remet en NT ;
+  - un premier « Oui » ne change rien.
+
+  Les critères restent visibles, avec la pastille « Si présent · <déclencheur> ».
+- Le script de génération refuse tout déclencheur hors liste, tout critère « si présent » sans déclencheur, et tout déclencheur sur un critère « cœur ».
+
 ## Contrôle global (13 octobre 2026, version 1.19)
 
 ### Corrigé
@@ -176,7 +194,7 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Testé dans le navigateur : clavier réel (Tab, Entrée), mode clair et sombre, largeur 375 px sans défilement horizontal, taux, exports CSV, Jira, JSON et PDF, aucune erreur de console.
 
 ### Restant à discuter
-- **Cohérence du « si présent »** : le statut ne suit pas une règle unique. 1.4 (CAPTCHA) est « si présent » mais 1.5 (CAPTCHA) est « cœur » ; 3.1, 3.5 et 3.9 (médias) sont « si présent » mais 3.7, 3.12 et 3.13 (médias) sont « cœur » ; 4.3 (tableau) est « si présent » mais 4.5 (tableau) est « cœur ». Proposition : « si présent » = tout critère qui ne porte que sur un type de contenu absent de beaucoup d'écrans (CAPTCHA, médias, tableaux, liens dans un texte).
+- **Cohérence du « si présent »** (réglé en 1.20, voir ci-dessus) : le statut ne suivait pas une règle unique. 1.4 (CAPTCHA) est « si présent » mais 1.5 (CAPTCHA) est « cœur » ; 3.1, 3.5 et 3.9 (médias) sont « si présent » mais 3.7, 3.12 et 3.13 (médias) sont « cœur » ; 4.3 (tableau) est « si présent » mais 4.5 (tableau) est « cœur ». Proposition : « si présent » = tout critère qui ne porte que sur un type de contenu absent de beaucoup d'écrans (CAPTCHA, médias, tableaux, liens dans un texte).
 - **Couche POUR / heuristiques** : CLAUDE.md demande qu'elle soit stockée dans un fichier de données séparé ; elle est encore écrite dans `src/ruxaam.html`.
 - **NOTICE** indique que les intitulés RAAM sont reproduits « dans src/ruxaam.html » ; ils le sont aussi dans `data/criteres-raam.json`.
 - **Non testé** : VoiceOver et TalkBack réels, zoom navigateur à 200 % et 400 %, contrastes de toutes les couleurs de l'interface.

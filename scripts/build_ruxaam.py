@@ -10,7 +10,7 @@ Sources :
   data/criteres-raam.json    intitulés officiels RAAM 1.1 (SIP, CC BY 3.0 LU)
   data/bonnes-pratiques.json bonnes pratiques hors RAAM
   data/themes-ruxal.json     ordre et noms des thèmes RUXAL
-  data/textes-ruxal.json     impact, explication, gravité (textes originaux)
+  data/textes-ruxal.json     impact, explication, gravité, questions des déclencheurs (textes originaux)
 
 Usage :
   python3 scripts/build_ruxaam.py          régénère src/ruxaam.html
@@ -25,6 +25,8 @@ HTML = ROOT / 'src' / 'ruxaam.html'
 DEBUT = '  // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>'
 FIN = '  // <<< FIN_DONNEES >>>'
 GRAVITES = {'critique', 'serieux', 'modere', 'mineur'}  # voir docs/gravite.md
+# Liste fermée des déclencheurs des critères « si présent » (questions posées pour chaque écran).
+DECLENCHEURS = ['captcha', 'image-complexe', 'media-temporel', 'tableau-donnees', 'composant-texte', 'formulaire']
 
 
 def charger(nom):
@@ -37,6 +39,9 @@ def construire():
     themes = [t['nom'] for t in charger('themes-ruxal.json')['themes']]
     textes = charger('textes-ruxal.json')
     erreurs = []
+    declencheurs = textes.get('declencheurs', [])
+    if [d['id'] for d in declencheurs] != DECLENCHEURS:
+        erreurs.append('déclencheurs de textes-ruxal.json différents de la liste fermée : ' + ', '.join(DECLENCHEURS))
 
     criteres = []
     for c in raam:
@@ -53,6 +58,7 @@ def construire():
             'niveau': t['gravite'],
             'niveau_wcag': c['niveau'],
             'siPresent': c['statut'] == 'si présent',
+            'declencheur': c.get('declencheur', ''),
             'libelle': c['intitule'],
             'impact': t['impact'],
             'explication': t['explication'],
@@ -84,6 +90,10 @@ def construire():
     if orphelins:
         erreurs.append('textes sans critère : ' + ', '.join(sorted(orphelins)))
     for c in criteres:
+        if c.get('siPresent') and c.get('declencheur') not in DECLENCHEURS:
+            erreurs.append('%s : critère « si présent » sans déclencheur valide' % c['id'])
+        if not c.get('siPresent') and c.get('declencheur'):
+            erreurs.append('%s : déclencheur sur un critère « cœur »' % c['id'])
         if c['theme_ruxal'] not in themes:
             erreurs.append('%s : thème RUXAL inconnu « %s »' % (c['id'], c['theme_ruxal']))
         if c['niveau'] not in GRAVITES:
@@ -92,7 +102,7 @@ def construire():
             erreurs.append(c['id'] + ' : impact ou explication vide')
     if erreurs:
         sys.exit('Données invalides :\n- ' + '\n- '.join(erreurs))
-    return criteres, themes, textes.get('verification_sources', '')
+    return criteres, themes, textes.get('verification_sources', ''), declencheurs
 
 
 def js(valeur):
@@ -100,12 +110,13 @@ def js(valeur):
     return json.dumps(valeur, ensure_ascii=False).replace('</', '<\\/')
 
 
-def bloc(criteres, themes, verif):
+def bloc(criteres, themes, verif, declencheurs):
     lignes = [DEBUT, '  var CRITERES = [']
     lignes += ['    ' + js(c) + ',' for c in criteres]
     lignes[-1] = lignes[-1].rstrip(',')
     lignes.append('  ];')
     lignes.append('  var THEMES_RUXAL_ORDRE = ' + js(themes) + ';')
+    lignes.append('  var DECLENCHEURS = ' + js(declencheurs) + ';')
     if verif:
         a, m, j = verif.split('-')
         lignes.append("  var REF_VERIF = '%s/%s/%s';" % (j, m, a))
@@ -114,12 +125,12 @@ def bloc(criteres, themes, verif):
 
 
 def main():
-    criteres, themes, verif = construire()
+    criteres, themes, verif, declencheurs = construire()
     html = HTML.read_text(encoding='utf-8')
     debut, fin = html.find(DEBUT), html.find(FIN)
     if debut < 0 or fin < debut:
         sys.exit('Marqueurs DEBUT_DONNEES / FIN_DONNEES introuvables dans ' + str(HTML))
-    nouveau = html[:debut] + bloc(criteres, themes, verif) + html[fin + len(FIN):]
+    nouveau = html[:debut] + bloc(criteres, themes, verif, declencheurs) + html[fin + len(FIN):]
     nb_raam = sum(1 for c in criteres if not c.get('horsRaam'))
     resume = '%d critères RAAM (%d « si présent ») + %d bonnes pratiques' % (
         nb_raam, sum(1 for c in criteres if c.get('siPresent')), len(criteres) - nb_raam)

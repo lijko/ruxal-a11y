@@ -1,7 +1,39 @@
 {
-  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAAM 1.1 de data/criteres-raam.json et aux bonnes pratiques de data/bonnes-pratiques.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAAM x.y (références WCAG ou EN 301 549) — conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, inspirée de l'échelle d'impact de Deque (axe-core) ; gravite_v1_17 = ancienne gravité à trois niveaux ; gravite_a_confirmer = proposée, à relire. Toutes les gravités sont acceptées comme base de discussion (13 oct. 2026), sans relecture critère par critère. Explications relues le 2026-10-13 contre la méthodologie de test du RAAM 1.1 (fr/json/methodologies.json du dépôt officiel) : même sens, formulation propre à RUXAL.",
+  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAAM 1.1 de data/criteres-raam.json et aux bonnes pratiques de data/bonnes-pratiques.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAAM x.y (références WCAG ou EN 301 549) — conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, inspirée de l'échelle d'impact de Deque (axe-core) ; gravite_v1_17 = ancienne gravité à trois niveaux ; gravite_a_confirmer = proposée, à relire. Toutes les gravités sont acceptées comme base de discussion (13 oct. 2026), sans relecture critère par critère. Explications relues le 2026-10-13 contre la méthodologie de test du RAAM 1.1 (fr/json/methodologies.json du dépôt officiel) : même sens, formulation propre à RUXAL. Déclencheurs : liste fermée des contenus qui rendent applicables les critères « si présent » ; « Non » pour un écran passe ses critères liés en NA.",
   "licence": "CC BY 4.0",
   "verification_sources": "2026-10-12",
+  "declencheurs": [
+    {
+      "id": "captcha",
+      "libelle": "CAPTCHA",
+      "question": "Cet écran contient-il un CAPTCHA ?"
+    },
+    {
+      "id": "image-complexe",
+      "libelle": "Image complexe",
+      "question": "Cet écran contient-il une image complexe (graphique, schéma, carte) ?"
+    },
+    {
+      "id": "media-temporel",
+      "libelle": "Média temporel ou son",
+      "question": "Cet écran contient-il un média temporel (audio, vidéo) ou un son qui se lance seul ?"
+    },
+    {
+      "id": "tableau-donnees",
+      "libelle": "Tableau de données",
+      "question": "Cet écran contient-il un tableau de données ?"
+    },
+    {
+      "id": "composant-texte",
+      "libelle": "Lien ou bouton dans un texte",
+      "question": "Cet écran contient-il un lien ou un bouton placé dans un texte ?"
+    },
+    {
+      "id": "formulaire",
+      "libelle": "Formulaire",
+      "question": "Cet écran contient-il au moins un champ de saisie ?"
+    }
+  ],
   "criteres": {
     "raam-1-1": {
       "raam": "1.1",
@@ -61,7 +93,7 @@
       "gravite_v1_17": "bloquant",
       "gravite_a_confirmer": false,
       "impact": "RAAM 1.5 (WCAG 1.1.1) — sans alternative au CAPTCHA visuel, les utilisateurs non-voyants ou malvoyants sont totalement bloqués à cette étape du parcours.",
-      "explication": "Le CAPTCHA visuel doit avoir une solution de secours non visuelle (CAPTCHA audio ou question logique), ou un autre moyen d'accéder à la fonction qu'il protège (code reçu par SMS, e-mail de confirmation).",
+      "explication": "Le CAPTCHA visuel doit avoir une solution de secours non visuelle (CAPTCHA audio ou question logique), ou un autre moyen d'accéder à la fonction qu'il protège (code reçu par SMS, e-mail de confirmation). Ne concerne que les écrans qui contiennent un CAPTCHA.",
       "origine": {
         "impact": "repris de c05",
         "explication": "repris de c05, revu selon la méthodologie RAAM 1.1",
@@ -162,7 +194,7 @@
       "gravite_v1_17": "bloquant",
       "gravite_a_confirmer": false,
       "impact": "RAAM 3.7 (WCAG 1.2.2 / 1.2.4) — sans sous-titres, les utilisateurs sourds ou malentendants n'ont accès à aucun des échanges audio d'une vidéo.",
-      "explication": "Une vidéo dont le son transmet de l'information (quelqu'un parle, par exemple) doit proposer des sous-titres synchronisés, directement ou via une version sous-titrée accessible depuis un bouton ou un lien voisin. Vaut aussi pour les vidéos en direct.",
+      "explication": "Une vidéo dont le son transmet de l'information (quelqu'un parle, par exemple) doit proposer des sous-titres synchronisés, directement ou via une version sous-titrée accessible depuis un bouton ou un lien voisin. Vaut aussi pour les vidéos en direct. Ne concerne que les écrans qui contiennent une vidéo.",
       "origine": {
         "impact": "repris de c12",
         "explication": "repris de c12, revu selon la méthodologie RAAM 1.1",
@@ -187,7 +219,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 3.12 (WCAG 1.4.2) — un son qui se déclenche seul et ne peut pas être coupé peut couvrir la voix de synthèse du lecteur d'écran, rendant l'application inutilisable pour ses utilisateurs.",
-      "explication": "Un son qui se déclenche seul à l'ouverture de l'écran est acceptable s'il dure 3 secondes au plus. Sinon, il doit pouvoir être arrêté (bouton dans l'écran) ou son volume réglé indépendamment du volume système — faute de quoi il couvre la voix du lecteur d'écran.",
+      "explication": "Un son qui se déclenche seul à l'ouverture de l'écran est acceptable s'il dure 3 secondes au plus. Sinon, il doit pouvoir être arrêté (bouton dans l'écran) ou son volume réglé indépendamment du volume système — faute de quoi il couvre la voix du lecteur d'écran. Ne concerne que les écrans qui contiennent un média temporel ou un son qui se lance seul.",
       "origine": {
         "impact": "repris de c16",
         "explication": "repris de c16, revu selon la méthodologie RAAM 1.1",
@@ -200,7 +232,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 3.13 (WCAG 2.1.1 / 2.1.2) — sans commandes de lecture (pause, arrêt, son, sous-titres), l'utilisateur ne peut ni suivre le média à son rythme ni le couper quand il couvre la voix du lecteur d'écran ; si ces commandes ne sont pas atteignables sans le toucher précis, il reste bloqué.",
-      "explication": "Pour chaque vidéo ou audio, vérifie que les commandes nécessaires existent : lecture, pause ou arrêt, coupure du son s'il y a une piste sonore, activation et désactivation de l'audiodescription et des sous-titres quand le média en possède (des sous-titres incrustés dans l'image doivent s'afficher dès la lecture). Leur utilisation au lecteur d'écran et au clavier se vérifie avec RAAM 5.1 et 5.2.",
+      "explication": "Pour chaque vidéo ou audio, vérifie que les commandes nécessaires existent : lecture, pause ou arrêt, coupure du son s'il y a une piste sonore, activation et désactivation de l'audiodescription et des sous-titres quand le média en possède (des sous-titres incrustés dans l'image doivent s'afficher dès la lecture). Leur utilisation au lecteur d'écran et au clavier se vérifie avec RAAM 5.1 et 5.2. Ne concerne que les écrans qui contiennent un média temporel (audio, vidéo).",
       "origine": {
         "impact": "nouveau",
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
@@ -224,7 +256,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 4.5 (WCAG 1.3.1) — une association cellule/en-tête incorrecte fait annoncer par le lecteur d'écran un en-tête erroné, faussant la lecture des données.",
-      "explication": "Avec VoiceOver ou TalkBack, parcours les cellules de données : chacune doit être annoncée avec son ou ses en-têtes de ligne et de colonne, et pas seulement les en-têtes lus une fois en haut du tableau.",
+      "explication": "Avec VoiceOver ou TalkBack, parcours les cellules de données : chacune doit être annoncée avec son ou ses en-têtes de ligne et de colonne, et pas seulement les en-têtes lus une fois en haut du tableau. Ne concerne que les écrans qui contiennent un tableau de données.",
       "origine": {
         "impact": "repris de c19",
         "explication": "repris de c19, revu selon la méthodologie RAAM 1.1",
@@ -440,7 +472,7 @@
       "gravite_v1_17": "bloquant",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.1 (WCAG 2.4.6) — sans étiquette visible (seulement un texte indicatif qui disparaît à la saisie), l'utilisateur oublie ce qu'il doit saisir et ne peut plus relire ni vérifier ses réponses, ce qui pénalise notamment les personnes ayant des troubles de la mémoire ou de l'attention.",
-      "explication": "Chaque champ (saisie, bouton radio, case à cocher) doit avoir une étiquette visible juste à côté, qui reste affichée pendant la saisie — un placeholder qui disparaît dès qu'on tape ne suffit pas.",
+      "explication": "Chaque champ (saisie, bouton radio, case à cocher) doit avoir une étiquette visible juste à côté, qui reste affichée pendant la saisie — un placeholder qui disparaît dès qu'on tape ne suffit pas. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "nouveau",
         "explication": "repris de c32, revu selon la méthodologie RAAM 1.1",
@@ -453,7 +485,7 @@
       "gravite_v1_17": "bloquant",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.2 (WCAG 1.3.1 / 3.3.2 / 4.1.2) — un champ sans nom accessible est annoncé « champ de texte » sans autre précision : l'utilisateur de lecteur d'écran ne sait pas quoi saisir et ne peut pas remplir le formulaire seul.",
-      "explication": "Avec VoiceOver ou TalkBack, place le focus sur chaque champ (y compris listes de choix, cases et interrupteurs) : une étiquette doit être annoncée avec le champ lui-même, pas lue à part avant ou après. Sur iOS, l'affichage des noms du Contrôle vocal permet aussi de repérer vite un champ sans étiquette.",
+      "explication": "Avec VoiceOver ou TalkBack, place le focus sur chaque champ (y compris listes de choix, cases et interrupteurs) : une étiquette doit être annoncée avec le champ lui-même, pas lue à part avant ou après. Sur iOS, l'affichage des noms du Contrôle vocal permet aussi de repérer vite un champ sans étiquette. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "nouveau",
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
@@ -465,7 +497,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.3 (WCAG 2.4.6 / 2.5.3 / 3.3.2) — une étiquette imprécise ou trompeuse fait saisir à l'utilisateur une information incorrecte dans le champ concerné.",
-      "explication": "Avec VoiceOver ou TalkBack, écoute l'étiquette de chaque champ : elle doit décrire sans ambiguïté ce qui est attendu, et contenir le texte de l'étiquette visible (sinon le Contrôle vocal ne trouve pas le champ).",
+      "explication": "Avec VoiceOver ou TalkBack, écoute l'étiquette de chaque champ : elle doit décrire sans ambiguïté ce qui est attendu, et contenir le texte de l'étiquette visible (sinon le Contrôle vocal ne trouve pas le champ). Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c33",
         "explication": "repris de c33, revu selon la méthodologie RAAM 1.1",
@@ -478,7 +510,7 @@
       "gravite_v1_17": "mineur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.4 (WCAG 3.3.2) — une étiquette éloignée de son champ oblige à deviner quel texte décrit quel champ, surtout avec le zoom ou une loupe, où l'on ne voit qu'une partie de l'écran.",
-      "explication": "Vérifie que chaque étiquette visible est collée au champ qu'elle décrit, sans espace ni élément intercalé qui pourrait la faire attribuer à un autre champ. Ne concerne que les écrans qui contiennent un formulaire.",
+      "explication": "Vérifie que chaque étiquette visible est collée au champ qu'elle décrit, sans espace ni élément intercalé qui pourrait la faire attribuer à un autre champ. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "nouveau",
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
@@ -490,7 +522,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.5 (WCAG 2.5.3 / 4.1.2) — un intitulé de bouton vague (« Valider », « OK ») sans contexte ne permet pas de comprendre l'action réellement déclenchée.",
-      "explication": "Un bouton « Valider » ou « OK » sans autre contexte ne dit pas ce qui va se passer. Avec VoiceOver ou TalkBack, vérifie que l'intitulé annoncé précise l'action réelle et contient le texte visible du bouton.",
+      "explication": "Un bouton « Valider » ou « OK » sans autre contexte ne dit pas ce qui va se passer. Avec VoiceOver ou TalkBack, vérifie que l'intitulé annoncé précise l'action réelle et contient le texte visible du bouton. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c37",
         "explication": "repris de c37, revu selon la méthodologie RAAM 1.1",
@@ -503,7 +535,7 @@
       "gravite_v1_17": "mineur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.6 (WCAG 1.3.1 / 3.3.2) — si un groupe de champs liés n'est pas identifié, l'utilisateur de lecteur d'écran entend « Oui », « Non » ou « 12 » sans savoir à quelle question ou à quelle donnée ces champs se rapportent.",
-      "explication": "Repère les champs qui forment un ensemble (suites de chiffres d'une carte bancaire, jour/mois/année, choix Oui/Non d'une même question). Avec VoiceOver ou TalkBack, place le focus sur le premier champ du groupe : la nature du groupe (la question, « Date de naissance »…) doit être annoncée et compréhensible.",
+      "explication": "Repère les champs qui forment un ensemble (suites de chiffres d'une carte bancaire, jour/mois/année, choix Oui/Non d'une même question). Avec VoiceOver ou TalkBack, place le focus sur le premier champ du groupe : la nature du groupe (la question, « Date de naissance »…) doit être annoncée et compréhensible. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c34, réécrit pour suivre la méthodologie RAAM 1.1",
         "explication": "repris de c34, revu selon la méthodologie RAAM 1.1",
@@ -516,7 +548,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.7 (WCAG 3.3.2) — un champ obligatoire non signalé (ou signalé par une couleur ou un symbole muet) provoque des erreurs de soumission que l'utilisateur ne comprend pas.",
-      "explication": "Valide le formulaire vide pour repérer les champs obligatoires. Pour chacun, le caractère obligatoire doit être indiqué visiblement près du champ ET annoncé par le lecteur d'écran en arrivant sur le champ. Un repère non textuel (astérisque, icône) doit être expliqué avant sa première utilisation ; une couleur seule ne suffit pas.",
+      "explication": "Valide le formulaire vide pour repérer les champs obligatoires. Pour chacun, le caractère obligatoire doit être indiqué visiblement près du champ ET annoncé par le lecteur d'écran en arrivant sur le champ. Un repère non textuel (astérisque, icône) doit être expliqué avant sa première utilisation ; une couleur seule ne suffit pas. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c60",
         "explication": "repris de c60, revu selon la méthodologie RAAM 1.1",
@@ -529,7 +561,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.8 (WCAG 3.3.2) — sans indication du format attendu (ex. date JJ/MM/AAAA, longueur d'un code), l'utilisateur ne sait pas comment saisir sa donnée et multiplie les erreurs.",
-      "explication": "Pour un champ qui attend un format précis (date, téléphone, code), le format doit être indiqué par un texte visible près du champ et annoncé par le lecteur d'écran en arrivant sur le champ — un exemple en placeholder qui disparaît à la saisie ne suffit pas. Saisir une valeur mal formée puis valider aide à repérer les champs concernés.",
+      "explication": "Pour un champ qui attend un format précis (date, téléphone, code), le format doit être indiqué par un texte visible près du champ et annoncé par le lecteur d'écran en arrivant sur le champ — un exemple en placeholder qui disparaît à la saisie ne suffit pas. Saisir une valeur mal formée puis valider aide à repérer les champs concernés. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c61",
         "explication": "repris de c61, revu selon la méthodologie RAAM 1.1",
@@ -542,7 +574,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.9 (WCAG 3.3.1) — une erreur de saisie mal signalée (uniquement visuelle, ou non détectable par un lecteur d'écran) empêche l'utilisateur de corriger seul sa saisie.",
-      "explication": "Provoque des erreurs (champ vide, e-mail mal formé) puis valide : pour chaque champ en erreur, le message doit être visible près du champ (un texte, pas seulement une bordure rouge) et annoncé par le lecteur d'écran quand le focus arrive sur le champ.",
+      "explication": "Provoque des erreurs (champ vide, e-mail mal formé) puis valide : pour chaque champ en erreur, le message doit être visible près du champ (un texte, pas seulement une bordure rouge) et annoncé par le lecteur d'écran quand le focus arrive sur le champ. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c38",
         "explication": "repris de c38, revu selon la méthodologie RAAM 1.1",
@@ -555,7 +587,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.10 (WCAG 3.3.3) — un message qui signale une erreur sans dire comment la corriger oblige l'utilisateur à procéder par essais successifs, ce qui pénalise particulièrement les personnes ayant des troubles cognitifs ou utilisant un lecteur d'écran.",
-      "explication": "Saisis volontairement des valeurs incorrectes (e-mail mal formé, date invalide) puis valide : pour chaque champ dont le format est contrôlé, le message d'erreur doit donner un exemple concret de valeur attendue (une adresse e-mail modèle, par exemple), visible et annoncé par VoiceOver ou TalkBack.",
+      "explication": "Saisis volontairement des valeurs incorrectes (e-mail mal formé, date invalide) puis valide : pour chaque champ dont le format est contrôlé, le message d'erreur doit donner un exemple concret de valeur attendue (une adresse e-mail modèle, par exemple), visible et annoncé par VoiceOver ou TalkBack. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "nouveau",
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
@@ -567,7 +599,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.11 (WCAG 3.3.4) — sans possibilité de vérifier, corriger ou annuler, une erreur de saisie dans un paiement, un contrat ou une suppression de données devient définitive, avec des conséquences financières ou juridiques pour l'utilisateur.",
-      "explication": "Sur les formulaires sensibles (paiement, données juridiques ou personnelles, réponses à un examen, suppression de données), vérifie qu'au moins un mécanisme existe : corriger ou annuler pendant la saisie (l'annulation de la plateforme n'est pas bloquée), confirmer explicitement avant l'envoi (étape de récapitulatif, case de confirmation), ou récupérer des données supprimées.",
+      "explication": "Sur les formulaires sensibles (paiement, données juridiques ou personnelles, réponses à un examen, suppression de données), vérifie qu'au moins un mécanisme existe : corriger ou annuler pendant la saisie (l'annulation de la plateforme n'est pas bloquée), confirmer explicitement avant l'envoi (étape de récapitulatif, case de confirmation), ou récupérer des données supprimées. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "nouveau",
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
@@ -579,7 +611,7 @@
       "gravite_v1_17": "mineur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 9.12 (WCAG 1.3.5) — sans identification du type de champ, l'utilisateur ne bénéficie pas du remplissage automatique ni des claviers adaptés (numérique, email), ce qui alourdit la saisie pour les personnes ayant des troubles moteurs ou cognitifs.",
-      "explication": "Un champ e-mail, téléphone ou nom doit afficher directement le clavier adapté (@ visible, pavé numérique) et accepter le remplissage automatique du système : des suggestions pertinentes doivent apparaître (sur Android, active d'abord le service de saisie automatique).",
+      "explication": "Un champ e-mail, téléphone ou nom doit afficher directement le clavier adapté (@ visible, pavé numérique) et accepter le remplissage automatique du système : des suggestions pertinentes doivent apparaître (sur Android, active d'abord le service de saisie automatique). Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
       "origine": {
         "impact": "repris de c46",
         "explication": "repris de c46, revu selon la méthodologie RAAM 1.1",
