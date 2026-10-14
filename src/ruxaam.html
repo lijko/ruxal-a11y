@@ -256,19 +256,17 @@ Ce fichier embarque des bibliotheques tierces sous leurs propres licences : voir
   }
   .seg-btn:last-child{border-right:none;}
   .seg-btn.active{background:var(--accent); color:var(--accent-ink);}
-  /* Questions des déclencheurs (« Cet écran contient-il… ? ») : une ligne par déclencheur, une colonne par écran. */
-  .decl-block{margin:0 0 16px; border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--surface-alt);}
-  .decl-block h3{margin:0 0 4px; font-size:14px;}
-  .decl-scroll{overflow-x:auto;}
-  .decl-table{border-collapse:collapse; width:100%; font-size:13px;}
-  .decl-table th,.decl-table td{padding:6px 8px; text-align:left; vertical-align:middle; border-top:1px solid var(--border-soft);}
-  .decl-table thead th{border-top:none; font-weight:700; color:var(--ink-soft); white-space:nowrap;}
-  .decl-table tbody th{font-weight:600;}
-  .decl-table .seg-toggle{display:inline-flex;}
-  .decl-table .seg-btn{min-width:44px;}
-  .decl-l{display:none;}
+  /* Bouton « Haut de page » : flottant en bas à droite, affiché seulement après défilement (attribut hidden sinon,
+     pour ne pas encombrer l'ordre de tabulation en haut de page). */
+  .btn-haut{
+    position:fixed; right:max(16px, env(safe-area-inset-right)); bottom:max(16px, env(safe-area-inset-bottom)); z-index:30;
+    display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:13px; font-weight:700; color:var(--ink);
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:99px; padding:9px 14px;
+    box-shadow:var(--shadow-pop); cursor:pointer;
+  }
+  .btn-haut[hidden]{display:none;}
+  .btn-haut:hover{background:var(--accent-soft);}
   .theme-na-note{align-self:center; margin-left:8px; font-size:11.5px; font-weight:600; color:var(--ink-soft); text-transform:none; letter-spacing:0;}
-  @media (max-width:560px){ .decl-q{display:none;} .decl-l{display:inline;} .decl-table tbody th{min-width:110px;} }
 
   /* Sous-onglets "type d'audit" (RAAM / UX·POUR) en tête de la page d'un onglet : toujours affichés, même
      quand un seul type existe (sip-rapide, flow) — ils servent alors de simple titre, pour garder la même
@@ -684,6 +682,8 @@ Ce fichier embarque des bibliotheques tierces sous leurs propres licences : voir
   <nav class="tabstrip" id="tabstrip" aria-label="Onglets de l'audit"></nav>
 
   <main id="main"></main>
+
+  <button type="button" class="btn-haut" id="btnHaut" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Haut de page</button>
 </div>
 
 <script>
@@ -1106,7 +1106,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON) — à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.20';
+  var APP_VERSION = '1.21';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -1170,9 +1170,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     {"id": "raam-11-13", "raam": "11.13", "theme_ruxal": "Composants Interactifs", "theme_raam": "11. Consultation", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "declencheur": "", "libelle": "Dans chaque écran, les fonctionnalités qui impliquent un mouvement de l’appareil ou vers l’appareil peuvent-elles être satisfaites de manière alternative (hors cas particuliers) ?", "impact": "RAAM 11.13 (WCAG 2.5.4) — une fonctionnalité qui ne repose que sur le mouvement de l'appareil est inutilisable par les personnes ne pouvant pas manipuler l'appareil de cette façon (fauteuil roulant, support fixe, tremblements), et un déclenchement involontaire pénalise aussi les utilisateurs qui bougent naturellement leur appareil.", "explication": "Une fonctionnalité déclenchée en secouant ou inclinant l'appareil doit aussi être accessible via un bouton classique, et il doit être possible de désactiver la détection de mouvement."},
     {"id": "raam-11-15", "raam": "11.15", "theme_ruxal": "Composants Interactifs", "theme_raam": "11. Consultation", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "declencheur": "", "libelle": "Chaque fonctionnalité d’identification ou de contrôle qui repose sur l’utilisation de caractéristiques biologiques de l’utilisateur dispose-t-elle d’une méthode alternative ?", "impact": "RAAM 11.15 (EN 301 549 5.3) — sans alternative, une personne dont la biométrie n'est pas reconnue de façon fiable (main abîmée, visage partiellement couvert) ou qui ne souhaite pas l'utiliser se retrouve bloquée pour s'identifier ou valider une action.", "explication": "Si l'app propose empreinte, reconnaissance faciale ou vocale pour s'identifier ou valider, une autre méthode doit rester disponible (code, mot de passe). Si cette autre méthode est elle aussi biométrique, elle ne doit pas reposer sur une caractéristique semblable (pas la voix pour remplacer la voix)."},
     {"id": "raam-12-3", "raam": "12.3", "theme_ruxal": "Fondations Techniques", "theme_raam": "12. Documentation et fonctionnalités d’accessibilité", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "declencheur": "", "libelle": "L’application ne perturbe pas les fonctionnalités d’accessibilité de la plateforme. Cette règle est-elle respectée ?", "impact": "RAAM 12.3 (EN 301 549 11.6.2) — si l'application bloque ou neutralise les réglages d'accessibilité du système (lecteur d'écran, taille du texte, contraste renforcé, réduction des animations, zoom), les personnes qui en dépendent ne peuvent plus l'utiliser.", "explication": "Active tour à tour les réglages d'accessibilité de l'appareil (VoiceOver ou TalkBack, grande taille de texte, zoom, contraste augmenté, réduction des animations, Contrôle vocal ou Voice Access, Switch Access) et utilise l'application : aucun ne doit être désactivé, bloqué ou contourné. Vérifie aussi que ses gestes, sa commande vocale ou ses raccourcis clavier n'entrent pas en conflit avec ceux de ces fonctionnalités."},
-    {"id": "bp1", "horsRaam": true, "raam": "", "theme_ruxal": "Composants Interactifs", "theme_raam": "Hors référentiel RAAM", "niveau": "modere", "niveau_wcag": "", "libelle": "Chaque zone tactile (bouton, lien, case à cocher, contrôle) est assez grande pour être touchée sans erreur : au moins 44×44 pt sur iOS et 48×48 dp sur Android.", "impact": "Une zone trop petite, ou collée à sa voisine, provoque des appuis ratés ou involontaires, surtout pour les personnes ayant des tremblements, une préhension limitée ou des doigts larges.", "explication": "Mesure la zone tactile réelle de chaque contrôle (pas seulement l'icône visible) avec l'inspecteur d'accessibilité de la plateforme. Une petite icône peut rester conforme si sa zone tactile est agrandie par du remplissage. Sur Android (Compose), les composants standard imposent déjà ce minimum : ce sont les composants personnalisés, les icônes seules et les liens dans un texte qu'il faut vérifier. Les WCAG 2.2 (2.5.8) acceptent une cible plus petite (24 px) si l'espacement avec les voisines suffit.", "note": "Recommandation des plateformes, pas une exigence du RAAM 1.1 : le référentiel repose sur les WCAG 2.1, où la taille de cible n'est qu'un critère AAA (2.5.5). Les pages Apple exigent JavaScript : leur texte a été relu sur la copie miroir developer-mdn.apple.com.", "sources": [{"t": "Apple, Human Interface Guidelines — Accessibility (« Buttons and controls » : hit target d'au moins 44×44 pt)", "u": "https://developer.apple.com/design/human-interface-guidelines/accessibility"}, {"t": "Android Developers, Make apps more accessible (« Use large, simple controls » : 48dp × 48dp)", "u": "https://developer.android.com/guide/topics/ui/accessibility/apps"}, {"t": "W3C, WCAG 2.2 — SC 2.5.8 Target Size (Minimum), niveau AA : 24×24 px", "u": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html"}, {"t": "W3C, WCAG 2.1 — SC 2.5.5 Target Size, niveau AAA : 44×44 px", "u": "https://www.w3.org/WAI/WCAG21/Understanding/target-size.html"}]},
-    {"id": "bp2", "horsRaam": true, "raam": "", "theme_ruxal": "Navigation & Structure", "theme_raam": "Hors référentiel RAAM", "niveau": "serieux", "niveau_wcag": "", "libelle": "Chaque écran et chaque vue modale offre un moyen évident de revenir en arrière ou de se fermer (bouton, geste ou action de la plateforme).", "impact": "Sans issue évidente, l'utilisateur reste bloqué dans l'écran ou la fenêtre, ou doit deviner un geste caché : c'est particulièrement pénalisant avec un lecteur d'écran, un commutateur ou une commande vocale.", "explication": "Ouvre chaque modale, feuille et écran de second niveau : un moyen explicite de fermer ou de revenir doit exister et rester atteignable au lecteur d'écran et au clavier, pas seulement par un geste de glissement. À l'écran racine, l'absence de retour est normale (c'est la sortie de l'application qui s'applique).", "note": "Aucun critère du RAAM 1.1 ne l'exige. Apple demande un moyen évident de fermer une vue modale ; la page Android décrit le comportement de Retour mais n'affirme pas qu'il doit toujours être disponible : à moduler selon l'écran (écran racine, étape volontairement bloquante).", "sources": [{"t": "Apple, Human Interface Guidelines — Modality (Best practices : « Always give people an obvious way to dismiss a modal view »)", "u": "https://developer.apple.com/design/human-interface-guidelines/modality"}, {"t": "Android Developers, Navigation principles (comportement des boutons Retour et Haut)", "u": "https://developer.android.com/guide/navigation/navigation-principles"}]},
-    {"id": "bp3", "horsRaam": true, "raam": "", "theme_ruxal": "Navigation & Structure", "theme_raam": "Hors référentiel RAAM", "niveau": "modere", "niveau_wcag": "", "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouvert (s'il existe encore).", "impact": "Le focus retombe en haut de l'écran ou sur un élément sans rapport : l'utilisateur de lecteur d'écran ou de clavier perd sa position et doit reparcourir l'écran depuis le début.", "explication": "Avec le lecteur d'écran ou un clavier externe, ouvre une modale depuis un bouton puis ferme-la : le focus doit revenir sur ce bouton (ou, s'il n'existe plus, sur un élément logique proche). Un focus perdu ou renvoyé au début de l'écran est à signaler ; selon l'appréciation de l'auditeur, il peut aussi se rattacher au critère 10.1 (ordre de parcours du focus).", "note": "Aucun critère du RAAM 1.1 ne l'exige. Pattern issu du web (WAI-ARIA Authoring Practices) : je n'ai pas vérifié d'équivalent normatif sur iOS ou Android, où l'on s'appuie sur le comportement attendu de la plateforme.", "sources": [{"t": "W3C, WAI-ARIA Authoring Practices — Modal Dialog Pattern (Keyboard Interaction : le focus revient à l'élément qui a ouvert la fenêtre)", "u": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"}]}
+    {"id": "bp1", "horsRaam": true, "raam": "", "theme_ruxal": "Composants Interactifs", "theme_raam": "Hors référentiel RAAM — bonne pratique", "niveau": "modere", "niveau_wcag": "", "libelle": "Chaque zone tactile (bouton, lien, case à cocher, contrôle) est assez grande pour être touchée sans erreur : au moins 44×44 pt sur iOS et 48×48 dp sur Android.", "impact": "Une zone trop petite, ou collée à sa voisine, provoque des appuis ratés ou involontaires, surtout pour les personnes ayant des tremblements, une préhension limitée ou des doigts larges.", "explication": "Mesure la zone tactile réelle de chaque contrôle (pas seulement l'icône visible) avec l'inspecteur d'accessibilité de la plateforme. Une petite icône peut rester conforme si sa zone tactile est agrandie par du remplissage. Sur Android (Compose), les composants standard imposent déjà ce minimum : ce sont les composants personnalisés, les icônes seules et les liens dans un texte qu'il faut vérifier. Les WCAG 2.2 (2.5.8) acceptent une cible plus petite (24 px) si l'espacement avec les voisines suffit.", "note": "Recommandation des plateformes, pas une exigence du RAAM 1.1 : le référentiel repose sur les WCAG 2.1, où la taille de cible n'est qu'un critère AAA (2.5.5). Les pages Apple exigent JavaScript : leur texte a été relu sur la copie miroir developer-mdn.apple.com.", "sources": [{"t": "Apple, Human Interface Guidelines — Accessibility (« Buttons and controls » : hit target d'au moins 44×44 pt)", "u": "https://developer.apple.com/design/human-interface-guidelines/accessibility"}, {"t": "Android Developers, Make apps more accessible (« Use large, simple controls » : 48dp × 48dp)", "u": "https://developer.android.com/guide/topics/ui/accessibility/apps"}, {"t": "W3C, WCAG 2.2 — SC 2.5.8 Target Size (Minimum), niveau AA : 24×24 px", "u": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html"}, {"t": "W3C, WCAG 2.1 — SC 2.5.5 Target Size, niveau AAA : 44×44 px", "u": "https://www.w3.org/WAI/WCAG21/Understanding/target-size.html"}]},
+    {"id": "bp2", "horsRaam": true, "raam": "", "theme_ruxal": "Navigation & Structure", "theme_raam": "Hors référentiel RAAM — bonne pratique", "niveau": "serieux", "niveau_wcag": "", "libelle": "Chaque écran et chaque vue modale offre un moyen évident de revenir en arrière ou de se fermer (bouton, geste ou action de la plateforme).", "impact": "Sans issue évidente, l'utilisateur reste bloqué dans l'écran ou la fenêtre, ou doit deviner un geste caché : c'est particulièrement pénalisant avec un lecteur d'écran, un commutateur ou une commande vocale.", "explication": "Ouvre chaque modale, feuille et écran de second niveau : un moyen explicite de fermer ou de revenir doit exister et rester atteignable au lecteur d'écran et au clavier, pas seulement par un geste de glissement. À l'écran racine, l'absence de retour est normale (c'est la sortie de l'application qui s'applique).", "note": "Aucun critère du RAAM 1.1 ne l'exige. Apple demande un moyen évident de fermer une vue modale ; la page Android décrit le comportement de Retour mais n'affirme pas qu'il doit toujours être disponible : à moduler selon l'écran (écran racine, étape volontairement bloquante).", "sources": [{"t": "Apple, Human Interface Guidelines — Modality (Best practices : « Always give people an obvious way to dismiss a modal view »)", "u": "https://developer.apple.com/design/human-interface-guidelines/modality"}, {"t": "Android Developers, Navigation principles (comportement des boutons Retour et Haut)", "u": "https://developer.android.com/guide/navigation/navigation-principles"}]},
+    {"id": "bp3", "horsRaam": true, "raam": "", "theme_ruxal": "Navigation & Structure", "theme_raam": "Hors référentiel RAAM — bonne pratique", "niveau": "modere", "niveau_wcag": "", "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouvert (s'il existe encore).", "impact": "Le focus retombe en haut de l'écran ou sur un élément sans rapport : l'utilisateur de lecteur d'écran ou de clavier perd sa position et doit reparcourir l'écran depuis le début.", "explication": "Avec le lecteur d'écran ou un clavier externe, ouvre une modale depuis un bouton puis ferme-la : le focus doit revenir sur ce bouton (ou, s'il n'existe plus, sur un élément logique proche). Un focus perdu ou renvoyé au début de l'écran est à signaler ; selon l'appréciation de l'auditeur, il peut aussi se rattacher au critère 10.1 (ordre de parcours du focus).", "note": "Aucun critère du RAAM 1.1 ne l'exige. Pattern issu du web (WAI-ARIA Authoring Practices) : je n'ai pas vérifié d'équivalent normatif sur iOS ou Android, où l'on s'appuie sur le comportement attendu de la plateforme.", "sources": [{"t": "W3C, WAI-ARIA Authoring Practices — Modal Dialog Pattern (Keyboard Interaction : le focus revient à l'élément qui a ouvert la fenêtre)", "u": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"}]}
   ];
   var THEMES_RUXAL_ORDRE = ["Navigation & Structure", "Composants Interactifs", "Images & Médias", "Couleurs & Contrastes", "Contenu & Lisibilité", "Fondations Techniques", "Formulaires"];
   var DECLENCHEURS = [{"id": "captcha", "libelle": "CAPTCHA", "question": "Cet écran contient-il un CAPTCHA ?"}, {"id": "image-complexe", "libelle": "Image complexe", "question": "Cet écran contient-il une image complexe (graphique, schéma, carte) ?"}, {"id": "media-temporel", "libelle": "Média temporel ou son", "question": "Cet écran contient-il un média temporel (audio, vidéo) ou un son qui se lance seul ?"}, {"id": "tableau-donnees", "libelle": "Tableau de données", "question": "Cet écran contient-il un tableau de données ?"}, {"id": "composant-texte", "libelle": "Lien coloré dans un texte", "question": "Cet écran contient-il, dans un texte, un lien repérable seulement par sa couleur (ni souligné, ni en gras) ?"}, {"id": "formulaire", "libelle": "Formulaire", "question": "Cet écran contient-il au moins un champ de saisie ?"}];
@@ -1198,99 +1198,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   var STATUT_NOM = {NT:'non testé', C:'conforme', NC:'non conforme', NA:'non applicable'};
   function nomCourtCritere(c){ return c.horsRaam ? 'Bonne pratique '+c.id : 'RAAM '+c.raam; }
   function declencheurInfo(id){ return DECLENCHEURS.find(function(d){ return d.id === id; }) || {id:id, libelle:id, question:id}; }
-
-  // Déclencheurs des critères « si présent » (liste fermée dans data/textes-ruxal.json) : une question par
-  // déclencheur et par écran. « Non » passe tous les critères liés en NA sur cet écran (y compris ceux déjà
-  // renseignés) ; « Oui » après un « Non » les remet en NT ; un premier « Oui » ne change rien.
-  function getDeclencheur(o, ecranId, declId){
-    return (o.declencheurs && o.declencheurs[ecranId] && o.declencheurs[ecranId][declId]) || null;
-  }
-  function setDeclencheur(o, ecranId, declId, reponse){
-    if(!o.declencheurs) o.declencheurs = {};
-    if(!o.declencheurs[ecranId]) o.declencheurs[ecranId] = {};
-    var avant = o.declencheurs[ecranId][declId] || null;
-    o.declencheurs[ecranId][declId] = reponse;
-    var crits = CRITERES.filter(function(c){ return c.declencheur === declId; });
-    var res = {nb: crits.length, ecrases: 0, remis: 0};
-    if(reponse === 'non'){
-      crits.forEach(function(c){
-        var st = getResultat(o, ecranId, c.id);
-        if(st === 'C' || st === 'NC') res.ecrases++;
-        if(st !== 'NA') setResultat(o, ecranId, c.id, 'NA');
-      });
-    } else if(avant === 'non'){
-      crits.forEach(function(c){ if(getResultat(o, ecranId, c.id) === 'NA'){ setResultat(o, ecranId, c.id, 'NT'); res.remis++; } });
-    }
-    return res;
-  }
-  // Saisie manuelle d'un statut : si un critère lié à un déclencheur reçoit C, NC ou NT sur un écran qui avait
-  // répondu « Non », la réponse passe à « Oui » (évaluer le critère, c'est dire que le contenu existe) — comme un
-  // « Oui » saisi à la main, les autres critères liés remis en NA par la question reviennent à NT. NA ne change rien.
-  function setStatutManuel(o, ecranId, critId, statut, bilan){
-    setResultat(o, ecranId, critId, statut);
-    if(statut === 'NA') return;
-    var c = CRITERES.find(function(x){ return x.id === critId; });
-    if(!c || !c.declencheur || getDeclencheur(o, ecranId, c.declencheur) !== 'non') return;
-    var r = setDeclencheur(o, ecranId, c.declencheur, 'oui');
-    if(bilan){ bilan.push({ecran: ecranId, decl: c.declencheur, remis: r.remis}); }
-  }
-  // À l'ouverture et à l'import : une sauvegarde faite avant cette règle (ou modifiée à la main) peut contenir un
-  // « Non » contredit par un critère lié évalué. On applique la même règle que pour une saisie manuelle.
-  function reconcilierDeclencheurs(){
-    var n = 0;
-    (state.onglets || []).forEach(function(o){
-      if(!o || !o.declencheurs || !o.resultats) return;
-      Object.keys(o.declencheurs).forEach(function(ecranId){
-        Object.keys(o.declencheurs[ecranId] || {}).forEach(function(declId){
-          if(o.declencheurs[ecranId][declId] !== 'non') return;
-          var contredit = CRITERES.some(function(c){ return c.declencheur === declId && getResultat(o, ecranId, c.id) !== 'NA'; });
-          if(contredit){ setDeclencheur(o, ecranId, declId, 'oui'); n++; }
-        });
-      });
-    });
-    return n;
-  }
-  function messageBilanDeclencheurs(o, bilan){
-    if(!bilan.length) return '';
-    var parDecl = {}, remis = 0;
-    bilan.forEach(function(b){
-      var e = o.ecrans.find(function(x){ return x.id === b.ecran; });
-      (parDecl[b.decl] = parDecl[b.decl] || []).push(e ? e.nom : '');
-      remis += b.remis;
-    });
-    return 'Un critère lié a été évalué : réponse passée à « Oui » pour ' +
-      Object.keys(parDecl).map(function(d){ return declencheurInfo(d).libelle+' ('+parDecl[d].join(', ')+')'; }).join(', ') + '.' +
-      (remis ? ' '+remis+' autre'+(remis>1?'s':'')+' critère'+(remis>1?'s':'')+' remis à évaluer (NT).' : '');
-  }
-
-  function renderDeclencheurs(o){
-    if(!o.ecrans.length) return '';
-    var sansReponse = 0;
-    var html = '<section class="decl-block" aria-labelledby="decl-titre-'+o.id+'">' +
-      '<h3 id="decl-titre-'+o.id+'">Contenus présents sur chaque écran</h3>' +
-      '<p class="muted" style="margin:0 0 8px; font-size:12.5px;">« Non » passe en NA les critères « si présent » liés, pour cet écran. « Oui » les laisse à évaluer.</p>' +
-      '<div class="decl-scroll"><table class="decl-table"><thead><tr><th scope="col">Question</th>' +
-      o.ecrans.map(function(e){ return '<th scope="col">'+escapeHtml(e.nom)+'</th>'; }).join('') +
-      '</tr></thead><tbody>';
-    DECLENCHEURS.forEach(function(d){
-      var nb = CRITERES.filter(function(c){ return c.declencheur === d.id; }).length;
-      html += '<tr><th scope="row"><span class="decl-q">'+escapeHtml(d.question)+'</span><span class="decl-l">'+escapeHtml(d.libelle)+' ?</span> <span class="muted" style="font-weight:500;">('+nb+' critère'+(nb>1?'s':'')+')</span></th>';
-      o.ecrans.forEach(function(e){
-        var rep = getDeclencheur(o, e.id, d.id);
-        if(!rep) sansReponse++;
-        html += '<td><div class="seg-toggle" role="group" aria-label="'+escapeHtml(d.libelle)+', écran '+escapeHtml(e.nom)+'">' +
-          ['oui','non'].map(function(v){
-            return '<button type="button" class="seg-btn'+(rep===v?' active':'')+'" data-action="set-declencheur" data-ecran="'+e.id+'" data-decl="'+d.id+'" data-rep="'+v+'" aria-pressed="'+(rep===v?'true':'false')+'">'+(v==='oui'?'Oui':'Non')+'</button>';
-          }).join('') +
-        '</div></td>';
-      });
-      html += '</tr>';
-    });
-    html += '</tbody></table></div>' +
-      (sansReponse ? '<p class="muted" style="margin:8px 0 0; font-size:12px;">'+sansReponse+' réponse'+(sansReponse>1?'s':'')+' en attente.</p>' : '') +
-    '</section>';
-    return html;
-  }
 
   // Les 3 types d'audit : point d'entrée de la création d'un onglet (écran 1). Chacun a désormais une approche
   // FIXE et exclusive plutôt qu'une combinaison libre :
@@ -1371,7 +1278,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   state.view = 'aide';
   if(!state.ticketsJira || typeof state.ticketsJira !== 'object') state.ticketsJira = {};
   if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
-  reconcilierDeclencheurs();
 
   function saveState(){
     try{ localStorage.setItem('atelier-ruxal-state', JSON.stringify(state)); }catch(e){ /* stockage indisponible : on continue sans persistance */ }
@@ -1739,7 +1645,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       {t:"Qu'est-ce que RUXAAM ?", d:"Outil de pré-diagnostic accessibilité mobile, basé sur le référentiel RAAM 1.1. Son audit rapide reprend la démarche de l'audit rapide du SIP (un échantillon d'écrans, une sélection de critères essentiels), appliquée aux critères du RAAM. Ce n'est pas un audit de conformité, et son taux n'est pas comparable à celui d'un audit rapide RAWEB."},
       {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAAM. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAAM (échantillon d'écrans indépendants), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : contrôles globaux, navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet."},
       {t:"Deux approches, selon le type d'audit", d:"Le référentiel officiel (RAAM) est toujours actif : c'est lui qui donne le taux de conformité. Pour les types Scénario et Fonctionnalité primaire, l'évaluation POUR/WCAG et heuristiques UX s'y ajoute automatiquement, sans rien à cocher ; l'Audit rapide RAAM n'a que le RAAM. Le score UX n'entre jamais dans le taux."},
-      {t:"4 statuts, une règle simple", d:"C (Conforme), NC (Non Conforme), NT (Non Testé) et NA (Non Applicable), par critère et par écran. Un critère n'est validé que s'il l'est sur tous les écrans de l'onglet — un seul écran en échec invalide le critère pour l'ensemble (règle du pire cas, comme le RAAM). Les critères « si présent » dépendent d'un contenu (CAPTCHA, image complexe, média, tableau, lien dans un texte, formulaire) : en tête de l'onglet, réponds pour chaque écran à « Cet écran contient-il… ? ». « Non » les passe en NA."},
+      {t:"4 statuts, une règle simple", d:"C (Conforme), NC (Non Conforme), NT (Non Testé) et NA (Non Applicable), par critère et par écran. Un critère n'est validé que s'il l'est sur tous les écrans de l'onglet — un seul écran en échec invalide le critère pour l'ensemble (règle du pire cas, comme le RAAM). Les critères « si présent » dépendent d'un contenu (CAPTCHA, image complexe, média, tableau, lien coloré dans un texte, formulaire) : si l'écran ne le contient pas, mets-les en NA."},
       {t:"Le bloc heuristique a son propre score, jamais mélangé au taux", d:"Les questions POUR/WCAG/UX se répondent en Succès, Difficile, Échec ou N/A (avec un commentaire pour expliquer un Difficile ou un Échec) — pour les types Scénario et Fonctionnalité primaire. Elles donnent un Score POUR/UX séparé, affiché à côté du taux de conformité RAAM mais jamais fondu avec lui : le taux ne dépend que des critères RAAM."},
       {t:"La gravité est indicative, pas normative", d:"Chaque critère porte une gravité par défaut : Critique (bloque l'accès à une fonction ou un contenu essentiel), Sérieux (barrière forte, qui peut bloquer selon le contexte), Modéré (difficulté réelle, avec un contournement), Mineur (gêne). Ni le RAAM ni WCAG 2.x ne définissent de gravité : cette échelle est propre à RUXAL, inspirée de l'échelle d'impact de Deque (axe-core). Elle sert à trier les non-conformités et à fixer la priorité des tickets Jira ; l'impact réel dépend de l'écran et de l'élément concernés. Le brouillon WCAG 3 du W3C étudie des étiquettes de gravité (dommage physique, risque, barrière, friction) : il n'est pas stable et n'est pas utilisé ici."}
     ];
@@ -2072,7 +1978,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var nbNC = CRITERES.filter(function(c){ return statutCritere(o, c.id).display==='NC'; }).length;
       if(nbNC===0 && state.filtreRetest){ state.filtreRetest = false; saveState(); } // plus rien à filtrer : on libère la liste
       html += '<div class="retest-filter"><button type="button" class="btn btn-ghost btn-sm'+(state.filtreRetest?' active':'')+'" data-action="toggle-retest" aria-pressed="'+(state.filtreRetest?'true':'false')+'"'+(nbNC===0?' disabled':'')+' title="N\'afficher que les critères non conformes">Non conformes ('+nbNC+')</button></div>';
-      html += renderDeclencheurs(o);
       html += renderThemeShortcuts(o);
       html += renderThemeSommaire(o);
       html += renderListeCriteres(o);
@@ -2762,12 +2667,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       state = incoming;
       if(!state.ticketsJira || typeof state.ticketsJira !== 'object') state.ticketsJira = {};
       if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
-      var corriges = reconcilierDeclencheurs();
       confirmDeleteId = null; resetArmed = false;
       state.view = 'dashboard';
       saveState();
       render();
-      setImportStatus('Sauvegarde importée : '+state.onglets.length+' onglet(s) rechargé(s).'+(corriges ? ' '+corriges+' réponse'+(corriges>1?'s':'')+' « Non » contredite'+(corriges>1?'s':'')+' par un critère évalué, passée'+(corriges>1?'s':'')+' à « Oui ».' : ''), false);
+      setImportStatus('Sauvegarde importée : '+state.onglets.length+' onglet(s) rechargé(s).', false);
     };
     reader.onerror = function(){ setImportStatus('Échec de la lecture du fichier.', true); };
     reader.readAsText(file);
@@ -3247,27 +3151,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       state.view = o.id;
       render();
     }
-    else if(action==='set-declencheur'){
-      var o = getOnglet(state.view);
-      if(o){
-        var ecId = el.getAttribute('data-ecran'), declId = el.getAttribute('data-decl'), rep = el.getAttribute('data-rep');
-        var r = setDeclencheur(o, ecId, declId, rep);
-        var ec = o.ecrans.find(function(x){ return x.id === ecId; });
-        var msg = declencheurInfo(declId).libelle+', écran '+(ec ? ec.nom : '')+' : '+(rep==='oui' ? 'oui' : 'non')+'. ';
-        if(rep === 'non') msg += r.nb+' critère'+(r.nb>1?'s':'')+' en NA'+(r.ecrases ? ' (dont '+r.ecrases+' déjà évalué'+(r.ecrases>1?'s':'')+' C ou NC)' : '')+'.';
-        else msg += r.remis ? r.remis+' critère'+(r.remis>1?'s':'')+' remis à évaluer (NT).' : 'Les critères liés restent à évaluer.';
-        render();
-        setImportStatus(msg, false);
-      }
-    }
     else if(action==='set-statut'){
       var o = getOnglet(state.view);
-      if(o){
-        var bilan = [];
-        setStatutManuel(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.getAttribute('data-statut'), bilan);
-        render();
-        if(bilan.length) setImportStatus(messageBilanDeclencheurs(o, bilan), false);
-      }
+      if(o){ setResultat(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.getAttribute('data-statut')); render(); }
     }
     else if(action==='copier-commentaire-critere'){
       var o = getOnglet(state.view);
@@ -3287,10 +3173,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       // partiel silencieux qui ne toucherait que les écrans encore à NT).
       var o = getOnglet(state.view);
       if(o){
-        var critId = el.getAttribute('data-crit'), statut = el.getAttribute('data-statut'), bilan = [];
-        o.ecrans.forEach(function(e){ setStatutManuel(o, e.id, critId, statut, bilan); });
+        var critId = el.getAttribute('data-crit'), statut = el.getAttribute('data-statut');
+        o.ecrans.forEach(function(e){ setResultat(o, e.id, critId, statut); });
         render();
-        if(bilan.length) setImportStatus(messageBilanDeclencheurs(o, bilan), false);
       }
     }
     else if(action==='toggle-theme'){
@@ -3327,12 +3212,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       if(o){
         var theme = el.getAttribute('data-theme'), statut = el.getAttribute('data-statut');
         var crits = critsForTheme(o, theme);
-        var bilan = [];
-        crits.forEach(function(c){ o.ecrans.forEach(function(e){ setStatutManuel(o, e.id, c.id, statut, bilan); }); });
+        crits.forEach(function(c){ o.ecrans.forEach(function(e){ setResultat(o, e.id, c.id, statut); }); });
         if(statut !== 'NA'){ themeOverrideOuvert[themeKey(o, theme)] = true; }
         else { delete themeOverrideOuvert[themeKey(o, theme)]; }
         render();
-        if(bilan.length) setImportStatus(messageBilanDeclencheurs(o, bilan), false);
       }
     }
     else if(action==='set-heur'){
@@ -3404,6 +3287,17 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // btnAide/btnDashboard sont câblés directement (hors délégué [data-action] ci-dessus) : on y désarme donc
   // explicitement les mêmes confirmations (suppression d'onglet, réinitialisation), sinon quitter l'écran sans
   // confirmer puis y revenir retrouverait le bouton toujours armé — dangereux pour une action destructive.
+  // « Haut de page » : remonte en haut et place le focus sur le titre de l'outil (le clavier repart du haut aussi).
+  var $btnHaut = document.getElementById('btnHaut');
+  var $titreOutil = document.querySelector('.brand');
+  function majBtnHaut(){ var cache = window.scrollY < Math.max(600, window.innerHeight); if($btnHaut.hidden !== cache) $btnHaut.hidden = cache; }
+  window.addEventListener('scroll', majBtnHaut, {passive:true});
+  window.addEventListener('resize', majBtnHaut);
+  $btnHaut.addEventListener('click', function(){
+    var reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0, behavior: reduit ? 'auto' : 'smooth'});
+    if($titreOutil){ $titreOutil.setAttribute('tabindex', '-1'); $titreOutil.focus({preventScroll:true}); }
+  });
   $btnAide.addEventListener('click', function(){ confirmDeleteId = null; resetArmed = false; state.view='aide'; render(); });
   $btnReferentiel.addEventListener('click', function(){ confirmDeleteId = null; resetArmed = false; state.view='referentiel'; render(); });
   $btnDashboard.addEventListener('click', function(){ confirmDeleteId = null; resetArmed = false; state.view='dashboard'; render(); });

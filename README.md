@@ -40,7 +40,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 | `data/criteres-raam.json` | 60 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) ; 25 « si présent », chacun rattaché à un déclencheur | CC BY 3.0 LU |
 | `data/bonnes-pratiques.json` | bonnes pratiques hors RAAM (hors taux) | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
-| `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; questions des 6 déclencheurs | CC BY 4.0 |
+| `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
 
 Après toute modification de `data/`, régénérer l'outil (Python 3, sans dépendance) :
 
@@ -63,7 +63,7 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 | Code (`src/`) | EUPL-1.2 |
 | Données et documentation (`data/`, `docs/`) | CC BY 4.0 |
 
-Le détail par fichier est dans `REUSE.toml`. Les textes complets sont dans `LICENSES/`.
+Les textes complets des licences sont dans `LICENSES/`.
 
 ## Attributions
 Voir `NOTICE`. Cet outil n'est ni approuvé ni certifié par le W3C, le SIP, l'OSAPS ou Deque Systems.

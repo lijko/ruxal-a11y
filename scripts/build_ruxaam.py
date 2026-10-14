@@ -73,7 +73,7 @@ def construire():
             'horsRaam': True,
             'raam': '',
             'theme_ruxal': b['theme_ruxal'],
-            'theme_raam': 'Hors référentiel RAAM',
+            'theme_raam': 'Hors référentiel RAAM — bonne pratique',
             'niveau': t['gravite'],
             'niveau_wcag': '',
             'libelle': b['libelle'],

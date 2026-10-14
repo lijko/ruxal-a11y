@@ -159,6 +159,8 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
 ## Déclencheurs des critères « si présent » (14 octobre 2026, version 1.20)
+
+> **Mise à jour (14 octobre 2026)** : les questions « Cet écran contient-il… ? » en tête d'onglet ont été **retirées**, jugées trop compliquées à l'usage, avec les règles qui en dépendaient (passage automatique en NA, correction des réponses contredites). Restent : le champ `declencheur` dans les données, la pastille « Si présent · <déclencheur> » et la mention dans les consignes. Les critères non applicables se mettent en NA à la main. Ajout d'un bouton « Haut de page », qui apparaît après défilement, remonte en haut et place le focus sur le titre de l'outil.
 - 25 critères « si présent », 35 « cœur ». Chaque critère « si présent » est rattaché à un déclencheur, dans une liste fermée de six (champ `declencheur` de `data/criteres-raam.json`) :
   - **CAPTCHA** : 1.4, 1.5 ;
   - **image complexe** : 1.6 ;
@@ -208,7 +210,6 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Version de l'outil : 1.16 → 1.17.
 
 ## Contrôles effectués
-- `reuse lint` : conforme REUSE 3.3.
 - `python3 scripts/build_ruxaam.py --check` : à jour, 59 critères RAAM (8 « si présent ») + 3 bonnes pratiques.
 - Navigateur (mode clair et sombre) : aucune erreur de console ; page Référentiel = 62 fiches, 7 thèmes dans l'ordre, 8 pastilles « Si présent », 3 « Hors RAAM ».
 - Audit rapide sur 3 écrans : tout C, 8 critères en NA, 2 critères RAAM NC (2.2 sur tous les écrans, 5.2 sur un seul), bp1 NC → taux 96 % (49/51), bp1 hors taux. Export liste CSV = 62 lignes + en-tête ; export Jira = 3 tickets ; export JSON valide.
