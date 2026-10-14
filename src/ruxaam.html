@@ -1223,6 +1223,30 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     }
     return res;
   }
+  // Saisie manuelle d'un statut : si un critère lié à un déclencheur reçoit C, NC ou NT sur un écran qui avait
+  // répondu « Non », la réponse passe à « Oui » (évaluer le critère, c'est dire que le contenu existe) — comme un
+  // « Oui » saisi à la main, les autres critères liés remis en NA par la question reviennent à NT. NA ne change rien.
+  function setStatutManuel(o, ecranId, critId, statut, bilan){
+    setResultat(o, ecranId, critId, statut);
+    if(statut === 'NA') return;
+    var c = CRITERES.find(function(x){ return x.id === critId; });
+    if(!c || !c.declencheur || getDeclencheur(o, ecranId, c.declencheur) !== 'non') return;
+    var r = setDeclencheur(o, ecranId, c.declencheur, 'oui');
+    if(bilan){ bilan.push({ecran: ecranId, decl: c.declencheur, remis: r.remis}); }
+  }
+  function messageBilanDeclencheurs(o, bilan){
+    if(!bilan.length) return '';
+    var parDecl = {}, remis = 0;
+    bilan.forEach(function(b){
+      var e = o.ecrans.find(function(x){ return x.id === b.ecran; });
+      (parDecl[b.decl] = parDecl[b.decl] || []).push(e ? e.nom : '');
+      remis += b.remis;
+    });
+    return 'Un critère lié a été évalué : réponse passée à « Oui » pour ' +
+      Object.keys(parDecl).map(function(d){ return declencheurInfo(d).libelle+' ('+parDecl[d].join(', ')+')'; }).join(', ') + '.' +
+      (remis ? ' '+remis+' autre'+(remis>1?'s':'')+' critère'+(remis>1?'s':'')+' remis à évaluer (NT).' : '');
+  }
+
   function renderDeclencheurs(o){
     if(!o.ecrans.length) return '';
     var sansReponse = 0;
@@ -3220,7 +3244,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     }
     else if(action==='set-statut'){
       var o = getOnglet(state.view);
-      if(o){ setResultat(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.getAttribute('data-statut')); render(); }
+      if(o){
+        var bilan = [];
+        setStatutManuel(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.getAttribute('data-statut'), bilan);
+        render();
+        if(bilan.length) setImportStatus(messageBilanDeclencheurs(o, bilan), false);
+      }
     }
     else if(action==='copier-commentaire-critere'){
       var o = getOnglet(state.view);
@@ -3240,9 +3269,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       // partiel silencieux qui ne toucherait que les écrans encore à NT).
       var o = getOnglet(state.view);
       if(o){
-        var critId = el.getAttribute('data-crit'), statut = el.getAttribute('data-statut');
-        o.ecrans.forEach(function(e){ setResultat(o, e.id, critId, statut); });
+        var critId = el.getAttribute('data-crit'), statut = el.getAttribute('data-statut'), bilan = [];
+        o.ecrans.forEach(function(e){ setStatutManuel(o, e.id, critId, statut, bilan); });
         render();
+        if(bilan.length) setImportStatus(messageBilanDeclencheurs(o, bilan), false);
       }
     }
     else if(action==='toggle-theme'){
@@ -3279,10 +3309,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       if(o){
         var theme = el.getAttribute('data-theme'), statut = el.getAttribute('data-statut');
         var crits = critsForTheme(o, theme);
-        crits.forEach(function(c){ o.ecrans.forEach(function(e){ setResultat(o, e.id, c.id, statut); }); });
+        var bilan = [];
+        crits.forEach(function(c){ o.ecrans.forEach(function(e){ setStatutManuel(o, e.id, c.id, statut, bilan); }); });
         if(statut !== 'NA'){ themeOverrideOuvert[themeKey(o, theme)] = true; }
         else { delete themeOverrideOuvert[themeKey(o, theme)]; }
         render();
+        if(bilan.length) setImportStatus(messageBilanDeclencheurs(o, bilan), false);
       }
     }
     else if(action==='set-heur'){
