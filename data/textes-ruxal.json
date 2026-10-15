@@ -24,14 +24,14 @@
       "question": "Cet écran contient-il un tableau de données ?"
     },
     {
-      "id": "composant-texte",
-      "libelle": "Lien coloré dans un texte",
-      "question": "Cet écran contient-il, dans un texte, un lien repérable seulement par sa couleur (ni souligné, ni en gras) ?"
-    },
-    {
       "id": "formulaire",
       "libelle": "Formulaire",
       "question": "Cet écran contient-il au moins un champ de saisie ?"
+    },
+    {
+      "id": "session",
+      "libelle": "Limite de session",
+      "question": "L'appli limite-t-elle la durée d'une session (déconnexion automatique, expiration) ?"
     }
   ],
   "criteres": {
@@ -111,18 +111,6 @@
         "impact": "repris de c06",
         "explication": "repris de c06",
         "prefixe_corrige": false
-      }
-    },
-    "raam-1-8": {
-      "raam": "1.8",
-      "gravite": "modere",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 1.8 (WCAG 1.4.5) — un texte affiché sous forme d'image ne grossit pas avec la taille de police du système, devient flou au zoom et ne peut pas être adapté (couleurs, police) par les personnes malvoyantes ou dyslexiques.",
-      "explication": "Repère les textes qui sont en fait des images (bannière, bouton graphique, titre stylisé) : un élément annoncé « image » par VoiceOver ou TalkBack qui contient du texte est un indice, un texte qui ne grossit pas avec la taille de police du système en est un autre. Ce texte doit pouvoir être remplacé par du vrai texte adaptable (taille, couleur, graisse), sauf si l'effet visuel ne peut pas être reproduit en texte stylé (un logo, par exemple).",
-      "origine": {
-        "impact": "nouveau",
-        "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
       }
     },
     "raam-2-1": {
@@ -221,18 +209,6 @@
       "gravite_a_confirmer": false,
       "impact": "RAAM 3.13 (WCAG 2.1.1 / 2.1.2) — sans commandes de lecture (pause, arrêt, son, sous-titres), l'utilisateur ne peut ni suivre le média à son rythme ni le couper quand il couvre la voix du lecteur d'écran ; si ces commandes ne sont pas atteignables sans le toucher précis, il reste bloqué.",
       "explication": "Pour chaque vidéo ou audio, vérifie que les commandes nécessaires existent : lecture, pause ou arrêt, coupure du son s'il y a une piste sonore, activation et désactivation de l'audiodescription et des sous-titres quand le média en possède (des sous-titres incrustés dans l'image doivent s'afficher dès la lecture). Leur utilisation au lecteur d'écran et au clavier se vérifie avec RAAM 5.1 et 5.2. Ne concerne que les écrans qui contiennent un média temporel (audio, vidéo).",
-      "origine": {
-        "impact": "nouveau",
-        "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
-      }
-    },
-    "raam-4-3": {
-      "raam": "4.3",
-      "gravite": "mineur",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 4.3 (WCAG 1.3.1) — sans titre, l'utilisateur de lecteur d'écran ne sait pas ce que contient un tableau avant de l'avoir parcouru cellule par cellule, ce qui rend la lecture longue et déroutante.",
-      "explication": "Pour chaque tableau de données (tarifs, horaires, relevés), active VoiceOver ou TalkBack et atteins le tableau : un titre qui décrit son contenu doit être annoncé à ce moment-là. Ne concerne que les écrans qui contiennent un tableau.",
       "origine": {
         "impact": "nouveau",
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
@@ -353,19 +329,6 @@
         "prefixe_corrige": true
       }
     },
-    "raam-7-2": {
-      "raam": "7.2",
-      "gravite": "mineur",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 7.2 (WCAG 1.3.1) — une liste seulement présentée comme telle visuellement perd son regroupement pour l'utilisateur de lecteur d'écran, qui ne perçoit plus les éléments comme un ensemble.",
-      "explication": "Repère les éléments présentés visuellement comme une liste (menu, résultats, étapes) : en y arrivant avec VoiceOver ou TalkBack, le lecteur doit annoncer qu'il s'agit d'une liste. Des éléments simplement empilés, sans cette annonce, ne suffisent pas.",
-      "origine": {
-        "impact": "repris de c59",
-        "explication": "repris de c59, revu selon la méthodologie RAAM 1.1",
-        "prefixe_corrige": false
-      }
-    },
     "raam-8-1": {
       "raam": "8.1",
       "gravite": "serieux",
@@ -390,30 +353,6 @@
         "impact": "repris de c56",
         "explication": "repris de c56, revu selon la méthodologie RAAM 1.1, paliers officiels précisés (14 oct. 2026)",
         "prefixe_corrige": false
-      }
-    },
-    "raam-8-3": {
-      "raam": "8.3",
-      "gravite": "modere",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 8.3 (WCAG 1.4.1) — un lien placé dans un paragraphe et signalé seulement par une couleur proche de celle du texte se confond avec lui : les personnes daltoniennes ou malvoyantes ne savent pas qu'il est activable.",
-      "explication": "Pour un lien ou un bouton placé dans une phrase et signalé seulement par sa couleur (ni souligné, ni en gras), mesure le contraste entre sa couleur et celle du texte voisin : 3:1 au moins. Si l'application propose un mode plus contrasté, évalue-le dans ce mode. Ne concerne que ce type de composant.",
-      "origine": {
-        "impact": "nouveau",
-        "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
-      }
-    },
-    "raam-8-4": {
-      "raam": "8.4",
-      "gravite": "modere",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 8.4 (WCAG 1.4.1) — si seul un changement de couleur signale qu'un lien placé dans un texte a le focus ou est survolé, l'utilisateur de clavier externe ou de pointeur qui distingue mal les couleurs ne voit pas où il se trouve.",
-      "explication": "Pour un lien ou un bouton placé dans une phrase et signalé seulement par sa couleur : avec un clavier externe, vérifie que le focus du système reste visible dessus ; avec une souris ou un trackpad, que son survol est signalé autrement que par la couleur (soulignement, gras). Ne concerne que ce type de composant.",
-      "origine": {
-        "impact": "nouveau",
-        "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
       }
     },
     "raam-8-5": {
@@ -447,11 +386,11 @@
       "gravite": "modere",
       "gravite_v1_17": "mineur",
       "gravite_a_confirmer": false,
-      "impact": "RAAM 8.7 (WCAG 1.4.13) — une infobulle ou un menu qui apparaît au focus ou au survol et qu'on ne peut pas masquer, ou qui disparaît trop vite, cache une partie de l'écran agrandi ou ne laisse pas le temps de lire l'information.",
-      "explication": "Avec un clavier externe, puis avec une souris ou un trackpad, fais apparaître chaque infobulle ou contenu additionnel : il doit pouvoir être masqué par une touche (Échap sur iOS, la touche Retour configurée sur Android), pouvoir être survolé par le pointeur, et rester affiché tant que le focus ou le pointeur est sur le composant ou sur le contenu (ou tant qu'il reste valable).",
+      "impact": "RAAM 8.7 (WCAG 1.4.13) — une infobulle, une aide ou un menu qui apparaît quand le focus arrive sur un composant (clavier externe, lecteur d'écran) ou au survol (souris, trackpad) peut cacher une partie de l'écran, surtout agrandi, ou disparaître avant d'avoir été lu. Si l'utilisateur ne peut ni le fermer ni le garder affiché, il perd l'information ou l'accès au contenu qu'il recouvre.",
+      "explication": "Déplace le focus sur chaque composant qui fait apparaître une infobulle, une aide ou un menu : avec un clavier externe ou le lecteur d'écran, et, si tu en as un, avec une souris ou un trackpad. Vérifie trois choses : 1. il peut être fermé sans déplacer le focus (touche Échap du clavier externe, ou action Retour de la plateforme) ; 2. il reste affiché tant que le focus ou le pointeur est sur le composant ou sur le contenu lui-même, sans disparaître avant d'être lu ; 3. avec un pointeur, tu peux amener la souris sur le contenu sans qu'il disparaisse. Écran sans infobulle ni contenu qui apparaît au focus : NA.",
       "origine": {
-        "impact": "nouveau",
-        "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
+        "impact": "nouveau, reformulé v1.22",
+        "explication": "nouveau, revu selon la méthodologie RAAM 1.1, reformulé v1.22"
       }
     },
     "raam-9-1": {
@@ -490,18 +429,6 @@
         "impact": "repris de c33",
         "explication": "repris de c33, revu selon la méthodologie RAAM 1.1",
         "prefixe_corrige": false
-      }
-    },
-    "raam-9-4": {
-      "raam": "9.4",
-      "gravite": "mineur",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 9.4 (WCAG 3.3.2) — une étiquette éloignée de son champ oblige à deviner quel texte décrit quel champ, surtout avec le zoom ou une loupe, où l'on ne voit qu'une partie de l'écran.",
-      "explication": "Vérifie que chaque étiquette visible est collée au champ qu'elle décrit, sans espace ni élément intercalé qui pourrait la faire attribuer à un autre champ. Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
-      "origine": {
-        "impact": "nouveau",
-        "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
       }
     },
     "raam-9-5": {
@@ -593,19 +520,6 @@
         "explication": "nouveau, revu selon la méthodologie RAAM 1.1"
       }
     },
-    "raam-9-12": {
-      "raam": "9.12",
-      "gravite": "mineur",
-      "gravite_v1_17": "mineur",
-      "gravite_a_confirmer": false,
-      "impact": "RAAM 9.12 (WCAG 1.3.5) — sans identification du type de champ, l'utilisateur ne bénéficie pas du remplissage automatique ni des claviers adaptés (numérique, email), ce qui alourdit la saisie pour les personnes ayant des troubles moteurs ou cognitifs.",
-      "explication": "Un champ e-mail, téléphone ou nom doit afficher directement le clavier adapté (@ visible, pavé numérique) et accepter le remplissage automatique du système : des suggestions pertinentes doivent apparaître (sur Android, active d'abord le service de saisie automatique). Ne concerne que les écrans qui contiennent au moins un champ de saisie.",
-      "origine": {
-        "impact": "repris de c46",
-        "explication": "repris de c46, revu selon la méthodologie RAAM 1.1",
-        "prefixe_corrige": false
-      }
-    },
     "raam-10-1": {
       "raam": "10.1",
       "gravite": "modere",
@@ -664,7 +578,7 @@
       "gravite_v1_17": "majeur",
       "gravite_a_confirmer": false,
       "impact": "RAAM 11.2 (WCAG 2.2.1) — une session qui expire sans que l'utilisateur puisse la prolonger peut lui faire perdre sa saisie, notamment s'il a besoin de plus de temps pour lire ou agir.",
-      "explication": "Si l'application déconnecte ou fait expirer une session (espace client, formulaire long), l'utilisateur doit pouvoir supprimer la limite, l'augmenter, ou disposer d'au moins vingt heures.",
+      "explication": "Si l'application déconnecte ou fait expirer une session (espace client, formulaire long), l'utilisateur doit pouvoir supprimer la limite, l'augmenter, ou disposer d'au moins vingt heures. Ne concerne que les applications qui limitent la durée d'une session.",
       "origine": {
         "impact": "repris de c62",
         "explication": "repris de c62",

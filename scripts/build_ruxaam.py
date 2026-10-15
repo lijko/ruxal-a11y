@@ -26,7 +26,10 @@ DEBUT = '  // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis d
 FIN = '  // <<< FIN_DONNEES >>>'
 GRAVITES = {'critique', 'serieux', 'modere', 'mineur'}  # voir docs/gravite.md
 # Liste fermée des déclencheurs des critères « si présent » (questions posées pour chaque écran).
-DECLENCHEURS = ['captcha', 'image-complexe', 'media-temporel', 'tableau-donnees', 'composant-texte', 'formulaire']
+DECLENCHEURS = ['captcha', 'image-complexe', 'media-temporel', 'tableau-donnees', 'formulaire', 'session']
+# Protocole de test RUXAAM en 4 étapes (champ etape : étape principale, ou sous-étape 3a / 3b du lecteur d'écran).
+ETAPES = {'1': 'Usage standard', '2': 'Agrandissement', '3': "Lecteur d'écran", '4': 'Navigation alternative'}
+ETAPES_VALIDES = {'1', '2', '3a', '3b', '4'}
 
 
 def charger(nom):
@@ -59,6 +62,7 @@ def construire():
             'niveau_wcag': c['niveau'],
             'siPresent': c['statut'] == 'si présent',
             'declencheur': c.get('declencheur', ''),
+            'etape': c.get('etape', ''),
             'libelle': c['intitule'],
             'impact': t['impact'],
             'explication': t['explication'],
@@ -74,6 +78,7 @@ def construire():
             'raam': '',
             'theme_ruxal': b['theme_ruxal'],
             'theme_raam': 'Hors référentiel RAAM — bonne pratique',
+            'etape': b.get('etape', ''),
             'niveau': t['gravite'],
             'niveau_wcag': '',
             'libelle': b['libelle'],
@@ -90,6 +95,8 @@ def construire():
     if orphelins:
         erreurs.append('textes sans critère : ' + ', '.join(sorted(orphelins)))
     for c in criteres:
+        if c.get('etape') not in ETAPES_VALIDES:
+            erreurs.append('%s : étape inconnue « %s » (attendu : %s)' % (c['id'], c.get('etape'), ', '.join(sorted(ETAPES_VALIDES))))
         if c.get('siPresent') and c.get('declencheur') not in DECLENCHEURS:
             erreurs.append('%s : critère « si présent » sans déclencheur valide' % c['id'])
         if not c.get('siPresent') and c.get('declencheur'):
@@ -117,6 +124,10 @@ def bloc(criteres, themes, verif, declencheurs):
     lignes.append('  ];')
     lignes.append('  var THEMES_RUXAL_ORDRE = ' + js(themes) + ';')
     lignes.append('  var DECLENCHEURS = ' + js(declencheurs) + ';')
+    # ETAPES : id -> [étape ou sous-étape, libellé de l'étape] ; ETAPES_ORDRE : titres des 4 groupes de la vue par étape.
+    etapes = {c['id']: [c['etape'], ETAPES[c['etape'][0]]] for c in criteres}
+    lignes.append('  var ETAPES = ' + js(etapes) + ';')
+    lignes.append('  var ETAPES_ORDRE = ' + js(['%s · %s' % (n, ETAPES[n]) for n in sorted(ETAPES)]) + ';')
     if verif:
         a, m, j = verif.split('-')
         lignes.append("  var REF_VERIF = '%s/%s/%s';" % (j, m, a))

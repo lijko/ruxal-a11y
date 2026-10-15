@@ -42,6 +42,8 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 - **9.6 champs de même nature** : Mineur → Sérieux. Des choix « Oui / Non » annoncés sans leur question rendent le champ impossible à remplir seul au lecteur d'écran.
 - **bp1 taille des zones tactiles** : Sérieux → Modéré (recommandation des plateformes, critère AAA en WCAG 2.1).
 
+Répartition (version 1.22) : 52 critères RAAM — 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur ; 3 bonnes pratiques hors RAAM — 2 Modéré, 1 Sérieux.
+
 | Critère | Gravité | Ancienne (v1.17) |
 |---|---|---|
 | RAAM 1.1 | Mineur | mineur |
@@ -50,7 +52,6 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 | RAAM 1.4 | Sérieux | majeur |
 | RAAM 1.5 | Critique | bloquant |
 | RAAM 1.6 | Modéré | mineur |
-| RAAM 1.8 | Modéré | mineur |
 | RAAM 2.1 | Sérieux | majeur |
 | RAAM 2.2 | Sérieux | bloquant |
 | RAAM 2.3 | Sérieux | majeur |
@@ -59,7 +60,6 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 | RAAM 3.9 | Sérieux | majeur |
 | RAAM 3.12 | Sérieux | majeur |
 | RAAM 3.13 | Sérieux | majeur |
-| RAAM 4.3 | Mineur | mineur |
 | RAAM 4.5 | Sérieux | majeur |
 | RAAM 5.1 | Critique | bloquant |
 | RAAM 5.2 | Critique | bloquant |
@@ -69,18 +69,14 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 | RAAM 6.1 | Sérieux | majeur |
 | RAAM 6.2 | Modéré | majeur |
 | RAAM 7.1 | Modéré | majeur |
-| RAAM 7.2 | Mineur | mineur |
 | RAAM 8.1 | Sérieux | majeur |
 | RAAM 8.2 | Sérieux | majeur |
-| RAAM 8.3 | Modéré | mineur |
-| RAAM 8.4 | Modéré | mineur |
 | RAAM 8.5 | Sérieux | bloquant |
 | RAAM 8.6 | Modéré | majeur |
 | RAAM 8.7 | Modéré | mineur |
 | RAAM 9.1 | Sérieux | bloquant |
 | RAAM 9.2 | Critique | bloquant |
 | RAAM 9.3 | Sérieux | majeur |
-| RAAM 9.4 | Mineur | mineur |
 | RAAM 9.5 | Sérieux | majeur |
 | RAAM 9.6 | Sérieux | mineur |
 | RAAM 9.7 | Modéré | majeur |
@@ -88,7 +84,6 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 | RAAM 9.9 | Sérieux | majeur |
 | RAAM 9.10 | Modéré | majeur |
 | RAAM 9.11 | Sérieux | majeur |
-| RAAM 9.12 | Mineur | mineur |
 | RAAM 10.1 | Modéré | majeur |
 | RAAM 10.2 | Sérieux | majeur |
 | RAAM 10.3 | Critique | bloquant |

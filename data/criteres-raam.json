@@ -2,7 +2,7 @@
   "source": "RAAM 1.1 — Service information et presse (SIP), Luxembourg — https://accessibilite.public.lu/fr/raam1.1/",
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile",
   "licence": "CC BY 3.0 LU",
-  "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal, statut et declencheur sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si l'écran contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxal.json).",
+  "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si l'écran contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxal.json). Champ etape : étape du protocole de test RUXAAM où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4).",
   "criteres": [
     {
       "raam": "1.1",
@@ -17,7 +17,8 @@
         "11.1.1.1.1 Non-text Content"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "1.2",
@@ -32,7 +33,8 @@
         "11.1.1.1.1 Non-text Content"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "1.3",
@@ -47,7 +49,8 @@
         "11.1.1.1.1 Non-text Content"
       ],
       "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "1.4",
@@ -63,7 +66,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "captcha"
+      "declencheur": "captcha",
+      "etape": "3a"
     },
     {
       "raam": "1.5",
@@ -79,7 +83,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "captcha"
+      "declencheur": "captcha",
+      "etape": "1"
     },
     {
       "raam": "1.6",
@@ -95,22 +100,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "image-complexe"
-    },
-    {
-      "raam": "1.8",
-      "theme_raam_numero": 1,
-      "theme_raam": "Éléments graphiques",
-      "intitule": "Chaque élément graphique texte porteur d’information, en l’absence d’un mécanisme de remplacement, doit, si possible être remplacé par du texte stylé. Cette règle est-elle respectée (hors cas particuliers) ?",
-      "niveau": "AA",
-      "wcag": [
-        "1.4.5 Texte sous forme d’image (AA)"
-      ],
-      "en301549": [
-        "11.1.4.5.1 Images of text"
-      ],
-      "theme_ruxal": "Images & Médias",
-      "statut": "cœur"
+      "declencheur": "image-complexe",
+      "etape": "3a"
     },
     {
       "raam": "2.1",
@@ -127,7 +118,8 @@
         "11.1.4.1 Use of colour"
       ],
       "theme_ruxal": "Couleurs & Contrastes",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "2.2",
@@ -143,7 +135,8 @@
         "11.7 User preferences"
       ],
       "theme_ruxal": "Couleurs & Contrastes",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "2.3",
@@ -159,7 +152,8 @@
         "11.7 User preference"
       ],
       "theme_ruxal": "Couleurs & Contrastes",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "3.5",
@@ -175,7 +169,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "etape": "1"
     },
     {
       "raam": "3.7",
@@ -193,7 +188,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "etape": "1"
     },
     {
       "raam": "3.9",
@@ -209,7 +205,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "etape": "1"
     },
     {
       "raam": "3.12",
@@ -225,7 +222,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "etape": "1"
     },
     {
       "raam": "3.13",
@@ -245,24 +243,8 @@
       ],
       "theme_ruxal": "Images & Médias",
       "statut": "si présent",
-      "declencheur": "media-temporel"
-    },
-    {
-      "raam": "4.3",
-      "theme_raam_numero": 4,
-      "theme_raam": "Tableaux",
-      "intitule": "Chaque tableau de données a-t-il un titre ?",
-      "niveau": "A",
-      "wcag": [
-        "1.3.1 Information et relations (A)"
-      ],
-      "en301549": [
-        "11.1.3.1.1 Info and Relationships",
-        "11.5.2.5 Object information"
-      ],
-      "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "si présent",
-      "declencheur": "tableau-donnees"
+      "declencheur": "media-temporel",
+      "etape": "1"
     },
     {
       "raam": "4.5",
@@ -280,7 +262,8 @@
       ],
       "theme_ruxal": "Contenu & Lisibilité",
       "statut": "si présent",
-      "declencheur": "tableau-donnees"
+      "declencheur": "tableau-donnees",
+      "etape": "3a"
     },
     {
       "raam": "5.1",
@@ -309,7 +292,8 @@
         "11.6.2 No disruption of accessibility features"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3b"
     },
     {
       "raam": "5.2",
@@ -334,7 +318,8 @@
         "11.5.2.17 Modifications of values and text"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "4"
     },
     {
       "raam": "5.3",
@@ -351,7 +336,8 @@
         "11.3.2.2 On Input"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "4"
     },
     {
       "raam": "5.4",
@@ -368,7 +354,8 @@
         "11.5.2.15 Change notification"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3b"
     },
     {
       "raam": "5.5",
@@ -382,7 +369,8 @@
         "5.6.2 Visual status"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3b"
     },
     {
       "raam": "6.1",
@@ -397,7 +385,8 @@
         "11.3.1.1.1 Language of software"
       ],
       "theme_ruxal": "Fondations Techniques",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "6.2",
@@ -412,7 +401,8 @@
         "11.1.3.1.1 Info and Relationships"
       ],
       "theme_ruxal": "Fondations Techniques",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "7.1",
@@ -434,24 +424,8 @@
         "11.5.2.9 Parent-child relationships"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
-    },
-    {
-      "raam": "7.2",
-      "theme_raam_numero": 7,
-      "theme_raam": "Structuration de l’information",
-      "intitule": "Dans chaque écran, chaque liste est-elle correctement structurée ?",
-      "niveau": "A",
-      "wcag": [
-        "1.3.1 Information et relations (A)"
-      ],
-      "en301549": [
-        "11.1.3.1.1 Info and Relationships",
-        "11.5.2.5 Object information",
-        "11.5.2.9 Parent-child relationships"
-      ],
-      "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "8.1",
@@ -469,7 +443,8 @@
         "11.5.2.10 Text"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "8.2",
@@ -486,39 +461,8 @@
         "11.7 User preferences"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "cœur"
-    },
-    {
-      "raam": "8.3",
-      "theme_raam_numero": 8,
-      "theme_raam": "Présentation de l’information",
-      "intitule": "Dans chaque écran, chaque composant en environnement de texte dont la nature n’est pas évidente a-t-il un rapport de contraste supérieur ou égal à 3:1 par rapport au texte environnant ?",
-      "niveau": "A",
-      "wcag": [
-        "1.4.1 Utilisation de la couleur (A)"
-      ],
-      "en301549": [
-        "11.1.4.1 Use of Colour"
-      ],
-      "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "si présent",
-      "declencheur": "composant-texte"
-    },
-    {
-      "raam": "8.4",
-      "theme_raam_numero": 8,
-      "theme_raam": "Présentation de l’information",
-      "intitule": "Dans chaque écran, pour chaque composant en environnement de texte dont la nature n’est pas évidente, une indication autre que la couleur permet-elle de signaler la prise de focus et le survol à la souris ?",
-      "niveau": "A",
-      "wcag": [
-        "1.4.1 Utilisation de la couleur (A)"
-      ],
-      "en301549": [
-        "11.1.4.1 Use of Colour"
-      ],
-      "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "si présent",
-      "declencheur": "composant-texte"
+      "statut": "cœur",
+      "etape": "2"
     },
     {
       "raam": "8.5",
@@ -536,7 +480,8 @@
         "11.7 User preferences"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "4"
     },
     {
       "raam": "8.6",
@@ -553,7 +498,8 @@
         "11.1.4.1 Use of Colour"
       ],
       "theme_ruxal": "Couleurs & Contrastes",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "8.7",
@@ -568,7 +514,8 @@
         "11.1.4.13 Content on Hover or Focus"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "4"
     },
     {
       "raam": "9.1",
@@ -584,7 +531,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "1"
     },
     {
       "raam": "9.2",
@@ -607,7 +555,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.3",
@@ -628,23 +577,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
-    },
-    {
-      "raam": "9.4",
-      "theme_raam_numero": 9,
-      "theme_raam": "Formulaires",
-      "intitule": "Chaque étiquette de champ et son champ associé sont-ils accolés ?",
-      "niveau": "A",
-      "wcag": [
-        "3.3.2 Étiquettes ou instructions (A)"
-      ],
-      "en301549": [
-        "11.3.3.2 Labels or Instructions (A)"
-      ],
-      "theme_ruxal": "Formulaires",
-      "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.5",
@@ -664,7 +598,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.6",
@@ -682,7 +617,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.7",
@@ -698,7 +634,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.8",
@@ -714,7 +651,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.9",
@@ -730,7 +668,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "3b"
     },
     {
       "raam": "9.10",
@@ -746,7 +685,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "1"
     },
     {
       "raam": "9.11",
@@ -762,23 +702,8 @@
       ],
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
-      "declencheur": "formulaire"
-    },
-    {
-      "raam": "9.12",
-      "theme_raam_numero": 9,
-      "theme_raam": "Formulaires",
-      "intitule": "Pour chaque champ qui attend une donnée personnelle de l’utilisateur, la saisie est-elle facilitée ?",
-      "niveau": "AA",
-      "wcag": [
-        "1.3.5 Identifier la finalité de la saisie (AA)"
-      ],
-      "en301549": [
-        "11.1.3.5.1 Identify Input Purpose (AA)"
-      ],
-      "theme_ruxal": "Formulaires",
-      "statut": "si présent",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "etape": "1"
     },
     {
       "raam": "10.1",
@@ -793,7 +718,8 @@
         "11.2.4.3 Focus Order (A)"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "4"
     },
     {
       "raam": "10.2",
@@ -811,7 +737,8 @@
         "11.5.2.10 Text"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raam": "10.3",
@@ -828,7 +755,8 @@
         "11.2.1.2 No Keyboard Trap (A)"
       ],
       "theme_ruxal": "Navigation & Structure",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "4"
     },
     {
       "raam": "11.1",
@@ -845,7 +773,8 @@
         "11.2.2.2 Pause, Stop, Hide (A)"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "11.2",
@@ -860,7 +789,9 @@
         "11.2.2.1 Timing adjustable"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "si présent",
+      "declencheur": "session",
+      "etape": "1"
     },
     {
       "raam": "11.7",
@@ -875,7 +806,8 @@
         "11.2.3.1 Three Flashes or Below Threshold (A)"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "11.8",
@@ -892,7 +824,8 @@
         "11.2.2.2 Pause, Stop, Hide (A)"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "11.9",
@@ -907,7 +840,8 @@
         "11.1.3.4 Orientation"
       ],
       "theme_ruxal": "Contenu & Lisibilité",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "11.10",
@@ -924,7 +858,8 @@
         "11.2.5.1 Pointer Gestures"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3b"
     },
     {
       "raam": "11.11",
@@ -937,7 +872,8 @@
         "5.9 Simultaneous user actions"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3b"
     },
     {
       "raam": "11.12",
@@ -952,7 +888,8 @@
         "11.2.5.2 Pointer Cancellation (A)"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "11.13",
@@ -968,7 +905,8 @@
         "11.2.5.4 Motion Actuation (A)"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "11.15",
@@ -981,7 +919,8 @@
         "5.3 Biometrics"
       ],
       "theme_ruxal": "Composants Interactifs",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raam": "12.3",
@@ -994,7 +933,8 @@
         "11.6.2 No disruption of accessibility features"
       ],
       "theme_ruxal": "Fondations Techniques",
-      "statut": "cœur"
+      "statut": "cœur",
+      "etape": "3b"
     }
   ]
 }

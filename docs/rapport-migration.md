@@ -158,6 +158,15 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Impacts réalignés sur ces consignes : 6.2, 9.6, 10.1, 10.2, 11.11.
 - Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
+## Version 1.22 (15 octobre 2026)
+- **Sélection** : 52 critères RAAM (dont 20 « si présent ») et 3 bonnes pratiques, soit 57 éléments. Critères retirés de la sélection : 1.8, 4.3, 7.2, 8.3, 8.4, 9.4 et 9.12. Le déclencheur « Lien coloré dans un texte » disparaît ; le déclencheur « Limite de session » est ajouté pour le 11.2, désormais « si présent ». Gravités RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
+- **8.7** : impact et consigne de test reformulés (fermeture sans déplacer le focus, maintien à l'affichage, survol possible au pointeur).
+- **Protocole de test en 4 étapes** : champ `etape` dans les données (1, 2, 3a, 3b, 4), pastille d'étape sur chaque critère, vue « Par étape de test » (23 / 1 / 24 / 7 éléments), encart de consigne en tête de chaque étape, section « Protocole de test » dans l'Aide. Séquence construite par RUXAAM à partir des pratiques décrites par Apple et Android ; ce n'est pas un protocole officiel.
+- **Plateforme** (iOS, Android, multiplateforme) : recommandations « Per platform » et étiquette des tickets Jira.
+- **Exports** : messages explicites, aucun fichier vide ; import d'une ancienne sauvegarde avec signalement des critères qui n'existent plus.
+- **Notes par écran** retirées de l'onglet (les notes générales restent) ; l'export JSON ne contient plus que le nom des écrans.
+- **Tests** : `tests/test_ruxaam.py` (Playwright), 46 contrôles.
+
 ## Revue de cohérence avec le RAAM (14 octobre 2026, version 1.21)
 1. **Retrait du RAAM 3.1** (transcription d'un contenu seulement audio, ajouté le 13 octobre) : retiré des données, des textes, de `gravite.md` et de la sélection. Résultat : **59 critères RAAM, dont 24 « si présent », plus 3 bonnes pratiques**.
 2. **Consignes de test** :

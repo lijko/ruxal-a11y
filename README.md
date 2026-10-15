@@ -32,13 +32,20 @@ Projet en cours de préparation pour publication. / Project being prepared for p
 ## Utilisation / Usage
 Ouvrir le fichier HTML de l'outil dans un navigateur. / Open the tool's HTML file in a browser.
 
+RUXAAM 1.22 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pratiques** hors taux, soit 57 éléments. Gravités par défaut des critères RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
+
+- **Protocole de test en 4 étapes** : 1. usage standard, 2. agrandissement (texte, puis affichage), 3. lecteur d'écran (3a contenus et structure, 3b composants, formulaires et annonces), 4. navigation alternative (clavier externe, commande vocale ; contrôle de sélection et Switch Access optionnels). Chaque critère est rattaché à l'étape où on le constate le plus facilement. Séquence construite par RUXAAM à partir des pratiques décrites par Apple et Android ; ce n'est pas un protocole officiel. Le détail est dans l'écran Aide de l'outil.
+- **Vue « Par étape de test »** : dans un onglet RAAM, la liste peut être rangée par thème ou par étape. Un critère n'apparaît qu'une fois, dans son étape principale. Statuts, taux et exports ne changent pas.
+- **Plateforme** : iOS, Android ou multiplateforme, choisie sous le nom de l'audit (un audit = une plateforme). Elle détermine les recommandations « Per platform » et une étiquette supplémentaire des tickets Jira.
+- **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
+
 ## Données et génération / Data and build
 Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
 
 | Fichier | Contenu | Licence |
 |---|---|---|
-| `data/criteres-raam.json` | 59 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) ; 24 « si présent », chacun rattaché à un déclencheur | CC BY 3.0 LU |
-| `data/bonnes-pratiques.json` | bonnes pratiques hors RAAM (hors taux) | CC BY 4.0 |
+| `data/criteres-raam.json` | 52 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) ; 20 « si présent », chacun rattaché à un déclencheur ; étape de test de chaque critère | CC BY 3.0 LU |
+| `data/bonnes-pratiques.json` | 3 bonnes pratiques hors RAAM (hors taux), avec leur étape de test | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
 
@@ -57,6 +64,15 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 - `data/` : critères, thèmes, couche POUR/heuristiques (données)
 - `docs/` : documentation
 - `scripts/` : génération des outils à partir de `data/`
+- `tests/` : tests de bout en bout de l'outil (Playwright)
+
+## Tests
+```bash
+python3 -m pip install playwright
+python3 -m playwright install chromium
+python3 tests/test_ruxaam.py
+```
+Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, export Jira selon la plateforme, messages d'export sans fichier vide, import d'une sauvegarde 1.21, absence d'erreur JavaScript.
 
 ## Licences / Licences
 | Contenu | Licence |

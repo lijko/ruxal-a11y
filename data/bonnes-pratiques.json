@@ -4,17 +4,20 @@
     {
       "id": "bp1",
       "theme_ruxal": "Composants Interactifs",
-      "libelle": "Chaque zone tactile (bouton, lien, case à cocher, contrôle) est assez grande pour être touchée sans erreur : au moins 44×44 pt sur iOS et 48×48 dp sur Android."
+      "libelle": "Chaque zone tactile (bouton, lien, case à cocher, contrôle) est assez grande pour être touchée sans erreur : au moins 44×44 pt sur iOS et 48×48 dp sur Android.",
+      "etape": "1"
     },
     {
       "id": "bp2",
       "theme_ruxal": "Navigation & Structure",
-      "libelle": "Chaque écran et chaque vue modale offre un moyen évident de revenir en arrière ou de se fermer (bouton, geste ou action de la plateforme)."
+      "libelle": "Chaque écran et chaque vue modale offre un moyen évident de revenir en arrière ou de se fermer (bouton, geste ou action de la plateforme).",
+      "etape": "1"
     },
     {
       "id": "bp3",
       "theme_ruxal": "Navigation & Structure",
-      "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouvert (s'il existe encore)."
+      "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouvert (s'il existe encore).",
+      "etape": "4"
     }
   ]
 }
