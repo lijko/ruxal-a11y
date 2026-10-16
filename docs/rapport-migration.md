@@ -158,6 +158,14 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - Impacts réalignés sur ces consignes : 6.2, 9.6, 10.1, 10.2, 11.11.
 - Vérification de non-reprise : la plus longue suite de mots identique à la méthodologie fait 8 mots, et reprend des termes de l'intitulé (« forme, taille ou position »).
 
+## Version 1.23 (16 octobre 2026)
+- **Contenu des écrans** : panneau d'interrupteurs (écran × CAPTCHA, image complexe, média, tableau, formulaire ; « Limite de session » pour toute l'application). Un critère « si présent » non applicable sur un écran y compte comme NA et y affiche « Absent » ; un critère absent de tous les écrans est masqué de la liste, des raccourcis et des thèmes. Rien n'est effacé : réactiver un interrupteur retrouve les statuts et commentaires. Migration : une sauvegarde sans réglage garde visibles les critères « si présent » déjà évalués, et la limite de session est déduite du 11.2.
+- **Champ « Ticket Jira » retiré** (saisie, rappel, exclusion à l'export). Les clés des anciennes sauvegardes ne masquent plus aucun ticket.
+- **Élément concerné** : champ d'une ligne par critère non conforme et par écran, notation `Écran[type "Libellé"] (état)` ; repris dans le titre et le corps des tickets Jira (`|` remplacé par `/`) et dans l'export JSON. Section d'aide « Noter les éléments », avec retour au champ d'origine.
+- **Mémoire des exports Jira** : critères déjà exportés retenus pour tout l'audit (`exportesJira`, inclus dans la sauvegarde, vidé à la réinitialisation), marqués seulement une fois le fichier enregistré ; messages « N ticket(s) déjà exporté(s), M nouveau(x) » ; menu « Tickets Jira — tout réexporter ». Limite documentée dans l'Aide : un critère déjà exporté qui devient non conforme sur un autre écran n'est pas réexporté automatiquement.
+- La 1.22 publiée est conservée telle quelle (protocole de test, encarts d'étape, pastilles 3a / 3b, table ETAPES générée).
+- **Tests** : 72 contrôles.
+
 ## Version 1.22 (15 octobre 2026)
 - **Sélection** : 52 critères RAAM (dont 20 « si présent ») et 3 bonnes pratiques, soit 57 éléments. Critères retirés de la sélection : 1.8, 4.3, 7.2, 8.3, 8.4, 9.4 et 9.12. Le déclencheur « Lien coloré dans un texte » disparaît ; le déclencheur « Limite de session » est ajouté pour le 11.2, désormais « si présent ». Gravités RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
 - **8.7** : impact et consigne de test reformulés (fermeture sans déplacer le focus, maintien à l'affichage, survol possible au pointeur).

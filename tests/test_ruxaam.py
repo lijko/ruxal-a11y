@@ -94,18 +94,34 @@ def main():
         verifier('Référentiel : 20 « si présent »', page.locator('.si-present-chip').count() == 20, page.locator('.si-present-chip').count())
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.22', 'version 1.22' in aide)
+        verifier('Aide : version 1.23', 'version 1.23' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation alternative' in aide)
+        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran[type "Libellé"]' in aide)
         verifier('Aide : déclencheurs à jour', 'limite de session' in aide and 'lien coloré' not in aide)
+        verifier('Aide : mémoire des exports Jira documentée', 'tout réexporter' in aide and 'pas réexporté automatiquement' in aide)
 
-        # --- Onglet RAAM : vue par thème / par étape
+        # --- Onglet RAAM : « Contenu des écrans » (tout désactivé au départ)
         creer_onglet(page)
-        verifier('Onglet : %d lignes de critères' % NB, page.locator('.crit-row').count() == NB, page.locator('.crit-row').count())
+        nb_coeur = NB - 20
+        verifier('Contenu des écrans : %d critères visibles au départ' % nb_coeur, page.locator('.crit-row').count() == nb_coeur, page.locator('.crit-row').count())
+        verifier('Contenu des écrans : 20 critères masqués annoncés', '20 critère(s)' in page.locator('.presence-masques').inner_text())
+        interrupteurs = page.evaluate("""() => [...document.querySelectorAll('[role=switch]')].map(b => b.id)""")
+        verifier('Contenu des écrans : 5 × 3 interrupteurs + session', len(interrupteurs) == 16, len(interrupteurs))
+        verifier('Interrupteur : nom accessible', page.locator('[role=switch][data-decl="formulaire"]').first.get_attribute('aria-label') == 'Formulaire — Accueil')
+        for i in interrupteurs:
+            page.click('#' + i)
+        verifier('Tous les interrupteurs activés : %d critères' % NB, page.locator('.crit-row').count() == NB, page.locator('.crit-row').count())
+        verifier('Interrupteur : aria-checked', page.locator('#' + interrupteurs[0]).get_attribute('aria-checked') == 'true')
+        page.click('[role=switch][data-decl="formulaire"][data-ecran="%s"]' % page.locator('[role=switch][data-decl="formulaire"]').nth(1).get_attribute('data-ecran'))
+        ligne_91 = page.locator('.crit-row', has=page.locator('[data-crit="raam-9-1"]')).first
+        verifier('Écran sans formulaire : cellule « Absent »', ligne_91.locator('.statut-absent').count() == 1, ligne_91.locator('.statut-absent').count())
+        page.click('[role=switch][data-decl="formulaire"][data-ecran="%s"]' % page.locator('[role=switch][data-decl="formulaire"]').nth(1).get_attribute('data-ecran'))
+
+        # --- Vue par thème / par étape (tout le contenu activé)
         verifier('Vue par thème : %d pastilles d\'étape' % NB, page.locator('.crit-row .etape-chip').count() == NB)
         page.click('[data-action="set-vue-liste"][data-vue="etapes"]')
         groupes = page.locator('.theme-group-name').all_inner_texts()
         verifier('Vue par étape : 4 groupes', len(groupes) == 4, groupes)
-        verifier('Vue par étape : %d critères' % NB, page.locator('.crit-row').count() == NB, page.locator('.crit-row').count())
         verifier('Vue par étape : un encart par groupe', page.locator('.etape-encart').count() == 4, page.locator('.etape-encart').count())
         par_etape = page.evaluate("""() => [...document.querySelectorAll('.theme-group')].map(g => g.querySelectorAll('.crit-row').length)""")
         verifier('Vue par étape : 23 / 1 / 24 / 7', par_etape == [23, 1, 24, 7], par_etape)
@@ -115,7 +131,7 @@ def main():
         page.click('[data-action="set-vue-liste"][data-vue="themes"]')
         verifier('Retour vue par thème : %d critères' % NB, page.locator('.crit-row').count() == NB)
 
-        # --- Jira : tous NT, puis C, puis NC selon la plateforme
+        # --- Jira : tous NT, puis C, puis NC ; « Élément concerné » ; mémoire des exports
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
         verifier('Jira, tous NT : pas de fichier', f is None)
         verifier('Jira, tous NT : message', 'aucun critère n\'a encore été testé' in message(page), message(page))
@@ -123,19 +139,41 @@ def main():
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
         verifier('Jira, aucun NC : message', f is None and 'aucun critère n\'est non conforme' in message(page), message(page))
         page.click('[data-action="set-statut-tous"][data-crit="raam-5-1"][data-statut="NC"]')
+        verifier('NC : champ « Ticket Jira » absent', page.locator('[data-action="set-ticket-jira"]').count() == 0)
+        champ = page.locator('[data-action="set-element-critere"][data-crit="raam-5-1"]').first
+        verifier('NC : champ « Élément concerné »', champ.count() == 1)
+        champ.fill('Accueil[button "Valider"] | (disabled)')
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Jira : élément concerné repris, | remplacé par /', f and 'Accueil[button ""Valider""] / (disabled)' in f, f and f[:300])
         verifier('Jira sans plateforme : iOS et Android', f and '- iOS: <to be completed>' in f and '- Android: <to be completed>' in f)
         verifier('Jira sans plateforme : 7 colonnes', f and f.splitlines()[0].count(',') == 6, f and f.splitlines()[0])
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Mémoire Jira : second export sans fichier', f is None)
+        verifier('Mémoire Jira : message « déjà exporté »', 'Aucun nouveau ticket : 1 critère(s) non conforme(s) déjà exporté(s)' in message(page), message(page))
+        page.click('[data-action="set-statut-tous"][data-crit="raam-9-1"][data-statut="NC"]')
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Mémoire Jira : seul le nouveau ticket', f and f.count(',Task,') == 1 and 'RAAM-9.1' in f, f and f.count(',Task,'))
+        verifier('Mémoire Jira : message « N déjà exportés, M nouveaux »', '1 ticket(s) déjà exporté(s), 1 nouveau(x)' in message(page), message(page))
+        verifier('Mémoire Jira : enregistrée dans l\'état', page.evaluate("Object.keys(JSON.parse(localStorage.getItem('atelier-ruxal-state')).exportesJira).sort().join()") == 'raam-5-1,raam-9-1')
         for code, ligne, etiquette in (('ios', '- iOS:', ',ios,'), ('android', '- Android:', ',android,'), ('cross', '- Cross-platform:', ',multiplateforme,')):
             page.click('#plateformeToggle [data-plateforme="%s"]' % code)
             presse = page.locator('#plateformeToggle [data-plateforme="%s"]' % code).get_attribute('aria-pressed')
-            f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+            f = telechargement(page, lambda: exporter(page, 'Tickets Jira — tout réexporter'))
             autres = [x for x in ('- iOS:', '- Android:', '- Cross-platform:') if x != ligne]
+            verifier('Jira %s (tout réexporter) : 2 tickets' % code, f and f.count(',Task,') == 2)
             verifier('Jira %s : bouton enfoncé' % code, presse == 'true')
             verifier('Jira %s : seule la plateforme choisie' % code, f and ligne in f and not any(x in f for x in autres))
             verifier('Jira %s : étiquette et colonne Labels en plus' % code, f and etiquette in f and f.splitlines()[0].count(',') == 7)
         page.click('#plateformeToggle [data-plateforme="cross"]')  # second clic : désélection
         verifier('Plateforme : second clic désélectionne', page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxal-state')).plateforme") == '')
+
+        # --- Aide « Noter les éléments » : aller et retour vers le champ
+        champ_id = page.locator('[data-action="set-element-critere"][data-crit="raam-5-1"]').first.get_attribute('id')
+        page.locator('[data-action="aide-notation"][data-focus="%s"]' % champ_id).click()
+        verifier('Icône d\'aide : focus sur « Noter les éléments »', page.evaluate("document.activeElement.id") == 'aide-notation')
+        verifier('Aide : deux boutons de retour', page.locator('[data-action="retour-champ"]').count() == 2)
+        page.locator('[data-action="retour-champ"]').first.click()
+        verifier('Retour : focus sur le champ d\'origine', page.evaluate("document.activeElement.id") == champ_id)
 
         # --- Notes par écran supprimées ; export JSON : écrans sans commentaire
         verifier('Notes par écran retirées', page.locator('textarea[data-action="set-commentaire-ecran"]').count() == 0)
@@ -159,12 +197,13 @@ def main():
 
         # --- Import d'une sauvegarde 1.21 (critères retirés, ancienne thématisation, pas de plateforme)
         ancienne = {'outil': 'RUXAAM-etat', 'version': 1, 'outilVersion': '1.21', 'state': {
-            'auditNom': 'Sauvegarde 1.21', 'ticketsJira': {}, 'filtreRetest': False, 'activeOngletId': None, 'view': 'dashboard',
+            'auditNom': 'Sauvegarde 1.21', 'ticketsJira': {'raam-1-1': 'ABC-1'}, 'filtreRetest': False, 'activeOngletId': None, 'view': 'dashboard',
             'onglets': [{'id': 'ong_a', 'nom': 'Audit rapide RAAM', 'scenario': 'sip-rapide', 'approches': ['SIP'],
                          'ecrans': [{'id': 'ec_1', 'nom': 'Accueil', 'commentaire': 'ancien'}], 'vue': 'audit', 'theming': 'sip',
                          'vueAudit': 'raam', 'heuristiques': {}, 'commentaireOnglet': '', 'valide': False,
                          'resultats': {'ec_1': {'raam-1-8': {'statut': 'NC', 'commentaire': ''}, 'raam-7-2': {'statut': 'C', 'commentaire': ''},
-                                                'raam-1-1': {'statut': 'C', 'commentaire': ''}}}}]}}
+                                                'raam-1-1': {'statut': 'NC', 'commentaire': ''}, 'raam-9-1': {'statut': 'C', 'commentaire': ''},
+                                                'raam-11-2': {'statut': 'C', 'commentaire': ''}}}}]}}
         with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False, encoding='utf-8') as t:
             json.dump(ancienne, t)
         page.set_input_files('#inputImportEtat', t.name)
@@ -173,7 +212,20 @@ def main():
         verifier('Import 1.21 : critères ignorés signalés', '2 critère(s)' in m and 'dont 1 non conforme' in m, m)
         verifier('Import 1.21 : plateforme vide', page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxal-state')).plateforme") == '')
         page.click('.tab-main')
-        verifier('Import 1.21 : onglet affiché (thématisation officielle)', page.locator('.crit-row').count() == NB)
+        etat = page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxal-state'))")
+        verifier('Import 1.21 : présences déduites (formulaire évalué)', etat['onglets'][0]['presences'].get('ec_1', {}).get('formulaire') is True, etat['onglets'][0].get('presences'))
+        verifier('Import 1.21 : limite de session déduite du 11.2', etat.get('limiteSession') is True)
+        verifier('Import 1.21 : critères évalués toujours visibles', page.locator('.crit-row', has=page.locator('[data-crit="raam-9-1"]')).count() == 1 and page.locator('.crit-row', has=page.locator('[data-crit="raam-11-2"]')).count() == 1)
+        verifier('Import 1.21 : mémoire Jira vide', etat.get('exportesJira') == {})
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Import 1.21 : ancien « Ticket Jira » sans effet', f and 'RAAM-1.1' in f)
+
+        # --- Réinitialisation : la mémoire des exports est vidée
+        page.click('#btnAide')
+        page.click('[data-action="reset-audit"]')
+        page.click('[data-action="reset-audit"]')
+        etat = page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxal-state'))")
+        verifier('Réinitialisation : mémoire Jira vidée', etat.get('exportesJira') == {} and etat.get('onglets') == [])
 
         verifier('Aucune erreur JavaScript', not erreurs, erreurs)
         navigateur.close()

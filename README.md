@@ -32,11 +32,14 @@ Projet en cours de préparation pour publication. / Project being prepared for p
 ## Utilisation / Usage
 Ouvrir le fichier HTML de l'outil dans un navigateur. / Open the tool's HTML file in a browser.
 
-RUXAAM 1.22 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pratiques** hors taux, soit 57 éléments. Gravités par défaut des critères RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
+RUXAAM 1.23 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pratiques** hors taux, soit 57 éléments. Gravités par défaut des critères RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
 
 - **Protocole de test en 4 étapes** : 1. usage standard, 2. agrandissement (texte, puis affichage), 3. lecteur d'écran (3a contenus et structure, 3b composants, formulaires et annonces), 4. navigation alternative (clavier externe, commande vocale ; contrôle de sélection et Switch Access optionnels). Chaque critère est rattaché à l'étape où on le constate le plus facilement. Séquence construite par RUXAAM à partir des pratiques décrites par Apple et Android ; ce n'est pas un protocole officiel. Le détail est dans l'écran Aide de l'outil.
 - **Vue « Par étape de test »** : dans un onglet RAAM, la liste peut être rangée par thème ou par étape. Un critère n'apparaît qu'une fois, dans son étape principale. Statuts, taux et exports ne changent pas.
 - **Plateforme** : iOS, Android ou multiplateforme, choisie sous le nom de l'audit (un audit = une plateforme). Elle détermine les recommandations « Per platform » et une étiquette supplémentaire des tickets Jira.
+- **Contenu des écrans** : en tête d'un onglet RAAM, un interrupteur par écran et par type d'élément (CAPTCHA, image complexe, média, tableau, formulaire), plus un interrupteur « Limite de session » pour toute l'application. Un critère « si présent » ne s'affiche que si un écran contient l'élément ; ailleurs il compte comme NA, sans rien effacer de ce qui a été saisi.
+- **Élément concerné** : pour chaque critère non conforme et chaque écran, un champ d'une ligne reçoit la notation `Écran[type "Libellé"] (état)`, expliquée dans l'Aide (« Noter les éléments »). L'export Jira la reprend dans le titre et le corps du ticket.
+- **Mémoire des exports Jira** : l'outil retient les critères déjà exportés (pour tout l'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira — tout réexporter » les reprend tous. Le champ « Ticket Jira » des versions précédentes est retiré.
 - **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
 
 ## Données et génération / Data and build
@@ -72,7 +75,7 @@ python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/test_ruxaam.py
 ```
-Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, export Jira selon la plateforme, messages d'export sans fichier vide, import d'une sauvegarde 1.21, absence d'erreur JavaScript.
+Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript.
 
 ## Licences / Licences
 | Contenu | Licence |

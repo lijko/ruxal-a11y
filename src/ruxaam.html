@@ -510,14 +510,34 @@ Details : README.md
      déjà géré par le row-gap du parent (8px) — un margin-top ici le cumulerait et recréerait le trop-grand
      espace signalé par Bertrand. Sous .heur-row (gap:14px, inchangé), la perte des 2px est sans effet notable. */
   .retest-filter{margin:0 0 12px;}
-  .ticket-jira-input{
-    font:inherit; font-size:14px; color:var(--ink); background:var(--surface); border:1px solid var(--border);
-    border-radius:8px; padding:8px 10px; width:100%; max-width:320px;
-  }
-  .ticket-jira-rappel{
-    margin-top:8px; padding:8px 12px; border-radius:8px; border:1px dashed var(--border);
-    background:var(--surface); color:var(--ink-soft); font-size:12.5px;
-  }
+  .presence-panel{margin:0 0 14px; padding:10px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);}
+  .presence-panel summary{cursor:pointer; font-weight:800; font-size:13px;}
+  .presence-panel summary .muted{font-weight:500; font-size:12px;}
+  .presence-aide{margin:8px 0; font-size:12.5px;}
+  .presence-scroll{overflow-x:auto;}
+  .presence-table{border-collapse:collapse; width:100%; font-size:13px;}
+  .presence-table th, .presence-table td{padding:6px 10px; border-top:1px solid var(--border); text-align:center;}
+  .presence-table thead th{border-top:none; font-size:12px; font-weight:800; color:var(--ink-soft);}
+  .presence-table tbody th{text-align:left; font-weight:600;}
+  .presence-table th:first-child{text-align:left;}
+  .switch{position:relative; width:38px; height:22px; border-radius:99px; border:1px solid var(--ink-faint); background:var(--surface-alt); cursor:pointer; padding:0; vertical-align:middle;}
+  .switch .switch-knob{position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.35); transition:left .15s;}
+  .switch.on{background:var(--accent); border-color:var(--accent);}
+  .switch.on .switch-knob{left:18px; background:var(--accent-ink,#fff);}
+  .switch:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .presence-session{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; border-top:1px solid var(--border); font-size:13px;}
+  .presence-masques{margin:10px 0 0; font-size:12.5px; color:var(--ink-soft);}
+  .statut-cell-absent{opacity:.65;}
+  .statut-absent{font-size:12px; font-weight:700; color:var(--ink-faint); padding:6px 4px; border:1px dashed var(--border); border-radius:8px; text-align:center;}
+  .presence-actions{margin-top:10px; display:flex; justify-content:flex-end;}
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  .element-label-row{justify-content:flex-start !important; gap:8px;}
+  .element-input{font:inherit; font-size:14px; color:var(--ink); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 10px; width:100%; max-width:480px;}
+  .aide-table{border-collapse:collapse; width:100%; font-size:13px; margin:0 0 10px;}
+  .aide-table th, .aide-table td{padding:6px 10px; border-top:1px solid var(--border); text-align:left;}
+  .aide-table thead th{border-top:none; font-size:12px; color:var(--ink-soft);}
+  .aide-table tbody th{font-weight:600;}
+  .aide-liste{margin:0 0 10px; padding-left:20px; font-size:13px; line-height:1.55;}
   .nc-followup{flex:1 1 100%; display:flex; flex-direction:column; gap:6px;}
   .nc-followup-ecran{display:flex; flex-direction:column; gap:4px;}
   .nc-followup-ecran + .nc-followup-ecran{border-top:1px dashed var(--border-soft); padding-top:8px; margin-top:2px;}
@@ -684,7 +704,8 @@ Details : README.md
         <div class="menu-wrap">
           <button class="btn btn-ghost btn-export" id="btnExportMenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="exportMenu"><svg class="btn-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Exporter<svg class="btn-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
           <div class="export-menu" id="exportMenu" role="menu" aria-label="Exporter" hidden>
-            <button type="button" role="menuitem" class="menu-item" id="btnExportJiraImport"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg><span class="menu-item-text"><b>Tickets Jira (CSV)</b><span>Prêt à importer, un ticket par critère non conforme. Les critères dont le champ « Ticket Jira » est rempli sont ignorés.</span></span></button>
+            <button type="button" role="menuitem" class="menu-item" id="btnExportJiraImport"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg><span class="menu-item-text"><b>Tickets Jira (CSV)</b><span>Prêt à importer, un ticket par critère non conforme. Les critères déjà exportés depuis cet audit sont écartés.</span></span></button>
+            <button type="button" role="menuitem" class="menu-item" id="btnExportJiraTout"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><span class="menu-item-text"><b>Tickets Jira — tout réexporter</b><span>Tous les critères non conformes, y compris ceux déjà exportés (import Jira échoué, fichier perdu).</span></span></button>
             <button type="button" role="menuitem" class="menu-item" id="btnExportListe"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span class="menu-item-text"><b>Liste des critères (CSV)</b><span>Une ligne par critère et par onglet (statut, commentaire), à ouvrir dans un tableur.</span></span></button>
             <button type="button" role="menuitem" class="menu-item" id="btnExportJSON"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg><span class="menu-item-text"><b>Données (JSON)</b><span>Résumé calculé de l'audit, pour un autre outil.</span></span></button>
           </div>
@@ -1129,7 +1150,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON) — à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.22';
+  var APP_VERSION = '1.23';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -1283,7 +1304,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   var state = loadState() || {
     auditNom: 'Audit sans titre',
     plateforme: '', // '' | 'ios' | 'android' | 'cross' — un audit = une plateforme (tickets Jira distincts par plateforme)
-    ticketsJira: {}, // critereId -> clé du ticket Jira (ex. ABC-123), un ticket par critère pour tout l'audit
+    ticketsJira: {}, // hérité : champ « Ticket Jira » retiré en v1.23, conservé pour lire les anciennes sauvegardes (plus utilisé)
+    exportesJira: {}, // critereId -> true : critères déjà exportés vers Jira, pour tout l'audit (mémoire silencieuse, v1.23)
     filtreRetest: false, // n'affiche que les critères non conformes
     onglets: [],
     activeOngletId: null,
@@ -1294,7 +1316,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // uniquement à l'ouverture (ce chargement du script) : la navigation interne ensuite n'est pas affectée.
   state.view = 'aide';
   if(!state.ticketsJira || typeof state.ticketsJira !== 'object') state.ticketsJira = {};
+  if(!state.exportesJira || typeof state.exportesJira !== 'object') state.exportesJira = {};
   if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
+  migrerPresences(state);
 
   function saveState(){
     try{ localStorage.setItem('atelier-ruxal-state', JSON.stringify(state)); }catch(e){ /* stockage indisponible : on continue sans persistance */ }
@@ -1315,6 +1339,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       scenario: scenario, // 'sip-rapide' | 'flow' | 'fonctionnalite'
       approches: approches, // ['SIP'] (sip-rapide) | ['SIP'] ou ['SIP','OSAPS'] (fonctionnalite) | ['OSAPS'] (flow, pas de RAAM)
       ecrans: ecrans, // [{id,nom,commentaire}]
+      presences: {}, // ecranId -> {declencheurId: true} : éléments présents (voir « Contenu des écrans »)
       vue: 'audit', // 'audit' | 'recap' — bascule sur 'recap' une fois l'onglet validé
       theming: 'ruxal', // 'ruxal' | 'sip'
       // Sous-onglet "type d'audit" affiché dans la page (voir .audit-type-tabs) : 'raam' | 'pourux'. Par défaut
@@ -1332,11 +1357,27 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return o;
   }
 
+  // « Contenu des écrans » : un critère « si présent » n'est applicable sur un écran que si l'élément correspondant
+  // y est signalé (interrupteur activé). « Limite de session » vaut pour toute l'appli (state.limiteSession).
+  // Non applicable = compté NA partout (taux, listes, exports) sans toucher à ce qui avait été saisi : réactiver
+  // l'interrupteur retrouve les statuts et commentaires.
+  var CRITERE_PAR_ID = {}; CRITERES.forEach(function(c){ CRITERE_PAR_ID[c.id] = c; });
+  function critereApplicable(o, ecranId, c){
+    if(!c || !c.siPresent) return true;
+    if(c.declencheur === 'session') return !!state.limiteSession;
+    return !!(((o.presences || {})[ecranId] || {})[c.declencheur]);
+  }
+  function critereVisible(o, c){
+    if(!c.siPresent) return true;
+    return o.ecrans.some(function(e){ return critereApplicable(o, e.id, c); });
+  }
   function getResultat(o, ecranId, critereId){
+    if(!critereApplicable(o, ecranId, CRITERE_PAR_ID[critereId])) return 'NA';
     var r = (o.resultats[ecranId] && o.resultats[ecranId][critereId]);
     return r ? r.statut : 'NT';
   }
   function setResultat(o, ecranId, critereId, statut){
+    if(!critereApplicable(o, ecranId, CRITERE_PAR_ID[critereId])) return; // élément absent de l'écran : rien à saisir
     if(!o.resultats[ecranId]) o.resultats[ecranId] = {};
     if(!o.resultats[ecranId][critereId]) o.resultats[ecranId][critereId] = {statut:'NT', commentaire:''};
     o.resultats[ecranId][critereId].statut = statut;
@@ -1346,6 +1387,16 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function getCommentaireCritere(o, ecranId, critereId){
     var r = o.resultats[ecranId] && o.resultats[ecranId][critereId];
     return r ? (r.commentaire||'') : '';
+  }
+  // Élément concerné (notation « Écran[type "Libellé"] », voir l'Aide) : une ligne, propre à un critère et à un écran.
+  function getElementCritere(o, ecranId, critereId){
+    var r = o.resultats[ecranId] && o.resultats[ecranId][critereId];
+    return r ? (r.element||'') : '';
+  }
+  function setElementCritere(o, ecranId, critereId, val){
+    if(!o.resultats[ecranId]) o.resultats[ecranId] = {};
+    if(!o.resultats[ecranId][critereId]) o.resultats[ecranId][critereId] = {statut:'NT', commentaire:''};
+    o.resultats[ecranId][critereId].element = val;
   }
   function setCommentaireCritere(o, ecranId, critereId, val){
     if(!o.resultats[ecranId]) o.resultats[ecranId] = {};
@@ -1395,7 +1446,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return !crits.every(function(c){ return statutCritere(o, c.id).display === 'NA'; });
   }
   function critsForTheme(o, theme){
-    return CRITERES.filter(function(c){ return critGroup(o, c) === theme; });
+    return CRITERES.filter(function(c){ return critGroup(o, c) === theme && critereVisible(o, c); });
   }
   // Thème sans rien à évaluer : tous ses critères sont NA sur tous les écrans (cas typique : « Non » à la question
   // « Cet écran contient-il au moins un champ de saisie ? » sur chaque écran, qui vide le thème Formulaires).
@@ -1712,11 +1763,36 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function reinitialiserAudit(){
     state.auditNom = 'Audit sans titre';
     state.plateforme = '';
+    state.limiteSession = false;
+    state.exportesJira = {};
     state.onglets = [];
     state.activeOngletId = null;
     state.scenarioChoisi = null;
     state.view = 'dashboard';
     saveState();
+  }
+
+  // Retour vers le champ d'où l'on est venu (jamais sauvegardé : simple mémoire de navigation).
+  var retourAide = null;
+  function boutonRetourChamp(){
+    return retourAide ? '<p style="margin:10px 0;"><button type="button" class="btn btn-sm btn-primary" data-action="retour-champ">Retour au champ « Élément concerné »</button></p>' : '';
+  }
+  function renderAideNotation(){
+    return '<h3 id="aide-notation" tabindex="-1" style="margin:18px 0 6px;">Noter les éléments</h3>' + boutonRetourChamp() +
+      '<p class="muted" style="margin:0 0 8px;">Une notation simple pour désigner ce qui est en cause : <b>crochets = élément, flèche = parcours</b>. Elle sert dans le champ « Élément concerné » et dans tes commentaires ; l\'export Jira la reprend telle quelle.</p>' +
+      '<table class="aide-table"><caption class="sr-only">Notation des écrans, éléments et parcours</caption><thead><tr><th scope="col">Ce que tu désignes</th><th scope="col">Notation</th><th scope="col">Exemple</th></tr></thead><tbody>' +
+      [['Un écran','Écran','Produits'],['Un élément','Écran[type]','Produits[list]'],['Un élément avec son libellé','Écran[type "Libellé"]','Accueil[button "Connexion"]'],['Un élément avec un état','Écran[type "Libellé"] (état)','Accueil[button "Valider"] (disabled)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
+        return '<tr><th scope="row">'+escapeHtml(r[0])+'</th><td><code>'+escapeHtml(r[1])+'</code></td><td><code>'+escapeHtml(r[2])+'</code></td></tr>';
+      }).join('') + '</tbody></table>' +
+      '<ul class="aide-liste">' +
+        '<li>Les crochets servent seulement à l\'élément, collés au nom de l\'écran. Jamais autour de l\'écran.</li>' +
+        '<li>Types courants : header, button, link, field, list, image, tab, checkbox, dialog, card.</li>' +
+        '<li>L\'état est un mot court entre parenthèses (disabled, selected, expanded, error, focused). Plusieurs états : <code>(disabled, focused)</code>.</li>' +
+        '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt;[card "Consommation"]</code>.</li>' +
+        '<li>Une variante d\'écran ou une condition ne se note pas : dis-la en une phrase dans le commentaire.</li>' +
+        '<li>N\'utilise pas le caractère | (il sert de séparateur dans le titre du ticket).</li>' +
+        '<li>Types et états en anglais, noms d\'écrans et libellés comme dans l\'application.</li>' +
+      '</ul>' + boutonRetourChamp();
   }
 
   function renderAide(){
@@ -1734,7 +1810,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       renderProtocole() +
       renderReferences() +
       '<h3 style="margin:18px 0 6px;">Corrections et suivi</h3>' +
-      '<p class="muted" style="margin:0 0 4px;">Le menu Exporter > « Tickets Jira (CSV) » produit un CSV directement importable dans Jira : un ticket par critère non conforme (thème, écrans concernés, constat, impact, comportement attendu), sans ceux dont le champ « Ticket Jira » est déjà rempli. Une fois le ticket créé, saisissez sa clé dans le champ « Ticket Jira » du critère. Le bouton « Non conformes » n\'affiche que les critères non conformes. Après correction, passez le critère en conforme puis clôturez le ticket. Sauvegardez l\'audit pour le reprendre plus tard.</p>' +
+      '<p class="muted" style="margin:0 0 4px;">Le menu Exporter > « Tickets Jira (CSV) » produit un CSV directement importable dans Jira : un ticket par critère non conforme (thème, écrans concernés, constat, impact, comportement attendu). Choisissez la plateforme testée (iOS, Android ou Multiplateforme) avant d\'exporter : le bloc « Recommendations » et l\'étiquette des tickets en tiennent compte. L\'outil retient les critères déjà exportés (pour tout l\'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira — tout réexporter » les reprend tous, par exemple si l\'import dans Jira a échoué. Limite : un critère déjà exporté qui devient non conforme sur un autre écran n\'est pas réexporté automatiquement ; utilise alors « tout réexporter » ou complète le ticket existant à la main. Le bouton « Non conformes » n\'affiche que les critères non conformes. Sauvegardez l\'audit pour le reprendre plus tard.</p>' +
+      renderAideNotation() +
       '<p class="muted" style="margin-top:14px; font-size:12px;">RUXAAM — version '+escapeHtml(APP_VERSION)+'</p>' +
       // Zone sensible (bouton de réinitialisation + son texte + le séparateur) : conditionnée uniquement à la
       // présence de contenu (state.onglets.length > 0), jamais au chemin de navigation emprunté pour arriver
@@ -2016,6 +2093,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           '<button type="button" class="seg-btn'+(o.theming==='ruxal'?' active':'')+'" data-action="set-theming" data-theming="ruxal">RUXAL</button>' +
           '<button type="button" class="seg-btn'+(o.theming==='sip'?' active':'')+'" data-action="set-theming" data-theming="sip">Référentiel officiel</button>' +
         '</div></div>';
+      html += renderPresences(o);
       var nbNC = CRITERES.filter(function(c){ return statutCritere(o, c.id).display==='NC'; }).length;
       if(nbNC===0 && state.filtreRetest){ state.filtreRetest = false; saveState(); } // plus rien à filtrer : on libère la liste
       html += '<div class="retest-filter"><button type="button" class="btn btn-ghost btn-sm'+(state.filtreRetest?' active':'')+'" data-action="toggle-retest" aria-pressed="'+(state.filtreRetest?'true':'false')+'"'+(nbNC===0?' disabled':'')+' title="N\'afficher que les critères non conformes">Non conformes ('+nbNC+')</button></div>';
@@ -2297,6 +2375,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var byTheme = {};
     var order = getThemeOrder(o);
     CRITERES.forEach(function(c){
+      if(!critereVisible(o, c)) return;
       if(state.filtreRetest && statutCritere(o, c.id).display !== 'NC') return;
       var key = critGroup(o, c);
       (byTheme[key] = byTheme[key]||[]).push(c);
@@ -2337,11 +2416,63 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function getThemeOrderPresent(o){
     var byTheme = {};
     CRITERES.forEach(function(c){
+      if(!critereVisible(o, c)) return;
       if(state.filtreRetest && statutCritere(o, c.id).display !== 'NC') return;
       var key = critGroup(o, c);
       (byTheme[key] = byTheme[key]||[]).push(c);
     });
     return getThemeOrder(o).filter(function(theme){ return byTheme[theme]; });
+  }
+
+  // Contenu des écrans : interrupteurs (effet immédiat) déclencheur × écran. Activé = « cet écran contient cet
+  // élément » -> les critères « si présent » correspondants s'affichent pour cet écran ; désactivé = masqués et
+  // comptés NA. Tout est désactivé au départ : la ligne « N critères masqués » rappelle ce qui reste caché.
+  function nbCriteresMasques(o){
+    return CRITERES.filter(function(c){ return !critereVisible(o, c); }).length;
+  }
+  function switchHtml(id, on, label, attrs){
+    return '<button type="button" role="switch" class="switch'+(on?' on':'')+'" id="'+id+'" aria-checked="'+(on?'true':'false')+'" aria-label="'+escapeHtml(label)+'" '+attrs+'><span class="switch-knob" aria-hidden="true"></span></button>';
+  }
+  function renderPresences(o){
+    var decl = DECLENCHEURS.filter(function(d){ return d.id !== 'session' && CRITERES.some(function(c){ return c.siPresent && c.declencheur === d.id; }); });
+    if(!decl.length || !o.ecrans.length) return '';
+    var pres = o.presences || {};
+    var nb = nbCriteresMasques(o);
+    var html = '<details class="presence-panel" open><summary>Contenu des écrans</summary>' +
+      '<p class="muted presence-aide">Active ce que contient chaque écran : les critères « si présent » concernés s\'affichent. Ce qui reste désactivé est masqué et compte comme NA.</p>' +
+      '<div class="presence-session"><span id="pq-session">'+escapeHtml(DECLENCHEURS.filter(function(d){return d.id==='session';})[0].question)+'</span>' +
+        switchHtml('pres-session', !!state.limiteSession, 'Limite de session', 'data-action="set-presence-session"') + '</div>' +
+      '<div class="presence-scroll"><table class="presence-table"><caption class="sr-only">Éléments présents dans chaque écran</caption><thead><tr><th scope="col">L\'écran contient…</th>' +
+      o.ecrans.map(function(e){ return '<th scope="col">'+escapeHtml(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>';
+    decl.forEach(function(d){
+      html += '<tr><th scope="row" title="'+escapeHtml(d.question)+'">'+escapeHtml(d.libelle)+'</th>' +
+        o.ecrans.map(function(e){
+          var on = !!(pres[e.id] || {})[d.id];
+          return '<td>'+switchHtml('pres-'+e.id+'-'+d.id, on, d.libelle+' — '+e.nom, 'data-action="set-presence" data-ecran="'+e.id+'" data-decl="'+d.id+'"')+'</td>';
+        }).join('') + '</tr>';
+    });
+    return html + '</tbody></table></div><p class="presence-masques" role="status">' + (nb ? nb+' critère(s) « si présent » masqué(s) : aucun élément correspondant n\'est activé. Ils ne comptent pas dans le taux.' : 'Aucun critère masqué.') + '</p></details>';
+  }
+  // Migration : une sauvegarde sans réglage de contenu (avant les interrupteurs) garde visibles les critères
+  // « si présent » déjà évalués (C ou NC) pour ne rien faire disparaître du taux.
+  function migrerPresences(st){
+    if(!st || !Array.isArray(st.onglets)) return;
+    if(typeof st.limiteSession !== 'boolean'){
+      st.limiteSession = st.onglets.some(function(o){
+        return (o.ecrans || []).some(function(e){ var r = o.resultats && o.resultats[e.id] && o.resultats[e.id]['raam-11-2']; return r && (r.statut === 'C' || r.statut === 'NC'); });
+      });
+    }
+    st.onglets.forEach(function(o){
+      if(o.presences) return;
+      o.presences = {};
+      (o.ecrans || []).forEach(function(e){
+        CRITERES.forEach(function(c){
+          if(!c.siPresent || c.declencheur === 'session') return;
+          var r = o.resultats && o.resultats[e.id] && o.resultats[e.id][c.id];
+          if(r && (r.statut === 'C' || r.statut === 'NC')){ (o.presences[e.id] = o.presences[e.id] || {})[c.declencheur] = true; }
+        });
+      });
+    });
   }
 
   // Raccourcis cliquables vers chaque thème de la liste ci-dessous, qui font défiler jusqu'au groupe
@@ -2470,6 +2601,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         '</div></div>';
     }
     o.ecrans.forEach(function(e){
+      if(!critereApplicable(o, e.id, c)){
+        html += '<div class="statut-cell statut-cell-absent"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><span class="statut-absent" title="Élément absent de cet écran (voir « Contenu des écrans »)">Absent</span></div>';
+        return;
+      }
       var cur = getResultat(o, e.id, c.id);
       html += '<div class="statut-cell"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><div class="statut-toggle" role="group" aria-label="'+nomCourtCritere(c)+', écran '+escapeHtml(e.nom)+'">' +
         STATUTS.map(function(s){ return '<button type="button" class="statut-btn'+(cur===s?' sel-'+s:'')+'" data-action="set-statut" data-ecran="'+e.id+'" data-crit="'+c.id+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" aria-pressed="'+(cur===s?'true':'false')+'">'+s+'</button>'; }).join('') +
@@ -2533,8 +2668,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     '</div>';
   }
 
+  var ICON_AIDE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><circle cx="12" cy="18" r=".6"/></svg>';
   function renderNcFollowup(o, c){
-    if(statutCritere(o, c.id).display !== 'NC') return ticketJiraRappelHtml(c.id);
+    if(statutCritere(o, c.id).display !== 'NC') return '';
     var ecransNC = o.ecrans.filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; });
     var multi = o.ecrans.length > 1;
     // Champ(s) commentaire : en pleine largeur de la ligne, sous les cartes Comment-vérifier / Impact — c'est
@@ -2543,33 +2679,19 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     // rendu par renderCritDetailRow, plus dans cette fonction.
     var champs = ecransNC.map(function(e){
       var val = getCommentaireCritere(o, e.id, c.id);
-      var labelTxt = multi ? ('Commentaire — '+escapeHtml(e.nom)) : 'Commentaire (sera exportable en tâche de correction — fonctionnalité à venir)';
+      var labelTxt = multi ? ('Commentaire — '+escapeHtml(e.nom)) : 'Commentaire';
+      var elId = 'element-'+o.id+'-'+c.id+'-'+e.id;
       return '<div class="nc-followup-ecran">' +
+        '<div class="comment-label-row element-label-row"><label class="comment-label" for="'+elId+'">Élément concerné'+(multi ? ' — '+escapeHtml(e.nom) : '')+'</label>' +
+          '<button type="button" class="icon-btn" data-action="aide-notation" data-focus="'+elId+'" aria-label="Aide : comment noter l\'élément" title="Aide : comment noter l\'élément">'+ICON_AIDE+'</button></div>' +
+        '<input type="text" class="element-input" id="'+elId+'" name="'+elId+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="set-element-critere" data-crit="'+c.id+'" data-ecran="'+e.id+'" value="'+escapeHtml(getElementCritere(o, e.id, c.id))+'" placeholder="Ex. '+(multi ? escapeHtml(e.nom) : 'Accueil')+'[button &quot;Fermer&quot;]">' +
         '<div class="comment-label-row"><label class="comment-label" for="comment-'+o.id+'-'+c.id+'-'+e.id+'">'+labelTxt+'</label>' +
           commentaireToolbarHtml(c.id, e.id) +
         '</div>' +
         '<textarea class="comment-input" id="comment-'+o.id+'-'+c.id+'-'+e.id+'" rows="4" data-action="set-commentaire-critere" data-crit="'+c.id+'" data-ecran="'+e.id+'" placeholder="Détail du problème observé, contexte, capture...">'+escapeHtml(val)+'</textarea>' +
       '</div>';
     }).join('');
-    return '<div class="nc-followup">' + ticketJiraHtml(c.id) + champs + '</div>';
-  }
-
-  // Champ « Ticket Jira » d'un critère non conforme : une clé par critère pour tout l'audit (même ticket quel que
-  // soit l'onglet ou l'écran), reprise dans l'export « pour Jira » et dans le filtre « À valider ».
-  function ticketJiraHtml(critId){
-    var val = state.ticketsJira[critId] || '';
-    return '<div class="nc-followup-ecran ticket-jira-row">' +
-      '<div class="comment-label-row"><label class="comment-label" for="ticket-'+critId+'">Ticket Jira</label></div>' +
-      '<input type="text" class="ticket-jira-input" id="ticket-'+critId+'" name="ticket-'+critId+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="set-ticket-jira" data-crit="'+critId+'" value="'+escapeHtml(val)+'" placeholder="Clé du ticket de correction, ex. ABC-123">' +
-    '</div>';
-  }
-
-  // Rappel (lecture seule) du ticket lié à un critère qui n'est plus non conforme : après correction, on garde la
-  // trace du ticket pour savoir quoi clôturer.
-  function ticketJiraRappelHtml(critId){
-    var val = state.ticketsJira[critId];
-    if(!val) return '';
-    return '<div class="ticket-jira-rappel">Ticket Jira : <b>'+escapeHtml(val)+'</b> — le défaut n\'est plus signalé. Clôturer le ticket une fois la correction validée.</div>';
+    return '<div class="nc-followup">' + champs + '</div>';
   }
 
   // Même principe que renderNcFollowup, pour les questions heuristiques POUR/UX : un commentaire libre, mais
@@ -2604,7 +2726,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           criteres: isSip ? CRITERES.map(function(c){
             var s = statutCritere(o, c.id);
             var commentairesEcrans = s.display === 'NC' ? o.ecrans.filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; }).map(function(e){
-              return {ecran: e.nom, commentaire: getCommentaireCritere(o, e.id, c.id)};
+              return {ecran: e.nom, element: getElementCritere(o, e.id, c.id), commentaire: getCommentaireCritere(o, e.id, c.id)};
             }) : [];
             return {id:c.id, libelle:c.libelle, theme_ruxal:c.theme_ruxal, theme_raam:c.theme_raam, raam:c.raam, niveau_wcag:c.niveau_wcag, horsRaam:!!c.horsRaam, statut:s.display, commentairesEcrans:commentairesEcrans};
           }) : [],
@@ -2651,7 +2773,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var dl = null;
     try{ dl = (typeof claude !== 'undefined' && claude && claude.use) ? await claude.use('downloads') : null; }catch(e){ dl = null; }
     if(!dl){
-      try{ telechargementDirect(filename, data); setImportStatus(MSG_DIRECT, false); return true; }
+      try{ telechargementDirect(filename, data); setImportStatus(MSG_DIRECT, false); return 'direct'; }
       catch(e){ setImportStatus('Le téléchargement n\'est pas disponible dans cette vue : ouvre l\'outil depuis l\'application Claude.', true); return false; }
     }
     try{
@@ -2758,8 +2880,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       }
       state = incoming;
       if(!state.ticketsJira || typeof state.ticketsJira !== 'object') state.ticketsJira = {};
+      // la mémoire des exports Jira est celle de la sauvegarde importée (aucune : on repart de zéro)
+      if(!state.exportesJira || typeof state.exportesJira !== 'object') state.exportesJira = {};
       if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
       if(['ios','android','cross'].indexOf(state.plateforme) === -1) state.plateforme = '';
+      migrerPresences(state);
       confirmDeleteId = null; resetArmed = false;
       state.view = 'dashboard';
       saveState();
@@ -2825,7 +2950,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return t;
   }
   var PRIORITE_JIRA = {critique:'Highest', serieux:'High', modere:'Medium', mineur:'Low'};
-  function buildJiraImportCSV(){
+  function buildJiraImportCSV(toutReexporter){
     var header = ['Summary','Description','Issue Type','Priority','Labels','Labels','Labels'].concat(state.plateforme ? ['Labels'] : []);
     var lignes = [header.map(csvEscapeVirgule).join(',')];
     var ordreThemes = THEMES_RUXAL;
@@ -2839,7 +2964,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         concernes.push({o:o, ecrans:o.ecrans.filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; })});
       });
       if(!concernes.length) return;
-      if(state.ticketsJira[c.id]){ ignores++; return; }
+      if(!toutReexporter && state.exportesJira[c.id]){ ignores++; return; }
       items.push({c:c, concernes:concernes});
     });
     items.sort(function(a,b){
@@ -2852,8 +2977,13 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var c = it.c;
       var theme = c.theme_ruxal;
       var multi = it.concernes.length > 1;
-      var ecransNoms = [];
-      it.concernes.forEach(function(x){ x.ecrans.forEach(function(e){ if(ecransNoms.indexOf(e.nom) === -1) ecransNoms.push(e.nom); }); });
+      var ecransNoms = [], objets = [];
+      var propre = function(t){ return String(t||'').replace(/\s+/g,' ').replace(/\|/g,'/').trim(); };
+      it.concernes.forEach(function(x){ x.ecrans.forEach(function(e){
+        var el = propre(getElementCritere(x.o, e.id, c.id));
+        var nom = el || e.nom;
+        if(ecransNoms.indexOf(nom) === -1){ ecransNoms.push(nom); objets.push(el || (e.nom+'[<element>]')); }
+      }); });
       var commentaires = it.concernes.map(function(x){
         var t = commentaireCritereTexte(x.o, c);
         return t ? (multi ? x.o.nom+' : '+t : t) : '';
@@ -2877,7 +3007,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         : ['- RAAM 1.1 \u2014 Criterion '+c.raam+': '+c.libelle, '  '+refUrl];
       var desc = [
         'Flow(s) / Screen(s) / Element(s) in concern'
-      ].concat(flowsTxt, ecransNoms.length ? ecransNoms.map(function(n){ return n+'[<element>]'; }) : ['<Screen>[<element>]'], [
+      ].concat(flowsTxt, objets.length ? objets : ['<Screen>[<element>]'], [
         '',
         'Actual behavior / Impact',
         commentaires.length ? commentaires.join('\n') : '<to be completed>',
@@ -2904,21 +3034,32 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var labels = ['accessibilite'].concat(state.plateforme ? [{ios:'ios',android:'android',cross:'multiplateforme'}[state.plateforme]] : []).concat([(c.horsRaam ? 'hors-raam' : 'RAAM-'+c.raam), theme.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')]);
       lignes.push([summary, desc, 'Task', PRIORITE_JIRA[c.niveau]||'Medium'].concat(labels).map(csvEscapeVirgule).join(','));
     });
-    return { csv: lignes.join('\r\n'), nb: items.length, ignores: ignores };
+    return { csv: lignes.join('\r\n'), nb: items.length, ignores: ignores, ids: items.map(function(it){ return it.c.id; }) };
   }
 
-  async function exportJiraImport(){
+  // Mémoire silencieuse : un critère NC déjà exporté (pour tout l'audit) est écarté de l'export suivant ; il n'est
+  // marqué exporté qu'une fois le fichier enregistré. « Tout réexporter » ignore la mémoire puis la remet à jour.
+  // Limite assumée : un critère déjà exporté qui devient NC sur un autre écran n'est pas réexporté automatiquement.
+  async function exportJiraImport(toutReexporter){
+    toutReexporter = toutReexporter === true;
     if(!exportPossible('raam')) return;
-    var res = buildJiraImportCSV();
+    var res = buildJiraImportCSV(toutReexporter);
     if(res.nb === 0){
       setImportStatus(res.ignores
-        ? 'Aucun nouveau ticket : les '+res.ignores+' critère(s) non conforme(s) ont déjà un ticket Jira.'
+        ? 'Aucun nouveau ticket : '+res.ignores+' critère(s) non conforme(s) déjà exporté(s). Pour les exporter de nouveau : Exporter > « Tickets Jira — tout réexporter ».'
         : (auMoinsUnCritereTeste()
             ? 'Aucun ticket à créer : aucun critère n\'est non conforme (NC).'
             : 'Aucun ticket à créer : aucun critère n\'a encore été testé (tous sont NT).'), true);
       return;
     }
-    await saveFile(nomFichier('tickets-jira','csv'), '﻿' + res.csv, 'Tickets Jira téléchargés : '+res.nb+' à créer'+(res.ignores ? ' ('+res.ignores+' déjà lié(s) à un ticket, ignoré(s))' : '')+'.');
+    var msg = toutReexporter
+      ? 'Tickets Jira : '+res.nb+' exporté(s), y compris ceux déjà exportés.'
+      : (res.ignores ? res.ignores+' ticket(s) déjà exporté(s), '+res.nb+' nouveau(x).' : 'Tickets Jira téléchargés : '+res.nb+' à créer.');
+    var ok = await saveFile(nomFichier('tickets-jira','csv'), '\ufeff' + res.csv, msg);
+    if(!ok) return;
+    res.ids.forEach(function(id){ state.exportesJira[id] = true; });
+    saveState();
+    if(ok === 'direct') setImportStatus(msg+' '+MSG_DIRECT, false);
   }
 
 
@@ -3266,6 +3407,34 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       state.view = o.id;
       render();
     }
+    else if(action==='aide-notation'){
+      retourAide = {view: state.view, focus: el.getAttribute('data-focus')};
+      state.view = 'aide'; render();
+      var h = document.getElementById('aide-notation');
+      if(h){ h.scrollIntoView({block:'start'}); h.focus({preventScroll:true}); }
+    }
+    else if(action==='retour-champ'){
+      var r = retourAide; retourAide = null;
+      if(r){
+        state.view = r.view; render();
+        var cible = document.getElementById(r.focus);
+        if(cible){ cible.scrollIntoView({block:'center'}); cible.focus({preventScroll:true}); }
+      }
+    }
+    else if(action==='set-presence'){
+      var o = getOnglet(state.view);
+      if(o){
+        var eid = el.getAttribute('data-ecran'), did = el.getAttribute('data-decl');
+        if(!o.presences) o.presences = {};
+        if(!o.presences[eid]) o.presences[eid] = {};
+        if(o.presences[eid][did]) delete o.presences[eid][did]; else o.presences[eid][did] = true;
+        render();
+      }
+    }
+    else if(action==='set-presence-session'){
+      state.limiteSession = !state.limiteSession;
+      render();
+    }
     else if(action==='set-statut'){
       var o = getOnglet(state.view);
       if(o){ setResultat(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.getAttribute('data-statut')); render(); }
@@ -3380,15 +3549,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var el = ev.target;
     var action = el.getAttribute && el.getAttribute('data-action');
     if(!action) return;
-    if(action==='set-ticket-jira'){
-      var tk = el.value.trim();
-      if(tk) state.ticketsJira[el.getAttribute('data-crit')] = tk; else delete state.ticketsJira[el.getAttribute('data-crit')];
-      saveState();
-      return;
-    }
     var o = getOnglet(state.view);
     if(!o) return;
-    if(action==='set-commentaire-critere'){
+    if(action==='set-element-critere'){
+      setElementCritere(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.value);
+    } else if(action==='set-commentaire-critere'){
       setCommentaireCritere(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.value);
     } else if(action==='set-commentaire-heur'){
       var hId = el.getAttribute('data-h');
@@ -3432,7 +3597,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   $btnDashboard.addEventListener('click', function(){ confirmDeleteId = null; resetArmed = false; state.view='dashboard'; render(); });
   document.getElementById('btnExportJSON').addEventListener('click', exportJSON);
   document.getElementById('btnExportListe').addEventListener('click', exportListe);
-  document.getElementById('btnExportJiraImport').addEventListener('click', exportJiraImport);
+  document.getElementById('btnExportJiraImport').addEventListener('click', function(){ exportJiraImport(false); });
+  document.getElementById('btnExportJiraTout').addEventListener('click', function(){ exportJiraImport(true); });
   document.getElementById('btnExportEtat').addEventListener('click', exportFullState);
   document.getElementById('btnImportEtat').addEventListener('click', function(){ document.getElementById('inputImportEtat').click(); });
   document.getElementById('inputImportEtat').addEventListener('change', function(ev){
