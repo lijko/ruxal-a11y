@@ -30,7 +30,7 @@ resultats = []
 
 def verifier(nom, condition, detail=''):
     resultats.append((nom, bool(condition), detail))
-    print(('OK    ' if condition else 'ÉCHEC ') + nom + ('' if condition else '  — ' + str(detail)))
+    print(('OK    ' if condition else 'ÉCHEC ') + nom + ('' if condition else ' , ' + str(detail)))
 
 
 def ouvrir(page):
@@ -107,7 +107,7 @@ def main():
         verifier('Contenu des écrans : 20 critères masqués annoncés', '20 critère(s)' in page.locator('.presence-masques').inner_text())
         interrupteurs = page.evaluate("""() => [...document.querySelectorAll('[role=switch]')].map(b => b.id)""")
         verifier('Contenu des écrans : 5 × 3 interrupteurs + session', len(interrupteurs) == 16, len(interrupteurs))
-        verifier('Interrupteur : nom accessible', page.locator('[role=switch][data-decl="formulaire"]').first.get_attribute('aria-label') == 'Formulaire — Accueil')
+        verifier('Interrupteur : nom accessible', page.locator('[role=switch][data-decl="formulaire"]').first.get_attribute('aria-label') == 'Formulaire (Accueil)')
         for i in interrupteurs:
             page.click('#' + i)
         verifier('Tous les interrupteurs activés : %d critères' % NB, page.locator('.crit-row').count() == NB, page.locator('.crit-row').count())
@@ -158,7 +158,7 @@ def main():
         for code, ligne, etiquette in (('ios', '- iOS:', ',ios,'), ('android', '- Android:', ',android,'), ('cross', '- Cross-platform:', ',multiplateforme,')):
             page.click('#plateformeToggle [data-plateforme="%s"]' % code)
             presse = page.locator('#plateformeToggle [data-plateforme="%s"]' % code).get_attribute('aria-pressed')
-            f = telechargement(page, lambda: exporter(page, 'Tickets Jira — tout réexporter'))
+            f = telechargement(page, lambda: exporter(page, 'Tickets Jira : tout réexporter'))
             autres = [x for x in ('- iOS:', '- Android:', '- Cross-platform:') if x != ligne]
             verifier('Jira %s (tout réexporter) : 2 tickets' % code, f and f.count(',Task,') == 2)
             verifier('Jira %s : bouton enfoncé' % code, presse == 'true')

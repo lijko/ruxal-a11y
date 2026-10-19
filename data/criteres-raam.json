@@ -1,5 +1,5 @@
 {
-  "source": "RAAM 1.1 — Service information et presse (SIP), Luxembourg — https://accessibilite.public.lu/fr/raam1.1/",
+  "source": "RAAM 1.1, Service information et presse (SIP), Luxembourg, https://accessibilite.public.lu/fr/raam1.1/",
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile",
   "licence": "CC BY 3.0 LU",
   "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si l'écran contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxal.json). Champ etape : étape du protocole de test RUXAAM où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4).",

@@ -77,7 +77,7 @@ def construire():
             'horsRaam': True,
             'raam': '',
             'theme_ruxal': b['theme_ruxal'],
-            'theme_raam': 'Hors référentiel RAAM — bonne pratique',
+            'theme_raam': 'Hors référentiel RAAM, bonne pratique',
             'etape': b.get('etape', ''),
             'niveau': t['gravite'],
             'niveau_wcag': '',

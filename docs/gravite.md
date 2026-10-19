@@ -42,7 +42,7 @@ Passage de l'ancienne échelle à trois niveaux (version 1.17) : bloquant → Cr
 - **9.6 champs de même nature** : Mineur → Sérieux. Des choix « Oui / Non » annoncés sans leur question rendent le champ impossible à remplir seul au lecteur d'écran.
 - **bp1 taille des zones tactiles** : Sérieux → Modéré (recommandation des plateformes, critère AAA en WCAG 2.1).
 
-Répartition (version 1.22) : 52 critères RAAM — 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur ; 3 bonnes pratiques hors RAAM — 2 Modéré, 1 Sérieux.
+Répartition (version 1.22) : 52 critères RAAM (12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur) ; 3 bonnes pratiques hors RAAM (2 Modéré, 1 Sérieux).
 
 | Critère | Gravité | Ancienne (v1.17) |
 |---|---|---|
@@ -103,6 +103,6 @@ Répartition (version 1.22) : 52 critères RAAM — 12 Critique, 29 Sérieux, 10
 | bp3 | Modéré | mineur |
 
 ## Sources
-- Deque, axe-core — *Issue impact* : https://github.com/dequelabs/axe-core/blob/develop/doc/issue_impact.md
+- Deque, axe-core, *Issue impact* : https://github.com/dequelabs/axe-core/blob/develop/doc/issue_impact.md
 - W3C, *WCAG 3.0* (Working Draft) : https://www.w3.org/TR/wcag-3.0/
 - W3C, *Understanding Conformance* (WCAG 2) : https://www.w3.org/WAI/WCAG21/Understanding/conformance

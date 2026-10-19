@@ -1,6 +1,6 @@
-# RUXAL — Revue UX Accessibilité
+# RUXAL : Revue UX Accessibilité
 
-**FR** — RUXAL est une famille d'outils HTML autonomes qui aident à **préparer et prioriser un audit d'accessibilité**, avant l'audit complet. Chaque outil croise deux regards sur ce que l'on examine (écran, fonctionnalité ou parcours) :
+**FR** : RUXAL est une famille d'outils HTML autonomes qui aident à **préparer et prioriser un audit d'accessibilité**, avant l'audit complet. Chaque outil croise deux regards sur ce que l'on examine (écran, fonctionnalité ou parcours) :
 
 - **les critères officiels du référentiel** (RAAM 1.1 pour le mobile, RAWEB pour le web, RAPDF pour le PDF), évalués critère par critère (conforme, non conforme, non testé, non applicable), qui donnent un **taux de conformité** par onglet ;
 - **une lecture UX qualitative** : les quatre principes **POUR** de WCAG (Perceptible, Utilisable, Compréhensible, Robuste) et les **heuristiques d'utilisabilité**, qui servent à repérer les problèmes que les critères seuls ne montrent pas. Cette couche est **exclue du taux**.
@@ -13,7 +13,7 @@ RUXAL n'est **pas un audit de conformité** et ne produit aucune déclaration d'
 
 Outils : **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web), **RUXAPDF** (PDF).
 
-**EN** — RUXAL is a family of standalone HTML tools that help **prepare and prioritise an accessibility audit**, ahead of a full audit. Each tool looks at what you are reviewing (a screen, a feature or a journey) in two ways:
+**EN** : RUXAL is a family of standalone HTML tools that help **prepare and prioritise an accessibility audit**, ahead of a full audit. Each tool looks at what you are reviewing (a screen, a feature or a journey) in two ways:
 
 - **the official criteria of the standard** (RAAM 1.1 for mobile, RAWEB for web, RAPDF for PDF), assessed one by one (compliant, non-compliant, not tested, not applicable), which produce a **conformity rate** per tab;
 - **a qualitative UX reading**: the four **POUR** principles of WCAG (Perceivable, Operable, Understandable, Robust) and **usability heuristics**, used to spot issues that criteria alone do not reveal. This layer is **excluded from the rate**.
@@ -39,7 +39,7 @@ RUXAAM 1.23 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Plateforme** : iOS, Android ou multiplateforme, choisie sous le nom de l'audit (un audit = une plateforme). Elle détermine les recommandations « Per platform » et une étiquette supplémentaire des tickets Jira.
 - **Contenu des écrans** : en tête d'un onglet RAAM, un interrupteur par écran et par type d'élément (CAPTCHA, image complexe, média, tableau, formulaire), plus un interrupteur « Limite de session » pour toute l'application. Un critère « si présent » ne s'affiche que si un écran contient l'élément ; ailleurs il compte comme NA, sans rien effacer de ce qui a été saisi.
 - **Élément concerné** : pour chaque critère non conforme et chaque écran, un champ d'une ligne reçoit la notation `Écran[type "Libellé"] (état)`, expliquée dans l'Aide (« Noter les éléments »). L'export Jira la reprend dans le titre et le corps du ticket.
-- **Mémoire des exports Jira** : l'outil retient les critères déjà exportés (pour tout l'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira — tout réexporter » les reprend tous. Le champ « Ticket Jira » des versions précédentes est retiré.
+- **Mémoire des exports Jira** : l'outil retient les critères déjà exportés (pour tout l'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira : tout réexporter » les reprend tous. Le champ « Ticket Jira » des versions précédentes est retiré.
 - **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
 
 ## Données et génération / Data and build
@@ -60,7 +60,7 @@ python3 scripts/build_ruxaam.py
 
 Le script valide les données (texte manquant, thème ou gravité inconnus, identifiant en double) puis remplace le bloc compris entre les marqueurs `DEBUT_DONNEES` et `FIN_DONNEES` de `src/ruxaam.html`. Ne pas modifier ce bloc à la main. `python3 scripts/build_ruxaam.py --check` vérifie que le HTML est à jour (code retour 1 sinon), utile avant un commit.
 
-Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonne pratique. / Stable ids: `raam-1-2` for RAAM criterion 1.2, `bp1` for a best practice. **EN** — edit `data/`, then run the script above to inject the data into the standalone HTML file.
+Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonne pratique. / Stable ids: `raam-1-2` for RAAM criterion 1.2, `bp1` for a best practice. **EN** : edit `data/`, then run the script above to inject the data into the standalone HTML file.
 
 ## Structure
 - `src/` : outils (code)

@@ -1,35 +1,35 @@
-RUXAL — Revue UX Accessibilité
+RUXAL : Revue UX Accessibilité
 Copyright (c) 2026 Bertrand Kempf
 
 Le code original de RUXAL est sous licence EUPL-1.2. Les données et la documentation originales sont sous licence CC BY 4.0.
 Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur licence d'origine.
 
 1. Référentiels officiels luxembourgeois (RAAM 1.1, RAWEB, RAPDF)
-   Source : Service information et presse (SIP), Luxembourg — https://accessibilite.public.lu
+   Source : Service information et presse (SIP), Luxembourg, https://accessibilite.public.lu
    Dépôt du RAAM : https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile
-   Licence : Creative Commons Attribution 3.0 Luxembourg (CC BY 3.0 LU) — https://creativecommons.org/licenses/by/3.0/lu/
+   Licence : Creative Commons Attribution 3.0 Luxembourg (CC BY 3.0 LU), https://creativecommons.org/licenses/by/3.0/lu/
    Les intitulés des critères RAAM, leur niveau, leurs références WCAG et EN 301 549 sont reproduits sans modification dans data/criteres-raam.json et dans src/ruxaam.html. Ils restent sous CC BY 3.0 LU. Modifications de RUXAL : sélection de 52 critères, regroupement par thèmes RUXAL, gravités et textes d'impact et de test originaux.
    La licence du RAAM publiée par le SIP précise que le référentiel est une œuvre dérivée de documents de la DINUM : voir https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile/blob/main/LICENSE.md
    RUXAL n'est ni approuvé ni certifié par le SIP ou l'OSAPS.
 
-2. WCAG 2.1 — © W3C (MIT, ERCIM, Keio, Beihang)
+2. WCAG 2.1, © W3C (MIT, ERCIM, Keio, Beihang)
    Les numéros, intitulés et niveaux des critères de succès sont repris tels que publiés dans le RAAM (références WCAG et EN 301 549). Les textes d'impact et d'explication sont originaux.
    Licence du document : https://www.w3.org/Consortium/Legal/2015/doc-license
    RUXAL n'est ni approuvé ni certifié par le W3C.
 
-3. Heuristiques d'utilisabilité — Nielsen Norman Group
+3. Heuristiques d'utilisabilité, Nielsen Norman Group
    Les questions de la couche UX sont formulées par RUXAL. Les heuristiques d'origine sont référencées par lien : https://www.nngroup.com/articles/ten-usability-heuristics/
 
 4. Grille « Audit simplifié » du SIP
    Statut de réutilisation à confirmer auprès du SIP avant publication.
 
 5. Bibliothèque tierce embarquée dans src/ruxaam.html
-   jsPDF 2.5.1 — © 2010-2021 James Hall et contributeurs — licence MIT.
+   jsPDF 2.5.1, © 2010-2021 James Hall et contributeurs, licence MIT.
    Greffons de jsPDF inclus, avec leurs en-têtes de copyright conservés dans le fichier : Aras Abbasi, Steven Spungin, Youssef Beddad, James Robb, Dominik Homberger, Eduardo Menezes de Morais, Jussi Utunen, et notice « Adobe Systems Incorporated » (2008) pour les données de glyphes.
    html2canvas, DOMPurify et canvg ne sont pas embarqués : jsPDF les mentionne comme dépendances facultatives.
    Ces éléments restent sous leur propre licence ; l'EUPL-1.2 ne couvre que le code original de RUXAL.
 
-6. Échelle de gravité — Deque Systems (axe-core)
+6. Échelle de gravité, Deque Systems (axe-core)
    Source : https://github.com/dequelabs/axe-core/blob/develop/doc/issue_impact.md (dépôt axe-core, licence MPL-2.0)
    Les quatre niveaux de gravité de RUXAL (Critique, Sérieux, Modéré, Mineur) reprennent l'échelle d'impact d'axe-core (critical, serious, moderate, minor). Seuls les noms des niveaux sont repris ; les définitions sont formulées par RUXAL. Aucun code d'axe-core n'est embarqué.
    Cette gravité n'est pas normative : voir docs/gravite.md. RUXAL n'est ni approuvé ni certifié par Deque Systems.

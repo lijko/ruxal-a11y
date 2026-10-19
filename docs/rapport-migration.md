@@ -2,7 +2,7 @@
 SPDX-FileCopyrightText: 2026 Bertrand Kempf
 SPDX-License-Identifier: CC-BY-4.0
 -->
-# Rapport de migration — RUXAAM 1.17
+# Rapport de migration : RUXAAM 1.17
 
 > **Mise à jour (version 1.18)** : les gravités citées dans ce rapport sont celles de l'ancienne échelle à trois niveaux (bloquant, majeur, mineur). L'outil utilise désormais une échelle à quatre niveaux, non normative et inspirée de Deque : voir [`gravite.md`](gravite.md), qui donne la correspondance et les gravités à confirmer.
 
@@ -162,7 +162,7 @@ Chaque consigne « Comment vérifier » a été comparée à la méthodologie de
 - **Contenu des écrans** : panneau d'interrupteurs (écran × CAPTCHA, image complexe, média, tableau, formulaire ; « Limite de session » pour toute l'application). Un critère « si présent » non applicable sur un écran y compte comme NA et y affiche « Absent » ; un critère absent de tous les écrans est masqué de la liste, des raccourcis et des thèmes. Rien n'est effacé : réactiver un interrupteur retrouve les statuts et commentaires. Migration : une sauvegarde sans réglage garde visibles les critères « si présent » déjà évalués, et la limite de session est déduite du 11.2.
 - **Champ « Ticket Jira » retiré** (saisie, rappel, exclusion à l'export). Les clés des anciennes sauvegardes ne masquent plus aucun ticket.
 - **Élément concerné** : champ d'une ligne par critère non conforme et par écran, notation `Écran[type "Libellé"] (état)` ; repris dans le titre et le corps des tickets Jira (`|` remplacé par `/`) et dans l'export JSON. Section d'aide « Noter les éléments », avec retour au champ d'origine.
-- **Mémoire des exports Jira** : critères déjà exportés retenus pour tout l'audit (`exportesJira`, inclus dans la sauvegarde, vidé à la réinitialisation), marqués seulement une fois le fichier enregistré ; messages « N ticket(s) déjà exporté(s), M nouveau(x) » ; menu « Tickets Jira — tout réexporter ». Limite documentée dans l'Aide : un critère déjà exporté qui devient non conforme sur un autre écran n'est pas réexporté automatiquement.
+- **Mémoire des exports Jira** : critères déjà exportés retenus pour tout l'audit (`exportesJira`, inclus dans la sauvegarde, vidé à la réinitialisation), marqués seulement une fois le fichier enregistré ; messages « N ticket(s) déjà exporté(s), M nouveau(x) » ; menu « Tickets Jira : tout réexporter ». Limite documentée dans l'Aide : un critère déjà exporté qui devient non conforme sur un autre écran n'est pas réexporté automatiquement.
 - La 1.22 publiée est conservée telle quelle (protocole de test, encarts d'étape, pastilles 3a / 3b, table ETAPES générée).
 - **Tests** : 72 contrôles.
 
