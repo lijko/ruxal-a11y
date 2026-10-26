@@ -94,7 +94,7 @@ def main():
         verifier('Référentiel : 24 « si présent »', page.locator('.si-present-chip').count() == 24, page.locator('.si-present-chip').count())
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.1', 'RUXAWEB, version 1.1' in aide)
+        verifier('Aide : version 1.2', 'RUXAWEB, version 1.2' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation au clavier' in aide and 'NVDA' in aide and 'iOS' not in aide)
         verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Page[type "Libellé"]' in aide)
         verifier('Aide : déclencheurs web', 'cadre' in aide and 'autre langue' in aide)
@@ -124,7 +124,7 @@ def main():
         verifier('Vue par étape : 4 groupes', len(groupes) == 4, groupes)
         verifier('Vue par étape : un encart par groupe', page.locator('.etape-encart').count() == 4, page.locator('.etape-encart').count())
         par_etape = page.evaluate("""() => [...document.querySelectorAll('.theme-group')].map(g => g.querySelectorAll('.crit-row').length)""")
-        verifier('Vue par étape : 15 / 11 / 19 / 10', par_etape == [15, 11, 19, 10], par_etape)
+        verifier('Vue par étape : 16 / 11 / 19 / 10', par_etape == [16, 11, 19, 10], par_etape)
         chips = page.locator('.crit-row .etape-chip').all_inner_texts()
         verifier('Vue par étape : pastilles seulement pour 3a / 3b (19)', len(chips) == 19 and all(c[:2] in ('3a', '3b') for c in chips), chips[:3])
         verifier('Vue par étape : choix de thématisation masqué', page.locator('[data-action="set-theming"]').count() == 0)
@@ -240,6 +240,28 @@ def main():
         page.locator('[data-action="delete-ecran"]').last.click()
         page.locator('[data-action="delete-ecran"]').last.click()
         verifier('6 pages : retour à la grille', page.locator('.ecran-selecteur').count() == 0 and cellules() == 6, cellules())
+
+        # --- Critère 13.11 : officiel, hors sélection du SIP, hors taux
+        ouvrir(page)
+        page.click('#btnReferentiel')
+        verifier('13.11 : une fiche hors sélection au Référentiel', page.locator('.ref-card', has_text='Hors sélection SIP').count() == 1)
+        verifier('Référentiel : compte « 52 critères + 1 hors sélection »', '52 critères du RAWeb 1.1 (audit simplifié du SIP) + 1 critère RAWeb hors sélection' in page.locator('#main').inner_text())
+        creer_onglet(page)
+        for b in page.locator('[data-action="set-statut-theme"][data-statut="C"]').all():
+            b.click()
+        taux_avant = page.locator('.taux-preview').inner_text()
+        page.click('[data-action="set-statut-tous"][data-crit="raweb-13-11"][data-statut="NC"]')
+        taux_apres = page.locator('.taux-preview').inner_text()
+        verifier('13.11 NC : taux inchangé (100 %)', '100%' in taux_avant and '100%' in taux_apres, (taux_avant, taux_apres))
+        ligne = page.locator('.crit-row', has=page.locator('[data-crit="raweb-13-11"]')).first
+        verifier('13.11 : pastilles RAWeb 13.11 et hors sélection', 'RAWeb 13.11' in ligne.inner_text() and 'Hors sélection SIP' in ligne.inner_text())
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('13.11 : ticket Jira avec lien officiel', f and 'RAWeb-13.11' in f and 'criteres.html#crit-13-11' in f, f and f[:200])
+        f = telechargement(page, lambda: exporter(page, 'Liste des critères (CSV)'))
+        verifier('13.11 : liste CSV marquée hors taux', f and '13.11 (hors sélection SIP, hors taux)' in f)
+        f = telechargement(page, lambda: exporter(page, 'Données (JSON)'))
+        c1311 = [c for c in json.loads(f)['onglets'][0]['criteres'] if c['id'] == 'raweb-13-11'] if f else []
+        verifier('13.11 : export JSON horsSelectionSip', c1311 and c1311[0]['horsSelectionSip'] is True and c1311[0]['statut'] == 'NC')
 
         # --- Réinitialisation : la mémoire des exports est vidée
         page.click('#btnAide')

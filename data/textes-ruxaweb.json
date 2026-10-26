@@ -356,6 +356,12 @@
       "gravite": "serieux",
       "impact": "RAWeb 13.8 (WCAG 2.2.1 / 2.2.2) : un contenu qui bouge ou clignote sans fin (carrousel, bandeau défilant, animation) gêne la lecture et la concentration, et peut devenir illisible pour certaines personnes.",
       "explication": "Lance Axe (règles blink, marquee), puis repère chaque contenu en mouvement ou clignotant lancé automatiquement : il doit durer 5 secondes au plus, ou pouvoir être arrêté et relancé, ou masqué, ou affiché sans mouvement, par un contrôle atteignable au clavier."
+    },
+    "raweb-13-11": {
+      "raweb": "13.11",
+      "gravite": "modere",
+      "impact": "RAWeb 13.11 (WCAG 2.5.2) : une action déclenchée dès l'appui (mousedown, touchstart) part sur une simple erreur de visée, sans rattrapage possible, ce qui pénalise surtout les personnes qui ont des tremblements ou une motricité réduite.",
+      "explication": "Sur les boutons, liens et contrôles qui déclenchent une action, appuie (souris ou doigt), puis fais glisser le pointeur hors de la cible avant de relâcher : l'action ne doit pas avoir lieu. Elle doit se déclencher au relâchement (événement click) et pas dès l'appui, sauf si l'action peut être annulée ensuite, ou si l'appui est indispensable (touche de piano virtuel, par exemple). À l'inspecteur, repère les gestionnaires mousedown, pointerdown ou touchstart qui déclenchent une action."
     }
   },
   "bonnes_pratiques": {

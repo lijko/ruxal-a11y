@@ -64,6 +64,8 @@ def construire():
             'niveau': t['gravite'],
             'niveau_wcag': c['niveau'],
             'siPresent': c['statut'] == 'si présent',
+            # Critère officiel hors sélection de l'audit simplifié du SIP : évalué, mais exclu du taux.
+            'horsSelection': bool(c.get('hors_selection')),
             'declencheur': c.get('declencheur', ''),
             'etape': c.get('etape', ''),
             'libelle': c['intitule'],
@@ -152,9 +154,10 @@ def main():
     if debut < 0 or fin < debut:
         sys.exit('Marqueurs DEBUT_DONNEES / FIN_DONNEES introuvables dans ' + str(HTML))
     nouveau = html[:debut] + bloc(criteres, themes, verif, declencheurs) + html[fin + len(FIN):]
-    nb_ref = sum(1 for c in criteres if not c.get('horsRef'))
-    resume = '%d critères RAWeb (%d « si présent ») + %d bonnes pratiques' % (
-        nb_ref, sum(1 for c in criteres if c.get('siPresent')), len(criteres) - nb_ref)
+    nb_sel = sum(1 for c in criteres if c.get('horsSelection'))
+    nb_ref = sum(1 for c in criteres if not c.get('horsRef')) - nb_sel
+    resume = '%d critères RAWeb (%d « si présent ») + %d hors sélection SIP + %d bonnes pratiques' % (
+        nb_ref, sum(1 for c in criteres if c.get('siPresent')), nb_sel, len(criteres) - nb_ref - nb_sel)
     if '--check' in sys.argv:
         if nouveau != html:
             sys.exit('src/ruxaweb.html n\'est pas à jour : lancer python3 scripts/build_ruxaweb.py')

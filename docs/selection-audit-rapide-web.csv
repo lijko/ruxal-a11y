@@ -51,3 +51,4 @@
 13.1;Consultation;Pour chaque page web, l’utilisateur a-t-il le contrôle de chaque limite de temps modifiant le contenu (hors cas particuliers) ?;A;manuel et Axe;Composants Interactifs;cœur;;1 Usage standard;Sérieux
 13.7;Consultation;Dans chaque page web, les changements brusques de luminosité ou les effets de flash sont-ils correctement utilisés ?;A;manuel;Contenu & Lisibilité;cœur;;1 Usage standard;Critique
 13.8;Consultation;Dans chaque page web, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur (hors cas particuliers) ?;A;manuel et Axe;Contenu & Lisibilité;cœur;;1 Usage standard;Sérieux
+13.11;Consultation;Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ?;A;hors sélection (ajout RUXAWEB, hors taux);Composants Interactifs;cœur;;1 Usage standard;Modéré
