@@ -510,6 +510,22 @@ Details : README.md
      déjà géré par le row-gap du parent (8px), un margin-top ici le cumulerait et recréerait le trop-grand
      espace signalé par Bertrand. Sous .heur-row (gap:14px, inchangé), la perte des 2px est sans effet notable. */
   .retest-filter{margin:0 0 12px;}
+  /* Gestion des écrans en cours d'audit (panneau repliable) et sélecteur « un écran à la fois » au-delà de 6. */
+  .ecrans-liste{list-style:none; margin:8px 0; padding:0; display:flex; flex-direction:column; gap:6px;}
+  .ecrans-ligne, .ecrans-ajout{display:flex; align-items:center; gap:10px;}
+  .ecrans-nom{flex:0 1 340px; min-width:0; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--ink); font:inherit; font-size:13px;}
+  .ecrans-meta{min-width:52px; font-size:12px;}
+  .ecran-selecteur{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 12px;}
+  .ecran-selecteur-aide{flex-basis:100%; font-size:12px;}
+  .ecran-nb-nc{color:var(--c-nc); font-weight:800;}
+  .statut-consolide{display:flex; flex-direction:column; align-items:center; gap:4px; padding-left:12px; margin-left:2px; border-left:1px dashed var(--border);}
+  .statut-consolide-lbl{font-size:12.5px; color:var(--ink-faint); font-weight:600;}
+  .statut-consolide-val{font-size:11px; font-weight:800; padding:4px 10px; border-radius:7px; border:1px solid var(--border); background:var(--surface-alt); color:var(--ink);}
+  .statut-consolide-val.statut-C{background:var(--c-conforme-soft); color:var(--c-conforme); border-color:var(--c-conforme);}
+  .statut-consolide-val.statut-NC{background:var(--c-nc-soft); color:var(--c-nc); border-color:var(--c-nc);}
+  .statut-consolide-val.statut-NT{background:var(--c-nt-soft); color:var(--c-nt-ink); border-color:var(--c-nt);}
+  .statut-consolide-val.statut-NA{background:var(--c-na-soft); color:var(--c-na); border-color:var(--c-na);}
+  .statut-consolide-detail{font-size:11px; color:var(--ink-faint); white-space:nowrap;}
   .presence-panel{margin:0 0 14px; padding:10px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface);}
   .presence-panel summary{cursor:pointer; font-weight:800; font-size:13px;}
   .presence-panel summary .muted{font-weight:500; font-size:12px;}
@@ -1150,7 +1166,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.23';
+  var APP_VERSION = '1.24';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -1620,6 +1636,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var focusAvant = document.activeElement, cle = cleFocus(focusAvant), vueAvant = derniereVueRendue;
     renderVue();
     derniereVueRendue = state.view;
+    if(focusApresRendu){ var cibleDemandee = document.getElementById(focusApresRendu); focusApresRendu = null; if(cibleDemandee){ cibleDemandee.focus(); return; } }
     if(vueAvant === null) return; // premier affichage : on ne déplace pas le focus
     if(focusAvant && focusAvant !== document.body && document.contains(focusAvant)) return;
     var cible = (vueAvant === state.view && cle) ? document.querySelector(cle) : null;
@@ -1712,7 +1729,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function renderAideContent(){
     var points = [
       {t:"Qu'est-ce que RUXAAM ?", d:"Outil de pré-diagnostic accessibilité mobile, basé sur le référentiel RAAM 1.1. Son audit rapide reprend la démarche de l'audit rapide du SIP (un échantillon d'écrans, une sélection de critères essentiels), appliquée aux critères du RAAM. Ce n'est pas un audit de conformité, et son taux n'est pas comparable à celui d'un audit rapide RAWEB."},
-      {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAAM. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAAM (échantillon d'écrans indépendants), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet."},
+      {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAAM. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAAM (échantillon d'écrans indépendants), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet. Les écrans d'un onglet se renomment, s'ajoutent et se suppriment en cours d'audit (panneau « Écrans testés ») ; au-delà de 6 écrans, la liste des critères affiche un écran à la fois, choisi en tête de liste."},
       {t:"Deux approches, selon le type d'audit", d:"Le référentiel officiel (RAAM) est toujours actif : c'est lui qui donne le taux de conformité. Pour les types Scénario et Fonctionnalité primaire, l'évaluation POUR/WCAG et heuristiques UX s'y ajoute automatiquement, sans rien à cocher ; l'Audit rapide RAAM n'a que le RAAM. Le score UX n'entre jamais dans le taux."},
       {t:"4 statuts, une règle simple", d:"C (Conforme), NC (Non Conforme), NT (Non Testé) et NA (Non Applicable), par critère et par écran. Un critère n'est validé que s'il l'est sur tous les écrans de l'onglet : un seul écran en échec invalide le critère pour l'ensemble (règle du pire cas, comme le RAAM). Les critères « si présent » dépendent d'un contenu (CAPTCHA, image complexe, média, tableau, formulaire, limite de session) : si l'écran ne le contient pas, mets-les en NA."},
       {t:"Le bloc heuristique a son propre score, jamais mélangé au taux", d:"Les questions POUR/WCAG/UX se répondent en Succès, Difficile, Échec ou N/A (avec un commentaire pour expliquer un Difficile ou un Échec), pour les types Scénario et Fonctionnalité primaire. Elles donnent un Score POUR/UX séparé, affiché à côté du taux de conformité RAAM mais jamais fondu avec lui : le taux ne dépend que des critères RAAM."},
@@ -2093,10 +2110,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           '<button type="button" class="seg-btn'+(o.theming==='ruxal'?' active':'')+'" data-action="set-theming" data-theming="ruxal">RUXAL</button>' +
           '<button type="button" class="seg-btn'+(o.theming==='sip'?' active':'')+'" data-action="set-theming" data-theming="sip">Référentiel officiel</button>' +
         '</div></div>';
+      html += renderEcransPanel(o);
       html += renderPresences(o);
       var nbNC = CRITERES.filter(function(c){ return statutCritere(o, c.id).display==='NC'; }).length;
       if(nbNC===0 && state.filtreRetest){ state.filtreRetest = false; saveState(); } // plus rien à filtrer : on libère la liste
       html += '<div class="retest-filter"><button type="button" class="btn btn-ghost btn-sm'+(state.filtreRetest?' active':'')+'" data-action="toggle-retest" aria-pressed="'+(state.filtreRetest?'true':'false')+'"'+(nbNC===0?' disabled':'')+' title="N\'afficher que les critères non conformes">Non conformes ('+nbNC+')</button></div>';
+      html += renderSelecteurEcran(o);
       html += renderThemeShortcuts(o);
       html += renderThemeSommaire(o);
       html += renderListeCriteres(o);
@@ -2433,6 +2452,79 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function switchHtml(id, on, label, attrs){
     return '<button type="button" role="switch" class="switch'+(on?' on':'')+'" id="'+id+'" aria-checked="'+(on?'true':'false')+'" aria-label="'+escapeHtml(label)+'" '+attrs+'><span class="switch-knob" aria-hidden="true"></span></button>';
   }
+  // ---------- Écrans de l'onglet : gestion en cours d'audit et affichage un par un ----------
+  // L'outil vise l'ordinateur : jusqu'à SEUIL_GRILLE écrans, la grille (un groupe de statuts par écran) tient sur une
+  // ligne. Au-delà, chaque critère n'affiche plus que l'écran choisi dans le sélecteur, plus la colonne « Tous » et
+  // le statut consolidé de l'onglet (règle du pire cas). Les données ne changent pas, seul l'affichage s'adapte.
+  var SEUIL_GRILLE = 6;
+  var confirmDeleteEcranId = null; // suppression d'un écran « armée » (premier clic), jamais persistée
+  var ecransPanelOuvert = {};      // ongletId -> panneau « Écrans testés » déplié (survit aux rendus, jamais persisté)
+  var focusApresRendu = null;      // id de l'élément à focaliser après le prochain rendu
+  function modeUnEcran(o){ return o.ecrans.length > SEUIL_GRILLE; }
+  function ecranActif(o){
+    var e = o.ecrans.filter(function(x){ return x.id === o.ecranActif; })[0];
+    return e || o.ecrans[0];
+  }
+  function ecransAffiches(o){ return modeUnEcran(o) ? [ecranActif(o)] : o.ecrans; }
+  function minEcrans(o){ return o.scenario === 'sip-rapide' ? SIP_RAPIDE_MIN_ECRANS : 1; }
+  function nbNcEcran(o, e){ return CRITERES.filter(function(c){ return getResultat(o, e.id, c.id) === 'NC'; }).length; }
+  function statutConsolideHtml(o, c){
+    var s = statutCritere(o, c.id).display, n = {NC:0, NT:0, C:0, NA:0};
+    o.ecrans.forEach(function(e){ n[getResultat(o, e.id, c.id)]++; });
+    var detail = ['NC','NT','C','NA'].filter(function(k){ return n[k]; }).map(function(k){ return n[k]+' '+k; }).join(' · ');
+    return '<div class="statut-consolide" title="Statut du critère sur les '+o.ecrans.length+' écrans de l\'onglet (règle du pire cas)">' +
+      '<span class="statut-consolide-lbl">Onglet</span><span class="statut-consolide-val statut-'+s+'">'+s+'</span>' +
+      '<span class="statut-consolide-detail">'+detail+'</span></div>';
+  }
+  function renderSelecteurEcran(o){
+    if(!modeUnEcran(o)) return '';
+    var act = ecranActif(o);
+    return '<div class="ecran-selecteur" role="group" aria-labelledby="ecran-sel-lbl-'+o.id+'"><span class="vue-switch-lbl" id="ecran-sel-lbl-'+o.id+'">Écran affiché</span>' +
+      o.ecrans.map(function(e){
+        var on = e.id === act.id, nb = nbNcEcran(o, e);
+        return '<button type="button" class="preset-chip'+(on?' active':'')+'" data-action="set-ecran-actif" data-ecran="'+e.id+'" aria-pressed="'+(on?'true':'false')+'">'+escapeHtml(e.nom)+(nb ? ' <span class="ecran-nb-nc">'+nb+' NC</span>' : '')+'</button>';
+      }).join('') +
+      '<span class="muted ecran-selecteur-aide">Plus de '+SEUIL_GRILLE+' écrans : la liste affiche un écran à la fois. La colonne « Tous » règle un critère sur tous les écrans d\'un coup, et « Onglet » donne son statut d\'ensemble.</span></div>';
+  }
+  function erreurNomEcran(o, nom, saufId){
+    if(!nom) return 'Le nom est obligatoire.';
+    var doublon = o.ecrans.some(function(e){ return e.id !== saufId && String(e.nom).trim().toLowerCase() === nom.toLowerCase(); });
+    return doublon ? 'Ce nom est déjà utilisé dans cet onglet.' : '';
+  }
+  function renderEcransPanel(o){
+    var min = minEcrans(o);
+    var html = '<details class="presence-panel ecrans-panel"'+(ecransPanelOuvert[o.id] ? ' open' : '')+'><summary>Écrans testés <span class="muted">('+o.ecrans.length+')</span></summary>' +
+      '<p class="muted presence-aide">Renomme, ajoute ou supprime des écrans en cours d\'audit. Un ajout ou une suppression repasse l\'onglet en brouillon ; un nouvel écran part en NT sur tous les critères.'+(min > 1 ? ' Minimum '+min+' écrans pour ce type d\'audit.' : '')+'</p><ul class="ecrans-liste">';
+    o.ecrans.forEach(function(e){
+      var armed = confirmDeleteEcranId === e.id, bloque = o.ecrans.length <= min;
+      html += '<li class="ecrans-ligne">' +
+        '<input type="text" class="ecrans-nom" id="ecran-nom-'+e.id+'" name="ecran-nom-'+e.id+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="rename-ecran" data-ecran="'+e.id+'" value="'+escapeHtml(e.nom)+'" aria-label="Nom : '+escapeHtml(e.nom)+'">' +
+        '<span class="muted ecrans-meta">'+nbNcEcran(o, e)+' NC</span>' +
+        '<button type="button" class="btn btn-sm btn-danger'+(armed?' armed':'')+'" data-action="delete-ecran" data-ecran="'+e.id+'"' +
+          (bloque ? ' disabled title="Minimum '+min+' écrans pour ce type d\'audit"' : '') +
+          ' aria-label="'+(armed ? 'Confirmer la suppression de '+escapeHtml(e.nom)+' et de ses résultats' : 'Supprimer '+escapeHtml(e.nom))+'">'+(armed ? 'Confirmer la suppression' : 'Supprimer')+'</button></li>';
+    });
+    html += '</ul><div class="ecrans-ajout">' +
+      '<input type="text" class="ecrans-nom" id="ecran-ajout-'+o.id+'" name="ecran-ajout-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="ecran-ajout-input" placeholder="Nom du nouvel écran (ex. Panier)" aria-label="Nom du nouvel écran">' +
+      '<button type="button" class="btn btn-sm" data-action="add-ecran-onglet">+ Ajouter un écran</button></div></details>';
+    return html;
+  }
+  function ajouterEcran(){
+    var o = getOnglet(state.view); if(!o) return;
+    var inp = document.getElementById('ecran-ajout-'+o.id);
+    var nom = inp ? inp.value.trim() : '';
+    var err = erreurNomEcran(o, nom, null);
+    if(err){ setImportStatus(err, true); if(inp) inp.focus(); return; }
+    var id = uid('ec');
+    o.ecrans.push({id:id, nom:nom, commentaire:''});
+    o.resultats[id] = {};
+    var etaitValide = o.valide;
+    o.valide = false; o.vue = 'audit'; o.ecranActif = id; ecransPanelOuvert[o.id] = true;
+    focusApresRendu = 'ecran-ajout-'+o.id;
+    render();
+    setImportStatus('Ajout de « '+nom+' » : ses critères sont NT, le taux reste incomplet jusqu\'à son test'+(etaitValide ? ' ; l\'onglet repasse en brouillon' : '')+'.', false, 9000);
+  }
+
   function renderPresences(o){
     var decl = DECLENCHEURS.filter(function(d){ return d.id !== 'session' && CRITERES.some(function(c){ return c.siPresent && c.declencheur === d.id; }); });
     if(!decl.length || !o.ecrans.length) return '';
@@ -2600,7 +2692,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         STATUTS.map(function(s){ return '<button type="button" class="statut-btn" data-action="set-statut-tous" data-crit="'+c.id+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" title="Régler '+s+' pour tous les écrans de l\'onglet">'+s+'</button>'; }).join('') +
         '</div></div>';
     }
-    o.ecrans.forEach(function(e){
+    ecransAffiches(o).forEach(function(e){
       if(!critereApplicable(o, e.id, c)){
         html += '<div class="statut-cell statut-cell-absent"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><span class="statut-absent" title="Élément absent de cet écran (voir « Contenu des écrans »)">Absent</span></div>';
         return;
@@ -2610,6 +2702,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         STATUTS.map(function(s){ return '<button type="button" class="statut-btn'+(cur===s?' sel-'+s:'')+'" data-action="set-statut" data-ecran="'+e.id+'" data-crit="'+c.id+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" aria-pressed="'+(cur===s?'true':'false')+'">'+s+'</button>'; }).join('') +
         '</div></div>';
     });
+    if(modeUnEcran(o)) html += statutConsolideHtml(o, c);
     html += '</div>';
     html += renderCritDetailRow(o, c);
     html += renderNcFollowup(o, c);
@@ -2671,7 +2764,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   var ICON_AIDE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><circle cx="12" cy="18" r=".6"/></svg>';
   function renderNcFollowup(o, c){
     if(statutCritere(o, c.id).display !== 'NC') return '';
-    var ecransNC = o.ecrans.filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; });
+    // Au-delà du seuil, seuls les champs de l'écran affiché (s'il est NC) : les autres se voient en le choisissant.
+    var ecransNC = ecransAffiches(o).filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; });
     var multi = o.ecrans.length > 1;
     // Champ(s) commentaire : en pleine largeur de la ligne, sous les cartes Comment-vérifier / Impact, c'est
     // une saisie libre potentiellement longue, elle a besoin de largeur pour écrire et se relire, contrairement
@@ -3318,6 +3412,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
     // Désarme la confirmation de suppression d'onglet dès qu'une autre action a lieu (clic ailleurs, navigation...).
     if(action!=='delete-onglet' && confirmDeleteId!==null){ confirmDeleteId = null; }
+    if(action!=='delete-ecran' && confirmDeleteEcranId!==null){ confirmDeleteEcranId = null; }
     // Même désarmement pour la réinitialisation complète.
     if(action!=='reset-audit' && resetArmed){ resetArmed = false; }
 
@@ -3419,6 +3514,38 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         state.view = r.view; render();
         var cible = document.getElementById(r.focus);
         if(cible){ cible.scrollIntoView({block:'center'}); cible.focus({preventScroll:true}); }
+      }
+    }
+    else if(action==='set-ecran-actif'){
+      var o = getOnglet(state.view);
+      if(o){ o.ecranActif = el.getAttribute('data-ecran'); render(); }
+    }
+    else if(action==='add-ecran-onglet'){ ajouterEcran(); }
+    else if(action==='delete-ecran'){
+      var o = getOnglet(state.view);
+      if(o){
+        var eid = el.getAttribute('data-ecran');
+        var cible = o.ecrans.filter(function(x){ return x.id === eid; })[0];
+        if(!cible){ /* rien */ }
+        else if(o.ecrans.length <= minEcrans(o)){
+          setImportStatus('Suppression impossible : ce type d\'audit demande au moins '+minEcrans(o)+' écrans. Ajoute d\'abord un écran.', true);
+        } else if(confirmDeleteEcranId === eid){
+          // Second clic : suppression définitive de l'écran et de tout ce qui y a été saisi.
+          o.ecrans = o.ecrans.filter(function(x){ return x.id !== eid; });
+          delete o.resultats[eid];
+          if(o.presences) delete o.presences[eid];
+          if(o.ecranActif === eid) o.ecranActif = null;
+          var etaitValide = o.valide;
+          o.valide = false; o.vue = 'audit';
+          confirmDeleteEcranId = null;
+          focusApresRendu = 'ecran-ajout-'+o.id;
+          render();
+          setImportStatus('Suppression de « '+cible.nom+' » : ses statuts et commentaires sont effacés et le taux est recalculé'+(etaitValide ? ' ; l\'onglet repasse en brouillon' : '')+'. Les tickets Jira déjà créés ne sont pas modifiés.', false, 10000);
+          return;
+        } else {
+          confirmDeleteEcranId = eid;
+        }
+        render();
       }
     }
     else if(action==='set-presence'){
@@ -3569,6 +3696,29 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     }
     saveState();
   });
+
+  // Renommage d'un écran : à la validation du champ (Entrée ou sortie du champ), pas à chaque frappe.
+  document.addEventListener('change', function(ev){
+    var el = ev.target;
+    if(!el.getAttribute || el.getAttribute('data-action') !== 'rename-ecran') return;
+    var o = getOnglet(state.view); if(!o) return;
+    var e = o.ecrans.filter(function(x){ return x.id === el.getAttribute('data-ecran'); })[0]; if(!e) return;
+    var nom = el.value.trim(), err = erreurNomEcran(o, nom, e.id);
+    if(err){ el.value = e.nom; setImportStatus(err+' Nom inchangé : « '+e.nom+' ».', true); return; }
+    if(nom !== e.nom){ var ancien = e.nom; e.nom = nom; render(); setImportStatus('Nouveau nom : « '+nom+' » (au lieu de « '+ancien+' »).', false); }
+  });
+  document.addEventListener('keydown', function(ev){
+    var el = ev.target;
+    if(ev.key !== 'Enter' || !el.getAttribute) return;
+    var a = el.getAttribute('data-action');
+    if(a === 'ecran-ajout-input'){ ev.preventDefault(); ajouterEcran(); }
+    else if(a === 'rename-ecran'){ ev.preventDefault(); el.blur(); }
+  });
+  // Le panneau des écrans garde son état ouvert ou fermé d'un rendu à l'autre.
+  document.addEventListener('toggle', function(ev){
+    var d = ev.target;
+    if(d && d.classList && d.classList.contains('ecrans-panel')){ var o = getOnglet(state.view); if(o) ecransPanelOuvert[o.id] = d.open; }
+  }, true);
 
   document.getElementById('plateformeToggle').addEventListener('click', function(ev){
     var btn = ev.target.closest('.seg-btn'); if(!btn) return;
