@@ -515,8 +515,20 @@ Details : README.md
   .ecrans-ligne, .ecrans-ajout{display:flex; align-items:center; gap:10px;}
   .ecrans-nom{flex:0 1 340px; min-width:0; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--ink); font:inherit; font-size:13px;}
   .ecrans-meta{min-width:52px; font-size:12px;}
-  .ecran-selecteur{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 12px;}
-  .ecran-selecteur-aide{flex-basis:100%; font-size:12px;}
+  .ecran-selecteur{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0;}
+  .ecran-selecteur-aide{margin:0 0 8px; font-size:12px;}
+  /* Au-delà de 6 écrans : le choix de l'écran reste visible pendant le défilement (barre flottante), avec les
+     raccourcis de thèmes quand ils sont affichés, pour changer d'écran sans remonter en haut de la liste. */
+  .barre-audit{
+    position:sticky; top:10px; z-index:4; display:flex; flex-direction:column; gap:8px; margin-bottom:18px;
+    background:var(--surface-raised); padding:8px 10px; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-pop);
+  }
+  .barre-audit .theme-shortcuts{position:static; margin:0; padding:8px 0 0; border:none; border-top:1px solid var(--border-soft); border-radius:0; box-shadow:none; background:transparent;}
+  .ecran-nav{padding:5px 10px; border-radius:99px; border:1px solid var(--border); background:var(--surface); color:var(--ink-soft); font-weight:800; cursor:pointer;}
+  .ecran-nav:hover:not(:disabled){border-color:var(--accent); color:var(--accent);}
+  .ecran-nav:disabled{opacity:.4; cursor:default;}
+  /* Les groupes de thèmes ne passent pas sous la barre flottante quand on y saute. */
+  .theme-group{scroll-margin-top:170px;}
   .ecran-nb-nc{color:var(--c-nc); font-weight:800;}
   .statut-consolide{display:flex; flex-direction:column; align-items:center; gap:4px; padding-left:12px; margin-left:2px; border-left:1px dashed var(--border);}
   .statut-consolide-lbl{font-size:12.5px; color:var(--ink-faint); font-weight:600;}
@@ -1166,7 +1178,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.25';
+  var APP_VERSION = '1.26';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -2115,8 +2127,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var nbNC = CRITERES.filter(function(c){ return statutCritere(o, c.id).display==='NC'; }).length;
       if(nbNC===0 && state.filtreRetest){ state.filtreRetest = false; saveState(); } // plus rien à filtrer : on libère la liste
       html += '<div class="retest-filter"><button type="button" class="btn btn-ghost btn-sm'+(state.filtreRetest?' active':'')+'" data-action="toggle-retest" aria-pressed="'+(state.filtreRetest?'true':'false')+'"'+(nbNC===0?' disabled':'')+' title="N\'afficher que les critères non conformes">Non conformes ('+nbNC+')</button></div>';
-      html += renderSelecteurEcran(o);
-      html += renderThemeShortcuts(o);
+      if(modeUnEcran(o)){
+        html += aideSelecteurEcran(o);
+        html += '<div class="barre-audit">' + renderSelecteurEcran(o) + renderThemeShortcuts(o) + '</div>';
+      } else {
+        html += renderThemeShortcuts(o);
+      }
       html += renderThemeSommaire(o);
       html += renderListeCriteres(o);
 
@@ -2478,13 +2494,22 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   }
   function renderSelecteurEcran(o){
     if(!modeUnEcran(o)) return '';
-    var act = ecranActif(o);
+    var act = ecranActif(o), iAct = o.ecrans.indexOf(act);
+    var nav = function(sens, lib, txt){
+      var cible = o.ecrans[iAct + sens];
+      return '<button type="button" class="ecran-nav" data-action="set-ecran-actif" data-nav="'+(sens < 0 ? 'prec' : 'suiv')+'" data-ecran="'+(cible ? cible.id : '')+'"'+(cible ? ' aria-label="'+lib+' : '+escapeHtml(cible.nom)+'" title="'+lib+' : '+escapeHtml(cible.nom)+'"' : ' disabled aria-label="'+lib+'"')+'>'+txt+'</button>';
+    };
     return '<div class="ecran-selecteur" role="group" aria-labelledby="ecran-sel-lbl-'+o.id+'"><span class="vue-switch-lbl" id="ecran-sel-lbl-'+o.id+'">Écran affiché</span>' +
+      nav(-1, 'Écran précédent', '&lsaquo;') +
       o.ecrans.map(function(e){
         var on = e.id === act.id, nb = nbNcEcran(o, e);
         return '<button type="button" class="preset-chip'+(on?' active':'')+'" data-action="set-ecran-actif" data-ecran="'+e.id+'" aria-pressed="'+(on?'true':'false')+'">'+escapeHtml(e.nom)+(nb ? ' <span class="ecran-nb-nc">'+nb+' NC</span>' : '')+'</button>';
       }).join('') +
-      '<span class="muted ecran-selecteur-aide">Plus de '+SEUIL_GRILLE+' écrans : la liste affiche un écran à la fois. La colonne « Tous » règle un critère sur tous les écrans d\'un coup, et « Onglet » donne son statut d\'ensemble.</span></div>';
+      nav(1, 'Écran suivant', '&rsaquo;') + '</div>';
+  }
+  function aideSelecteurEcran(o){
+    if(!modeUnEcran(o)) return '';
+    return '<p class="muted ecran-selecteur-aide">Plus de '+SEUIL_GRILLE+' écrans : la liste affiche un écran à la fois, choisi dans la barre ci-dessous, qui reste visible pendant le défilement. La colonne « Tous » règle un critère sur tous les écrans d\'un coup, et « Onglet » donne son statut d\'ensemble.</p>';
   }
   function erreurNomEcran(o, nom, saufId){
     if(!nom) return 'Le nom est obligatoire.';
@@ -3572,7 +3597,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     }
     else if(action==='set-ecran-actif'){
       var o = getOnglet(state.view);
-      if(o){ o.ecranActif = el.getAttribute('data-ecran'); render(); }
+      if(o && el.getAttribute('data-ecran')){
+        var navSens = el.getAttribute('data-nav');
+        o.ecranActif = el.getAttribute('data-ecran'); render();
+        if(navSens){ var navBtn = document.querySelector('.ecran-nav[data-nav="'+navSens+'"]'); if(navBtn && !navBtn.disabled) navBtn.focus({preventScroll:true}); else { var actif = document.querySelector('.ecran-selecteur [aria-pressed="true"]'); if(actif) actif.focus({preventScroll:true}); } }
+      }
     }
     else if(action==='add-ecran-onglet'){ ajouterEcran(); }
     else if(action==='delete-ecran'){

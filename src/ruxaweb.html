@@ -516,8 +516,20 @@ Details : README.md
   .ecrans-ligne, .ecrans-ajout{display:flex; align-items:center; gap:10px;}
   .ecrans-nom{flex:0 1 340px; min-width:0; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--ink); font:inherit; font-size:13px;}
   .ecrans-meta{min-width:52px; font-size:12px;}
-  .ecran-selecteur{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 12px;}
-  .ecran-selecteur-aide{flex-basis:100%; font-size:12px;}
+  .ecran-selecteur{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0;}
+  .ecran-selecteur-aide{margin:0 0 8px; font-size:12px;}
+  /* Au-delà de 6 écrans : le choix de l'écran reste visible pendant le défilement (barre flottante), avec les
+     raccourcis de thèmes quand ils sont affichés, pour changer d'écran sans remonter en haut de la liste. */
+  .barre-audit{
+    position:sticky; top:10px; z-index:4; display:flex; flex-direction:column; gap:8px; margin-bottom:18px;
+    background:var(--surface-raised); padding:8px 10px; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-pop);
+  }
+  .barre-audit .theme-shortcuts{position:static; margin:0; padding:8px 0 0; border:none; border-top:1px solid var(--border-soft); border-radius:0; box-shadow:none; background:transparent;}
+  .ecran-nav{padding:5px 10px; border-radius:99px; border:1px solid var(--border); background:var(--surface); color:var(--ink-soft); font-weight:800; cursor:pointer;}
+  .ecran-nav:hover:not(:disabled){border-color:var(--accent); color:var(--accent);}
+  .ecran-nav:disabled{opacity:.4; cursor:default;}
+  /* Les groupes de thèmes ne passent pas sous la barre flottante quand on y saute. */
+  .theme-group{scroll-margin-top:170px;}
   .ecran-nb-nc{color:var(--c-nc); font-weight:800;}
   .statut-consolide{display:flex; flex-direction:column; align-items:center; gap:4px; padding-left:12px; margin-left:2px; border-left:1px dashed var(--border);}
   .statut-consolide-lbl{font-size:12.5px; color:var(--ink-faint); font-weight:600;}
@@ -1156,17 +1168,17 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Bloc de données généré depuis les fichiers JSON du dépôt de développement (ruxal-a11y) ; dans le dépôt simplifié, ce fichier est copié tel quel.
   // - data/criteres-raweb.json : les 52 critères du RAWeb 1.1 de la méthode de contrôle simplifié v1.2.1 du SIP,
   //   intitulés reproduits sans modification (CC BY 3.0 LU). Champ « niveau_wcag » = niveau officiel A/AA ;
-  //   « siPresent » = critère à évaluer seulement si la page contient le contenu concerné (sinon NA).
+  //   « siPresent » = critère à évaluer seulement si l'écran contient le contenu concerné (sinon NA).
   // - data/bonnes-pratiques-web.json : bonnes pratiques hors RAWeb (horsRef:true), cochables mais hors taux.
   // - data/textes-ruxaweb.json : textes originaux RUXAL. Champ « niveau » = gravité (critique/serieux/modere/mineur, non normative : voir docs/gravite.md),
   //   « impact » = conséquence pour l'utilisateur, « explication » = comment vérifier sur le web.
-  // Identifiants stables : « raweb-x-y » et « bpN ». Dans le code, « ecran » désigne une page testée
-  // (nom interne hérité de RUXAAM, conservé pour garder le même moteur dans toute la famille RUXAL).
+  // Identifiants stables : « raweb-x-y » et « bpN ». Un « écran » est une page du site, ou un état de
+  // page (fenêtre modale ouverte, étape d'un formulaire) : même vocabulaire que RUXAAM dans toute la famille RUXAL.
 
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.3';
+  var APP_VERSION = '1.4';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaweb.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -1228,7 +1240,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     {"id": "bp3", "horsRef": true, "ref": "", "theme_ruxal": "Navigation & Structure", "theme_ref": "Hors référentiel RAWeb, bonne pratique", "etape": "4", "niveau": "modere", "niveau_wcag": "", "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouverte (s'il existe encore).", "impact": "Le focus retombe en haut de la page ou sur un élément sans rapport : l'utilisateur de lecteur d'écran ou de clavier perd sa position et doit reparcourir la page depuis le début.", "explication": "Au clavier, ouvre une fenêtre modale depuis un bouton puis ferme-la (bouton Fermer, Échap) : le focus doit revenir sur ce bouton (ou, s'il n'existe plus, sur un élément logique proche). Un focus perdu ou renvoyé au début de la page est à signaler ; selon l'appréciation de l'auditeur, il peut aussi se rattacher au critère 12.8 (ordre de tabulation).", "note": "Aucun critère du RAWeb 1.1 ne l'exige en tant que tel. Pattern décrit par les WAI-ARIA Authoring Practices.", "sources": [{"t": "W3C, WAI-ARIA Authoring Practices, Modal Dialog Pattern (Keyboard Interaction : le focus revient à l'élément qui a ouvert la fenêtre)", "u": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"}]}
   ];
   var THEMES_RUXAL_ORDRE = ["Navigation & Structure", "Composants Interactifs", "Images & Médias", "Couleurs & Contrastes", "Contenu & Lisibilité", "Fondations Techniques", "Formulaires"];
-  var DECLENCHEURS = [{"id": "captcha", "libelle": "CAPTCHA", "question": "Cette page contient-elle un CAPTCHA ?"}, {"id": "image-complexe", "libelle": "Image complexe", "question": "Cette page contient-elle une image complexe (graphique, schéma, carte, infographie) ?"}, {"id": "media-temporel", "libelle": "Média temporel ou son", "question": "Cette page contient-elle un audio, une vidéo, ou un son qui se lance seul ?"}, {"id": "media-non-temporel", "libelle": "Média non temporel", "question": "Cette page contient-elle un média non temporel (carte interactive, visite virtuelle, animation ou objet embarqué) ?"}, {"id": "tableau-donnees", "libelle": "Tableau de données", "question": "Cette page contient-elle un tableau de données ?"}, {"id": "cadre", "libelle": "Cadre (iframe)", "question": "Cette page contient-elle un cadre (iframe : vidéo intégrée, carte, formulaire externe) ?"}, {"id": "formulaire", "libelle": "Formulaire", "question": "Cette page contient-elle au moins un champ de saisie ?"}, {"id": "changement-langue", "libelle": "Autre langue", "question": "Cette page contient-elle un passage dans une autre langue que celle de la page ?"}];
+  var DECLENCHEURS = [{"id": "captcha", "libelle": "CAPTCHA", "question": "Cet écran contient-il un CAPTCHA ?"}, {"id": "image-complexe", "libelle": "Image complexe", "question": "Cet écran contient-il une image complexe (graphique, schéma, carte, infographie) ?"}, {"id": "media-temporel", "libelle": "Média temporel ou son", "question": "Cet écran contient-il un audio, une vidéo, ou un son qui se lance seul ?"}, {"id": "media-non-temporel", "libelle": "Média non temporel", "question": "Cet écran contient-il un média non temporel (carte interactive, visite virtuelle, animation ou objet embarqué) ?"}, {"id": "tableau-donnees", "libelle": "Tableau de données", "question": "Cet écran contient-il un tableau de données ?"}, {"id": "cadre", "libelle": "Cadre (iframe)", "question": "Cet écran contient-il un cadre (iframe : vidéo intégrée, carte, formulaire externe) ?"}, {"id": "formulaire", "libelle": "Formulaire", "question": "Cet écran contient-il au moins un champ de saisie ?"}, {"id": "changement-langue", "libelle": "Autre langue", "question": "Cet écran contient-il un passage dans une autre langue que celle de la page ?"}];
   var ETAPES = {"raweb-1-1": ["2", "Code et outils"], "raweb-1-2": ["2", "Code et outils"], "raweb-1-3": ["3a", "Lecteur d'écran"], "raweb-1-4": ["3a", "Lecteur d'écran"], "raweb-1-5": ["1", "Usage standard"], "raweb-1-6": ["3a", "Lecteur d'écran"], "raweb-1-7": ["3a", "Lecteur d'écran"], "raweb-2-1": ["2", "Code et outils"], "raweb-3-1": ["1", "Usage standard"], "raweb-3-2": ["1", "Usage standard"], "raweb-4-1": ["1", "Usage standard"], "raweb-4-2": ["1", "Usage standard"], "raweb-4-3": ["1", "Usage standard"], "raweb-4-4": ["1", "Usage standard"], "raweb-4-8": ["1", "Usage standard"], "raweb-4-9": ["1", "Usage standard"], "raweb-4-10": ["1", "Usage standard"], "raweb-4-11": ["4", "Navigation au clavier"], "raweb-5-6": ["2", "Code et outils"], "raweb-5-7": ["2", "Code et outils"], "raweb-6-1": ["3a", "Lecteur d'écran"], "raweb-6-2": ["3a", "Lecteur d'écran"], "raweb-7-3": ["4", "Navigation au clavier"], "raweb-8-2": ["2", "Code et outils"], "raweb-8-3": ["2", "Code et outils"], "raweb-8-4": ["2", "Code et outils"], "raweb-8-5": ["2", "Code et outils"], "raweb-8-6": ["3a", "Lecteur d'écran"], "raweb-8-7": ["3a", "Lecteur d'écran"], "raweb-8-8": ["2", "Code et outils"], "raweb-9-1": ["3a", "Lecteur d'écran"], "raweb-9-2": ["2", "Code et outils"], "raweb-10-7": ["4", "Navigation au clavier"], "raweb-10-8": ["3a", "Lecteur d'écran"], "raweb-10-9": ["1", "Usage standard"], "raweb-10-10": ["3a", "Lecteur d'écran"], "raweb-10-14": ["4", "Navigation au clavier"], "raweb-11-1": ["3b", "Lecteur d'écran"], "raweb-11-2": ["3b", "Lecteur d'écran"], "raweb-11-5": ["3b", "Lecteur d'écran"], "raweb-11-6": ["3b", "Lecteur d'écran"], "raweb-11-7": ["3b", "Lecteur d'écran"], "raweb-11-9": ["3b", "Lecteur d'écran"], "raweb-11-10": ["3b", "Lecteur d'écran"], "raweb-12-6": ["3a", "Lecteur d'écran"], "raweb-12-7": ["4", "Navigation au clavier"], "raweb-12-8": ["4", "Navigation au clavier"], "raweb-12-9": ["4", "Navigation au clavier"], "raweb-12-11": ["4", "Navigation au clavier"], "raweb-13-1": ["1", "Usage standard"], "raweb-13-7": ["1", "Usage standard"], "raweb-13-8": ["1", "Usage standard"], "raweb-13-11": ["1", "Usage standard"], "bp1": ["1", "Usage standard"], "bp2": ["4", "Navigation au clavier"], "bp3": ["4", "Navigation au clavier"]};
   var ETAPES_ORDRE = ["1 · Usage standard", "2 · Code et outils", "3 · Lecteur d'écran", "4 · Navigation au clavier"];
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
@@ -1245,7 +1257,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
   var HEURISTIQUES = [
     {id:'h1', texte:"L'utilisateur comprend-il à tout moment où il se trouve dans le parcours ?"},
-    {id:'h2', texte:"Le vocabulaire employé est-il cohérent d'une page à l'autre ?"},
+    {id:'h2', texte:"Le vocabulaire employé est-il cohérent d'un écran à l'autre ?"},
     {id:'h3', texte:"Les messages d'erreur permettent-ils de comprendre et corriger le problème ?"},
     {id:'h4', texte:"Peut-on revenir en arrière sans perdre sa progression ?"},
     {id:'h5', texte:"Les actions importantes sont-elles reconnaissables au premier coup d'œil ?"},
@@ -1272,15 +1284,15 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   //   seul) et flow (POUR/UX seul), les 3 types d'audit couvrent chacune des combinaisons possibles sans qu'aucun
   //   ne demande de choix d'approche à la création.
   var SCENARIOS = [
-    {id:'sip-rapide', label:'Audit rapide RAWeb', desc:"Un échantillon de 3 pages, comme l'audit simplifié du SIP : la page d'accueil, une page avec un formulaire, une page au contenu particulier. Critères de l'audit simplifié du SIP uniquement, pas d'évaluation heuristique sur ce type d'audit.", ecranHint:"Un échantillon de 3 pages au moins est nécessaire, comme dans l'audit simplifié du SIP : la page d'accueil, une page avec un formulaire, une page au contenu particulier (tableau, vidéo, carte...)."},
-    {id:'flow', label:"Scénario", desc:"Un parcours complexe en plusieurs étapes (souscription, achat d'un produit...) : référentiel officiel (RAWeb) ET évaluation POUR/WCAG + heuristiques UX, toujours les deux. Chaque étape du scénario est une page à nommer.", ecranHint:"Nomme chaque étape ou page du scénario, dans l'ordre (ex. Choix de l'offre, Informations personnelles, Paiement, Confirmation). Au moins une étape est nécessaire."},
-    {id:'fonctionnalite', label:'Fonctionnalité primaire', desc:"Une fonction globale du site, pas un cas particulier (menu principal, lien d'évitement, fil d'Ariane, fenêtre modale, formulaire, notification...) : référentiel officiel (RAWeb) ET évaluation POUR/WCAG + heuristiques UX, toujours les deux. Une seule page représentative suffit souvent.", ecranHint:"Une seule page suffit souvent (le composant est identique partout), laisse le champ vide, il reprendra le nom de l'onglet. N'ajoute une seconde page que si tu soupçonnes une incohérence."}
+    {id:'sip-rapide', label:'Audit rapide RAWeb', desc:"Un échantillon de 3 écrans (pages du site), comme l'audit simplifié du SIP : l'accueil, un écran avec un formulaire, un écran au contenu particulier. Critères de l'audit simplifié du SIP uniquement, pas d'évaluation heuristique sur ce type d'audit.", ecranHint:"Un échantillon de 3 écrans au moins est nécessaire, comme dans l'audit simplifié du SIP : l'accueil, un écran avec un formulaire, un écran au contenu particulier (tableau, vidéo, carte...)."},
+    {id:'flow', label:"Scénario", desc:"Un parcours complexe en plusieurs étapes (souscription, achat d'un produit...) : référentiel officiel (RAWeb) ET évaluation POUR/WCAG + heuristiques UX, toujours les deux. Chaque étape du scénario est un écran à nommer.", ecranHint:"Nomme chaque étape ou écran du scénario, dans l'ordre (ex. Choix de l'offre, Informations personnelles, Paiement, Confirmation). Au moins une étape est nécessaire."},
+    {id:'fonctionnalite', label:'Fonctionnalité primaire', desc:"Une fonction globale du site, pas un cas particulier (menu principal, lien d'évitement, fil d'Ariane, fenêtre modale, formulaire, notification...) : référentiel officiel (RAWeb) ET évaluation POUR/WCAG + heuristiques UX, toujours les deux. Un seul écran représentatif suffit souvent.", ecranHint:"Un seul écran suffit souvent (le composant est identique partout), laisse le champ vide, il reprendra le nom de l'onglet. N'ajoute un second écran que si tu soupçonnes une incohérence."}
   ];
   function getScenario(id){ return SCENARIOS.filter(function(s){return s.id===id;})[0] || SCENARIOS[0]; }
   // Nom fixe et non éditable de l'onglet « Audit rapide RAWeb » (un seul par audit) : garantit un taux
   // d'échantillon comparable d'un audit à l'autre, sans dépendre d'une saisie ou d'une suggestion.
   var NOM_SIP_RAPIDE = 'Audit rapide RAWeb';
-  // Nombre minimal de pages pour ce même type d'audit : un échantillon trop petit ne serait pas comparable d'un audit à l'autre.
+  // Nombre minimal d'écrans pour ce même type d'audit : un échantillon trop petit ne serait pas comparable d'un audit à l'autre.
   var SIP_RAPIDE_MIN_ECRANS = 3;
 
   // Modèles de départ, proposés uniquement pour le type d'audit "Fonctionnalité primaire", juste un pré-remplissage
@@ -1735,12 +1747,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // volontairement court (6 points), pour une lecture en moins d'une minute.
   function renderAideContent(){
     var points = [
-      {t:"Qu'est-ce que RUXAWEB ?", d:"Outil de pré-diagnostic accessibilité web, basé sur le référentiel RAWeb 1.1. Son audit rapide reprend les critères et la démarche de l'audit simplifié du SIP (méthode de contrôle simplifié v1.2.1 : 52 critères, un échantillon de 3 pages). Le critère 13.11, absent de cette sélection, est proposé en plus, à titre indicatif et hors taux. Ce n'est pas un audit de conformité : le taux est un repère de pré-diagnostic, pas un résultat officiel du SIP."},
-      {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAWeb. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAWeb (échantillon de 3 pages), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet. Les pages d'un onglet se renomment, s'ajoutent et se suppriment en cours d'audit (panneau « Pages testées ») ; au-delà de 6 pages, la liste des critères affiche une page à la fois, choisie en tête de liste."},
+      {t:"Qu'est-ce que RUXAWEB ?", d:"Outil de pré-diagnostic accessibilité web, basé sur le référentiel RAWeb 1.1. Son audit rapide reprend les critères et la démarche de l'audit simplifié du SIP (méthode de contrôle simplifié v1.2.1 : 52 critères, un échantillon de 3 écrans). Dans RUXAWEB, un écran est une page du site, ou un état de page (fenêtre modale ouverte, étape d'un formulaire). Le critère 13.11, absent de cette sélection, est proposé en plus, à titre indicatif et hors taux. Ce n'est pas un audit de conformité : le taux est un repère de pré-diagnostic, pas un résultat officiel du SIP."},
+      {t:"Le modèle : des onglets", d:"Chaque onglet = un objet nommé, testé avec le référentiel RAWeb. Pour le définir, pars d'un des 3 types d'audit : Audit rapide RAWeb (échantillon de 3 écrans), Scénario (parcours complexe en plusieurs étapes : souscription, achat d'un produit...), Fonctionnalité primaire (fonction globale : navigation, formulaire, notification...). Chaque onglet garde son propre taux, jamais mélangé avec celui d'un autre onglet. Les écrans d'un onglet se renomment, s'ajoutent et se suppriment en cours d'audit (panneau « Écrans testés ») ; au-delà de 6 écrans, la liste des critères affiche un écran à la fois, choisi dans une barre qui reste visible pendant le défilement."},
       {t:"Deux approches, selon le type d'audit", d:"Le référentiel officiel (RAWeb) est toujours actif : c'est lui qui donne le taux de conformité. Pour les types Scénario et Fonctionnalité primaire, l'évaluation POUR/WCAG et heuristiques UX s'y ajoute automatiquement, sans rien à cocher ; l'Audit rapide RAWeb n'a que le RAWeb. Le score UX n'entre jamais dans le taux."},
-      {t:"4 statuts, une règle simple", d:"C (Conforme), NC (Non Conforme), NT (Non Testé) et NA (Non Applicable), par critère et par page. Un critère n'est validé que s'il l'est sur toutes les pages de l'onglet : une seule page en échec invalide le critère pour l'ensemble (règle du pire cas, comme le RAWeb). Les critères « si présent » dépendent d'un contenu (CAPTCHA, image complexe, média, tableau, cadre, formulaire, autre langue) : ils ne s'affichent que pour les pages qui le contiennent, ailleurs ils comptent comme NA."},
+      {t:"4 statuts, une règle simple", d:"C (Conforme), NC (Non Conforme), NT (Non Testé) et NA (Non Applicable), par critère et par écran. Un critère n'est validé que s'il l'est sur tous les écrans de l'onglet : un seul écran en échec invalide le critère pour l'ensemble (règle du pire cas, comme le RAWeb). Les critères « si présent » dépendent d'un contenu (CAPTCHA, image complexe, média, tableau, cadre, formulaire, autre langue) : ils ne s'affichent que pour les écrans qui le contiennent, ailleurs ils comptent comme NA."},
       {t:"Le bloc heuristique a son propre score, jamais mélangé au taux", d:"Les questions POUR/WCAG/UX se répondent en Succès, Difficile, Échec ou N/A (avec un commentaire pour expliquer un Difficile ou un Échec), pour les types Scénario et Fonctionnalité primaire. Elles donnent un Score POUR/UX séparé, affiché à côté du taux de conformité RAWeb mais jamais fondu avec lui : le taux ne dépend que des critères RAWeb."},
-      {t:"La gravité est indicative, pas normative", d:"Chaque critère porte une gravité par défaut : Critique (bloque l'accès à une fonction ou un contenu essentiel), Sérieux (barrière forte, qui peut bloquer selon le contexte), Modéré (difficulté réelle, avec un contournement), Mineur (gêne). Ni le RAWeb ni WCAG 2.x ne définissent de gravité : cette échelle est propre à RUXAL, inspirée de l'échelle d'impact de Deque (axe-core). Elle sert à trier les non-conformités et à fixer la priorité des tickets Jira ; l'impact réel dépend de la page et de l'élément concernés. Le brouillon WCAG 3 du W3C étudie des étiquettes de gravité (dommage physique, risque, barrière, friction) : il n'est pas stable et n'est pas utilisé ici."}
+      {t:"La gravité est indicative, pas normative", d:"Chaque critère porte une gravité par défaut : Critique (bloque l'accès à une fonction ou un contenu essentiel), Sérieux (barrière forte, qui peut bloquer selon le contexte), Modéré (difficulté réelle, avec un contournement), Mineur (gêne). Ni le RAWeb ni WCAG 2.x ne définissent de gravité : cette échelle est propre à RUXAL, inspirée de l'échelle d'impact de Deque (axe-core). Elle sert à trier les non-conformités et à fixer la priorité des tickets Jira ; l'impact réel dépend de l'écran et de l'élément concernés. Le brouillon WCAG 3 du W3C étudie des étiquettes de gravité (dommage physique, risque, barrière, friction) : il n'est pas stable et n'est pas utilisé ici."}
     ];
     var html = '<div class="aide-list">';
     points.forEach(function(p, i){
@@ -1755,12 +1767,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // critère porte son étape principale (champ etape des données).
   function renderProtocole(){
     var P = [
-      "Un audit rapide se fait en <b>4 étapes</b>, toujours dans cet ordre. Chaque critère de l'outil est rattaché à l'étape où on le constate le plus facilement. Tu peux répondre aux critères au fil des étapes, sans attendre la fin. Parcours les mêmes pages à chaque étape. Si un problème apparaît à une étape, note-le sur le critère concerné et continue.",
-      "<b>1. Usage standard</b> : navigateur sans réglage particulier, à la souris (ou au doigt sur mobile). Parcours les pages comme un utilisateur ordinaire : images, couleurs et contrastes, médias, animations, limites de temps. À constater ici : information portée par la seule couleur ou par la forme, contrastes (avec Colour Contrast Analyser), sous-titres et transcriptions, sons et contenus en mouvement, flashs, CAPTCHA.",
+      "Un audit rapide se fait en <b>4 étapes</b>, toujours dans cet ordre. Chaque critère de l'outil est rattaché à l'étape où on le constate le plus facilement. Tu peux répondre aux critères au fil des étapes, sans attendre la fin. Parcours les mêmes écrans à chaque étape. Si un problème apparaît à une étape, note-le sur le critère concerné et continue.",
+      "<b>1. Usage standard</b> : navigateur sans réglage particulier, à la souris (ou au doigt sur mobile). Parcours les écrans comme un utilisateur ordinaire : images, couleurs et contrastes, médias, animations, limites de temps. À constater ici : information portée par la seule couleur ou par la forme, contrastes (avec Colour Contrast Analyser), sous-titres et transcriptions, sons et contenus en mouvement, flashs, CAPTCHA.",
       "<b>2. Code et outils</b> : lance l'extension Axe (gratuite) et garde seulement les règles citées par les critères ; puis ouvre l'inspecteur du navigateur et son arbre d'accessibilité. À constater ici : alternatives des images, titres des cadres, langue de la page, titre de la page, code ARIA, en-têtes des tableaux, zones de la page. Axe ne suffit jamais seul : il trouve des défauts, il ne prouve pas la conformité.",
       "<b>3. Lecteur d'écran</b> : NVDA avec Firefox ou Chrome (Windows), ou VoiceOver avec Safari (macOS) ; sur mobile, TalkBack avec Chrome ou VoiceOver avec Safari. 3a. Contenus et structure : chaque information est-elle annoncée, avec la bonne langue ? Les listes des titres, des liens et des repères permettent-elles de comprendre la page ? 3b. Formulaires : chaque champ, groupe de champs et bouton a-t-il un nom pertinent ? Les champs obligatoires, les formats et les erreurs sont-ils annoncés ?",
-      "<b>4. Navigation au clavier</b> : débranche la souris et parcours chaque page avec Tab, Maj+Tab, Entrée, Espace, les flèches et Échap. Contrôle : un lien d'évitement en début de page, tout est atteignable et activable (menus, médias, composants scriptés), le focus est toujours visible, l'ordre est logique, les contenus qui apparaissent au survol apparaissent aussi au clavier, aucun piège. La commande vocale est un complément utile, optionnel en audit rapide.",
-      "<b>Bon à savoir</b> : un critère se constate parfois à plusieurs étapes (ex. 6.1 : un lien vague se repère à l'œil comme au lecteur d'écran) : l'outil indique l'étape principale, mais un doute à une autre étape compte. En cas de résultats différents selon l'étape, retiens le pire (NC l'emporte sur C). Les critères « si présent » ne se testent que si le contenu existe dans la page : sinon NA. L'environnement de test du RAWeb 1.1 fait foi pour les combinaisons navigateur et lecteur d'écran.",
+      "<b>4. Navigation au clavier</b> : débranche la souris et parcours chaque écran avec Tab, Maj+Tab, Entrée, Espace, les flèches et Échap. Contrôle : un lien d'évitement en début de page, tout est atteignable et activable (menus, médias, composants scriptés), le focus est toujours visible, l'ordre est logique, les contenus qui apparaissent au survol apparaissent aussi au clavier, aucun piège. La commande vocale est un complément utile, optionnel en audit rapide.",
+      "<b>Bon à savoir</b> : un critère se constate parfois à plusieurs étapes (ex. 6.1 : un lien vague se repère à l'œil comme au lecteur d'écran) : l'outil indique l'étape principale, mais un doute à une autre étape compte. En cas de résultats différents selon l'étape, retiens le pire (NC l'emporte sur C). Les critères « si présent » ne se testent que si le contenu existe dans l'écran : sinon NA. L'environnement de test du RAWeb 1.1 fait foi pour les combinaisons navigateur et lecteur d'écran.",
       "<span class=\"muted\">Séquence construite par RUXAWEB à partir de l'environnement de test et de la méthodologie du RAWeb 1.1 et de la méthode de contrôle simplifié du SIP ; ce n'est pas un protocole officiel. Dans un onglet RAWeb, la vue « Par étape de test » range les critères selon ces étapes.</span>"
     ];
     return '<h3 style="margin:18px 0 8px;">Protocole de test</h3><div class="protocole">' + P.map(function(t){ return '<p>'+t+'</p>'; }).join('') + '</div>';
@@ -1809,18 +1821,18 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   function renderAideNotation(){
     return '<h3 id="aide-notation" tabindex="-1" style="margin:18px 0 6px;">Noter les éléments</h3>' + boutonRetourChamp() +
       '<p class="muted" style="margin:0 0 8px;">Une notation simple pour désigner ce qui est en cause : <b>crochets = élément, flèche = parcours</b>. Elle sert dans le champ « Élément concerné » et dans tes commentaires ; l\'export Jira la reprend telle quelle.</p>' +
-      '<table class="aide-table"><caption class="sr-only">Notation des pages, éléments et parcours</caption><thead><tr><th scope="col">Ce que tu désignes</th><th scope="col">Notation</th><th scope="col">Exemple</th></tr></thead><tbody>' +
-      [['Une page','Page','Produits'],['Un élément','Page[type]','Produits[list]'],['Un élément avec son libellé','Page[type "Libellé"]','Accueil[button "Connexion"]'],['Un élément avec un état','Page[type "Libellé"] (état)','Accueil[button "Valider"] (disabled)'],['Un élément commun à toutes les pages','[type "Libellé"]','[link "Aller au contenu"]'],['Un parcours','Page -> Page','Accueil -> Produits -> Détail produit']].map(function(r){
+      '<table class="aide-table"><caption class="sr-only">Notation des écrans, éléments et parcours</caption><thead><tr><th scope="col">Ce que tu désignes</th><th scope="col">Notation</th><th scope="col">Exemple</th></tr></thead><tbody>' +
+      [['Un écran','Écran','Produits'],['Un élément','Écran[type]','Produits[list]'],['Un élément avec son libellé','Écran[type "Libellé"]','Accueil[button "Connexion"]'],['Un élément avec un état','Écran[type "Libellé"] (état)','Accueil[button "Valider"] (disabled)'],['Un élément commun à tous les écrans','[type "Libellé"]','[link "Aller au contenu"]'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
         return '<tr><th scope="row">'+escapeHtml(r[0])+'</th><td><code>'+escapeHtml(r[1])+'</code></td><td><code>'+escapeHtml(r[2])+'</code></td></tr>';
       }).join('') + '</tbody></table>' +
       '<ul class="aide-liste">' +
-        '<li>Les crochets servent seulement à l\'élément, collés au nom de la page. Jamais autour de la page. Un élément présent sur toutes les pages (en-tête, menu, pied de page) se note sans page devant.</li>' +
+        '<li>Les crochets servent seulement à l\'élément, collés au nom de l\'écran. Jamais autour de l\'écran. Un élément présent sur tous les écrans (en-tête, menu, pied de page) se note sans écran devant.</li>' +
         '<li>Types courants : header, nav, button, link, field, list, image, table, iframe, tab, checkbox, dialog, card.</li>' +
         '<li>L\'état est un mot court entre parenthèses (disabled, selected, expanded, error, focused). Plusieurs états : <code>(disabled, focused)</code>.</li>' +
-        '<li>Page ou élément inconnu : des chevrons, par exemple <code>&lt;Page&gt;[card "Consommation"]</code>.</li>' +
-        '<li>Une variante de page ou une condition ne se note pas : dis-la en une phrase dans le commentaire.</li>' +
+        '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt;[card "Consommation"]</code>.</li>' +
+        '<li>Une variante d\'écran ou une condition ne se note pas : dis-la en une phrase dans le commentaire.</li>' +
         '<li>N\'utilise pas le caractère | (il sert de séparateur dans le titre du ticket).</li>' +
-        '<li>Types et états en anglais, noms de pages et libellés comme sur le site.</li>' +
+        '<li>Types et états en anglais, noms d\'écrans et libellés comme sur le site.</li>' +
       '</ul>' + boutonRetourChamp();
   }
 
@@ -1839,7 +1851,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       renderProtocole() +
       renderReferences() +
       '<h3 style="margin:18px 0 6px;">Corrections et suivi</h3>' +
-      '<p class="muted" style="margin:0 0 4px;">Le menu Exporter > « Tickets Jira (CSV) » produit un CSV directement importable dans Jira : un ticket par critère non conforme (thème, pages concernées, constat, impact, comportement attendu). Choisissez le support testé (Ordinateur ou Mobile) avant d\'exporter : le bloc « Recommendations » et l\'étiquette des tickets en tiennent compte. L\'outil retient les critères déjà exportés (pour tout l\'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira : tout réexporter » les reprend tous, par exemple si l\'import dans Jira a échoué. Limite : un critère déjà exporté qui devient non conforme sur une autre page n\'est pas réexporté automatiquement ; utilise alors « tout réexporter » ou complète le ticket existant à la main. Le bouton « Non conformes » n\'affiche que les critères non conformes. Sauvegardez l\'audit pour le reprendre plus tard.</p>' +
+      '<p class="muted" style="margin:0 0 4px;">Le menu Exporter > « Tickets Jira (CSV) » produit un CSV directement importable dans Jira : un ticket par critère non conforme (thème, écrans concernés, constat, impact, comportement attendu). Choisissez le support testé (Ordinateur ou Mobile) avant d\'exporter : le bloc « Recommendations » et l\'étiquette des tickets en tiennent compte. L\'outil retient les critères déjà exportés (pour tout l\'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira : tout réexporter » les reprend tous, par exemple si l\'import dans Jira a échoué. Limite : un critère déjà exporté qui devient non conforme sur un autre écran n\'est pas réexporté automatiquement ; utilise alors « tout réexporter » ou complète le ticket existant à la main. Le bouton « Non conformes » n\'affiche que les critères non conformes. Sauvegardez l\'audit pour le reprendre plus tard.</p>' +
       renderAideNotation() +
       '<p class="muted" style="margin-top:14px; font-size:12px;">RUXAWEB, version '+escapeHtml(APP_VERSION)+'</p>' +
       // Zone sensible (bouton de réinitialisation + son texte + le séparateur) : conditionnée uniquement à la
@@ -1868,7 +1880,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var sipRapideExiste = state.onglets.some(function(o){ return o.scenario === 'sip-rapide'; });
     $main.innerHTML = '<div class="panel">' +
       '<h2 style="margin-bottom:4px;">Nouvel onglet</h2>' +
-      '<div class="banner-example">Avant de choisir : as-tu déjà fait un tour d\'exploration libre de la page ou du parcours, sans grille ? Si non, prends 5 minutes avant de continuer : ça aide à repérer les pages ou flows qui valent la peine d\'être testés.</div>' +
+      '<div class="banner-example">Avant de choisir : as-tu déjà fait un tour d\'exploration libre de l\'écran ou du parcours, sans grille ? Si non, prends 5 minutes avant de continuer : ça aide à repérer les écrans ou flows qui valent la peine d\'être testés.</div>' +
       '<p class="muted" style="margin-bottom:4px;">Quel est ton besoin ?</p>' +
       '<div class="scenario-cards">' +
         SCENARIOS.map(function(s){
@@ -1943,7 +1955,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         '<div class="card-name">'+escapeHtml(o.nom)+'</div>' +
         scoresHtml +
         '<div class="card-meta">' +
-          (isSip ? '<span>'+escapeHtml(scenarioLabel(o.scenario))+' &middot; '+o.ecrans.length+' page(s)</span>' : '<span>'+escapeHtml(scenarioLabel(o.scenario))+'</span>') +
+          (isSip ? '<span>'+escapeHtml(scenarioLabel(o.scenario))+' &middot; '+o.ecrans.length+' écran(s)</span>' : '<span>'+escapeHtml(scenarioLabel(o.scenario))+'</span>') +
           (bothCard ? '<span>Évaluation POUR/WCAG + heuristiques UX incluse</span>' : '') +
         '</div>' +
       '</div>';
@@ -2000,10 +2012,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     html += '</label>';
 
     if(showEcrans){
-      html += '<label class="field" id="f-ecrans-label"><span>'+(scenario.id==='flow' ? 'Étape(s) du scénario' : 'Page(s) de l\'onglet')+((scenario.id==='sip-rapide' || scenario.id==='flow') ? ' <span class="required-mark">*</span>' : '')+'</span>' +
+      html += '<label class="field" id="f-ecrans-label"><span>'+(scenario.id==='flow' ? 'Étape(s) du scénario' : 'Écran(s) de l\'onglet')+((scenario.id==='sip-rapide' || scenario.id==='flow') ? ' <span class="required-mark">*</span>' : '')+'</span>' +
           '<span class="muted" style="font-weight:500;">'+escapeHtml(scenario.ecranHint)+'</span>' +
           '<div class="ecran-list" id="f-ecrans"></div>' +
-          '<button type="button" id="f-add-ecran" class="btn btn-sm btn-ghost" data-action="add-ecran-field" style="align-self:flex-start;">'+(scenario.id==='flow' ? '+ Ajouter une étape' : '+ Ajouter une page')+'</button>' +
+          '<button type="button" id="f-add-ecran" class="btn btn-sm btn-ghost" data-action="add-ecran-field" style="align-self:flex-start;">'+(scenario.id==='flow' ? '+ Ajouter une étape' : '+ Ajouter un écran')+'</button>' +
         '</label>';
     }
 
@@ -2038,8 +2050,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     // personne), les champs de recherche ne reçoivent pas ce type de suggestion. L'apparence est neutralisée
     // par CSS pour rester identique.
     var rowName = 'ecran-nom-'+AUTOFILL_GUARD+'-'+(ecranRowSeq++);
-    row.innerHTML = '<input type="search" class="f-ecran-nom" name="'+rowName+'" autocomplete="off" placeholder="'+(state.scenarioChoisi==='flow' ? 'Nom de l\'étape (ex. Paiement)' : 'Nom de la page (ex. Accueil)')+'">' +
-      '<button type="button" class="btn btn-sm btn-ghost" data-action="remove-ecran-field" aria-label="Retirer cette page">&times;</button>';
+    row.innerHTML = '<input type="search" class="f-ecran-nom" name="'+rowName+'" autocomplete="off" placeholder="'+(state.scenarioChoisi==='flow' ? 'Nom de l\'étape (ex. Paiement)' : 'Nom de l\'écran (ex. Accueil)')+'">' +
+      '<button type="button" class="btn btn-sm btn-ghost" data-action="remove-ecran-field" aria-label="Retirer cet écran">&times;</button>';
     wrap.appendChild(row);
     row.querySelector('[data-action=remove-ecran-field]').addEventListener('click', function(){
       if(wrap.children.length>1) wrap.removeChild(row);
@@ -2127,8 +2139,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var nbNC = CRITERES.filter(function(c){ return statutCritere(o, c.id).display==='NC'; }).length;
       if(nbNC===0 && state.filtreRetest){ state.filtreRetest = false; saveState(); } // plus rien à filtrer : on libère la liste
       html += '<div class="retest-filter"><button type="button" class="btn btn-ghost btn-sm'+(state.filtreRetest?' active':'')+'" data-action="toggle-retest" aria-pressed="'+(state.filtreRetest?'true':'false')+'"'+(nbNC===0?' disabled':'')+' title="N\'afficher que les critères non conformes">Non conformes ('+nbNC+')</button></div>';
-      html += renderSelecteurEcran(o);
-      html += renderThemeShortcuts(o);
+      if(modeUnEcran(o)){
+        html += aideSelecteurEcran(o);
+        html += '<div class="barre-audit">' + renderSelecteurEcran(o) + renderThemeShortcuts(o) + '</div>';
+      } else {
+        html += renderThemeShortcuts(o);
+      }
       html += renderThemeSommaire(o);
       html += renderListeCriteres(o);
 
@@ -2227,7 +2243,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           '</div>' +
         '</div>' +
       '</div>';
-      html += '<p class="muted" style="margin-bottom:14px;">'+taux.C+' critère(s) RAWeb conforme(s) sur '+taux.total+' applicable(s) &middot; Score POUR/WCAG et heuristiques UX &middot; '+scenarioLabel(o.scenario)+' &middot; '+o.ecrans.length+' page(s).</p>';
+      html += '<p class="muted" style="margin-bottom:14px;">'+taux.C+' critère(s) RAWeb conforme(s) sur '+taux.total+' applicable(s) &middot; Score POUR/WCAG et heuristiques UX &middot; '+scenarioLabel(o.scenario)+' &middot; '+o.ecrans.length+' écran(s).</p>';
       html += '<div class="audit-type-tabs">' +
         '<button type="button" class="audit-type-tab'+(vueAuditRecap==='ref'?' active':'')+'" data-action="set-vue-audit" data-vue="ref">RAWeb</button>' +
         '<button type="button" class="audit-type-tab'+(vueAuditRecap==='pourux'?' active':'')+'" data-action="set-vue-audit" data-vue="pourux">UX·POUR</button>' +
@@ -2240,7 +2256,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
              (headlineAppreciation ? '<span class="pill '+pillClass+'">'+headlineAppreciation+'</span>' : ''))) +
       '</div>';
       if(isSip){
-        html += '<p class="muted" style="margin-bottom:18px;">'+taux.C+' critère(s) conforme(s) sur '+taux.total+' applicable(s) &middot; '+scenarioLabel(o.scenario)+' &middot; '+o.ecrans.length+' page(s).</p>';
+        html += '<p class="muted" style="margin-bottom:18px;">'+taux.C+' critère(s) conforme(s) sur '+taux.total+' applicable(s) &middot; '+scenarioLabel(o.scenario)+' &middot; '+o.ecrans.length+' écran(s).</p>';
       } else {
         html += '<p class="muted" style="margin-bottom:18px;">Score POUR/WCAG et heuristiques UX &middot; '+scenarioLabel(o.scenario)+'.</p>';
       }
@@ -2360,7 +2376,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
     var ecransAnnotes = o.ecrans.filter(function(e){ return e.commentaire; });
     if(ecransAnnotes.length){
-      html += '<div class="theme-group-title" style="margin-top:18px;">Pages<span class="line"></span></div>';
+      html += '<div class="theme-group-title" style="margin-top:18px;">Écrans<span class="line"></span></div>';
       ecransAnnotes.forEach(function(e){
         html += '<div class="ecran-note-card">' +
           '<div class="ecran-note-name">'+escapeHtml(e.nom)+'</div>' +
@@ -2423,11 +2439,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
             '<span class="theme-group-chevron">'+ICON_CHEVRON+'</span>' +
             '<span class="theme-group-name">'+escapeHtml(theme)+'</span>' +
           '</button>' +
-          (themeEntierementNA(o, theme) ? '<span class="theme-na-note">non applicable sur toutes les pages</span>' : '') +
+          (themeEntierementNA(o, theme) ? '<span class="theme-na-note">non applicable sur tous les écrans</span>' : '') +
           '</span>' +
           '<span class="line"></span>' +
-          '<div class="statut-toggle theme-bulk-toggle" role="group" aria-label="'+escapeHtml(theme)+' : statut pour tous les critères et toutes les pages">' +
-            STATUTS.map(function(s){ return '<button type="button" class="statut-btn" data-action="set-statut-theme" data-theme="'+escapeHtml(theme)+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" title="Régler '+s+' pour tous les critères de ce thème, sur toutes les pages">'+s+'</button>'; }).join('') +
+          '<div class="statut-toggle theme-bulk-toggle" role="group" aria-label="'+escapeHtml(theme)+' : statut pour tous les critères et tous les écrans">' +
+            STATUTS.map(function(s){ return '<button type="button" class="statut-btn" data-action="set-statut-theme" data-theme="'+escapeHtml(theme)+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" title="Régler '+s+' pour tous les critères de ce thème, sur tous les écrans">'+s+'</button>'; }).join('') +
           '</div>' +
         '</div>';
       if(open){
@@ -2470,7 +2486,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // le statut consolidé de l'onglet (règle du pire cas). Les données ne changent pas, seul l'affichage s'adapte.
   var SEUIL_GRILLE = 6;
   var confirmDeleteEcranId = null; // suppression d'un écran « armée » (premier clic), jamais persistée
-  var ecransPanelOuvert = {};      // ongletId -> panneau « Pages testées » déplié (survit aux rendus, jamais persisté)
+  var ecransPanelOuvert = {};      // ongletId -> panneau « Écrans testés » déplié (survit aux rendus, jamais persisté)
   var focusApresRendu = null;      // id de l'élément à focaliser après le prochain rendu
   function modeUnEcran(o){ return o.ecrans.length > SEUIL_GRILLE; }
   function ecranActif(o){
@@ -2484,19 +2500,28 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var s = statutCritere(o, c.id).display, n = {NC:0, NT:0, C:0, NA:0};
     o.ecrans.forEach(function(e){ n[getResultat(o, e.id, c.id)]++; });
     var detail = ['NC','NT','C','NA'].filter(function(k){ return n[k]; }).map(function(k){ return n[k]+' '+k; }).join(' · ');
-    return '<div class="statut-consolide" title="Statut du critère sur les '+o.ecrans.length+' pages de l\'onglet (règle du pire cas)">' +
+    return '<div class="statut-consolide" title="Statut du critère sur les '+o.ecrans.length+' écrans de l\'onglet (règle du pire cas)">' +
       '<span class="statut-consolide-lbl">Onglet</span><span class="statut-consolide-val statut-'+s+'">'+s+'</span>' +
       '<span class="statut-consolide-detail">'+detail+'</span></div>';
   }
   function renderSelecteurEcran(o){
     if(!modeUnEcran(o)) return '';
-    var act = ecranActif(o);
-    return '<div class="ecran-selecteur" role="group" aria-labelledby="ecran-sel-lbl-'+o.id+'"><span class="vue-switch-lbl" id="ecran-sel-lbl-'+o.id+'">Page affichée</span>' +
+    var act = ecranActif(o), iAct = o.ecrans.indexOf(act);
+    var nav = function(sens, lib, txt){
+      var cible = o.ecrans[iAct + sens];
+      return '<button type="button" class="ecran-nav" data-action="set-ecran-actif" data-nav="'+(sens < 0 ? 'prec' : 'suiv')+'" data-ecran="'+(cible ? cible.id : '')+'"'+(cible ? ' aria-label="'+lib+' : '+escapeHtml(cible.nom)+'" title="'+lib+' : '+escapeHtml(cible.nom)+'"' : ' disabled aria-label="'+lib+'"')+'>'+txt+'</button>';
+    };
+    return '<div class="ecran-selecteur" role="group" aria-labelledby="ecran-sel-lbl-'+o.id+'"><span class="vue-switch-lbl" id="ecran-sel-lbl-'+o.id+'">Écran affiché</span>' +
+      nav(-1, 'Écran précédent', '&lsaquo;') +
       o.ecrans.map(function(e){
         var on = e.id === act.id, nb = nbNcEcran(o, e);
         return '<button type="button" class="preset-chip'+(on?' active':'')+'" data-action="set-ecran-actif" data-ecran="'+e.id+'" aria-pressed="'+(on?'true':'false')+'">'+escapeHtml(e.nom)+(nb ? ' <span class="ecran-nb-nc">'+nb+' NC</span>' : '')+'</button>';
       }).join('') +
-      '<span class="muted ecran-selecteur-aide">Plus de '+SEUIL_GRILLE+' pages : la liste affiche une page à la fois. La colonne « Toutes » règle un critère sur toutes les pages d\'un coup, et « Onglet » donne son statut d\'ensemble.</span></div>';
+      nav(1, 'Écran suivant', '&rsaquo;') + '</div>';
+  }
+  function aideSelecteurEcran(o){
+    if(!modeUnEcran(o)) return '';
+    return '<p class="muted ecran-selecteur-aide">Plus de '+SEUIL_GRILLE+' écrans : la liste affiche un écran à la fois, choisi dans la barre ci-dessous, qui reste visible pendant le défilement. La colonne « Tous » règle un critère sur tous les écrans d\'un coup, et « Onglet » donne son statut d\'ensemble.</p>';
   }
   function erreurNomEcran(o, nom, saufId){
     if(!nom) return 'Le nom est obligatoire.';
@@ -2505,20 +2530,20 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   }
   function renderEcransPanel(o){
     var min = minEcrans(o);
-    var html = '<details class="presence-panel ecrans-panel"'+(ecransPanelOuvert[o.id] ? ' open' : '')+'><summary>Pages testées <span class="muted">('+o.ecrans.length+')</span></summary>' +
-      '<p class="muted presence-aide">Renomme, ajoute ou supprime des pages en cours d\'audit. Un ajout ou une suppression repasse l\'onglet en brouillon ; une nouvelle page part en NT sur tous les critères.'+(min > 1 ? ' Minimum '+min+' pages pour ce type d\'audit.' : '')+'</p><ul class="ecrans-liste">';
+    var html = '<details class="presence-panel ecrans-panel"'+(ecransPanelOuvert[o.id] ? ' open' : '')+'><summary>Écrans testés <span class="muted">('+o.ecrans.length+')</span></summary>' +
+      '<p class="muted presence-aide">Renomme, ajoute ou supprime des écrans en cours d\'audit. Un ajout ou une suppression repasse l\'onglet en brouillon ; un nouvel écran part en NT sur tous les critères.'+(min > 1 ? ' Minimum '+min+' écrans pour ce type d\'audit.' : '')+'</p><ul class="ecrans-liste">';
     o.ecrans.forEach(function(e){
       var armed = confirmDeleteEcranId === e.id, bloque = o.ecrans.length <= min;
       html += '<li class="ecrans-ligne">' +
         '<input type="text" class="ecrans-nom" id="ecran-nom-'+e.id+'" name="ecran-nom-'+e.id+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="rename-ecran" data-ecran="'+e.id+'" value="'+escapeHtml(e.nom)+'" aria-label="Nom : '+escapeHtml(e.nom)+'">' +
         '<span class="muted ecrans-meta">'+nbNcEcran(o, e)+' NC</span>' +
         '<button type="button" class="btn btn-sm btn-danger'+(armed?' armed':'')+'" data-action="delete-ecran" data-ecran="'+e.id+'"' +
-          (bloque ? ' disabled title="Minimum '+min+' pages pour ce type d\'audit"' : '') +
+          (bloque ? ' disabled title="Minimum '+min+' écrans pour ce type d\'audit"' : '') +
           ' aria-label="'+(armed ? 'Confirmer la suppression de '+escapeHtml(e.nom)+' et de ses résultats' : 'Supprimer '+escapeHtml(e.nom))+'">'+(armed ? 'Confirmer la suppression' : 'Supprimer')+'</button></li>';
     });
     html += '</ul><div class="ecrans-ajout">' +
-      '<input type="text" class="ecrans-nom" id="ecran-ajout-'+o.id+'" name="ecran-ajout-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="ecran-ajout-input" placeholder="Nom de la nouvelle page (ex. Plan du site)" aria-label="Nom de la nouvelle page">' +
-      '<button type="button" class="btn btn-sm" data-action="add-ecran-onglet">+ Ajouter une page</button></div></details>';
+      '<input type="text" class="ecrans-nom" id="ecran-ajout-'+o.id+'" name="ecran-ajout-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="ecran-ajout-input" placeholder="Nom du nouvel écran (ex. Plan du site)" aria-label="Nom du nouvel écran">' +
+      '<button type="button" class="btn btn-sm" data-action="add-ecran-onglet">+ Ajouter un écran</button></div></details>';
     return html;
   }
   function ajouterEcran(){
@@ -2543,12 +2568,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var pres = o.presences || {};
     var nb = nbCriteresMasques(o);
     var dSession = DECLENCHEURS.filter(function(d){ return d.id === 'session'; })[0];
-    var html = '<details class="presence-panel" open><summary>Contenu des pages</summary>' +
-      '<p class="muted presence-aide">Active ce que contient chaque page : les critères « si présent » concernés s\'affichent. Ce qui reste désactivé est masqué et compte comme NA.</p>' +
+    var html = '<details class="presence-panel" open><summary>Contenu des écrans</summary>' +
+      '<p class="muted presence-aide">Active ce que contient chaque écran : les critères « si présent » concernés s\'affichent. Ce qui reste désactivé est masqué et compte comme NA.</p>' +
       // Déclencheur global « session » : absent de RUXAWEB (la limite de temps, critère 13.1, est un critère cœur).
       (dSession ? '<div class="presence-session"><span id="pq-session">'+escapeHtml(dSession.question)+'</span>' +
         switchHtml('pres-session', !!state.limiteSession, dSession.libelle, 'data-action="set-presence-session"') + '</div>' : '') +
-      '<div class="presence-scroll"><table class="presence-table"><caption class="sr-only">Contenus présents dans chaque page</caption><thead><tr><th scope="col">La page contient…</th>' +
+      '<div class="presence-scroll"><table class="presence-table"><caption class="sr-only">Contenus présents dans chaque écran</caption><thead><tr><th scope="col">L\'écran contient…</th>' +
       o.ecrans.map(function(e){ return '<th scope="col">'+escapeHtml(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>';
     decl.forEach(function(d){
       html += '<tr><th scope="row" title="'+escapeHtml(d.question)+'">'+escapeHtml(d.libelle)+'</th>' +
@@ -2664,9 +2689,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   }
   // Encart en tête de chaque groupe de la vue « Par étape » : rappel court de la consigne (repris de l'Aide).
   var ETAPE_ENCARTS = [
-    "Navigateur sans réglage particulier, à la souris : parcours les pages comme un utilisateur ordinaire (images, couleurs et contrastes, médias, animations, limites de temps).",
+    "Navigateur sans réglage particulier, à la souris : parcours les écrans comme un utilisateur ordinaire (images, couleurs et contrastes, médias, animations, limites de temps).",
     "Extension Axe (seulement les règles citées par les critères), puis inspecteur du navigateur et arbre d'accessibilité : alternatives des images, cadres, langue, titre de page, ARIA, tableaux, zones de la page.",
-    "NVDA avec Firefox ou Chrome, ou VoiceOver avec Safari : parcours la page élément par élément et avec les listes de titres, de liens et de repères. 3a : contenus et structure. 3b : formulaires.",
+    "NVDA avec Firefox ou Chrome, ou VoiceOver avec Safari : parcours l'écran élément par élément et avec les listes de titres, de liens et de repères. 3a : contenus et structure. 3b : formulaires.",
     "Clavier seul (Tab, Maj+Tab, Entrée, Espace, flèches, Échap) : lien d'évitement, tout est atteignable et activable, le focus reste visible, l'ordre est logique, sans piège."
   ];
   function critTagsHtml(c, vueEtapes){
@@ -2682,7 +2707,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         '<span class="niveau-chip niveau-'+c.niveau+'" title="Gravité indicative, non normative (échelle inspirée de Deque)">'+escapeHtml(graviteLabel(c.niveau))+'</span>' +
         '<span class="crit-ref mono" title="Numérotation officielle du référentiel RAWeb 1.1">RAWeb '+escapeHtml(c.ref)+'</span>' +
         '<span class="wcag-chip">Niveau '+escapeHtml(c.niveau_wcag)+'</span>' + etapeChip(c, vueEtapes) +
-        (c.siPresent ? '<span class="si-present-chip" title="À évaluer seulement si la page contient : '+escapeHtml(declencheurInfo(c.declencheur).libelle)+' ; sinon, statut NA">Si présent · '+escapeHtml(declencheurInfo(c.declencheur).libelle)+'</span>' : '') +
+        (c.siPresent ? '<span class="si-present-chip" title="À évaluer seulement si l\'écran contient : '+escapeHtml(declencheurInfo(c.declencheur).libelle)+' ; sinon, statut NA">Si présent · '+escapeHtml(declencheurInfo(c.declencheur).libelle)+'</span>' : '') +
         (c.horsSelection ? '<span class="hors-ref-chip" title="Critère officiel du RAWeb 1.1, absent de l\'audit simplifié du SIP : évalué à titre indicatif, il n\'entre pas dans le taux">Hors sélection SIP · hors taux</span>' : '') +
       '</div>';
   }
@@ -2700,17 +2725,17 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     // seulement utile (et affichée) dès que l'onglet en compte plus d'un, sinon strictement redondante avec
     // le seul écran déjà affiché juste à côté.
     if(o.ecrans.length > 1){
-      html += '<div class="statut-cell statut-cell-tous"><span class="ecran-name" aria-hidden="true">Toutes</span><div class="statut-toggle" role="group" aria-label="'+nomCourtCritere(c)+', toutes les pages">' +
-        STATUTS.map(function(s){ return '<button type="button" class="statut-btn" data-action="set-statut-tous" data-crit="'+c.id+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" title="Régler '+s+' pour toutes les pages de l\'onglet">'+s+'</button>'; }).join('') +
+      html += '<div class="statut-cell statut-cell-tous"><span class="ecran-name" aria-hidden="true">Tous</span><div class="statut-toggle" role="group" aria-label="'+nomCourtCritere(c)+', tous les écrans">' +
+        STATUTS.map(function(s){ return '<button type="button" class="statut-btn" data-action="set-statut-tous" data-crit="'+c.id+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" title="Régler '+s+' pour tous les écrans de l\'onglet">'+s+'</button>'; }).join('') +
         '</div></div>';
     }
     ecransAffiches(o).forEach(function(e){
       if(!critereApplicable(o, e.id, c)){
-        html += '<div class="statut-cell statut-cell-absent"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><span class="statut-absent" title="Contenu absent de cette page (voir « Contenu des pages »)">Absent</span></div>';
+        html += '<div class="statut-cell statut-cell-absent"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><span class="statut-absent" title="Contenu absent de cet écran (voir « Contenu des écrans »)">Absent</span></div>';
         return;
       }
       var cur = getResultat(o, e.id, c.id);
-      html += '<div class="statut-cell"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><div class="statut-toggle" role="group" aria-label="'+nomCourtCritere(c)+', page '+escapeHtml(e.nom)+'">' +
+      html += '<div class="statut-cell"><span class="ecran-name" aria-hidden="true">'+escapeHtml(e.nom)+'</span><div class="statut-toggle" role="group" aria-label="'+nomCourtCritere(c)+', écran '+escapeHtml(e.nom)+'">' +
         STATUTS.map(function(s){ return '<button type="button" class="statut-btn'+(cur===s?' sel-'+s:'')+'" data-action="set-statut" data-ecran="'+e.id+'" data-crit="'+c.id+'" data-statut="'+s+'" aria-label="'+s+', '+STATUT_NOM[s]+'" aria-pressed="'+(cur===s?'true':'false')+'">'+s+'</button>'; }).join('') +
         '</div></div>';
     });
@@ -2825,7 +2850,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         return {
           nom: o.nom, scenario: o.scenario, scenarioLabel: scenarioLabel(o.scenario), approches: o.approches,
           commentaire: o.commentaireOnglet||'',
-          pages: o.ecrans.map(function(e){return {nom: e.nom};}),
+          ecrans: o.ecrans.map(function(e){return {nom: e.nom};}),
           valide: o.valide, taux: isSip ? taux.pct : null, appreciation: isSip ? taux.appreciation : null,
           scorePourUx: pourux ? pourux.pct : null,
           // Onglet flow (pas de RAWeb) : pas de critères SIP à exporter, tableau vide plutôt qu'un jeu de
@@ -2833,9 +2858,9 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           criteres: isSip ? CRITERES.map(function(c){
             var s = statutCritere(o, c.id);
             var commentairesEcrans = s.display === 'NC' ? o.ecrans.filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; }).map(function(e){
-              return {page: e.nom, element: getElementCritere(o, e.id, c.id), commentaire: getCommentaireCritere(o, e.id, c.id)};
+              return {ecran: e.nom, element: getElementCritere(o, e.id, c.id), commentaire: getCommentaireCritere(o, e.id, c.id)};
             }) : [];
-            return {id:c.id, libelle:c.libelle, theme_ruxal:c.theme_ruxal, theme_raweb:c.theme_ref, raweb:c.ref, niveau_wcag:c.niveau_wcag, horsRaweb:!!c.horsRef, horsSelectionSip:!!c.horsSelection, statut:s.display, commentairesPages:commentairesEcrans};
+            return {id:c.id, libelle:c.libelle, theme_ruxal:c.theme_ruxal, theme_raweb:c.theme_ref, raweb:c.ref, niveau_wcag:c.niveau_wcag, horsRaweb:!!c.horsRef, horsSelectionSip:!!c.horsSelection, statut:s.display, commentairesEcrans:commentairesEcrans};
           }) : [],
           heuristiques: o.approches.indexOf('OSAPS')>-1 ? HEURISTIQUES.map(function(h){
             var cur = o.heuristiques[h.id]||{statut:null,commentaire:''};
@@ -3005,7 +3030,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
   function buildListeLignes(){
     var lignes = [];
-    var header = ['Onglet (type d\'audit)','Page(s)','RAWeb','Thème (RUXAL)','Gravité','Niveau WCAG','Critère','Statut',"Commentaire (critère)"];
+    var header = ['Onglet (type d\'audit)','Écran(s)','RAWeb','Thème (RUXAL)','Gravité','Niveau WCAG','Critère','Statut',"Commentaire (critère)"];
     lignes.push(header);
     state.onglets.forEach(function(o){
       // Onglet flow (pas de RAWeb/SIP) : rien à exporter ici, cette liste est spécifiquement les critères
@@ -3537,8 +3562,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var errs = [];
       if(!nom) errs.push("Le nom de l'onglet est obligatoire.");
       if(scenario.id === 'sip-rapide'){
-        if(ecrans.length===0) errs.push('Au moins une page nommée est obligatoire.');
-        else if(ecransInsuffisants) errs.push('Au moins '+SIP_RAPIDE_MIN_ECRANS+' pages sont nécessaires pour l\'audit rapide RAWeb.');
+        if(ecrans.length===0) errs.push('Au moins un écran nommé est obligatoire.');
+        else if(ecransInsuffisants) errs.push('Au moins '+SIP_RAPIDE_MIN_ECRANS+' écrans sont nécessaires pour l\'audit rapide RAWeb.');
       }
       if(scenario.id === 'flow' && ecrans.length===0) errs.push('Au moins une étape nommée est obligatoire.');
       if(nomInput) nomInput.classList.toggle('field-invalid', !nom);
@@ -3585,7 +3610,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     }
     else if(action==='set-ecran-actif'){
       var o = getOnglet(state.view);
-      if(o){ o.ecranActif = el.getAttribute('data-ecran'); render(); }
+      if(o && el.getAttribute('data-ecran')){
+        var navSens = el.getAttribute('data-nav');
+        o.ecranActif = el.getAttribute('data-ecran'); render();
+        if(navSens){ var navBtn = document.querySelector('.ecran-nav[data-nav="'+navSens+'"]'); if(navBtn && !navBtn.disabled) navBtn.focus({preventScroll:true}); else { var actif = document.querySelector('.ecran-selecteur [aria-pressed="true"]'); if(actif) actif.focus({preventScroll:true}); } }
+      }
     }
     else if(action==='add-ecran-onglet'){ ajouterEcran(); }
     else if(action==='delete-ecran'){
@@ -3595,7 +3624,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         var cible = o.ecrans.filter(function(x){ return x.id === eid; })[0];
         if(!cible){ /* rien */ }
         else if(o.ecrans.length <= minEcrans(o)){
-          setImportStatus('Suppression impossible : ce type d\'audit demande au moins '+minEcrans(o)+' pages. Ajoute d\'abord une page.', true);
+          setImportStatus('Suppression impossible : ce type d\'audit demande au moins '+minEcrans(o)+' écrans. Ajoute d\'abord un écran.', true);
         } else if(confirmDeleteEcranId === eid){
           // Second clic : suppression définitive de l'écran et de tout ce qui y a été saisi.
           o.ecrans = o.ecrans.filter(function(x){ return x.id !== eid; });

@@ -46,7 +46,7 @@ def creer_onglet(page, type_audit='sip-rapide', ecrans=('Accueil', 'Contact', 'A
     page.click('[data-scenario="%s"]' % type_audit)
     champs = page.locator('input[placeholder^="Nom de l"]')
     while champs.count() < len(ecrans):
-        page.get_by_role('button', name='+ Ajouter une page').click()
+        page.get_by_role('button', name='+ Ajouter un écran').click()
     for i, nom in enumerate(ecrans):
         champs.nth(i).fill(nom)
     page.get_by_role('button', name="Créer l'onglet").click()
@@ -107,9 +107,9 @@ def main():
         verifier('Référentiel : 24 « si présent »', page.locator('.si-present-chip').count() == 24, page.locator('.si-present-chip').count())
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.3', 'RUXAWEB, version 1.3' in aide)
+        verifier('Aide : version 1.4', 'RUXAWEB, version 1.4' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation au clavier' in aide and 'NVDA' in aide and 'iOS' not in aide)
-        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Page[type "Libellé"]' in aide)
+        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran[type "Libellé"]' in aide and 'Pages testées' not in aide)
         verifier('Aide : déclencheurs web', 'cadre' in aide and 'autre langue' in aide)
         verifier('Aide : mémoire des exports Jira documentée', 'tout réexporter' in aide and 'pas réexporté automatiquement' in aide)
 
@@ -192,13 +192,13 @@ def main():
         # --- Notes par écran supprimées ; export JSON : écrans sans commentaire
         verifier('Notes par écran retirées', page.locator('textarea[data-action="set-commentaire-ecran"]').count() == 0)
         f = telechargement(page, lambda: exporter(page, 'Données (JSON)'))
-        ecrans = json.loads(f)['onglets'][0]['pages'] if f else None
+        ecrans = json.loads(f)['onglets'][0]['ecrans'] if f else None
         verifier('Export JSON : écrans = {nom}', ecrans and all(list(e.keys()) == ['nom'] for e in ecrans), ecrans)
 
         # --- Gestion des pages en cours d'audit, affichage un par un au-delà de 6
         ouvrir(page)
         creer_onglet(page)
-        page.click('summary:has-text("Pages testées")')
+        page.click('summary:has-text("Écrans testés")')
         lignes = page.locator('.ecrans-ligne')
         verifier('pages : panneau ouvert, 3 lignes', lignes.count() == 3, lignes.count())
         verifier('Audit rapide : suppression bloquée à 3', page.locator('[data-action="delete-ecran"]').first.is_disabled())
@@ -225,7 +225,7 @@ def main():
         page.locator('[data-action="set-statut"][data-crit="raweb-6-2"][data-statut="NC"]').nth(3).click()
         page.click('[data-action="valider-onglet"]')
         page.click('[data-action="modifier-onglet"]')
-        page.click('summary:has-text("Pages testées")') if not page.locator('.ecrans-panel').get_attribute('open') is not None else None
+        page.click('summary:has-text("Écrans testés")') if not page.locator('.ecrans-panel').get_attribute('open') is not None else None
         suppr = page.locator('[data-action="delete-ecran"]').nth(3)
         suppr.click()
         verifier('Suppression : premier clic arme', page.locator('[data-action="delete-ecran"]').nth(3).inner_text() == 'Confirmer la suppression')
@@ -240,11 +240,19 @@ def main():
             page.locator('[data-action="ecran-ajout-input"]').fill(nom)
             page.click('[data-action="add-ecran-onglet"]')
         rangs = page.locator('.crit-row')
+        barre = page.locator('.barre-audit')
+        verifier('Sélecteur : dans la barre flottante (sticky)', barre.count() == 1 and barre.locator('.ecran-selecteur').count() == 1 and barre.evaluate("b => getComputedStyle(b).position") == 'sticky')
+        page.locator('.crit-row').nth(25).scroll_into_view_if_needed()
+        verifier('Sélecteur : visible après défilement', barre.bounding_box()['y'] >= 0 and barre.bounding_box()['y'] < 40, barre.bounding_box())
+        page.click('.ecran-nav[data-nav="prec"]')
+        verifier('Écran précédent : P6 affiché', page.locator('.ecran-selecteur [aria-pressed="true"]').inner_text().startswith('P6'))
+        page.click('.ecran-nav[data-nav="suiv"]')
+        verifier('Écran suivant : P7, bouton Suivant désactivé', page.locator('.ecran-selecteur [aria-pressed="true"]').inner_text().startswith('P7') and page.locator('.ecran-nav[data-nav="suiv"]').is_disabled())
         verifier('7 pages : sélecteur affiché', page.locator('.ecran-selecteur').count() == 1)
         verifier('7 pages : une seule colonne par critère', cellules() == 1, cellules())
         verifier('7 pages : statut consolidé sur chaque critère', page.locator('.statut-consolide').count() == rangs.count(), (page.locator('.statut-consolide').count(), rangs.count()))
         verifier('7 pages : écran ajouté affiché', page.locator('.ecran-selecteur [aria-pressed="true"]').inner_text().startswith('P7'))
-        page.click('.ecran-selecteur [data-action="set-ecran-actif"] >> nth=1')
+        page.click('.ecran-selecteur .preset-chip >> nth=1')
         verifier('7 pages : choix d\'un autre', page.locator('.ecran-selecteur [aria-pressed="true"]').inner_text().startswith('Contact'))
         page.locator('[data-action="set-statut"][data-crit="raweb-6-2"][data-statut="NC"]').click()
         ligne = page.locator('.crit-row', has=page.locator('[data-crit="raweb-6-2"]')).first

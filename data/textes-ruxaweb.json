@@ -6,42 +6,42 @@
     {
       "id": "captcha",
       "libelle": "CAPTCHA",
-      "question": "Cette page contient-elle un CAPTCHA ?"
+      "question": "Cet écran contient-il un CAPTCHA ?"
     },
     {
       "id": "image-complexe",
       "libelle": "Image complexe",
-      "question": "Cette page contient-elle une image complexe (graphique, schéma, carte, infographie) ?"
+      "question": "Cet écran contient-il une image complexe (graphique, schéma, carte, infographie) ?"
     },
     {
       "id": "media-temporel",
       "libelle": "Média temporel ou son",
-      "question": "Cette page contient-elle un audio, une vidéo, ou un son qui se lance seul ?"
+      "question": "Cet écran contient-il un audio, une vidéo, ou un son qui se lance seul ?"
     },
     {
       "id": "media-non-temporel",
       "libelle": "Média non temporel",
-      "question": "Cette page contient-elle un média non temporel (carte interactive, visite virtuelle, animation ou objet embarqué) ?"
+      "question": "Cet écran contient-il un média non temporel (carte interactive, visite virtuelle, animation ou objet embarqué) ?"
     },
     {
       "id": "tableau-donnees",
       "libelle": "Tableau de données",
-      "question": "Cette page contient-elle un tableau de données ?"
+      "question": "Cet écran contient-il un tableau de données ?"
     },
     {
       "id": "cadre",
       "libelle": "Cadre (iframe)",
-      "question": "Cette page contient-elle un cadre (iframe : vidéo intégrée, carte, formulaire externe) ?"
+      "question": "Cet écran contient-il un cadre (iframe : vidéo intégrée, carte, formulaire externe) ?"
     },
     {
       "id": "formulaire",
       "libelle": "Formulaire",
-      "question": "Cette page contient-elle au moins un champ de saisie ?"
+      "question": "Cet écran contient-il au moins un champ de saisie ?"
     },
     {
       "id": "changement-langue",
       "libelle": "Autre langue",
-      "question": "Cette page contient-elle un passage dans une autre langue que celle de la page ?"
+      "question": "Cet écran contient-il un passage dans une autre langue que celle de la page ?"
     }
   ],
   "criteres": {
