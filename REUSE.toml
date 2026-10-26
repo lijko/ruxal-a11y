@@ -3,23 +3,23 @@ version = 1
 [[annotations]]
 path = ["src/**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2026 Bertrand Kempf", "Service information et presse (SIP), Luxembourg (critères RAAM)", "2010-2021 James Hall et contributeurs (jsPDF)"]
+SPDX-FileCopyrightText = ["2026 Bertrand Kempf", "Service information et presse (SIP), Luxembourg (critères RAAM et RAWeb)", "2010-2021 James Hall et contributeurs (jsPDF)"]
 SPDX-License-Identifier = "EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU AND MIT"
 
 [[annotations]]
-path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "docs/.gitkeep", "docs/rapport-migration.md", "docs/gravite.md", "README.md", "CONTRIBUTING.md", "NOTICE", ".gitignore"]
+path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "data/bonnes-pratiques-web.json", "data/textes-ruxaweb.json", "docs/.gitkeep", "docs/rapport-migration.md", "docs/gravite.md", "README.md", "CONTRIBUTING.md", "NOTICE", ".gitignore"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Bertrand Kempf"
 SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
-path = ["data/criteres-raam.json"]
+path = ["data/criteres-raam.json", "data/criteres-raweb.json"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Service information et presse (SIP), Luxembourg"
 SPDX-License-Identifier = "LicenseRef-CC-BY-3.0-LU"
 
 [[annotations]]
-path = ["docs/comparaison-raam-ruxaam.csv", "docs/selection-audit-rapide-mobile.csv"]
+path = ["docs/comparaison-raam-ruxaam.csv", "docs/selection-audit-rapide-mobile.csv", "docs/selection-audit-rapide-web.csv"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Bertrand Kempf; Service information et presse (SIP), Luxembourg"
 SPDX-License-Identifier = "CC-BY-4.0 AND LicenseRef-CC-BY-3.0-LU"

@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 Bertrand Kempf
+# SPDX-License-Identifier: EUPL-1.2
+"""Tests de bout en bout de src/ruxaweb.html (Playwright, Chromium sans interface).
+
+Installation (une fois) :
+  python3 -m pip install playwright
+  python3 -m playwright install chromium
+Lancement :
+  python3 tests/test_ruxaweb.py
+Code retour 0 si tout passe, 1 sinon. L'outil est ouvert en file:// : aucun serveur n'est nécessaire.
+"""
+import json
+import pathlib
+import sys
+import tempfile
+
+from playwright.sync_api import sync_playwright
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+URL = (ROOT / 'src' / 'ruxaweb.html').as_uri()
+DATA = ROOT / 'data'
+
+NB_REF = len(json.loads((DATA / 'criteres-raweb.json').read_text(encoding='utf-8'))['criteres'])
+NB_BP = len(json.loads((DATA / 'bonnes-pratiques-web.json').read_text(encoding='utf-8'))['bonnes_pratiques'])
+NB = NB_REF + NB_BP
+
+resultats = []
+
+
+def verifier(nom, condition, detail=''):
+    resultats.append((nom, bool(condition), detail))
+    print(('OK    ' if condition else 'ÉCHEC ') + nom + ('' if condition else ' , ' + str(detail)))
+
+
+def ouvrir(page):
+    page.goto(URL)
+    page.evaluate("localStorage.clear()")
+    page.reload()
+
+
+def creer_onglet(page, type_audit='sip-rapide', ecrans=('Accueil', 'Contact', 'Actualités')):
+    page.click('#btnDashboard')
+    page.click('[data-action="goto-scenario"]')
+    page.click('[data-scenario="%s"]' % type_audit)
+    champs = page.locator('input[placeholder^="Nom de l"]')
+    while champs.count() < len(ecrans):
+        page.get_by_role('button', name='+ Ajouter une page').click()
+    for i, nom in enumerate(ecrans):
+        champs.nth(i).fill(nom)
+    page.get_by_role('button', name="Créer l'onglet").click()
+
+
+def message(page):
+    return page.locator('#importStatus').inner_text()
+
+
+def telechargement(page, action):
+    """Exécute action ; renvoie le texte du fichier produit, ou None si aucun fichier n'est produit."""
+    try:
+        with page.expect_download(timeout=1500) as dl:
+            action()
+        return pathlib.Path(dl.value.path()).read_text(encoding='utf-8')
+    except Exception:
+        return None
+
+
+def exporter(page, libelle):
+    page.click('#btnExportMenu')
+    page.locator('.menu-item', has_text=libelle).click()
+
+
+def main():
+    with sync_playwright() as p:
+        navigateur = p.chromium.launch()
+        page = navigateur.new_page(accept_downloads=True)
+        erreurs = []
+        page.on('pageerror', lambda e: erreurs.append(str(e)))
+        ouvrir(page)
+
+        # --- Exports sans onglet : un message, aucun fichier
+        for libelle in ('Tickets Jira (CSV)', 'Liste des critères (CSV)', 'Données (JSON)'):
+            f = telechargement(page, lambda: exporter(page, libelle))
+            verifier('Export « %s » sans onglet : pas de fichier' % libelle, f is None, f and f[:80])
+            verifier('Export « %s » sans onglet : message' % libelle, 'aucun onglet' in message(page), message(page))
+        f = telechargement(page, lambda: page.click('#btnExportEtat'))
+        verifier('Sauvegarder sans onglet : pas de fichier', f is None)
+        verifier('Sauvegarder sans onglet : message', 'Rien à sauvegarder' in message(page), message(page))
+
+        # --- Page Référentiel
+        page.click('#btnReferentiel')
+        verifier('Référentiel : %d fiches' % NB, page.locator('.ref-card').count() == NB, page.locator('.ref-card').count())
+        verifier('Référentiel : %d pastilles d\'étape' % NB, page.locator('.etape-chip').count() == NB, page.locator('.etape-chip').count())
+        verifier('Référentiel : 24 « si présent »', page.locator('.si-present-chip').count() == 24, page.locator('.si-present-chip').count())
+        page.click('#btnAide')
+        aide = page.locator('#main').inner_text()
+        verifier('Aide : version 1.0', 'RUXAWEB, version 1.0' in aide)
+        verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation au clavier' in aide and 'NVDA' in aide and 'iOS' not in aide)
+        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Page[type "Libellé"]' in aide)
+        verifier('Aide : déclencheurs web', 'cadre' in aide and 'autre langue' in aide)
+        verifier('Aide : mémoire des exports Jira documentée', 'tout réexporter' in aide and 'pas réexporté automatiquement' in aide)
+
+        # --- Onglet RAWeb : « Contenu des pages » (tout désactivé au départ)
+        creer_onglet(page)
+        nb_coeur = NB - 24
+        verifier('Contenu des écrans : %d critères visibles au départ' % nb_coeur, page.locator('.crit-row').count() == nb_coeur, page.locator('.crit-row').count())
+        verifier('Contenu des écrans : 20 critères masqués annoncés', '24 critère(s)' in page.locator('.presence-masques').inner_text())
+        interrupteurs = page.evaluate("""() => [...document.querySelectorAll('[role=switch]')].map(b => b.id)""")
+        verifier('Contenu des pages : 8 × 3 interrupteurs, sans session', len(interrupteurs) == 24, len(interrupteurs))
+        verifier('Interrupteur : nom accessible', page.locator('[role=switch][data-decl="formulaire"]').first.get_attribute('aria-label') == 'Formulaire (Accueil)')
+        for i in interrupteurs:
+            page.click('#' + i)
+        verifier('Tous les interrupteurs activés : %d critères' % NB, page.locator('.crit-row').count() == NB, page.locator('.crit-row').count())
+        verifier('Interrupteur : aria-checked', page.locator('#' + interrupteurs[0]).get_attribute('aria-checked') == 'true')
+        page.click('[role=switch][data-decl="formulaire"][data-ecran="%s"]' % page.locator('[role=switch][data-decl="formulaire"]').nth(1).get_attribute('data-ecran'))
+        ligne_91 = page.locator('.crit-row', has=page.locator('[data-crit="raweb-11-1"]')).first
+        verifier('Page sans formulaire : cellule « Absent »', ligne_91.locator('.statut-absent').count() == 1, ligne_91.locator('.statut-absent').count())
+        page.click('[role=switch][data-decl="formulaire"][data-ecran="%s"]' % page.locator('[role=switch][data-decl="formulaire"]').nth(1).get_attribute('data-ecran'))
+
+        # --- Vue par thème / par étape (tout le contenu activé)
+        verifier('Vue par thème : %d pastilles d\'étape' % NB, page.locator('.crit-row .etape-chip').count() == NB)
+        page.click('[data-action="set-vue-liste"][data-vue="etapes"]')
+        groupes = page.locator('.theme-group-name').all_inner_texts()
+        verifier('Vue par étape : 4 groupes', len(groupes) == 4, groupes)
+        verifier('Vue par étape : un encart par groupe', page.locator('.etape-encart').count() == 4, page.locator('.etape-encart').count())
+        par_etape = page.evaluate("""() => [...document.querySelectorAll('.theme-group')].map(g => g.querySelectorAll('.crit-row').length)""")
+        verifier('Vue par étape : 15 / 11 / 19 / 10', par_etape == [15, 11, 19, 10], par_etape)
+        chips = page.locator('.crit-row .etape-chip').all_inner_texts()
+        verifier('Vue par étape : pastilles seulement pour 3a / 3b (19)', len(chips) == 19 and all(c[:2] in ('3a', '3b') for c in chips), chips[:3])
+        verifier('Vue par étape : choix de thématisation masqué', page.locator('[data-action="set-theming"]').count() == 0)
+        page.click('[data-action="set-vue-liste"][data-vue="themes"]')
+        verifier('Retour vue par thème : %d critères' % NB, page.locator('.crit-row').count() == NB)
+
+        # --- Jira : tous NT, puis C, puis NC ; « Élément concerné » ; mémoire des exports
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Jira, tous NT : pas de fichier', f is None)
+        verifier('Jira, tous NT : message', 'aucun critère n\'a encore été testé' in message(page), message(page))
+        page.click('[data-action="set-statut-tous"][data-crit="raweb-6-1"][data-statut="C"]')
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Jira, aucun NC : message', f is None and 'aucun critère n\'est non conforme' in message(page), message(page))
+        page.click('[data-action="set-statut-tous"][data-crit="raweb-6-2"][data-statut="NC"]')
+        verifier('NC : champ « Ticket Jira » absent', page.locator('[data-action="set-ticket-jira"]').count() == 0)
+        champ = page.locator('[data-action="set-element-critere"][data-crit="raweb-6-2"]').first
+        verifier('NC : champ « Élément concerné »', champ.count() == 1)
+        champ.fill('Accueil[button "Valider"] | (disabled)')
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Jira : élément concerné repris, | remplacé par /', f and 'Accueil[button ""Valider""] / (disabled)' in f, f and f[:300])
+        verifier('Jira sans support : Desktop et Mobile', f and '- Desktop: <to be completed>' in f and '- Mobile (responsive): <to be completed>' in f)
+        verifier('Jira : lien RAWeb 1.1 crit-6-2', f and 'https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-6-2' in f and 'RAWeb 1.1, Criterion 6.2:' in f)
+        verifier('Jira sans plateforme : 7 colonnes', f and f.splitlines()[0].count(',') == 6, f and f.splitlines()[0])
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Mémoire Jira : second export sans fichier', f is None)
+        verifier('Mémoire Jira : message « déjà exporté »', 'Aucun nouveau ticket : 1 critère(s) non conforme(s) déjà exporté(s)' in message(page), message(page))
+        page.click('[data-action="set-statut-tous"][data-crit="raweb-11-1"][data-statut="NC"]')
+        f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
+        verifier('Mémoire Jira : seul le nouveau ticket', f and f.count(',Task,') == 1 and 'RAWeb-11.1' in f, f and f.count(',Task,'))
+        verifier('Mémoire Jira : message « N déjà exportés, M nouveaux »', '1 ticket(s) déjà exporté(s), 1 nouveau(x)' in message(page), message(page))
+        verifier('Mémoire Jira : enregistrée dans l\'état', page.evaluate("Object.keys(JSON.parse(localStorage.getItem('atelier-ruxaweb-state')).exportesJira).sort().join()") == 'raweb-11-1,raweb-6-2')
+        for code, ligne, etiquette in (('desktop', '- Desktop:', ',desktop,'), ('mobile', '- Mobile (responsive):', ',mobile-web,')):
+            page.click('#plateformeToggle [data-plateforme="%s"]' % code)
+            presse = page.locator('#plateformeToggle [data-plateforme="%s"]' % code).get_attribute('aria-pressed')
+            f = telechargement(page, lambda: exporter(page, 'Tickets Jira : tout réexporter'))
+            autres = [x for x in ('- Desktop:', '- Mobile (responsive):') if x != ligne]
+            verifier('Jira %s (tout réexporter) : 2 tickets' % code, f and f.count(',Task,') == 2)
+            verifier('Jira %s : bouton enfoncé' % code, presse == 'true')
+            verifier('Jira %s : seule la plateforme choisie' % code, f and ligne in f and not any(x in f for x in autres))
+            verifier('Jira %s : étiquette et colonne Labels en plus' % code, f and etiquette in f and f.splitlines()[0].count(',') == 7)
+        page.click('#plateformeToggle [data-plateforme="mobile"]')  # second clic : désélection
+        verifier('Plateforme : second clic désélectionne', page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxaweb-state')).plateforme") == '')
+
+        # --- Aide « Noter les éléments » : aller et retour vers le champ
+        champ_id = page.locator('[data-action="set-element-critere"][data-crit="raweb-6-2"]').first.get_attribute('id')
+        page.locator('[data-action="aide-notation"][data-focus="%s"]' % champ_id).click()
+        verifier('Icône d\'aide : focus sur « Noter les éléments »', page.evaluate("document.activeElement.id") == 'aide-notation')
+        verifier('Aide : deux boutons de retour', page.locator('[data-action="retour-champ"]').count() == 2)
+        page.locator('[data-action="retour-champ"]').first.click()
+        verifier('Retour : focus sur le champ d\'origine', page.evaluate("document.activeElement.id") == champ_id)
+
+        # --- Notes par écran supprimées ; export JSON : écrans sans commentaire
+        verifier('Notes par écran retirées', page.locator('textarea[data-action="set-commentaire-ecran"]').count() == 0)
+        f = telechargement(page, lambda: exporter(page, 'Données (JSON)'))
+        ecrans = json.loads(f)['onglets'][0]['pages'] if f else None
+        verifier('Export JSON : écrans = {nom}', ecrans and all(list(e.keys()) == ['nom'] for e in ecrans), ecrans)
+
+        # --- Réinitialisation : la mémoire des exports est vidée
+        page.click('#btnAide')
+        page.click('[data-action="reset-audit"]')
+        page.click('[data-action="reset-audit"]')
+        etat = page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxaweb-state'))")
+        verifier('Réinitialisation : mémoire Jira vidée', etat.get('exportesJira') == {} and etat.get('onglets') == [])
+
+        verifier('Aucune erreur JavaScript', not erreurs, erreurs)
+        navigateur.close()
+
+    echecs = [r for r in resultats if not r[1]]
+    print('\n%d contrôles, %d échec(s)' % (len(resultats), len(echecs)))
+    return 1 if echecs else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -2,7 +2,7 @@
 
 **FR** : RUXAL est une famille d'outils HTML autonomes qui aident à **préparer et prioriser un audit d'accessibilité**, avant l'audit complet. Chaque outil croise deux regards sur ce que l'on examine (écran, fonctionnalité ou parcours) :
 
-- **les critères officiels du référentiel** (RAAM 1.1 pour le mobile, RAWEB pour le web, RAPDF pour le PDF), évalués critère par critère (conforme, non conforme, non testé, non applicable), qui donnent un **taux de conformité** par onglet ;
+- **les critères officiels du référentiel** (RAAM 1.1 pour le mobile, RAWeb 1.1 pour le web, RAPDF 1.1 pour le PDF), évalués critère par critère (conforme, non conforme, non testé, non applicable), qui donnent un **taux de conformité** par onglet ;
 - **une lecture UX qualitative** : les quatre principes **POUR** de WCAG (Perceptible, Utilisable, Compréhensible, Robuste) et les **heuristiques d'utilisabilité**, qui servent à repérer les problèmes que les critères seuls ne montrent pas. Cette couche est **exclue du taux**.
 
 Trois types d'audit : l'**audit rapide** (critères du référentiel), la **fonctionnalité primaire** (fermer, retour, menu, navigation, formulaire, notification) et le **scénario** (parcours complexe, critères + lecture UX). Les résultats s'exportent en CSV.
@@ -11,11 +11,11 @@ RUXAL n'est **pas un audit de conformité** et ne produit aucune déclaration d'
 
 **Gravité** : chaque critère porte une gravité par défaut (Critique, Sérieux, Modéré, Mineur), qui sert à trier les non-conformités et à prioriser les tickets. Elle **n'est pas normative** : ni le RAAM ni WCAG 2.x n'en définissent. L'échelle est propre à RUXAL, inspirée de l'échelle d'impact de Deque (axe-core) ; le brouillon WCAG 3 du W3C, encore instable, n'est pas utilisé. Détail dans [`docs/gravite.md`](docs/gravite.md).
 
-Outils : **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web), **RUXAPDF** (PDF).
+Outils : **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web, RAWeb 1.1), **RUXAPDF** (PDF, RAPDF 1.1, prévu).
 
 **EN** : RUXAL is a family of standalone HTML tools that help **prepare and prioritise an accessibility audit**, ahead of a full audit. Each tool looks at what you are reviewing (a screen, a feature or a journey) in two ways:
 
-- **the official criteria of the standard** (RAAM 1.1 for mobile, RAWEB for web, RAPDF for PDF), assessed one by one (compliant, non-compliant, not tested, not applicable), which produce a **conformity rate** per tab;
+- **the official criteria of the standard** (RAAM 1.1 for mobile, RAWeb 1.1 for web, RAPDF 1.1 for PDF), assessed one by one (compliant, non-compliant, not tested, not applicable), which produce a **conformity rate** per tab;
 - **a qualitative UX reading**: the four **POUR** principles of WCAG (Perceivable, Operable, Understandable, Robust) and **usability heuristics**, used to spot issues that criteria alone do not reveal. This layer is **excluded from the rate**.
 
 Three audit types: **quick audit** (standard criteria), **primary feature** (close, back, menu, navigation, form, notification) and **scenario** (complex journey, criteria + UX reading). Results can be exported as CSV.
@@ -24,7 +24,7 @@ RUXAL is **not a compliance audit** and produces no accessibility statement: it 
 
 **Severity**: each criterion has a default severity (Critical, Serious, Moderate, Minor), used to sort issues and prioritise tickets. It is **not normative**: neither RAAM nor WCAG 2.x define severity. The scale is RUXAL's own, inspired by Deque's axe-core impact levels; the unstable WCAG 3 draft is not used. See [`docs/gravite.md`](docs/gravite.md).
 
-Tools: **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web), **RUXAPDF** (PDF).
+Tools: **RUXAAM** (mobile, RAAM 1.1), **RUXAWEB** (web, RAWeb 1.1), **RUXAPDF** (PDF, RAPDF 1.1, planned).
 
 ## Statut / Status
 Projet en cours de préparation pour publication. / Project being prepared for publication.
@@ -42,6 +42,20 @@ RUXAAM 1.23 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Mémoire des exports Jira** : l'outil retient les critères déjà exportés (pour tout l'audit, avec la sauvegarde) et ne les exporte pas deux fois ; « Tickets Jira : tout réexporter » les reprend tous. Le champ « Ticket Jira » des versions précédentes est retiré.
 - **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
 
+### RUXAWEB 1.0 (web, RAWeb 1.1)
+`src/ruxaweb.html` : même moteur, mêmes types d'audit, mêmes thèmes RUXAL, même couche POUR et UX, mêmes exports que RUXAAM, adaptés au web.
+
+- **Critères** : les **52 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) (47 testés manuellement, 19 avec Axe, 52 distincts), intitulés officiels non modifiés ; 24 « si présent ». Contrairement à RUXAAM, aucune adaptation : la grille du SIP est faite pour le web, le taux reste donc lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
+- **3 bonnes pratiques hors RAWeb** (hors taux) : taille des cibles (WCAG 2.2, 2.5.8), fermeture d'une fenêtre modale au clavier, retour du focus à sa fermeture.
+- **Pages** au lieu d'écrans : l'audit rapide porte sur 3 pages au moins (accueil, page avec formulaire, page au contenu particulier), comme l'audit simplifié du SIP.
+- **Contenu des pages** : 8 déclencheurs (CAPTCHA, image complexe, média temporel ou son, média non temporel, tableau de données, cadre, formulaire, autre langue). Pas de déclencheur global : la limite de temps (13.1) est un critère cœur.
+- **Protocole de test en 4 étapes** : 1. usage standard, 2. code et outils (Axe, inspecteur, arbre d'accessibilité), 3. lecteur d'écran (NVDA ou VoiceOver ; 3a contenus et structure, 3b formulaires), 4. navigation au clavier. Construit à partir de l'environnement de test et de la méthodologie du RAWeb 1.1 et de la méthode simplifiée du SIP ; pas un protocole officiel.
+- **Support** : Ordinateur ou Mobile (un audit = un support), repris dans le bloc « Recommendations » et une étiquette des tickets Jira. Référence des tickets : « RAWeb 1.1, Criterion X.Y » avec un lien `criteres.html#crit-X-Y`.
+- **Données séparées de RUXAAM** : stockage local (`atelier-ruxaweb-state`) et sauvegardes (`RUXAWEB-etat`) distincts ; une sauvegarde RUXAAM ne s'ouvre pas dans RUXAWEB.
+- **Gravités** : base de discussion, alignées sur les critères équivalents de RUXAAM quand il y en a (8 Critique, 25 Sérieux, 18 Modéré, 1 Mineur).
+
+**EN**: `src/ruxaweb.html` applies the same engine to the web, with the 52 RAWeb 1.1 criteria of the SIP simplified audit method, a 4-step web test protocol and pages instead of screens.
+
 ## Données et génération / Data and build
 Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
 
@@ -51,11 +65,17 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 | `data/bonnes-pratiques.json` | 3 bonnes pratiques hors RAAM (hors taux), avec leur étape de test | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
+| `data/criteres-raweb.json` | RUXAWEB : 52 critères officiels du RAWeb 1.1 (audit simplifié du SIP, intitulés non modifiés) ; 24 « si présent » ; étape de test | CC BY 3.0 LU |
+| `data/bonnes-pratiques-web.json` | RUXAWEB : 3 bonnes pratiques hors RAWeb (hors taux) | CC BY 4.0 |
+| `data/textes-ruxaweb.json` | RUXAWEB : gravité, impact et consigne de test de chaque critère ; 8 déclencheurs | CC BY 4.0 |
+
+`data/themes-ruxal.json` est commun à toute la famille.
 
 Après toute modification de `data/`, régénérer l'outil (Python 3, sans dépendance) :
 
 ```bash
 python3 scripts/build_ruxaam.py
+python3 scripts/build_ruxaweb.py
 ```
 
 Le script valide les données (texte manquant, thème ou gravité inconnus, identifiant en double) puis remplace le bloc compris entre les marqueurs `DEBUT_DONNEES` et `FIN_DONNEES` de `src/ruxaam.html`. Ne pas modifier ce bloc à la main. `python3 scripts/build_ruxaam.py --check` vérifie que le HTML est à jour (code retour 1 sinon), utile avant un commit.
@@ -74,8 +94,9 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/test_ruxaam.py
+python3 tests/test_ruxaweb.py
 ```
-Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript.
+Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript. `tests/test_ruxaweb.py` fait les mêmes vérifications pour RUXAWEB (pages, 8 déclencheurs, étapes web, support Ordinateur ou Mobile, lien RAWeb des tickets).
 
 ## Licences / Licences
 | Contenu | Licence |

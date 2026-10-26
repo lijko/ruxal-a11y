@@ -4,12 +4,14 @@ Copyright (c) 2026 Bertrand Kempf
 Le code original de RUXAL est sous licence EUPL-1.2. Les données et la documentation originales sont sous licence CC BY 4.0.
 Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur licence d'origine.
 
-1. Référentiels officiels luxembourgeois (RAAM 1.1, RAWEB, RAPDF)
+1. Référentiels officiels luxembourgeois (RAAM 1.1, RAWeb 1.1, RAPDF 1.1)
    Source : Service information et presse (SIP), Luxembourg, https://accessibilite.public.lu
    Dépôt du RAAM : https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile
+   Dépôt du RAWeb : https://github.com/accessibility-luxembourg/ReferentielAccessibiliteWeb
    Licence : Creative Commons Attribution 3.0 Luxembourg (CC BY 3.0 LU), https://creativecommons.org/licenses/by/3.0/lu/
    Les intitulés des critères RAAM, leur niveau, leurs références WCAG et EN 301 549 sont reproduits sans modification dans data/criteres-raam.json et dans src/ruxaam.html. Ils restent sous CC BY 3.0 LU. Modifications de RUXAL : sélection de 52 critères, regroupement par thèmes RUXAL, gravités et textes d'impact et de test originaux.
    La licence du RAAM publiée par le SIP précise que le référentiel est une œuvre dérivée de documents de la DINUM : voir https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile/blob/main/LICENSE.md
+   Les intitulés des critères RAWeb 1.1, leur niveau, leurs références WCAG et EN 301 549 sont reproduits sans modification dans data/criteres-raweb.json et dans src/ruxaweb.html. Ils restent sous CC BY 3.0 LU. Modifications de RUXAL : regroupement par thèmes RUXAL, étapes de test, gravités et textes d'impact et de test originaux. Le RAWeb contient une copie adaptée du RGAA 4.1.2 publié par la DINUM : voir la licence du dépôt du RAWeb.
    RUXAL n'est ni approuvé ni certifié par le SIP ou l'OSAPS.
 
 2. WCAG 2.1, © W3C (MIT, ERCIM, Keio, Beihang)
@@ -20,10 +22,11 @@ Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur
 3. Heuristiques d'utilisabilité, Nielsen Norman Group
    Les questions de la couche UX sont formulées par RUXAL. Les heuristiques d'origine sont référencées par lien : https://www.nngroup.com/articles/ten-usability-heuristics/
 
-4. Grille « Audit simplifié » du SIP
-   Statut de réutilisation à confirmer auprès du SIP avant publication.
+4. Méthode de contrôle simplifié de l'accessibilité v1.2.1 du SIP (« audit simplifié »)
+   Source : https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html
+   RUXAWEB reprend la liste des 52 critères RAWeb 1.1 de cette méthode (critères testés manuellement et avec Axe) et cite les règles Axe qu'elle associe aux critères. Le fichier Excel de la grille n'est ni reproduit ni versionné. Le statut de réutilisation de la grille elle-même reste à confirmer auprès du SIP.
 
-5. Bibliothèque tierce embarquée dans src/ruxaam.html
+5. Bibliothèque tierce embarquée dans src/ruxaam.html et src/ruxaweb.html
    jsPDF 2.5.1, © 2010-2021 James Hall et contributeurs, licence MIT.
    Greffons de jsPDF inclus, avec leurs en-têtes de copyright conservés dans le fichier : Aras Abbasi, Steven Spungin, Youssef Beddad, James Robb, Dominik Homberger, Eduardo Menezes de Morais, Jussi Utunen, et notice « Adobe Systems Incorporated » (2008) pour les données de glyphes.
    html2canvas, DOMPurify et canvg ne sont pas embarqués : jsPDF les mentionne comme dépendances facultatives.
