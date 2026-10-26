@@ -1,5 +1,5 @@
 {
-  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAWeb 1.1 de data/criteres-raweb.json et aux bonnes pratiques de data/bonnes-pratiques-web.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAWeb x.y (références WCAG) : conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, alignée sur les critères équivalents de RUXAAM quand il y en a ; base de discussion, à relire. Explications rédigées d'après les tests et la méthodologie du RAWeb 1.1 (fr/json/criteres.json et fr/json/methodologies.json du dépôt officiel) et d'après la méthode de contrôle simplifié v1.2.1 du SIP (règles Axe citées) : même sens, formulation propre à RUXAL. Déclencheurs : liste fermée des contenus qui rendent applicables les critères « si présent ».",
+  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAWeb 1.1 de data/criteres-raweb.json et aux bonnes pratiques de data/bonnes-pratiques-web.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAWeb x.y (références WCAG) : conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, alignée sur les critères équivalents de RUXAAM quand il y en a ; base de discussion, à relire. Explications rédigées d'après les tests et la méthodologie du RAWeb 1.1 (fr/json/criteres.json et fr/json/methodologies.json du dépôt officiel) et d'après la méthode de contrôle simplifié v1.2.1 du SIP. Les consignes restent compréhensibles sans outil spécialisé : un outil de test automatique n'y est évoqué qu'en appoint, sans nom de règle : même sens, formulation propre à RUXAL. Déclencheurs : liste fermée des contenus qui rendent applicables les critères « si présent ».",
   "licence": "CC BY 4.0",
   "verification_sources": "2026-10-12",
   "declencheurs": [
@@ -49,7 +49,7 @@
       "raweb": "1.1",
       "gravite": "critique",
       "impact": "RAWeb 1.1 (WCAG 1.1.1) : sans alternative textuelle, une image porteuse d'information (icône de lien, bouton image, logo, graphique) n'existe pas pour l'utilisateur de lecteur d'écran, qui entend au mieux un nom de fichier.",
-      "explication": "Lance Axe (règles image-alt, input-image-alt, role-img-alt, svg-img-alt, area-alt, object-alt), puis complète à l'inspecteur : chaque image qui porte une information (img, svg, canvas, bouton image, zone d'image réactive) doit avoir une alternative (alt, aria-label, aria-labelledby ou title). Axe ne sait pas si une image porte une information : c'est à toi de le décider."
+      "explication": "Repère chaque image qui porte une information (photo de produit, icône de lien ou de bouton, logo cliquable, graphique). Avec le lecteur d'écran, ou dans l'inspecteur du navigateur, vérifie qu'elle a une alternative textuelle (attribut alt ou équivalent). Un outil automatique signale les images sans alternative, mais c'est à toi de décider si une image porte une information."
     },
     "raweb-1-2": {
       "raweb": "1.2",
@@ -91,7 +91,7 @@
       "raweb": "2.1",
       "gravite": "modere",
       "impact": "RAWeb 2.1 (WCAG 4.1.2) : un cadre sans titre est annoncé « cadre » sans autre information : l'utilisateur de lecteur d'écran ne sait pas ce qu'il contient (vidéo, carte, formulaire externe) avant d'y entrer.",
-      "explication": "Lance Axe (règle frame-title), puis vérifie à l'inspecteur que chaque iframe ou frame a un attribut title. Le critère porte sur la présence du titre ; profites-en pour noter un titre vide de sens (« iframe », un nom de fichier)."
+      "explication": "Repère les contenus intégrés dans un cadre (vidéo, carte, formulaire externe : balise iframe). Dans l'inspecteur, chaque cadre doit avoir un titre (attribut title), que le lecteur d'écran annonce en entrant dans le cadre. Note aussi un titre vide de sens (« iframe », un nom de fichier)."
     },
     "raweb-3-1": {
       "raweb": "3.1",
@@ -103,7 +103,7 @@
       "raweb": "3.2",
       "gravite": "serieux",
       "impact": "RAWeb 3.2 (WCAG 1.4.3) : un contraste insuffisant rend le texte difficile ou impossible à lire pour les personnes malvoyantes, âgées, ou qui consultent la page en plein soleil.",
-      "explication": "Lance Axe (règle color-contrast) puis vérifie à la main ce qu'il n'a pas pu mesurer (texte sur image ou dégradé, états au survol et au focus, texte en image) avec Colour Contrast Analyser. Seuils : 4,5:1 pour le texte courant, 3:1 pour un texte d'au moins 24 px, ou 18,5 px en gras."
+      "explication": "Mesure le contraste entre le texte et son fond avec un outil comme Colour Contrast Analyser, en priorité sur les textes clairs ou petits, posés sur une image ou un dégradé, et dans les états au survol et au focus. Seuils : 4,5:1 pour le texte courant, 3:1 pour un texte d'au moins 24 px, ou 18,5 px en gras."
     },
     "raweb-4-1": {
       "raweb": "4.1",
@@ -121,7 +121,7 @@
       "raweb": "4.3",
       "gravite": "critique",
       "impact": "RAWeb 4.3 (WCAG 1.2.2 / 1.2.4) : sans sous-titres, les personnes sourdes ou malentendantes n'ont accès à aucune parole de la vidéo.",
-      "explication": "Lance Axe (règle video-caption) puis lis la vidéo : si le son porte de l'information, des sous-titres synchronisés doivent pouvoir s'afficher (directement ou dans une version sous-titrée). Avec une balise track, vérifie kind=\"captions\". Les sous-titres incrustés dans l'image comptent."
+      "explication": "Lis la vidéo : si le son porte de l'information (quelqu'un parle, par exemple), des sous-titres synchronisés doivent pouvoir s'afficher, directement ou dans une version sous-titrée. Les sous-titres incrustés dans l'image comptent."
     },
     "raweb-4-4": {
       "raweb": "4.4",
@@ -163,7 +163,7 @@
       "raweb": "5.7",
       "gravite": "serieux",
       "impact": "RAWeb 5.7 (WCAG 1.3.1) : une mauvaise association cellule et en-tête fait annoncer par le lecteur d'écran un en-tête faux ou aucun en-tête.",
-      "explication": "Lance Axe (règles td-headers-attr, th-has-data-cells), puis, avec NVDA ou VoiceOver, parcours quelques cellules : chacune doit être annoncée avec son ou ses en-têtes. À l'inspecteur : scope (col, row) pour un en-tête qui couvre toute la ligne ou la colonne, id et headers pour les tableaux complexes."
+      "explication": "Avec NVDA ou VoiceOver, parcours quelques cellules du tableau : chacune doit être annoncée avec son ou ses en-têtes de ligne et de colonne. Si ce n'est pas le cas, le lien entre les cellules et leurs en-têtes est mal codé (attribut scope, ou id et headers pour un tableau complexe)."
     },
     "raweb-6-1": {
       "raweb": "6.1",
@@ -175,7 +175,7 @@
       "raweb": "6.2",
       "gravite": "critique",
       "impact": "RAWeb 6.2 (WCAG 1.1.1 / 2.4.4) : un lien sans intitulé est annoncé « lien » sans autre information : l'utilisateur de lecteur d'écran ne peut pas savoir où il mène, ni le distinguer des autres.",
-      "explication": "Lance Axe (règle link-name) puis contrôle à l'inspecteur les liens icônes et images : chaque lien doit avoir un intitulé (texte, alternative de l'image, aria-label ou aria-labelledby). Un lien vide ou réduit à une icône sans alternative est non conforme."
+      "explication": "Ouvre la liste des liens du lecteur d'écran (NVDA : Insert+F7 ; VoiceOver : rotor) et cherche les liens annoncés sans nom (« lien » seul) : ce sont souvent des icônes ou des images cliquables (réseaux sociaux, logo). Chaque lien doit avoir un intitulé : son texte, l'alternative de son image, ou un libellé caché."
     },
     "raweb-7-3": {
       "raweb": "7.3",
@@ -187,19 +187,19 @@
       "raweb": "8.2",
       "gravite": "serieux",
       "impact": "RAWeb 8.2 (WCAG 4.1.1 / 4.1.2) : un code ARIA ou HTML incorrect (attribut ARIA invalide, rôle sans ses enfants requis, identifiant dupliqué référencé) fausse ce que restituent les technologies d'assistance.",
-      "explication": "Dans l'audit simplifié du SIP, ce critère se teste avec Axe : règles aria-allowed-attr, aria-required-attr, aria-required-children, aria-required-parent, aria-roles, aria-valid-attr, aria-valid-attr-value, aria-roledescription, duplicate-id-active, duplicate-id-aria, list, listitem, definition-list et dlitem. Vérifie chaque erreur signalée à l'inspecteur ; la validation complète du code au validateur du W3C n'est plus exigée."
+      "explication": "Vérifie que le code ne trompe pas les technologies d'assistance : rôles et attributs ARIA valides et complets, listes bien construites, identifiants uniques quand d'autres éléments s'y réfèrent. Un outil de test automatique repère vite la plupart de ces erreurs ; vérifie ensuite chacune dans l'inspecteur. La validation complète du code n'est plus exigée."
     },
     "raweb-8-3": {
       "raweb": "8.3",
       "gravite": "serieux",
       "impact": "RAWeb 8.3 (WCAG 3.1.1) : sans langue déclarée, le lecteur d'écran lit la page avec une prononciation par défaut, souvent incompréhensible (texte français lu avec un accent anglais).",
-      "explication": "Lance Axe (règle html-has-lang) puis vérifie à l'inspecteur que l'élément html porte un attribut lang (ou xml:lang)."
+      "explication": "Dans l'inspecteur, vérifie que l'élément html de la page porte un attribut lang (par exemple lang=\"fr\")."
     },
     "raweb-8-4": {
       "raweb": "8.4",
       "gravite": "serieux",
       "impact": "RAWeb 8.4 (WCAG 3.1.1) : un code de langue faux ou invalide fait lire la page avec la mauvaise voix de synthèse.",
-      "explication": "Lance Axe (règle html-lang-valid) puis vérifie que le code de langue de l'élément html est valide (fr, de, en, lb) et correspond à la langue principale réelle de la page. Une page en allemand déclarée lang=\"fr\" est non conforme."
+      "explication": "Vérifie que le code de langue de la page (attribut lang de l'élément html) est valide (fr, de, en, lb) et correspond à la langue principale réelle de la page. Une page en allemand déclarée lang=\"fr\" est non conforme."
     },
     "raweb-8-5": {
       "raweb": "8.5",
@@ -223,19 +223,19 @@
       "raweb": "8.8",
       "gravite": "modere",
       "impact": "RAWeb 8.8 (WCAG 3.1.2) : un code de langue faux sur un passage le fait lire avec une mauvaise voix de synthèse.",
-      "explication": "Lance Axe (règle valid-lang) puis vérifie que chaque attribut lang posé sur un passage a un code valide qui correspond bien à la langue de ce passage (par exemple lang=\"en\" sur une citation en anglais, lang=\"lb\" sur un texte en luxembourgeois)."
+      "explication": "Pour chaque passage marqué dans une autre langue, vérifie que son code de langue est valide et correspond bien à la langue du passage (par exemple lang=\"en\" sur une citation en anglais, lang=\"lb\" sur un texte en luxembourgeois)."
     },
     "raweb-9-1": {
       "raweb": "9.1",
       "gravite": "modere",
       "impact": "RAWeb 9.1 (WCAG 1.3.1 / 2.4.1 / 2.4.6 / 4.1.2) : sans titres structurés, les utilisateurs de lecteur d'écran, qui naviguent souvent de titre en titre, ne peuvent ni survoler la page ni sauter à la partie qui les intéresse.",
-      "explication": "Lance Axe (règle heading-order), puis affiche la liste des titres (NVDA : Insert+F7, Titres ; VoiceOver : rotor ; ou une extension de type HeadingsMap) : chaque texte qui joue visuellement le rôle de titre doit être un titre (h1 à h6 ou role=\"heading\" avec aria-level), avec un contenu pertinent et une hiérarchie cohérente."
+      "explication": "Affiche la liste des titres (NVDA : Insert+F7, Titres ; VoiceOver : rotor ; ou une extension comme HeadingsMap) : chaque texte qui joue visuellement le rôle de titre doit y figurer, avec un contenu pertinent et une hiérarchie cohérente (pas de saut de niveau illogique)."
     },
     "raweb-9-2": {
       "raweb": "9.2",
       "gravite": "modere",
       "impact": "RAWeb 9.2 (WCAG 1.3.1) : sans zones structurantes (en-tête, navigation, contenu principal, pied de page), l'utilisateur de lecteur d'écran ne peut pas aller directement au contenu ou au menu.",
-      "explication": "Lance Axe (règles region, landmark-no-duplicate-main), puis vérifie à l'inspecteur ou au lecteur d'écran (liste des repères) : un seul main visible, un seul banner et un seul contentinfo, une navigation principale en nav. Vérifie aussi que header et footer ne sont pas imbriqués dans article, aside, main, nav ou section quand ils structurent toute la page."
+      "explication": "Affiche la liste des repères du lecteur d'écran (ou les zones dans l'inspecteur) : la page doit avoir un en-tête, une navigation principale, un seul contenu principal et un pied de page, chacun identifié comme tel (header, nav, main, footer)."
     },
     "raweb-10-7": {
       "raweb": "10.7",
@@ -247,7 +247,7 @@
       "raweb": "10.8",
       "gravite": "serieux",
       "impact": "RAWeb 10.8 (WCAG 1.3.2 / 4.1.2) : un contenu masqué visuellement mais lu par le lecteur d'écran (ou l'inverse) crée des annonces fantômes, ou cache une information utile aux seuls utilisateurs de lecteur d'écran.",
-      "explication": "Lance Axe (règles aria-hidden-body, aria-hidden-focus), puis repère à l'inspecteur les contenus cachés (hidden, aria-hidden, display: none, classes de masquage). Un contenu caché doit soit être réellement destiné à être ignoré, soit devenir restituable par une action de l'utilisateur (bouton, onglet). Un élément focalisable dans un bloc aria-hidden=\"true\" est non conforme."
+      "explication": "Repère les contenus cachés (menus repliés, fenêtres fermées, textes réservés aux lecteurs d'écran). Un contenu caché doit soit être vraiment ignoré par le lecteur d'écran, soit devenir accessible par une action (bouton, onglet). Un élément qu'on atteint au clavier mais que le lecteur d'écran n'annonce pas est non conforme."
     },
     "raweb-10-9": {
       "raweb": "10.9",
@@ -271,7 +271,7 @@
       "raweb": "11.1",
       "gravite": "critique",
       "impact": "RAWeb 11.1 (WCAG 1.3.1 / 2.4.6 / 3.3.2 / 4.1.2) : un champ sans étiquette est annoncé « zone d'édition » sans autre information : l'utilisateur de lecteur d'écran ne sait pas quoi saisir et le formulaire devient impossible à remplir.",
-      "explication": "Lance Axe (règle label), puis vérifie à l'inspecteur et au lecteur d'écran que chaque champ (texte, liste, case, bouton radio) a une étiquette : label lié par for et id, aria-label, aria-labelledby ou title. Un placeholder seul n'est pas une étiquette."
+      "explication": "Avec le lecteur d'écran, place-toi sur chaque champ (texte, liste, case, bouton radio) : une étiquette doit être annoncée. Dans l'inspecteur, elle passe par une balise label liée au champ, ou par un libellé ARIA. Un texte indicatif dans le champ (placeholder) n'est pas une étiquette."
     },
     "raweb-11-2": {
       "raweb": "11.2",
@@ -301,7 +301,7 @@
       "raweb": "11.9",
       "gravite": "serieux",
       "impact": "RAWeb 11.9 (WCAG 2.5.3 / 4.1.2) : un bouton sans intitulé ou à l'intitulé vague (« OK », icône seule) ne dit pas ce qu'il va faire ; un nom accessible différent du texte visible gêne aussi la commande vocale.",
-      "explication": "Lance Axe (règles button-name, input-button-name), puis écoute chaque bouton du formulaire au lecteur d'écran : l'intitulé doit dire l'action (« Envoyer la demande », « Rechercher »). Si le bouton a un texte visible, son nom accessible doit le contenir."
+      "explication": "Écoute chaque bouton du formulaire au lecteur d'écran : l'intitulé doit dire l'action (« Envoyer la demande », « Rechercher »), y compris pour un bouton icône. Si le bouton a un texte visible, le nom annoncé doit le contenir."
     },
     "raweb-11-10": {
       "raweb": "11.10",
@@ -319,7 +319,7 @@
       "raweb": "12.7",
       "gravite": "modere",
       "impact": "RAWeb 12.7 (WCAG 2.4.1 / 2.4.3 / 3.2.3) : sans lien d'évitement, l'utilisateur au clavier doit traverser tout l'en-tête et le menu, à chaque page, avant d'atteindre le contenu.",
-      "explication": "Lance Axe (règle bypass), puis charge la page et appuie sur Tab : un lien « Aller au contenu » (visible au moins à la prise de focus) doit apparaître parmi les premiers et amener réellement le focus au début du contenu principal. Il doit être au même endroit sur toutes les pages."
+      "explication": "Charge la page et appuie sur Tab : un lien « Aller au contenu » (visible au moins quand il reçoit le focus) doit apparaître parmi les premiers et amener réellement le focus au début du contenu principal. Il doit être au même endroit sur toutes les pages."
     },
     "raweb-12-8": {
       "raweb": "12.8",
@@ -343,7 +343,7 @@
       "raweb": "13.1",
       "gravite": "serieux",
       "impact": "RAWeb 13.1 (WCAG 2.2.1 / 2.2.2) : une limite de temps non contrôlable (session qui expire, page qui se recharge ou redirige seule) fait perdre la saisie ou le contenu aux personnes qui lisent ou saisissent plus lentement.",
-      "explication": "Lance Axe (règle meta-refresh), puis repère les rafraîchissements, redirections et limites de session. Pour chacun, l'utilisateur doit pouvoir arrêter ou supprimer la limite, l'allonger, ou être prévenu avant l'échéance avec la possibilité de la prolonger. Une redirection par meta doit être immédiate. Une limite de session d'au moins 20 heures est acceptée."
+      "explication": "Repère les rafraîchissements, les redirections automatiques et les limites de session. Pour chacun, l'utilisateur doit pouvoir arrêter ou supprimer la limite, l'allonger, ou être prévenu avant l'échéance avec la possibilité de la prolonger. Une redirection automatique doit être immédiate. Une limite de session d'au moins 20 heures est acceptée."
     },
     "raweb-13-7": {
       "raweb": "13.7",
@@ -355,7 +355,7 @@
       "raweb": "13.8",
       "gravite": "serieux",
       "impact": "RAWeb 13.8 (WCAG 2.2.1 / 2.2.2) : un contenu qui bouge ou clignote sans fin (carrousel, bandeau défilant, animation) gêne la lecture et la concentration, et peut devenir illisible pour certaines personnes.",
-      "explication": "Lance Axe (règles blink, marquee), puis repère chaque contenu en mouvement ou clignotant lancé automatiquement : il doit durer 5 secondes au plus, ou pouvoir être arrêté et relancé, ou masqué, ou affiché sans mouvement, par un contrôle atteignable au clavier."
+      "explication": "Repère chaque contenu en mouvement ou clignotant lancé automatiquement (carrousel, bandeau défilant, animation) : il doit durer 5 secondes au plus, ou pouvoir être arrêté et relancé, masqué, ou affiché sans mouvement, par un contrôle atteignable au clavier."
     },
     "raweb-13-11": {
       "raweb": "13.11",
