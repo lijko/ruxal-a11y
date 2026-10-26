@@ -720,9 +720,9 @@ Details : README.md
         <div class="menu-wrap">
           <button class="btn btn-ghost btn-export" id="btnExportMenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="exportMenu"><svg class="btn-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Exporter<svg class="btn-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
           <div class="export-menu" id="exportMenu" role="menu" aria-label="Exporter" hidden>
-            <button type="button" role="menuitem" class="menu-item" id="btnExportJiraImport"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg><span class="menu-item-text"><b>Tickets Jira (CSV)</b><span>Prêt à importer, un ticket par critère non conforme. Les critères déjà exportés depuis cet audit sont écartés.</span></span></button>
+            <button type="button" role="menuitem" class="menu-item" id="btnExportJiraImport"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg><span class="menu-item-text"><b>Tickets Jira (CSV)</b><span>Prêt à importer dans Jira (séparateur virgule), un ticket par critère non conforme. Les critères déjà exportés sont écartés. À importer, pas à ouvrir dans Excel.</span></span></button>
             <button type="button" role="menuitem" class="menu-item" id="btnExportJiraTout"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><span class="menu-item-text"><b>Tickets Jira : tout réexporter</b><span>Tous les critères non conformes, y compris ceux déjà exportés (import Jira échoué, fichier perdu).</span></span></button>
-            <button type="button" role="menuitem" class="menu-item" id="btnExportListe"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span class="menu-item-text"><b>Liste des critères (CSV)</b><span>Une ligne par critère et par onglet (statut, commentaire), à ouvrir dans un tableur.</span></span></button>
+            <button type="button" role="menuitem" class="menu-item" id="btnExportListe"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span class="menu-item-text"><b>Liste des critères (Excel)</b><span>Fichier .xlsx : une ligne par critère et par onglet (statut, commentaire), colonnes et filtres prêts.</span></span></button>
             <button type="button" role="menuitem" class="menu-item" id="btnExportJSON"><svg class="menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg><span class="menu-item-text"><b>Données (JSON)</b><span>Résumé calculé de l'audit, pour un autre outil.</span></span></button>
           </div>
         </div>
@@ -1166,7 +1166,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.24';
+  var APP_VERSION = '1.25';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -2847,11 +2847,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return (titre ? titre+'_' : '') + type + '_' + horo + '.' + ext;
   }
 
-  // Repli quand la capacité « downloads » n'est pas servie (page ouverte hors du visionneur Claude, ou fichier
-  // HTML local) : téléchargement navigateur classique via un lien temporaire. Aucun envoi réseau.
+  // Téléchargement par le navigateur, via un lien temporaire : aucun envoi réseau, rien ne quitte l'appareil.
   function telechargementDirect(filename, data){
     var ext = (filename.split('.').pop() || '').toLowerCase();
-    var mimes = {json:'application/json', csv:'text/csv;charset=utf-8', pdf:'application/pdf'};
+    var mimes = {json:'application/json', csv:'text/csv;charset=utf-8', pdf:'application/pdf', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};
     var blob = new Blob([data], {type: mimes[ext] || 'application/octet-stream'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -2859,28 +2858,13 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 10000);
   }
-  var MSG_DIRECT = 'Téléchargement direct lancé. Si rien n\'apparaît dans tes téléchargements, ouvre l\'outil depuis l\'application Claude.';
 
-  // Enregistrement d'un fichier via la capacité « downloads » : jamais silencieux. Chaque issue (indisponible,
-  // refus, limite de fréquence, erreur) affiche un message dans la zone d'état de la barre supérieure.
+  // Enregistrement d'un fichier : jamais silencieux, un message confirme le téléchargement ou explique l'échec.
   async function saveFile(filename, data, okMsg){
-    var dl = null;
-    try{ dl = (typeof claude !== 'undefined' && claude && claude.use) ? await claude.use('downloads') : null; }catch(e){ dl = null; }
-    if(!dl){
-      try{ telechargementDirect(filename, data); setImportStatus(MSG_DIRECT, false); return 'direct'; }
-      catch(e){ setImportStatus('Le téléchargement n\'est pas disponible dans cette vue : ouvre l\'outil depuis l\'application Claude.', true); return false; }
-    }
-    try{
-      var r = await dl.save({filename: filename, data: data});
-      setImportStatus(okMsg || 'Fichier enregistré.', false);
-      return true;
-    }catch(e){
-      var code = e && e.code;
-      if(code === 'declined') setImportStatus('Enregistrement annulé.', false);
-      else if(code === 'rate_limited') setImportStatus('Une demande d\'enregistrement est déjà en cours : valide ou ferme la fenêtre, puis réessaie.', true);
-      else setImportStatus('Enregistrement impossible'+(code ? ' ('+code+')' : '')+'.', true);
-      return false;
-    }
+    try{ telechargementDirect(filename, data); }
+    catch(e){ setImportStatus('Le téléchargement a échoué dans ce navigateur. Réessaie, ou ouvre l\'outil dans un autre navigateur.', true); return false; }
+    setImportStatus((okMsg || 'Fichier téléchargé.')+' ('+filename+')', false, 8000);
+    return true;
   }
 
   // Garde commune des exports : quand il n'y a rien à exporter, on le dit en clair (et pourquoi) au lieu de
@@ -3006,10 +2990,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return s;
   }
 
-  function buildListeCSV(){
+  function buildListeLignes(){
     var lignes = [];
-    var header = ['Onglet','Type d\'audit','Écran(s)','RAAM','Thème (RUXAL)','Niveau','Niveau WCAG','Critère','Statut',"Commentaire (critère)"];
-    lignes.push(header.map(csvEscape).join(';'));
+    var header = ['Onglet','Type d\'audit','Écran(s)','RAAM','Thème (RUXAL)','Gravité','Niveau WCAG','Critère','Statut',"Commentaire (critère)"];
+    lignes.push(header);
     state.onglets.forEach(function(o){
       // Onglet flow (pas de RAAM/SIP) : rien à exporter ici, cette liste est spécifiquement les critères
       // RAAM, absents pour ce type d'audit (POUR/UX uniquement).
@@ -3019,10 +3003,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         var s = statutCritere(o, c.id);
         var commentaire = commentaireCritereTexte(o, c);
         var row = [o.nom, scenarioLabel(o.scenario), ecransTxt, (c.horsRaam ? 'Hors RAAM (bonne pratique)' : c.raam), c.theme_ruxal, graviteLabel(c.niveau), c.niveau_wcag, c.libelle, s.display, commentaire];
-        lignes.push(row.map(csvEscape).join(';'));
+        lignes.push(row);
       });
     });
-    return lignes.join('\r\n');
+    return lignes;
   }
 
   // ---------- Export « pour Jira » (CSV) ----------
@@ -3153,16 +3137,87 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     if(!ok) return;
     res.ids.forEach(function(id){ state.exportesJira[id] = true; });
     saveState();
-    if(ok === 'direct') setImportStatus(msg+' '+MSG_DIRECT, false);
   }
 
+
+  // ---------- Fichier Excel (.xlsx), écrit sans bibliothèque ----------
+  // Un vrai classeur plutôt qu'un CSV : Excel n'interprète plus le séparateur selon la langue du poste, ni les numéros
+  // de critères (« 10.10 » devenait 10,1, « 1.1 » une date). Archive ZIP sans compression, cellules texte.
+  var CRC_TABLE = (function(){ var t = [], c; for(var n = 0; n < 256; n++){ c = n; for(var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+  function crc32(u8){ var c = 0xFFFFFFFF; for(var i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  function zipStore(fichiers){
+    var enc = new TextEncoder(), morceaux = [], central = [], offset = 0;
+    fichiers.forEach(function(f){
+      var nom = enc.encode(f.nom), data = enc.encode(f.contenu), crc = crc32(data);
+      var h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(12, 0x21, true);
+      h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, nom.length, true);
+      morceaux.push(new Uint8Array(h.buffer), nom, data);
+      var c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(14, 0x21, true);
+      c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, nom.length, true); c.setUint32(42, offset, true);
+      central.push(new Uint8Array(c.buffer), nom);
+      offset += 30 + nom.length + data.length;
+    });
+    var tailleCentral = central.reduce(function(t, x){ return t + x.length; }, 0);
+    var fin = new DataView(new ArrayBuffer(22));
+    fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, fichiers.length, true); fin.setUint16(10, fichiers.length, true);
+    fin.setUint32(12, tailleCentral, true); fin.setUint32(16, offset, true);
+    var tout = morceaux.concat(central, [new Uint8Array(fin.buffer)]);
+    var sortie = new Uint8Array(tout.reduce(function(t, x){ return t + x.length; }, 0)), pos = 0;
+    tout.forEach(function(x){ sortie.set(x, pos); pos += x.length; });
+    return sortie;
+  }
+  function xmlEsc(v){
+    return String(v == null ? '' : v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function colonneExcel(i){ var t = ''; i++; while(i > 0){ var m = (i - 1) % 26; t = String.fromCharCode(65 + m) + t; i = Math.floor((i - 1) / 26); } return t; }
+  // Styles : 1 en-tête, 2 texte (retour à la ligne, aligné en haut), 3 à 6 statuts C, NC, NT, NA.
+  var XLSX_STYLE_STATUT = {C:3, NC:4, NT:5, NA:6};
+  function construireXlsx(feuille){
+    var nbCol = feuille.colonnes.length, derniere = colonneExcel(nbCol - 1) + (feuille.lignes.length + 1);
+    var cellule = function(ref, val, style){ return '<c r="'+ref+'" t="inlineStr" s="'+style+'"><is><t xml:space="preserve">'+xmlEsc(val)+'</t></is></c>'; };
+    var lignes = ['<row r="1">' + feuille.colonnes.map(function(c, i){ return cellule(colonneExcel(i)+'1', c.titre, 1); }).join('') + '</row>'];
+    feuille.lignes.forEach(function(l, r){
+      lignes.push('<row r="'+(r+2)+'">' + l.map(function(v, i){
+        var style = (feuille.colonnes[i].statut && XLSX_STYLE_STATUT[v]) ? XLSX_STYLE_STATUT[v] : 2;
+        return cellule(colonneExcel(i)+(r+2), v, style);
+      }).join('') + '</row>');
+    });
+    var entete = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+    var NS = 'http://schemas.openxmlformats.org/', NSR = NS+'officeDocument/2006/relationships';
+    var nomFeuille = feuille.nom.replace(/'/g, "''");
+    var remplissage = function(rgb){ return '<fill><patternFill patternType="solid"><fgColor rgb="FF'+rgb+'"/><bgColor indexed="64"/></patternFill></fill>'; };
+    var xf = function(police, fond, centre){ return '<xf numFmtId="49" fontId="'+police+'" fillId="'+fond+'" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="top" wrapText="1"'+(centre ? ' horizontal="center"' : '')+'/></xf>'; };
+    return zipStore([
+      {nom:'[Content_Types].xml', contenu: entete + '<Types xmlns="'+NS+'package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+      {nom:'_rels/.rels', contenu: entete + '<Relationships xmlns="'+NS+'package/2006/relationships"><Relationship Id="rId1" Type="'+NSR+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+      {nom:'xl/workbook.xml', contenu: entete + '<workbook xmlns="'+NS+'spreadsheetml/2006/main" xmlns:r="'+NSR+'"><sheets><sheet name="'+xmlEsc(feuille.nom)+'" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\''+xmlEsc(nomFeuille)+'\'!$A$1:$'+derniere.replace(/(\d+)$/, '$$$1')+'</definedName></definedNames></workbook>'},
+      {nom:'xl/_rels/workbook.xml.rels', contenu: entete + '<Relationships xmlns="'+NS+'package/2006/relationships"><Relationship Id="rId1" Type="'+NSR+'/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+NSR+'/styles" Target="styles.xml"/></Relationships>'},
+      {nom:'xl/styles.xml', contenu: entete + '<styleSheet xmlns="'+NS+'spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>' +
+        '<fills count="7"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>'+remplissage('E0EEF2')+remplissage('E0F3E8')+remplissage('FBE5E2')+remplissage('FBF1D3')+remplissage('E6ECF0')+'</fills>' +
+        '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+        '<cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+xf(1, 2, false)+xf(0, 0, false)+xf(1, 3, true)+xf(1, 4, true)+xf(1, 5, true)+xf(1, 6, true)+'</cellXfs>' +
+        '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'},
+      {nom:'xl/worksheets/sheet1.xml', contenu: entete + '<worksheet xmlns="'+NS+'spreadsheetml/2006/main"><dimension ref="A1:'+derniere+'"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>' +
+        feuille.colonnes.map(function(c, i){ return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+c.largeur+'" customWidth="1"/>'; }).join('') +
+        '</cols><sheetData>' + lignes.join('') + '</sheetData><autoFilter ref="A1:'+derniere+'"/></worksheet>'}
+    ]);
+  }
 
   async function exportListe(){
     if(!exportPossible('raam')) return;
-    // BOM UTF-8 en tête : garantit que les accents s'affichent correctement à l'ouverture directe dans Excel.
-    var csv = '﻿' + buildListeCSV();
-    await saveFile(nomFichier('liste-criteres','csv'), csv, 'Liste des critères enregistrée.');
+    var lignes = buildListeLignes();
+    var largeurs = [24, 20, 28, 16, 22, 10, 10, 70, 8, 60];
+    var xlsx = construireXlsx({
+      nom: 'Critères',
+      colonnes: lignes[0].map(function(t, i){ return {titre: t, largeur: largeurs[i] || 20, statut: t === 'Statut'}; }),
+      lignes: lignes.slice(1)
+    });
+    await saveFile(nomFichier('liste-criteres','xlsx'), xlsx, 'Liste des critères enregistrée (Excel).');
   }
+
 
   // ---------- Référentiel (liste d'apprentissage) + export PDF ----------
   // Même contenu que l'audit, présenté sans statuts ni écrans pour apprendre les critères et les thèmes. Cette
@@ -3252,8 +3307,6 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   }
 
   async function exportReferentielPdf(){
-    var dl = null;
-    try{ dl = (typeof claude !== 'undefined' && claude && claude.use) ? await claude.use('downloads') : null; }catch(e){ dl = null; }
     setRefStatus('Préparation du PDF…', false);
     var JsPDF;
     try{ JsPDF = await loadJsPdf(); }
@@ -3261,11 +3314,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     try{
       var buf = buildReferentielPdf(JsPDF, referentielGroupes(refTheming), refTheming);
       var nomPdf = nomFichier('referentiel-criteres','pdf',false);
-      if(dl){ await dl.save({filename: nomPdf, data: buf}); setRefStatus('PDF enregistré.', false); }
-      else { telechargementDirect(nomPdf, buf); setRefStatus(MSG_DIRECT, false); }
+      telechargementDirect(nomPdf, buf);
+      setRefStatus('PDF téléchargé ('+nomPdf+').', false);
     }catch(e){
-      if(e && e.code === 'declined') setRefStatus('', false);
-      else setRefStatus('Le PDF n\'a pas pu être enregistré.', true);
+      setRefStatus('Le PDF n\'a pas pu être créé ou téléchargé.', true);
     }
   }
 

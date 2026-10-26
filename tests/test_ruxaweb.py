@@ -11,6 +11,7 @@ Lancement :
 Code retour 0 si tout passe, 1 sinon. L'outil est ouvert en file:// : aucun serveur n'est nécessaire.
 """
 import json
+import openpyxl
 import pathlib
 import sys
 import tempfile
@@ -65,6 +66,18 @@ def telechargement(page, action):
         return None
 
 
+def telechargement_octets(page, action):
+    """Comme telechargement, mais renvoie le chemin du fichier produit (fichier binaire), ou None."""
+    try:
+        with page.expect_download(timeout=1500) as dl:
+            action()
+        cible = pathlib.Path(tempfile.mkdtemp()) / dl.value.suggested_filename
+        dl.value.save_as(cible)
+        return str(cible), dl.value.suggested_filename
+    except Exception:
+        return None
+
+
 def exporter(page, libelle):
     page.click('#btnExportMenu')
     page.locator('.menu-item', has_text=libelle).click()
@@ -79,7 +92,7 @@ def main():
         ouvrir(page)
 
         # --- Exports sans onglet : un message, aucun fichier
-        for libelle in ('Tickets Jira (CSV)', 'Liste des critères (CSV)', 'Données (JSON)'):
+        for libelle in ('Tickets Jira (CSV)', 'Liste des critères (Excel)', 'Données (JSON)'):
             f = telechargement(page, lambda: exporter(page, libelle))
             verifier('Export « %s » sans onglet : pas de fichier' % libelle, f is None, f and f[:80])
             verifier('Export « %s » sans onglet : message' % libelle, 'aucun onglet' in message(page), message(page))
@@ -94,7 +107,7 @@ def main():
         verifier('Référentiel : 24 « si présent »', page.locator('.si-present-chip').count() == 24, page.locator('.si-present-chip').count())
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.2', 'RUXAWEB, version 1.2' in aide)
+        verifier('Aide : version 1.3', 'RUXAWEB, version 1.3' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation au clavier' in aide and 'NVDA' in aide and 'iOS' not in aide)
         verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Page[type "Libellé"]' in aide)
         verifier('Aide : déclencheurs web', 'cadre' in aide and 'autre langue' in aide)
@@ -257,11 +270,39 @@ def main():
         verifier('13.11 : pastilles RAWeb 13.11 et hors sélection', 'RAWeb 13.11' in ligne.inner_text() and 'Hors sélection SIP' in ligne.inner_text())
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
         verifier('13.11 : ticket Jira avec lien officiel', f and 'RAWeb-13.11' in f and 'criteres.html#crit-13-11' in f, f and f[:200])
-        f = telechargement(page, lambda: exporter(page, 'Liste des critères (CSV)'))
-        verifier('13.11 : liste CSV marquée hors taux', f and '13.11 (hors sélection SIP, hors taux)' in f)
+        x = telechargement_octets(page, lambda: exporter(page, 'Liste des critères (Excel)'))
+        valeurs = [c.value for r in openpyxl.load_workbook(x[0]).active.iter_rows() for c in r] if x else []
+        verifier('13.11 : liste Excel marquée hors taux', '13.11 (hors sélection SIP, hors taux)' in valeurs)
         f = telechargement(page, lambda: exporter(page, 'Données (JSON)'))
         c1311 = [c for c in json.loads(f)['onglets'][0]['criteres'] if c['id'] == 'raweb-13-11'] if f else []
         verifier('13.11 : export JSON horsSelectionSip', c1311 and c1311[0]['horsSelectionSip'] is True and c1311[0]['statut'] == 'NC')
+
+        # --- Export Excel de la liste, sans mention d'une application tierce
+        ouvrir(page)
+        creer_onglet(page)
+        page.click('[data-action="set-statut-tous"][data-crit="raweb-10-10"][data-statut="NC"]')
+        champ = page.locator('[data-action="set-commentaire-critere"][data-crit="raweb-10-10"]').first
+        champ.fill('Défaut ; avec "guillemets", virgule\net retour à la ligne <balise> & esperluette')
+        x = telechargement_octets(page, lambda: exporter(page, 'Liste des critères (Excel)'))
+        verifier('Excel : fichier .xlsx produit', x and x[1].endswith('.xlsx'), x and x[1])
+        if x:
+            ws = openpyxl.load_workbook(x[0]).active
+            entetes = [c.value for c in ws[1]]
+            verifier('Excel : en-têtes', entetes[:4] == ['Onglet', "Type d'audit", entetes[2], 'RAWeb'] and 'Gravité' in entetes and 'Statut' in entetes, entetes)
+            verifier('Excel : une ligne par critère', ws.max_row == NB + 1, ws.max_row)
+            col_ref, col_statut = entetes.index('RAWeb'), entetes.index('Statut')
+            refs = [r[col_ref].value for r in ws.iter_rows(min_row=2)]
+            verifier('Excel : numéros gardés en texte (10.1, 10.10…)', all(isinstance(v, str) for v in refs) and '10.10' in refs and '11.10' in refs, refs[:5])
+            ligne = [r for r in ws.iter_rows(min_row=2) if r[col_statut].value == 'NC']
+            verifier('Excel : statut NC coloré', ligne and ligne[0][col_statut].fill.fgColor.rgb == 'FFFBE5E2', ligne and ligne[0][col_statut].fill.fgColor.rgb)
+            verifier('Excel : commentaire intact (caractères spéciaux, retour à la ligne)', ligne and ligne[0][-1].value == 'Accueil : Défaut ; avec "guillemets", virgule\net retour à la ligne <balise> & esperluette', ligne and ligne[0][-1].value)
+            verifier('Excel : ligne d\'en-tête figée et filtre', ws.freeze_panes == 'A2' and ws.auto_filter.ref is not None, (ws.freeze_panes, ws.auto_filter.ref))
+            verifier('Excel : largeur de la colonne Critère', ws.column_dimensions['H'].width >= 60, ws.column_dimensions['H'].width)
+        verifier('Messages sans mention de Claude', 'claude' not in message(page).lower(), message(page))
+        page.click('#btnReferentiel')
+        x = telechargement_octets(page, lambda: page.click('[data-action="export-ref-pdf"]'))
+        verifier('PDF : téléchargé, message sans Claude', x and x[1].endswith('.pdf') and 'claude' not in page.locator('#refStatus').inner_text().lower(), page.locator('#refStatus').inner_text())
+        verifier('Page : aucune mention de Claude', 'claude' not in page.content().lower())
 
         # --- Réinitialisation : la mémoire des exports est vidée
         page.click('#btnAide')

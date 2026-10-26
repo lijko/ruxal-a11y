@@ -11,6 +11,7 @@ Lancement :
 Code retour 0 si tout passe, 1 sinon. L'outil est ouvert en file:// : aucun serveur n'est nécessaire.
 """
 import json
+import openpyxl
 import pathlib
 import sys
 import tempfile
@@ -65,6 +66,18 @@ def telechargement(page, action):
         return None
 
 
+def telechargement_octets(page, action):
+    """Comme telechargement, mais renvoie le chemin du fichier produit (fichier binaire), ou None."""
+    try:
+        with page.expect_download(timeout=1500) as dl:
+            action()
+        cible = pathlib.Path(tempfile.mkdtemp()) / dl.value.suggested_filename
+        dl.value.save_as(cible)
+        return str(cible), dl.value.suggested_filename
+    except Exception:
+        return None
+
+
 def exporter(page, libelle):
     page.click('#btnExportMenu')
     page.locator('.menu-item', has_text=libelle).click()
@@ -79,7 +92,7 @@ def main():
         ouvrir(page)
 
         # --- Exports sans onglet : un message, aucun fichier
-        for libelle in ('Tickets Jira (CSV)', 'Liste des critères (CSV)', 'Données (JSON)'):
+        for libelle in ('Tickets Jira (CSV)', 'Liste des critères (Excel)', 'Données (JSON)'):
             f = telechargement(page, lambda: exporter(page, libelle))
             verifier('Export « %s » sans onglet : pas de fichier' % libelle, f is None, f and f[:80])
             verifier('Export « %s » sans onglet : message' % libelle, 'aucun onglet' in message(page), message(page))
@@ -94,7 +107,7 @@ def main():
         verifier('Référentiel : 20 « si présent »', page.locator('.si-present-chip').count() == 20, page.locator('.si-present-chip').count())
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.24', 'version 1.24' in aide)
+        verifier('Aide : version 1.25', 'version 1.25' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation alternative' in aide)
         verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran[type "Libellé"]' in aide)
         verifier('Aide : déclencheurs à jour', 'limite de session' in aide and 'lien coloré' not in aide)
@@ -191,7 +204,7 @@ def main():
             json.dump(uxpour, t)
         page.set_input_files('#inputImportEtat', t.name)
         page.wait_for_timeout(300)
-        for libelle in ('Liste des critères (CSV)', 'Tickets Jira (CSV)'):
+        for libelle in ('Liste des critères (Excel)', 'Tickets Jira (CSV)'):
             f = telechargement(page, lambda: exporter(page, libelle))
             verifier('UX·POUR seul, « %s » : pas de fichier, message' % libelle, f is None and 'aucun onglet RAAM' in message(page), message(page))
 
@@ -278,6 +291,33 @@ def main():
         page.locator('[data-action="delete-ecran"]').last.click()
         page.locator('[data-action="delete-ecran"]').last.click()
         verifier('6 écrans : retour à la grille', page.locator('.ecran-selecteur').count() == 0 and cellules() == 6, cellules())
+
+        # --- Export Excel de la liste, sans mention d'une application tierce
+        ouvrir(page)
+        creer_onglet(page)
+        page.click('[data-action="set-statut-tous"][data-crit="raam-10-1"][data-statut="NC"]')
+        champ = page.locator('[data-action="set-commentaire-critere"][data-crit="raam-10-1"]').first
+        champ.fill('Défaut ; avec "guillemets", virgule\net retour à la ligne <balise> & esperluette')
+        x = telechargement_octets(page, lambda: exporter(page, 'Liste des critères (Excel)'))
+        verifier('Excel : fichier .xlsx produit', x and x[1].endswith('.xlsx'), x and x[1])
+        if x:
+            ws = openpyxl.load_workbook(x[0]).active
+            entetes = [c.value for c in ws[1]]
+            verifier('Excel : en-têtes', entetes[:4] == ['Onglet', "Type d'audit", entetes[2], 'RAAM'] and 'Gravité' in entetes and 'Statut' in entetes, entetes)
+            verifier('Excel : une ligne par critère', ws.max_row == NB + 1, ws.max_row)
+            col_ref, col_statut = entetes.index('RAAM'), entetes.index('Statut')
+            refs = [r[col_ref].value for r in ws.iter_rows(min_row=2)]
+            verifier('Excel : numéros gardés en texte (10.1, 10.10…)', all(isinstance(v, str) for v in refs) and '9.10' in refs and '11.10' in refs, refs[:5])
+            ligne = [r for r in ws.iter_rows(min_row=2) if r[col_statut].value == 'NC']
+            verifier('Excel : statut NC coloré', ligne and ligne[0][col_statut].fill.fgColor.rgb == 'FFFBE5E2', ligne and ligne[0][col_statut].fill.fgColor.rgb)
+            verifier('Excel : commentaire intact (caractères spéciaux, retour à la ligne)', ligne and ligne[0][-1].value == 'Accueil : Défaut ; avec "guillemets", virgule\net retour à la ligne <balise> & esperluette', ligne and ligne[0][-1].value)
+            verifier('Excel : ligne d\'en-tête figée et filtre', ws.freeze_panes == 'A2' and ws.auto_filter.ref is not None, (ws.freeze_panes, ws.auto_filter.ref))
+            verifier('Excel : largeur de la colonne Critère', ws.column_dimensions['H'].width >= 60, ws.column_dimensions['H'].width)
+        verifier('Messages sans mention de Claude', 'claude' not in message(page).lower(), message(page))
+        page.click('#btnReferentiel')
+        x = telechargement_octets(page, lambda: page.click('[data-action="export-ref-pdf"]'))
+        verifier('PDF : téléchargé, message sans Claude', x and x[1].endswith('.pdf') and 'claude' not in page.locator('#refStatus').inner_text().lower(), page.locator('#refStatus').inner_text())
+        verifier('Page : aucune mention de Claude', 'claude' not in page.content().lower())
 
         # --- Réinitialisation : la mémoire des exports est vidée
         page.click('#btnAide')
