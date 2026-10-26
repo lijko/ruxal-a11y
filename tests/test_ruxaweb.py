@@ -288,7 +288,7 @@ def main():
         if x:
             ws = openpyxl.load_workbook(x[0]).active
             entetes = [c.value for c in ws[1]]
-            verifier('Excel : en-têtes', entetes[:4] == ['Onglet', "Type d'audit", entetes[2], 'RAWeb'] and 'Gravité' in entetes and 'Statut' in entetes, entetes)
+            verifier('Excel : en-têtes', entetes[:3] == ["Onglet (type d'audit)", entetes[1], 'RAWeb'] and "Type d'audit" not in entetes and 'Gravité' in entetes and 'Statut' in entetes, entetes)
             verifier('Excel : une ligne par critère', ws.max_row == NB + 1, ws.max_row)
             col_ref, col_statut = entetes.index('RAWeb'), entetes.index('Statut')
             refs = [r[col_ref].value for r in ws.iter_rows(min_row=2)]
@@ -297,7 +297,8 @@ def main():
             verifier('Excel : statut NC coloré', ligne and ligne[0][col_statut].fill.fgColor.rgb == 'FFFBE5E2', ligne and ligne[0][col_statut].fill.fgColor.rgb)
             verifier('Excel : commentaire intact (caractères spéciaux, retour à la ligne)', ligne and ligne[0][-1].value == 'Accueil : Défaut ; avec "guillemets", virgule\net retour à la ligne <balise> & esperluette', ligne and ligne[0][-1].value)
             verifier('Excel : ligne d\'en-tête figée et filtre', ws.freeze_panes == 'A2' and ws.auto_filter.ref is not None, (ws.freeze_panes, ws.auto_filter.ref))
-            verifier('Excel : largeur de la colonne Critère', ws.column_dimensions['H'].width >= 60, ws.column_dimensions['H'].width)
+            verifier('Excel : largeur de la colonne Critère', ws.column_dimensions['G'].width >= 60, ws.column_dimensions['G'].width)
+            verifier('Excel : onglet audit rapide sans type répété', ws['A2'].value == ws['A2'].value.split(' (')[0], ws['A2'].value)
         verifier('Messages sans mention de Claude', 'claude' not in message(page).lower(), message(page))
         page.click('#btnReferentiel')
         x = telechargement_octets(page, lambda: page.click('[data-action="export-ref-pdf"]'))

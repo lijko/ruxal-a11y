@@ -2992,17 +2992,19 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
   function buildListeLignes(){
     var lignes = [];
-    var header = ['Onglet','Type d\'audit','Écran(s)','RAAM','Thème (RUXAL)','Gravité','Niveau WCAG','Critère','Statut',"Commentaire (critère)"];
+    var header = ['Onglet (type d\'audit)','Écran(s)','RAAM','Thème (RUXAL)','Gravité','Niveau WCAG','Critère','Statut',"Commentaire (critère)"];
     lignes.push(header);
     state.onglets.forEach(function(o){
       // Onglet flow (pas de RAAM/SIP) : rien à exporter ici, cette liste est spécifiquement les critères
       // RAAM, absents pour ce type d'audit (POUR/UX uniquement).
       if(o.approches.indexOf('SIP') === -1) return;
       var ecransTxt = o.ecrans.map(function(e){ return e.nom; }).join(', ');
+      // Une seule colonne : le type n'est ajouté que s'il diffère du nom (l'audit rapide porte le nom de son type).
+      var ongletTxt = o.nom === scenarioLabel(o.scenario) ? o.nom : o.nom+' ('+scenarioLabel(o.scenario)+')';
       CRITERES.forEach(function(c){
         var s = statutCritere(o, c.id);
         var commentaire = commentaireCritereTexte(o, c);
-        var row = [o.nom, scenarioLabel(o.scenario), ecransTxt, (c.horsRaam ? 'Hors RAAM (bonne pratique)' : c.raam), c.theme_ruxal, graviteLabel(c.niveau), c.niveau_wcag, c.libelle, s.display, commentaire];
+        var row = [ongletTxt, ecransTxt, (c.horsRaam ? 'Hors RAAM (bonne pratique)' : c.raam), c.theme_ruxal, graviteLabel(c.niveau), c.niveau_wcag, c.libelle, s.display, commentaire];
         lignes.push(row);
       });
     });
@@ -3209,7 +3211,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   async function exportListe(){
     if(!exportPossible('raam')) return;
     var lignes = buildListeLignes();
-    var largeurs = [24, 20, 28, 16, 22, 10, 10, 70, 8, 60];
+    var largeurs = [34, 28, 16, 22, 10, 10, 70, 8, 60];
     var xlsx = construireXlsx({
       nom: 'Critères',
       colonnes: lignes[0].map(function(t, i){ return {titre: t, largeur: largeurs[i] || 20, statut: t === 'Statut'}; }),
