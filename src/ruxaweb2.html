@@ -73,15 +73,28 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   aside.aide h2{margin:0;font-size:16px}
   aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--texte-doux)}
   aside.aide p{margin:0}
-  .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-  .parcours button,.parcours span.pas{width:100%;display:flex;gap:10px;align-items:center;text-align:left;background:none;border:0;border-radius:8px;padding:6px 8px;min-height:36px}
+  .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+  .parcours .phase{display:flex;flex-direction:column;gap:6px;padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--texte-doux)}
+  .parcours .phase:first-child{padding-top:0}
+  .parcours .phase b{text-transform:none;letter-spacing:0;font-size:14px;color:var(--texte)}
+  .prog{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-weight:600;font-size:12px}
+  .prog span.barre-prog{flex:1;height:6px;border-radius:99px;background:var(--bord-doux);overflow:hidden}
+  .prog span.barre-prog i{display:block;height:100%;background:var(--c);border-radius:99px}
+  .parcours .pas-li{position:relative}
+  .parcours .pas-li:not(.fin)::after{content:"";position:absolute;left:21px;top:40px;bottom:-6px;width:2px;background:var(--bord);border-radius:2px}
+  .parcours .pas-li.ok:not(.fin)::after{background:var(--c)}
+  .parcours button,.parcours span.pas{position:relative;z-index:1;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:none;border:0;border-radius:12px;padding:6px 8px;min-height:46px}
   .parcours button{cursor:pointer}
   .parcours button:hover{background:var(--surface-alt)}
-  .parcours .ici{background:var(--accent-doux);color:var(--accent-texte);font-weight:700}
-  .parcours .rond{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--bord);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+  .parcours .lib{display:flex;flex-direction:column;line-height:1.25}
+  .parcours .lib small{font-size:12px;color:var(--texte-doux);font-weight:500}
+  .parcours .rond{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--bord);background:var(--surface);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--texte-doux)}
+  .parcours .rond svg{width:15px;height:15px}
   .parcours .fait .rond{background:var(--c);border-color:var(--c);color:var(--surface)}
-  .parcours .ici .rond{border-color:var(--accent)}
-  .parcours .sous{padding-left:24px}
+  .parcours .ici{background:var(--accent-doux)}
+  .parcours .ici .lib{font-weight:800;color:var(--accent-texte)}
+  .parcours .ici .rond{background:var(--accent);border-color:var(--accent);color:var(--sur-accent);box-shadow:0 0 0 4px var(--accent-doux),0 0 0 6px var(--accent)}
+  @media (prefers-reduced-motion: no-preference){ .parcours .ici .rond{transition:box-shadow .2s} }
 
   h1{margin:0;font-size:24px;text-wrap:balance}
   h2{font-size:17px;margin:0}
@@ -293,23 +306,23 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
 
   // Parcours d'audit : préparer, puis pour chaque écran le tour à vide et les 4 étapes, puis clôture et résumé.
   var ETAPES = [
-    {id:'vide', nom:'Tour à vide', familles:[],
+    {id:'vide', nom:'Tour à vide', outil:'sans outil', familles:[],
      faire:"Parcours l'écran comme un utilisateur, sans outil ni lecteur d'écran. Note ce qui gêne ou surprend.",
      chercher:"Le but de l'écran, ses contenus particuliers (formulaire, vidéo, tableau) et ce que tu retrouveras ailleurs (en-tête, menu, pied de page).",
      note:"Sans point de contrôle, une observation reste une note : elle ne change aucun statut."},
-    {id:'1', nom:'Usage standard', familles:['visuel','medias','temps','formulaires'],
+    {id:'1', nom:'Usage standard', outil:'souris et zoom', familles:['visuel','medias','temps','formulaires'],
      faire:"Utilise l'écran normalement, à la souris ou au doigt, puis agrandis le texte à 200 %.",
      chercher:"Couleurs et contrastes, informations données par la couleur ou la position, médias, contenus en mouvement, limites de temps."},
-    {id:'2', nom:'Code et outils', familles:['structure'],
+    {id:'2', nom:'Code et outils', outil:'inspecteur', familles:['structure'],
      faire:"Ouvre l'inspecteur du navigateur. Un outil automatique peut aider, sans remplacer ton jugement.",
      chercher:"Titre de l'écran, langue, zones principales, titres, tableaux, cadres, validité du code."},
-    {id:'3a', nom:"Lecteur d'écran : contenus", familles:['restitution','structure'],
+    {id:'3a', nom:"Lecteur d'écran : contenus", court:'Contenus', outil:"lecteur d'écran", familles:['restitution','structure'],
      faire:"Parcours l'écran au lecteur d'écran, du début à la fin, puis active chaque composant.",
      chercher:"Nom, rôle et état de chaque élément, alternatives des images, titres, listes, messages."},
-    {id:'3b', nom:"Lecteur d'écran : formulaires", familles:['formulaires','restitution'],
+    {id:'3b', nom:"Lecteur d'écran : formulaires", court:'Formulaires', outil:"lecteur d'écran", familles:['formulaires','restitution'],
      faire:"Remplis chaque formulaire au lecteur d'écran, puis provoque des erreurs.",
      chercher:"Étiquettes, regroupements, intitulés des boutons, messages d'erreur restitués et liés aux champs."},
-    {id:'4', nom:'Clavier', familles:['clavier'],
+    {id:'4', nom:'Clavier', outil:'clavier seul', familles:['clavier'],
      faire:"Laisse la souris. Parcours l'écran au clavier : Tab, Maj+Tab, Entrée, Espace, flèches, Échap.",
      chercher:"Focus visible, ordre logique, aucun piège, accès à tout ce qui s'ouvre au survol ou au focus."}
   ];
@@ -413,24 +426,35 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   }
 
   // L'aide occupe toujours la même place et garde la même structure : le parcours, puis « À faire » et « À chercher ».
+  var ICONES = {
+    prep:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+    vide:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    clo:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+    res:'<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>'
+  };
+  function icone(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONES[n]+'</svg>'; }
   function vueAide(o){
-    var html = '<h2 id="aide-titre">Aide</h2><h3>Parcours</h3><ol class="parcours">';
+    var html = '<h2 id="aide-titre">Aide</h2><ol class="parcours">';
     var dansOnglet = !!o && state.vue !== 'accueil';
     var e = o ? ecranDe(o, state.ecranId) : null;
-    function pas(id, txt, ici, fait, cls, action, extra){
-      var inner = '<span class="rond" aria-hidden="true">'+(fait ? '&#10003;' : '')+'</span><span>'+txt+(fait ? '<span class="sr"> (fait)</span>' : '')+'</span>';
-      var c = (ici ? 'ici ' : '') + (fait ? 'fait ' : '');
-      if(dansOnglet && action) return '<li class="'+(cls||'')+'"><button type="button" class="'+c+'" data-action="'+action+'"'+(extra||'')+(ici ? ' aria-current="step"' : '')+'>'+inner+'</button></li>';
-      return '<li class="'+(cls||'')+'"><span class="pas '+c+'">'+inner+'</span></li>';
+    function pas(marque, txt, sous, ici, fait, fin, action, extra){
+      var inner = '<span class="rond" aria-hidden="true">'+(fait ? '&#10003;' : marque)+'</span><span class="lib">'+txt+(sous ? '<small>'+sous+'</small>' : '')+(fait ? '<span class="sr"> (fait)</span>' : '')+'</span>';
+      var c = (ici ? 'ici ' : '') + (fait ? 'fait' : '');
+      var li = '<li class="pas-li'+(fait ? ' ok' : '')+(fin ? ' fin' : '')+'">';
+      if(dansOnglet && action) return li+'<button type="button" class="'+c+'" data-action="'+action+'"'+(extra||'')+(ici ? ' aria-current="step"' : '')+'>'+inner+'</button></li>';
+      return li+'<span class="pas '+c+'">'+inner+'</span></li>';
     }
-    html += pas('prep','Préparer les écrans', state.vue === 'preparer', !!o && o.ecrans.length > 0, '', 'vue', ' data-vue="preparer"');
-    html += '<li><span class="pas petit doux">Pour chaque écran'+(e && dansOnglet ? ' : <b>'+esc(e.nom)+'</b>' : '')+'</span></li>';
-    ETAPES.forEach(function(et){
+    html += '<li class="phase">Avant</li>';
+    html += pas(icone('prep'), 'Préparer les écrans', 'noms et contenus', state.vue === 'preparer', !!o && o.ecrans.length > 0, true, 'vue', ' data-vue="preparer"');
+    var faits = e ? ETAPES.filter(function(et){ return (e.etapes || {})[et.id]; }).length : 0;
+    html += '<li class="phase"><span>Pour chaque écran</span>' + (e && dansOnglet ? '<b>'+esc(e.nom)+'</b><span class="prog"><span class="barre-prog"><i style="width:'+Math.round(faits / ETAPES.length * 100)+'%"></i></span>'+faits+'/'+ETAPES.length+'</span>' : '') + '</li>';
+    ETAPES.forEach(function(et, i){
       var fait = !!(e && (e.etapes || {})[et.id]);
-      html += pas(et.id, (et.id === 'vide' ? '' : et.id + '. ') + et.nom, state.vue === 'audit' && state.etape === et.id, fait, 'sous', 'etape', ' data-etape="'+et.id+'"');
+      html += pas(et.id === 'vide' ? icone('vide') : et.id, et.court || et.nom, et.outil, state.vue === 'audit' && state.etape === et.id, fait, i === ETAPES.length - 1, 'etape', ' data-etape="'+et.id+'"');
     });
-    html += pas('clo','Clôture', state.vue === 'cloture', !!(o && o.valide), '', 'vue', ' data-vue="cloture"');
-    html += pas('res','Résumé et exports', state.vue === 'resume', false, '', 'vue', ' data-vue="resume"');
+    html += '<li class="phase">Pour finir</li>';
+    html += pas(icone('clo'), 'Clôture', 'trancher les NT', state.vue === 'cloture', !!(o && o.valide), false, 'vue', ' data-vue="cloture"');
+    html += pas(icone('res'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
     html += '</ol>';
     var a = state.vue === 'audit' ? ETAPE[state.etape] : (AIDE[state.vue] || AIDE.accueil);
     if(state.vue === 'grille') a = AIDE.grille;
