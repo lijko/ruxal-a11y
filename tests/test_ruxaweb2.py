@@ -175,8 +175,61 @@ def main():
         page.wait_for_timeout(300)
         verifier('Import v1 : refusé avec renvoi vers 1.7', '1.7' in page.locator('#statut').inner_text())
 
-        page.emulate_media(color_scheme='dark')
+        # Import d'un rapport axe-core puis Lighthouse : des résultats à reprendre, jamais un statut.
         page.click('[data-action="ouvrir"]')
+        page.click('[data-action="vue"][data-vue="audit"]')
+        ecran(page, 1)
+        axe = {'testEngine': {'name': 'axe-core', 'version': '4.13.0'}, 'url': 'https://exemple.lu/',
+               'violations': [{'id': 'image-alt', 'help': 'Images must have alternative text', 'tags': ['wcag2a', 'wcag111'],
+                               'nodes': [{'target': ['#logo']}, {'target': ['.promo img']}]},
+                              {'id': 'regle-inconnue', 'help': 'Contraste insuffisant (test)', 'tags': ['wcag2aa', 'wcag143'],
+                               'nodes': [{'target': ['p.note']}]}],
+               'incomplete': [{'id': 'color-contrast', 'help': 'Contrast to review', 'tags': ['wcag143'], 'nodes': [{'target': ['h2']}]}],
+               'passes': [{'id': 'document-title', 'tags': ['wcag242'], 'nodes': [{'target': ['html']}]}]}
+        f = pathlib.Path(tempfile.mkdtemp()) / 'axe.json'
+        f.write_text(json.dumps(axe), encoding='utf-8')
+        avant = statut(page, 1, 'raweb-1-1')
+        page.click('[data-action="vue"][data-vue="audit"]')
+        page.set_input_files('#fichier-auto', str(f))
+        page.wait_for_timeout(300)
+        verifier('axe : 3 résultats à vérifier (2 échecs, 1 incomplet)', page.locator('[data-action="reprendre"]').count() == 3)
+        verifier('axe : règle réussie ignorée', 'document-title' not in page.locator('main').inner_text())
+        verifier('axe : rien de compté avant reprise', statut(page, 1, 'raweb-1-1') == avant)
+        cands = page.evaluate('RUXAWEB.state().onglets[0].candidats')
+        par = {c['regle']: c['criteres'] for c in cands}
+        verifier('axe : image-alt vers 1.1 (table RUXAL)', par.get('image-alt') == ['raweb-1-1'], par)
+        verifier('axe : règle hors table rapprochée par WCAG 1.4.3 (3.2)', par.get('regle-inconnue') == ['raweb-3-2'], par)
+        page.click('[data-action="vue"][data-vue="audit"]')
+        page.locator('[data-action="reprendre"]').first.click()
+        verifier('Reprendre : constat prérempli', 'Images must have alternative text' in page.input_value('#obs-texte'))
+        page.click('#form-obs button[type=submit]')
+        derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
+        verifier('Reprendre : observation #nc avec sa source', derniere['tag'] == 'nc' and derniere.get('source', {}).get('regle') == 'image-alt', derniere)
+        verifier('Reprendre : 1.1 NC', statut(page, 1, 'raweb-1-1') == 'NC')
+        page.click('[data-action="vue"][data-vue="audit"]')
+        verifier('Reprendre : résultat retiré de la liste', page.locator('[data-action="reprendre"]').count() == 2)
+        page.locator('[data-action="ecarter"]').first.click()
+        verifier('Écarter : résultat retiré', page.locator('[data-action="reprendre"]').count() == 1)
+        lh = {'lighthouseVersion': '13.5.0', 'categories': {'accessibility': {'auditRefs': [{'id': 'button-name'}, {'id': 'html-has-lang'}, {'id': 'focus-traps'}]}},
+              'audits': {'button-name': {'id': 'button-name', 'title': 'Buttons do not have an accessible name', 'score': 0, 'scoreDisplayMode': 'binary',
+                                         'details': {'items': [{'node': {'selector': 'button.close'}}]}},
+                         'html-has-lang': {'id': 'html-has-lang', 'title': 'html has lang', 'score': 1, 'scoreDisplayMode': 'binary'},
+                         'focus-traps': {'id': 'focus-traps', 'title': 'Manual', 'score': None, 'scoreDisplayMode': 'manual'}}}
+        f2 = f.parent / 'lh.json'
+        f2.write_text(json.dumps(lh), encoding='utf-8')
+        page.set_input_files('#fichier-auto', str(f2))
+        page.wait_for_timeout(300)
+        verifier('Lighthouse : un seul échec, réussites et contrôles manuels ignorés', page.locator('[data-action="reprendre"]').count() == 1 and 'Buttons do not have' in page.locator('main').inner_text())
+        cands = [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert']
+        verifier('Lighthouse : button-name vers 7.1 et 11.9', cands and cands[0]['criteres'] == ['raweb-7-1', 'raweb-11-9'], cands)
+        f3 = f.parent / 'autre.json'
+        f3.write_text(json.dumps({'foo': 1}), encoding='utf-8')
+        page.set_input_files('#fichier-auto', str(f3))
+        page.wait_for_timeout(300)
+        verifier('Import d\'un autre fichier : refusé avec un message', 'ni un rapport axe' in page.locator('#statut').inner_text())
+
+        page.emulate_media(color_scheme='dark')
+        page.click('[data-action="accueil"]')
         verifier('Mode sombre : pas d\'erreur', not erreurs, erreurs)
         verifier('Aucune erreur JavaScript', not erreurs, erreurs)
         nav.close()

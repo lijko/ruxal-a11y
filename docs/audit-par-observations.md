@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 -->
 # Audit par observations
 
-**Statut : spécification, première version construite (RUXAWEB 2.0, `src/ruxaweb2.html`, 27 octobre 2026).** Pas encore construit : import Lighthouse et axe, couche POUR/UX, niveaux 2 et 3 du déploiement. Cible : RUXAWEB d'abord, RUXAAM ensuite (sans l'import d'outils automatiques, qui n'existent que pour le web).
+**Statut : spécification, première version construite (RUXAWEB 2.0, `src/ruxaweb2.html`, 27 octobre 2026).** Import axe et Lighthouse construit (résultats à reprendre ou écarter, `data/axe-raweb.json`). Pas encore construit : couche POUR/UX, niveaux 2 et 3 du déploiement. Cible : RUXAWEB d'abord, RUXAAM ensuite (sans l'import d'outils automatiques, qui n'existent que pour le web).
 
 ## Principe
 Aujourd'hui, l'audit part de la liste des critères : le testeur lit chaque critère, cherche s'il est respecté, puis décrit les problèmes.

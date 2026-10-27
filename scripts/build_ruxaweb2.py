@@ -4,7 +4,8 @@
 """Injecte les données de data/ dans src/ruxaweb2.html (RUXAWEB 2, audit par observations).
 
 Reprend les critères, textes, thèmes et déclencheurs de RUXAWEB 1 (mêmes contrôles, voir build_ruxaweb.py)
-et y ajoute la table symptôme vers critères (data/symptomes-ruxaweb.json).
+et y ajoute la table symptôme vers critères (data/symptomes-ruxaweb.json) et la correspondance des règles
+axe-core et Lighthouse vers les critères (data/axe-raweb.json).
 
 Usage :
   python3 scripts/build_ruxaweb2.py          régénère src/ruxaweb2.html
@@ -25,6 +26,9 @@ FIN = '  // <<< FIN_DONNEES >>>'
 
 def bloc():
     criteres, themes, verif, declencheurs = v1.construire()
+    # Critères WCAG de chaque critère RAWeb (numéros seuls), pour rapprocher une règle axe absente de la table.
+    wcag = {c['raweb']: [w.split(' ')[0] for w in c.get('wcag', [])] for c in v1.charger('criteres-raweb.json')['criteres']}
+    criteres = [dict(c, wcag=wcag.get(c['ref'], [])) if c.get('ref') else c for c in criteres]
     symptomes = v1.charger('symptomes-ruxaweb.json')
     ids = {c['id'] for c in criteres}
     par_ref = {c['ref']: c['id'] for c in criteres if c.get('ref')}
@@ -45,6 +49,17 @@ def bloc():
             'criteres': conv(s.get('criteres', [])) + bps,
             'selon': [{'element': x['element'], 'criteres': conv(x['criteres'])} for x in s.get('selon', [])],
         })
+    axe = {}
+    for regle, refs in v1.charger('axe-raweb.json')['regles'].items():
+        cible = []
+        for r in refs:
+            if r in ids:
+                cible.append(r)
+            elif r in par_ref:
+                cible.append(par_ref[r])
+            else:
+                erreurs.append('axe-raweb.json, %s : critère %s inconnu' % (regle, r))
+        axe[regle] = cible
     if erreurs:
         sys.exit('Données invalides :\n- ' + '\n- '.join(erreurs))
     j = v1.js
@@ -56,12 +71,13 @@ def bloc():
                '  var DECLENCHEURS = ' + j(declencheurs) + ';',
                '  var FAMILLES = ' + j(symptomes['familles']) + ';',
                '  var SYMPTOMES = ' + j(sortie) + ';',
+               '  var AXE_RAWEB = ' + j(axe) + ';',
                '  var URL_CRITERE = ' + j(v1.URL_CRITERE) + ';',
                FIN]
     nb_sel = sum(1 for c in criteres if c.get('horsSelection'))
     nb_ref = sum(1 for c in criteres if not c.get('horsRef')) - nb_sel
-    resume = '%d critères RAWeb + %d hors sélection SIP + %d bonnes pratiques, %d points de contrôle' % (
-        nb_ref, nb_sel, len(criteres) - nb_ref - nb_sel, len(sortie))
+    resume = '%d critères RAWeb + %d hors sélection SIP + %d bonnes pratiques, %d points de contrôle, %d règles axe' % (
+        nb_ref, nb_sel, len(criteres) - nb_ref - nb_sel, len(sortie), len(axe))
     return '\n'.join(lignes), resume
 
 

@@ -71,7 +71,8 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Aussi ailleurs** : un constat peut valoir sur d'autres écrans. « Partout » (même élément) : un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. « Composant » (même composant, autre contenu) : seuls les critères de mécanique se propagent (7.1, 7.3, 7.5, 10.7, 10.14, 11.10, 12.8, 12.9, 12.11, 13.11). Un élément partagé n'a pas de statut propre : le taux reste celui du SIP.
 - **Retest** : depuis la grille, un critère se remet à NT sur un écran ; les observations précédentes restent en historique.
 - **Exports** (menu Fichier) : grille Excel, un ticket Jira par constat non conforme (un seul pour un constat partagé), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
-- **Pas encore repris** : couche POUR/UX, import Lighthouse ou axe, PDF du référentiel.
+- **Import axe ou Lighthouse** : un rapport JSON (axe-core, ou Lighthouse depuis les outils de développement d'Edge ou de Chrome) s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json` (correspondance RUXAL, à relire), sinon par les critères WCAG que donne le rapport axe.
+- **Pas encore repris** : couche POUR/UX, PDF du référentiel.
 
 ## Données et génération / Data and build
 Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
