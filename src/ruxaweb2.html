@@ -174,6 +174,13 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   .ecran-ligne:last-child{border-bottom:0}
   .ecran-ligne input[type=text]{flex:1 1 200px;width:auto}
   .contenus{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}
+  .switch{position:relative;width:40px;height:24px;border-radius:99px;border:1px solid var(--texte-doux);background:var(--surface-alt);cursor:pointer;padding:0;vertical-align:middle;flex:none}
+  .switch .bouton{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .switch[aria-checked="true"]{background:var(--accent);border-color:var(--accent)}
+  .switch[aria-checked="true"] .bouton{left:18px;background:var(--sur-accent)}
+  @media (prefers-reduced-motion: no-preference){ .switch .bouton{transition:left .15s} }
+  table.contenus-table th,table.contenus-table td{text-align:center}
+  table.contenus-table th:first-child,table.contenus-table tbody th{text-align:left}
   .puce{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bord);border-radius:99px;padding:4px 12px;min-height:34px;cursor:pointer;font-size:13px;background:var(--surface)}
   .puce[aria-pressed="true"]{background:var(--accent-doux);border-color:var(--accent);color:var(--accent-texte);font-weight:700}
 
@@ -487,16 +494,20 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl">Type</legend><div class="rangee">' +
       '<label class="choix"><input type="radio" name="onglet-type" value="rapide"'+(o.type !== 'scenario' ? ' checked' : '')+'> Audit rapide</label>' +
       '<label class="choix"><input type="radio" name="onglet-type" value="scenario"'+(o.type === 'scenario' ? ' checked' : '')+'> Scénario (parcours)</label></div></fieldset></div>';
-    html += '<section class="carte pile" aria-labelledby="t-ecrans"><h2 id="t-ecrans">'+(o.type === 'scenario' ? 'Écrans du parcours, dans l\'ordre' : 'Écrans de l\'échantillon')+' et ce qu\'ils contiennent</h2><div>';
+    html += '<section class="carte pile" aria-labelledby="t-ecrans"><h2 id="t-ecrans">'+(o.type === 'scenario' ? 'Écrans du parcours, dans l\'ordre' : 'Écrans de l\'échantillon')+'</h2><div>';
     o.ecrans.forEach(function(e, i){
       html += '<div class="ecran-ligne"><label class="sr" for="ecran-'+e.id+'">Nom de l\'écran '+(i+1)+'</label><input type="text" id="ecran-'+e.id+'" data-ecran-nom="'+e.id+'" value="'+esc(e.nom)+'" autocomplete="off">' +
-        (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') +
-        '<div class="contenus" role="group" aria-label="Contenus de '+esc(e.nom)+'">' + DECLENCHEURS.map(function(d){
-          var on = !!(e.contenus || {})[d.id];
-          return '<button type="button" class="puce" aria-pressed="'+on+'" data-action="contenu" data-ecran="'+e.id+'" data-d="'+d.id+'" title="'+esc(d.question)+'">'+esc(d.libelle)+'</button>';
-        }).join('') + '</div></div>';
+        (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') + '</div>';
     });
     html += '</div><div class="rangee entre"><button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button><span class="doux petit">'+mini+' écrans au moins.</span></div></section>';
+    // Contenu des écrans : un interrupteur par contenu et par écran, comme en 1.7. Activé : l'écran contient ce contenu.
+    html += '<section class="carte pile" aria-labelledby="t-contenus"><h2 id="t-contenus">Contenu des écrans</h2><div class="tableau" style="border:0"><table class="contenus-table"><thead><tr><th scope="col">L\'écran contient</th>' +
+      o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>' + DECLENCHEURS.map(function(d){
+        return '<tr><th scope="row" title="'+esc(d.question)+'">'+esc(d.libelle)+'</th>' + o.ecrans.map(function(e){
+          var on = !!(e.contenus || {})[d.id];
+          return '<td><button type="button" role="switch" class="switch" aria-checked="'+on+'" aria-label="'+esc(d.libelle)+' ('+esc(e.nom)+')" data-action="contenu" data-ecran="'+e.id+'" data-d="'+d.id+'"><span class="bouton" aria-hidden="true"></span></button></td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div></section>';
     html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="vue" data-vue="audit">Auditer</button></div>';
     return html;
   }

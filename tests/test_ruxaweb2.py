@@ -88,6 +88,8 @@ def main():
         verifier('Nouvel onglet : 3 écrans par défaut', page.locator('[data-ecran-nom]').count() == 3)
         # Écran 1 : formulaire présent ; les autres sans formulaire.
         page.click('[data-action="contenu"][data-d="formulaire"] >> nth=0')
+        sw = page.locator('[data-action="contenu"][data-d="formulaire"]').first
+        verifier('Contenu des écrans : interrupteur activé', sw.get_attribute('role') == 'switch' and sw.get_attribute('aria-checked') == 'true')
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         verifier('Audit : formulaire d\'observation', page.locator('#form-obs').count() == 1)
         verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#aide .ici').inner_text())
