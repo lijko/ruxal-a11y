@@ -382,6 +382,8 @@ Details : README.md
   .recap-theme-col{grid-area:theme;}
   @media (min-width:1000px){
     .recap-sip-layout{grid-template-columns:280px 1fr; grid-template-areas:"theme nclist"; align-items:start;}
+    /* Aligne le titre « Critères non conformes » sur celui du panneau de gauche (bordure 1px + marge intérieure 14px). */
+    .recap-nc-col{padding-top:15px;}
     .recap-theme-col{
       position:sticky; top:16px; background:var(--surface-alt); border:1px solid var(--border); border-radius:14px;
       padding:14px; box-shadow:var(--shadow-pop); max-height:calc(100vh - 32px); overflow-y:auto;
@@ -2295,7 +2297,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         html += '<div class="recap-nc-col">';
         var ncTitreTheme = activeTheme ? ' <span class="muted" style="text-transform:none; letter-spacing:0;">: '+escapeHtml(activeTheme)+'</span>' : '';
         html += '<div class="theme-group-title">Critères non conformes ('+ncList.length+')'+ncTitreTheme +
-          ' <span class="mono" style="font-weight:700;">RAAM '+(taux.pct!=null?taux.pct+'%':'-')+'</span><span class="line"></span></div>';
+          '<span class="line"></span></div>';
         if(ncList.length){
           ncList.forEach(function(c){
             var ecransNC = o.ecrans.filter(function(e){ return getResultat(o, e.id, c.id) === 'NC'; });
