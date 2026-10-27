@@ -66,11 +66,11 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 ### RUXAWEB 2.0 (web, audit par observations)
 `src/ruxaweb2.html` : nouvelle façon d'auditer, à côté de la 1.7 qui reste disponible (`src/ruxaweb.html`, branche `archive/ruxaweb-v1.7`). Mêmes critères, mêmes textes, même formule de taux. Spécification : [`docs/audit-par-observations.md`](docs/audit-par-observations.md).
 
-- **On note des constats, la grille se remplit** : chaque observation porte un tag (#c, #nc, #na) et un ou plusieurs critères, proposés à partir d'un point de contrôle (`data/symptomes-ruxaweb.json`). Sans critère, c'est une note libre.
+- **On note des observations, la grille se remplit** : chaque observation porte un tag (#c, #nc, #na) et un ou plusieurs critères, proposés à partir d'un point de contrôle (`data/symptomes-ruxaweb.json`). Sans critère, c'est une note libre.
 - **Parcours guidé, écran par écran** : tour à vide, puis les 4 étapes du protocole, puis clôture et résumé. Le panneau d'aide, toujours au même endroit, montre le parcours et dit quoi faire et quoi chercher à l'étape en cours.
-- **Aussi ailleurs** : un constat peut valoir sur d'autres écrans. « Partout » (même élément) : un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. « Composant » (même composant, autre contenu) : seuls les critères de mécanique se propagent (7.1, 7.3, 7.5, 10.7, 10.14, 11.10, 12.8, 12.9, 12.11, 13.11). Un élément partagé n'a pas de statut propre : le taux reste celui du SIP.
+- **Aussi ailleurs** : une observation peut valoir sur d'autres écrans. « Partout » (même élément) : un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. « Composant » (même composant, autre contenu) : seuls les critères de mécanique se propagent (7.1, 7.3, 7.5, 10.7, 10.14, 11.10, 12.8, 12.9, 12.11, 13.11). Un élément partagé n'a pas de statut propre : le taux reste celui du SIP.
 - **Retest** : depuis la grille, un critère se remet à NT sur un écran ; les observations précédentes restent en historique.
-- **Exports** (menu Fichier) : grille Excel, un ticket Jira par constat non conforme (un seul pour un constat partagé), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
+- **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation partagée), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
 - **Import axe ou Lighthouse** : un rapport JSON (axe-core, ou Lighthouse depuis les outils de développement d'Edge ou de Chrome) s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json` (correspondance RUXAL, à relire), sinon par les critères WCAG que donne le rapport axe.
 - **Pas encore repris** : couche POUR/UX, PDF du référentiel.
 

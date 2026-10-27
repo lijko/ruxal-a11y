@@ -337,10 +337,10 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       chercher:"Le reste des critères forme le périmètre : chacun devra recevoir un statut, rien n'est conforme par défaut."},
     grille:{faire:"Les statuts viennent des observations. Ouvre un critère pour lire comment le vérifier, voir ses observations ou le retester.",
       chercher:"Pointillés : conforme ailleurs, à confirmer sur cet écran. Un critère reste NT tant qu'aucune observation ne le tranche."},
-    cloture:{faire:"Tranche chaque critère resté sans statut, écran par écran. Une non-conformité demande un constat.",
-      chercher:"Les critères « à confirmer » viennent d'un constat conforme fait sur un autre écran."},
+    cloture:{faire:"Tranche chaque critère resté sans statut, écran par écran. Une non-conformité demande une observation.",
+      chercher:"Les critères « à confirmer » viennent d'une observation conforme faite sur un autre écran."},
     resume:{faire:"Relis les non-conformités, puis exporte depuis le menu Fichier : grille Excel, tickets Jira, sauvegarde.",
-      chercher:"Un constat partagé donne un seul ticket. Pour retester après correction, ouvre le critère dans la grille."}
+      chercher:"Une observation partagée donne un seul ticket. Pour retester après correction, ouvre le critère dans la grille."}
   };
 
   // ---------- État ----------
@@ -359,8 +359,8 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function refTxt(c){ return c.horsRef ? 'Bonne pratique ' + c.id.replace(/\D/g, '') : 'RAWeb ' + c.ref; }
 
   // ---------- Calcul des statuts ----------
-  // Statut d'un critère sur un écran, tiré des observations. Un élément partagé n'a pas de statut propre : son
-  // constat écrit dans les écrans cochés, comme une saisie faite sur chacun. Un #nc partagé vaut NC ; un #c
+  // Statut d'un critère sur un écran, tiré des observations. Un élément partagé n'a pas de statut propre : ses
+  // observations s'écrivent dans les écrans cochés, comme une saisie faite sur chacun. Un #nc partagé vaut NC ; un #c
   // partagé laisse « à confirmer » (AC) sur les autres écrans, car d'autres éléments peuvent violer le critère.
   function concerne(obs, ecranId, c){
     if(obs.ecran === ecranId) return 'propre';
@@ -516,7 +516,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     return '<div class="obs'+(invalide ? ' invalide' : '')+'"><span class="pastille s-'+cl+'">'+lib+'</span><div class="corps">' +
       '<span class="texte">'+esc(x.texte)+(x.attendu ? ' <span class="doux">Attendu : '+esc(x.attendu)+'</span>' : '')+'</span>' +
       '<span class="rangee">'+x.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('')+badgePartage(o, x)+
-      (origine ? '<span class="doux petit">constaté sur '+esc(origine)+'</span>' : '')+(invalide ? '<span class="doux petit">remplacé par un retest</span>' : '')+'</span></div>' +
+      (origine ? '<span class="doux petit">observé sur '+esc(origine)+'</span>' : '')+(invalide ? '<span class="doux petit">remplacé par un retest</span>' : '')+'</span></div>' +
       (origine ? '' : '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+(confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button>')+'</div>';
   }
 
@@ -542,19 +542,19 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       var elts = {};
       o.obs.forEach(function(x){ if(x.partage && x.partage.genre === g){ elts[x.partage.nom] = (elts[x.partage.nom] || 0) + 1; } });
       var noms = Object.keys(elts);
-      html += '<div class="carte"><h2>'+(g === 'partout' ? 'Partout' : 'Composants')+'</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(n)+'</span><span class="doux petit">'+elts[n]+' constat'+(elts[n] > 1 ? 's' : '')+'</span></div>'; }).join('')
+      html += '<div class="carte"><h2>'+(g === 'partout' ? 'Partout' : 'Composants')+'</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(n)+'</span><span class="doux petit">'+elts[n]+' observation'+(elts[n] > 1 ? 's' : '')+'</span></div>'; }).join('')
         : '<p class="doux petit" style="margin:4px 8px">'+(g === 'partout' ? 'Identique sur plusieurs écrans : en-tête, menu, pied de page.' : 'Même composant, contenu différent : formulaire, fenêtre modale.')+'</p>') + '</div>';
     });
     var nte = ntEcran(o, e);
     html += '</nav><div class="centre"><div class="rangee entre"><h1>'+esc(e.nom)+'</h1><span class="rangee">'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'<button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></span></div>';
     html += formulaireObs(o, e, et);
     html += vueCandidats(o, e);
-    // Les critères tranchés à la clôture sans constat (C, NA) restent dans la grille ; ici, une seule ligne les résume.
+    // Les critères tranchés à la clôture sans observation (C, NA) restent dans la grille ; ici, une seule ligne les résume.
     var liste = o.obs.filter(function(x){ return x.ecran === e.id || (x.partage && x.partage.ecrans.indexOf(e.id) > -1); });
     var cloture = liste.filter(function(x){ return x.etape === 'cloture' && x.tag !== 'nc'; }).length;
     liste = liste.filter(function(x){ return !(x.etape === 'cloture' && x.tag !== 'nc'); }).reverse();
     html += '<section class="carte" aria-labelledby="t-obs"><h2 id="t-obs">Observations de cet écran ('+liste.length+')</h2>' + (liste.length ? liste.map(function(x){ return ligneObs(o, x, e); }).join('') : '<p class="doux">Aucune observation pour l\'instant.</p>') +
-      (cloture ? '<p class="doux petit" style="margin:8px 0 0">'+cloture+' critère(s) tranché(s) à la clôture, sans constat : voir la <button type="button" class="ref-btn" data-action="vue" data-vue="grille">grille</button>.</p>' : '') + '</section>';
+      (cloture ? '<p class="doux petit" style="margin:8px 0 0">'+cloture+' critère(s) tranché(s) à la clôture, sans observation : voir la <button type="button" class="ref-btn" data-action="vue" data-vue="grille">grille</button>.</p>' : '') + '</section>';
     var dernier = et.i === ETAPES.length - 1;
     html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+(dernier ? 'Étape terminée, écran suivant' : 'Étape terminée, passer à : '+esc(ETAPES[et.i+1].nom))+'</button></div></div></div>';
     return html;
@@ -620,7 +620,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function formulaireObs(o, e, et){
     var props = criteresProposes();
     var html = '<form class="carte pile" id="form-obs" novalidate><h2>Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span></h2>';
-    html += '<div class="champ"><label class="lbl" for="obs-texte">Constat</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea></div>';
+    html += '<div class="champ"><label class="lbl" for="obs-texte">Observation</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea></div>';
     html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-point">Point de contrôle</label><select id="obs-point"><option value="">Aucun : note libre</option>';
     var ici = SYMPTOMES.filter(function(s){ return et.familles.indexOf(s.famille) > -1; }), autres = SYMPTOMES.filter(function(s){ return et.familles.indexOf(s.famille) === -1; });
     function opts(l){ return l.map(function(s){ return '<option value="'+s.id+'"'+(s.id === brouillon.point ? ' selected' : '')+'>'+esc(s.controle)+'</option>'; }).join(''); }
@@ -653,9 +653,9 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
         '<div class="champ"><label class="lbl" for="obs-partage-nom">Nom de l\'élément</label><input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="'+(brouillon.genre === 'partout' ? 'Ex. Menu principal' : 'Ex. Formulaire')+'" autocomplete="off"><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
         '<div class="rangee" role="group" aria-label="Autres écrans concernés"><span class="lbl">Sur quels écrans ?</span>' + o.ecrans.filter(function(x){ return x.id !== e.id; }).map(function(x){
           return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>'; }).join('') + '</div>' +
-        '<p class="doux petit" style="margin:0">'+(brouillon.genre === 'partout' ? 'Un constat non conforme vaut tel quel sur les écrans cochés. Un constat conforme y reste à confirmer.' : 'Seule la mécanique du composant se propage (rôle et état, focus, messages, erreurs) ; le contenu reste à vérifier sur chaque écran.')+'</p></fieldset>';
+        '<p class="doux petit" style="margin:0">'+(brouillon.genre === 'partout' ? 'Une observation non conforme vaut telle quelle sur les écrans cochés. Une observation conforme y reste à confirmer.' : 'Seule la mécanique du composant se propage (rôle et état, focus, messages, erreurs) ; le contenu reste à vérifier sur chaque écran.')+'</p></fieldset>';
     }
-    html += '<div class="rangee entre"><div class="tags" role="group" aria-label="Statut du constat">' +
+    html += '<div class="rangee entre"><div class="tags" role="group" aria-label="Statut de l\'observation">' +
       [['c','#c','conforme'],['nc','#nc','non conforme'],['na','#na','non applicable']].map(function(t){ return '<button type="button" class="tag tag-'+t[0]+'" data-action="tag" data-tag="'+t[0]+'" aria-pressed="'+(brouillon.tag === t[0])+'" aria-label="'+t[1]+', '+t[2]+'">'+t[1]+'</button>'; }).join('') +
       '</div><div class="rangee"><button type="button" class="btn btn-l" data-action="ailleurs" aria-expanded="'+brouillon.ailleurs+'">Aussi ailleurs</button><button type="submit" class="btn btn-p">Enregistrer</button></div></div></form>';
     return html;
@@ -700,7 +700,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       html += '<section class="carte" aria-labelledby="clo-'+e.id+'"><h2 id="clo-'+e.id+'">'+esc(e.nom)+' ('+le.length+')</h2>' + le.map(function(x){
         var cle = e.id+'|'+x.c.id;
         return '<div class="obs"><div class="corps"><span><b>'+esc(refTxt(x.c))+'</b> · '+esc(x.c.libelle)+(x.s === 'AC' ? ' <span class="doux petit">(conforme ailleurs, à confirmer)</span>' : '')+'</span>' +
-          (clotureNc === cle ? '<div class="rangee"><label class="sr" for="clo-txt">Constat de non-conformité</label><input type="text" id="clo-txt" placeholder="Constat" autocomplete="off" style="flex:1 1 240px;width:auto"><button type="button" class="btn btn-s btn-p" data-action="clo-nc-ok" data-ecran="'+e.id+'" data-crit="'+x.c.id+'">Enregistrer</button></div>' : '') +
+          (clotureNc === cle ? '<div class="rangee"><label class="sr" for="clo-txt">Observation de non-conformité</label><input type="text" id="clo-txt" placeholder="Observation" autocomplete="off" style="flex:1 1 240px;width:auto"><button type="button" class="btn btn-s btn-p" data-action="clo-nc-ok" data-ecran="'+e.id+'" data-crit="'+x.c.id+'">Enregistrer</button></div>' : '') +
           '</div><div class="tags" role="group" aria-label="Statut de '+esc(refTxt(x.c))+' sur '+esc(e.nom)+'">' +
           '<button type="button" class="tag tag-c" data-action="clo" data-tag="c" data-ecran="'+e.id+'" data-crit="'+x.c.id+'" aria-pressed="false">C</button>' +
           '<button type="button" class="tag tag-nc" data-action="clo-nc" data-ecran="'+e.id+'" data-crit="'+x.c.id+'" aria-pressed="'+(clotureNc === cle)+'">NC</button>' +
@@ -772,7 +772,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     lireBrouillon();
     var o = onglet(), e = ecranDe(o, state.ecranId);
     var texte = brouillon.texte.trim();
-    if(!texte){ message('Écris le constat avant d\'enregistrer.', true); var t = document.getElementById('obs-texte'); if(t) t.focus(); return; }
+    if(!texte){ message('Écris l\'observation avant d\'enregistrer.', true); var t = document.getElementById('obs-texte'); if(t) t.focus(); return; }
     var x = {id:uid(), n:suivant(), ecran:e.id, etape:state.etape, texte:texte, attendu:brouillon.attendu.trim(), point:brouillon.point, criteres:brouillon.crits.slice(), tag:brouillon.tag, partage:null};
     if(brouillon.ailleurs && brouillon.ecransPartage.length){
       var nom = brouillon.nomPartage.trim();
@@ -847,7 +847,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     else if(a === 'clo-nc'){ clotureNc = b.getAttribute('data-ecran')+'|'+b.getAttribute('data-crit'); rendre(); var it = document.getElementById('clo-txt'); if(it) it.focus(); }
     else if(a === 'clo-nc-ok'){
       var tx = (document.getElementById('clo-txt').value || '').trim();
-      if(!tx){ message('Décris le constat de non-conformité.', true); document.getElementById('clo-txt').focus(); return; }
+      if(!tx){ message('Décris l\'observation de non-conformité.', true); document.getElementById('clo-txt').focus(); return; }
       o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'cloture', texte:tx, attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:'nc', partage:null});
       clotureNc = null; rendre(); var bf2 = $main.querySelector('.tag'); if(bf2) bf2.focus();
     }
@@ -863,7 +863,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       brouillon.texte = k.titre + ' (' + k.nb + ' élément' + (k.nb > 1 ? 's' : '') + (k.exemples.length ? ' : ' + k.exemples.join(', ') : '') + ')';
       brouillon.crits = k.criteres.slice(); brouillon.tag = k.type === 'violation' ? 'nc' : brouillon.tag; brouillon.candidat = k.id;
       rendre(); var ta = document.getElementById('obs-texte'); if(ta){ ta.focus(); ta.scrollIntoView({block:'center'}); }
-      message('Résultat repris dans le formulaire : vérifie le constat, les critères et le statut, puis enregistre.');
+      message('Résultat repris dans le formulaire : vérifie l\'observation, les critères et le statut, puis enregistre.');
     }
     else if(a === 'ecarter'){
       var k2 = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(k2) k2.etat = 'ecarte';
@@ -935,22 +935,22 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       CRITERES.forEach(function(c){
         var s = statutOnglet(o, c);
         var ecr = o.ecrans.filter(function(e){ return statutEcran(o, e, c).s === 'NC'; }).map(function(e){ return e.nom; });
-        var constats = o.obs.filter(function(x){ return x.tag === 'nc' && x.criteres.indexOf(c.id) > -1; }).map(function(x){ return ((ecranDe(o, x.ecran) || {}).nom || '') + ' : ' + x.texte; });
-        lignes.push([o.nom, c.horsRef ? 'Bonne pratique' : c.ref, c.horsRef ? 'Hors RAWeb, hors taux' : (c.horsSelection ? 'Hors sélection SIP' : 'Sélection SIP'), c.theme_ref, c.libelle, c.niveau_wcag, s, ecr.join(', '), constats.join('\n')]);
+        var observations = o.obs.filter(function(x){ return x.tag === 'nc' && x.criteres.indexOf(c.id) > -1; }).map(function(x){ return ((ecranDe(o, x.ecran) || {}).nom || '') + ' : ' + x.texte; });
+        lignes.push([o.nom, c.horsRef ? 'Bonne pratique' : c.ref, c.horsRef ? 'Hors RAWeb, hors taux' : (c.horsSelection ? 'Hors sélection SIP' : 'Sélection SIP'), c.theme_ref, c.libelle, c.niveau_wcag, s, ecr.join(', '), observations.join('\n')]);
       });
     });
-    var x = construireXlsx({nom:'Critères', colonnes:[['Onglet',26],['Critère',10],['Sélection',22],['Thématique RAWeb',26],['Intitulé',70],['Niveau',8],['Statut',8],['Écrans non conformes',28],['Constats',70]].map(function(c){ return {titre:c[0], largeur:c[1], statut:c[0] === 'Statut'}; }), lignes:lignes});
+    var x = construireXlsx({nom:'Critères', colonnes:[['Onglet',26],['Critère',10],['Sélection',22],['Thématique RAWeb',26],['Intitulé',70],['Niveau',8],['Statut',8],['Écrans non conformes',28],['Observations',70]].map(function(c){ return {titre:c[0], largeur:c[1], statut:c[0] === 'Statut'}; }), lignes:lignes});
     telecharger(nomFichier('grille','xlsx'), x); message('Grille des critères téléchargée (Excel).');
   }
   function csv(v){ var t = String(v == null ? '' : v); return /[,"\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; }
-  // Un ticket par constat non conforme encore valide (pas remplacé par un retest). Un constat partagé donne un
+  // Un ticket par observation non conforme encore valide (pas remplacé par un retest). Une observation partagée donne un
   // seul ticket, qui liste tous les écrans concernés.
   function exporterJira(){
     var lignes = [['Summary','Description','Issue Type','Priority','Labels','Labels','Labels','Labels'].map(csv).join(',')], n = 0;
     state.onglets.forEach(function(o){
       o.obs.forEach(function(x){
         if(x.tag !== 'nc' || !x.criteres.length) return;
-        // Un constat sort de l'export seulement s'il a été retesté sur tous les écrans qu'il touche.
+        // Une observation sort de l'export seulement s'il a été retesté sur tous les écrans qu'il touche.
         var touches = [x.ecran].concat(x.partage ? x.partage.ecrans : []);
         var invalide = touches.every(function(eid){ return x.criteres.every(function(id){ return o.obs.some(function(y){ return y.tag === 'nt' && y.n > x.n && y.ecran === eid && y.criteres.indexOf(id) > -1; }); }); });
         if(invalide) return;
@@ -969,7 +969,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
         n++;
       });
     });
-    if(!n){ message('Aucun ticket à créer : aucun constat non conforme.', true); return; }
+    if(!n){ message('Aucun ticket à créer : aucune observation non conforme.', true); return; }
     telecharger(nomFichier('jira','csv'), '﻿' + lignes.join('\r\n')); message(n+' ticket(s) Jira téléchargé(s) (CSV, à importer dans Jira).');
   }
 

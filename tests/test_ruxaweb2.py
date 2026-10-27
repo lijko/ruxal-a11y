@@ -115,7 +115,7 @@ def main():
         verifier('Note libre enregistrée sans critère', page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0].criteres.length') == 0 and page.evaluate('RUXAWEB.state().onglets[0].obs.length') == avant + 1)
         page.fill('#obs-texte', '')
         page.click('#form-obs button[type=submit]')
-        verifier('Constat vide : message', 'Écris le constat' in page.locator('#statut').inner_text())
+        verifier('Observation vide : message', 'Écris l\'observation' in page.locator('#statut').inner_text())
 
         # Retest (#nt).
         page.click('[data-action="vue"][data-vue="grille"]')
@@ -154,9 +154,9 @@ def main():
         j = telecharger(page, 'export-jira')
         rows = list(csv.reader(io.StringIO(j.read_text(encoding='utf-8-sig'))))
         menu = [r for r in rows[1:] if 'Menu principal' in r[0]]
-        verifier('Jira : un seul ticket pour le constat partagé', len(menu) == 1, [r[0] for r in rows[1:]])
+        verifier('Jira : un seul ticket pour l\'observation partagée', len(menu) == 1, [r[0] for r in rows[1:]])
         verifier('Jira : référence RAWeb', 'RAWeb 1.1, Criterion 10.7' in menu[0][1] if menu else False)
-        verifier('Jira : constat retesté sur un seul écran toujours exporté (encore NC ailleurs)', len(menu) == 1)
+        verifier('Jira : observation retestée sur un seul écran toujours exporté (encore NC ailleurs)', len(menu) == 1)
         s = telecharger(page, 'export-json')
         sauvegarde = json.loads(s.read_text(encoding='utf-8'))
         verifier('Sauvegarde : version 2', sauvegarde.get('v') == 2)
@@ -201,7 +201,7 @@ def main():
         verifier('axe : règle hors table rapprochée par WCAG 1.4.3 (3.2)', par.get('regle-inconnue') == ['raweb-3-2'], par)
         page.click('[data-action="vue"][data-vue="audit"]')
         page.locator('[data-action="reprendre"]').first.click()
-        verifier('Reprendre : constat prérempli', 'Images must have alternative text' in page.input_value('#obs-texte'))
+        verifier('Reprendre : observation préremplie', 'Images must have alternative text' in page.input_value('#obs-texte'))
         page.click('#form-obs button[type=submit]')
         derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
         verifier('Reprendre : observation #nc avec sa source', derniere['tag'] == 'nc' and derniere.get('source', {}).get('regle') == 'image-alt', derniere)

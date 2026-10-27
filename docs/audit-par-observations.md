@@ -9,7 +9,7 @@ SPDX-License-Identifier: CC-BY-4.0
 ## Principe
 Aujourd'hui, l'audit part de la liste des critères : le testeur lit chaque critère, cherche s'il est respecté, puis décrit les problèmes.
 
-L'audit par observations inverse ce sens. Le testeur note ce qu'il constate, au fil du test ; chaque constat est rattaché à un ou plusieurs critères ; **la grille des critères se remplit à partir des observations**.
+L'audit par observations inverse ce sens. Le testeur note ce qu'il constate, au fil du test ; chaque observation est rattachée à un ou plusieurs critères ; **la grille des critères se remplit à partir des observations**.
 
 Pourquoi :
 - c'est l'ordre naturel du test : on voit un problème avant de savoir quel critère il viole ;
@@ -30,7 +30,7 @@ Le périmètre est la liste des critères qui doivent recevoir un statut avant q
 ## 2. Observations
 ### Format
 ```
-Écran[type "Libellé"] (état) : constat. Attendu : ... #tag
+Écran[type "Libellé"] (état) : observation. Attendu : ... #tag
 ```
 - Élément : `Écran[type "Libellé"]`, état facultatif entre parenthèses.
 - Flux : `Écran -> Écran`.
@@ -49,23 +49,23 @@ Les tags reprennent les statuts de la grille, pour n'avoir qu'un seul vocabulair
 
 | Tag | Sens | Effet sur les critères rattachés |
 |---|---|---|
-| `#c` | constat conforme | alimente C |
-| `#nc` | constat non conforme | alimente NC |
+| `#c` | observation conforme | alimente C |
+| `#nc` | observation non conforme | alimente NC |
 | `#na` | le critère ne s'applique pas ici (justification sur place) | alimente NA |
 | `#nt` | remise à zéro, par exemple avant un retest | remet NT, invalide les observations antérieures |
 
-NT n'est pas un tag de constat : c'est l'état par défaut de tout critère du périmètre sans observation.
+NT n'est pas un tag d'observation : c'est l'état par défaut de tout critère du périmètre sans observation.
 
-Le tag qualifie le **constat**, pas le critère : une observation `#nc` rend NC tous les critères auxquels elle est rattachée.
+Le tag qualifie l'**observation**, pas le critère : une observation `#nc` rend NC tous les critères auxquels elle est rattachée.
 
 ### Corriger ou retester
-- **Erreur de saisie** (constat faux, mauvais rattachement) : on modifie ou on supprime l'observation. Le statut se recalcule.
-- **Retest** (le constat était juste, la situation a changé, par exemple après correction) : on ajoute `#nt` sur le critère. Les observations antérieures restent visibles, barrées, comme historique ; seules les observations postérieures comptent. L'historique NC, puis NT, puis C sert de trace de correction.
+- **Erreur de saisie** (observation fausse, mauvais rattachement) : on modifie ou on supprime l'observation. Le statut se recalcule.
+- **Retest** (l'observation était juste, la situation a changé, par exemple après correction) : on ajoute `#nt` sur le critère. Les observations antérieures restent visibles, barrées, comme historique ; seules les observations postérieures comptent. L'historique NC, puis NT, puis C sert de trace de correction.
 
 ### Règles de rédaction
 - **Factuel** : ce qui est vu, entendu ou atteint, pas l'interprétation.
 - **Restitution exacte** entre guillemets quand elle vient d'un lecteur d'écran.
-- **Un constat par observation**, même si deux défauts touchent le même élément.
+- **Un défaut par observation**, même si deux défauts touchent le même élément.
 - **Noter aussi le conforme** : sans `#c`, un critère reste NT.
 - Consignes génériques : aucun raccourci, menu ou produit propre à un lecteur d'écran ou à un outil.
 
@@ -119,38 +119,38 @@ Les noms de règles des outils n'apparaissent pas dans les consignes de test ; i
 3. **Script local** (Node.js, Playwright, axe-core) pour tester plusieurs écrans d'affilée, dans leurs différents états : utilise l'Edge déjà installé, se lance par un fichier `.cmd`, produit un JSON importable dans l'outil.
 
 ## 8. Retours d'usage de la version précédente (RUXAAM 1.27, RUXAWEB 1.6)
-Constats de Bertrand après utilisation, et réponses proposées.
+Retours de Bertrand après utilisation, et réponses proposées.
 
 ### 8.1 Éléments partagés
-**Constat** : en audit rapide, reprendre les mêmes non-conformités sur chaque écran de l'échantillon (en-tête, pied de page, menu principal...) est très long et source d'erreurs.
+**Retour** : en audit rapide, reprendre les mêmes non-conformités sur chaque écran de l'échantillon (en-tête, pied de page, menu principal...) est très long et source d'erreurs.
 
 **Décision (27 octobre 2026)** :
 - Deux listes à côté des écrans : **Partout** (le même élément à l'identique : en-tête, menu, pied de page) et **Composants** (le même composant, contenu différent : formulaire, modale).
-- L'auditeur note son constat sur l'écran où il le voit, puis « Aussi ailleurs » : « Identique partout ? » et les écrans concernés. La déclaration en amont reste possible.
+- L'auditeur note son observation sur l'écran où il le voit, puis « Aussi ailleurs » : « Identique partout ? » et les écrans concernés. La déclaration en amont reste possible.
 - **Un élément partagé n'a jamais de statut propre** : il écrit dans les écrans cochés, comme une saisie écran par écran. Le taux se calcule comme aujourd'hui, et reste comparable à celui du SIP.
 - Un `#nc` partagé rend le critère NC sur chaque écran coché. Un `#c` partagé laisse le critère « à confirmer » sur les autres écrans : d'autres éléments peuvent le violer.
 - Pour un composant, seule la mécanique se propage (rôle et état, focus, messages, erreurs) ; le contenu se vérifie sur chaque écran.
-- Un constat partagé donne un seul ticket Jira.
+- Une observation partagée donne un seul ticket Jira.
 
 ### 8.2 Flux et scénarios
-**Constat** : même problème dans un flux ou un scénario, où les étapes partagent les mêmes composants.
+**Retour** : même problème dans un flux ou un scénario, où les étapes partagent les mêmes composants.
 
 **Proposition** : les éléments partagés valent pour tous les onglets de l'audit, pas seulement à l'intérieur d'un onglet. Un scénario n'a alors à tester que ce qui lui est propre : le contenu de ses étapes et les transitions (`Étape -> Étape` : focus, annonces, retour arrière, conservation des saisies).
 
 ### 8.3 Fonctionnalité primaire
-**Constat** : le type d'audit « Fonctionnalité primaire » est peut-être devenu inutile.
+**Retour** : le type d'audit « Fonctionnalité primaire » est peut-être devenu inutile.
 
 **Analyse** : il servait à tester une fois des comportements globaux (fermer un écran, revenir en arrière, ouvrir le menu, passer d'une étape à l'autre, notification). Les éléments partagés couvrent la partie « une fois pour toutes », et le scénario couvre les transitions. Il ne reste en propre que l'évaluation POUR et UX, qui peut se rattacher à un élément partagé ou à un scénario.
 
 **Décision (27 octobre 2026)** : ce type d'audit est retiré pour le moment, remplacé par les éléments partagés. À l'import d'une ancienne sauvegarde, un onglet de ce type est converti en éléments partagés, avec un message.
 
 ### 8.4 Accompagnement de l'auditeur
-**Constat** : l'accompagnement actuel (tour à vide, protocole en étapes) existe, mais surtout dans l'introduction et l'aide.
+**Retour** : l'accompagnement actuel (tour à vide, protocole en étapes) existe, mais surtout dans l'introduction et l'aide.
 
 **Proposition** : un accompagnement présent pendant l'audit, désactivable (mode « guidé » par défaut, mode « expert » sans les rappels).
 - **Bandeau d'étape** : en tête de l'écran en cours, l'étape du protocole (tour à vide, usage standard, code et outils, lecteur d'écran, clavier), ce qu'on y cherche, et les points de contrôle de la table des symptômes qui s'y rattachent, filtrés par le configurateur.
 - **Tour à vide en premier** pour chaque nouvel écran : parcours sans outil, premières impressions notées comme observations libres.
-- **Rappels contextuels** : critères restés NT dans l'étape qu'on quitte ; même constat saisi sur plusieurs écrans (proposition d'élément partagé) ; observation `#nc` sans attendu ; incohérence `#na` face à `#c` ou `#nc`.
+- **Rappels contextuels** : critères restés NT dans l'étape qu'on quitte ; même observation saisie sur plusieurs écrans (proposition d'élément partagé) ; observation `#nc` sans attendu ; incohérence `#na` face à `#c` ou `#nc`.
 - **Passe de clôture guidée** avant la validation de l'onglet.
 
 ## Points ouverts
