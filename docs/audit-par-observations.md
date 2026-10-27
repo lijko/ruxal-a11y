@@ -118,7 +118,44 @@ Les noms de règles des outils n'apparaissent pas dans les consignes de test ; i
 2. **Agent dans l'assistant de l'organisation** (Copilot, à vérifier : Microsoft 365 ou GitHub) : suggestion de critères à partir d'observations rédigées librement, avec le référentiel et la table des symptômes en connaissance. Les données d'audit doivent respecter la politique de l'employeur.
 3. **Script local** (Node.js, Playwright, axe-core) pour tester plusieurs écrans d'affilée, dans leurs différents états : utilise l'Edge déjà installé, se lance par un fichier `.cmd`, produit un JSON importable dans l'outil.
 
+## 8. Retours d'usage de la version précédente (RUXAAM 1.27, RUXAWEB 1.6)
+Constats de Bertrand après utilisation, et réponses proposées.
+
+### 8.1 Composants communs
+**Constat** : en audit rapide, reprendre les mêmes non-conformités sur chaque écran de l'échantillon (en-tête, pied de page, menu principal...) est très long et source d'erreurs.
+
+**Proposition** : un niveau **Composants communs**, testé une seule fois par onglet.
+- Le testeur déclare les composants communs (en-tête, pied de page, navigation principale, fil d'Ariane, bandeau cookies...), puis, dans le configurateur de chaque écran, coche ceux qui y figurent.
+- Une observation sur un composant commun s'écrit sans écran devant, selon la notation déjà retenue : `[Main navigation] : ... #nc`.
+- Elle s'applique à **tous les écrans qui contiennent ce composant** ; le calcul par écran reste le même (le pire statut l'emporte).
+- Elle donne **un seul ticket Jira**, pas un par écran.
+- Un défaut propre à un écran se note sur l'écran, même s'il touche un composant commun : `Panier[Main navigation] (déplié) : ...`.
+- Aide à la détection : si le même constat est saisi sur plusieurs écrans, l'outil propose de le rattacher à un composant commun.
+
+### 8.2 Flux et scénarios
+**Constat** : même problème dans un flux ou un scénario, où les étapes partagent les mêmes composants.
+
+**Proposition** : les composants communs sont partagés entre tous les onglets de l'audit, pas seulement à l'intérieur d'un onglet. Un scénario n'a alors à tester que ce qui lui est propre : le contenu de ses étapes et les transitions (`Étape -> Étape` : focus, annonces, retour arrière, conservation des saisies).
+
+### 8.3 Fonctionnalité primaire
+**Constat** : le type d'audit « Fonctionnalité primaire » est peut-être devenu inutile.
+
+**Analyse** : il servait à tester une fois des comportements globaux (fermer un écran, revenir en arrière, ouvrir le menu, passer d'une étape à l'autre, notification). Les composants communs couvrent la partie « une fois pour toutes », et le scénario couvre les transitions. Il ne reste en propre que l'évaluation POUR et UX, qui peut se rattacher à un composant commun ou à un scénario.
+
+**Proposition** : retirer ce type d'audit et le remplacer par les composants communs. À l'import d'une ancienne sauvegarde, un onglet de ce type est converti en composants communs, avec un message.
+
+### 8.4 Accompagnement de l'auditeur
+**Constat** : l'accompagnement actuel (tour à vide, protocole en étapes) existe, mais surtout dans l'introduction et l'aide.
+
+**Proposition** : un accompagnement présent pendant l'audit, désactivable (mode « guidé » par défaut, mode « expert » sans les rappels).
+- **Bandeau d'étape** : en tête de l'écran en cours, l'étape du protocole (tour à vide, usage standard, code et outils, lecteur d'écran, clavier), ce qu'on y cherche, et les points de contrôle de la table des symptômes qui s'y rattachent, filtrés par le configurateur.
+- **Tour à vide en premier** pour chaque nouvel écran : parcours sans outil, premières impressions notées comme observations libres.
+- **Rappels contextuels** : critères restés NT dans l'étape qu'on quitte ; même constat saisi sur plusieurs écrans (proposition de composant commun) ; observation `#nc` sans attendu ; incohérence `#na` face à `#c` ou `#nc`.
+- **Passe de clôture guidée** avant la validation de l'onglet.
+
 ## Points ouverts
+- Fonctionnalité primaire : confirmer le retrait au profit des composants communs.
+- Liste par défaut des composants communs, pour le web et pour le mobile (barre d'onglets, bouton retour).
 - Table symptôme vers critères : relecture de la version web, puis version RAAM.
 - Coexistence avec la saisie actuelle critère par critère : garder les deux modes ou basculer entièrement.
 - Format d'export et de réimport des observations (sauvegarde d'un audit en cours).
