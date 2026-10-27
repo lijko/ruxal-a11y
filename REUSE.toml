@@ -7,7 +7,7 @@ SPDX-FileCopyrightText = ["2026 Bertrand Kempf", "Service information et presse 
 SPDX-License-Identifier = "EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU AND MIT"
 
 [[annotations]]
-path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "data/bonnes-pratiques-web.json", "data/textes-ruxaweb.json", "docs/.gitkeep", "docs/rapport-migration.md", "docs/gravite.md", "README.md", "CONTRIBUTING.md", "NOTICE", ".gitignore"]
+path = ["data/.gitkeep", "data/bonnes-pratiques.json", "data/themes-ruxal.json", "data/textes-ruxal.json", "data/bonnes-pratiques-web.json", "data/textes-ruxaweb.json", "docs/.gitkeep", "docs/rapport-migration.md", "docs/gravite.md", "docs/audit-par-observations.md", "README.md", "CONTRIBUTING.md", "NOTICE", ".gitignore"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Bertrand Kempf"
 SPDX-License-Identifier = "CC-BY-4.0"
