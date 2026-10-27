@@ -124,13 +124,13 @@ Retours de Bertrand après utilisation, et réponses proposées.
 ### 8.1 Éléments partagés
 **Retour** : en audit rapide, reprendre les mêmes non-conformités sur chaque écran de l'échantillon (en-tête, pied de page, menu principal...) est très long et source d'erreurs.
 
-**Décision (27 octobre 2026)** :
-- Deux listes à côté des écrans : **Partout** (le même élément à l'identique : en-tête, menu, pied de page) et **Composants** (le même composant, contenu différent : formulaire, modale).
-- L'auditeur note son observation sur l'écran où il le voit, puis « Aussi ailleurs » : « Identique partout ? » et les écrans concernés. La déclaration en amont reste possible.
-- **Un élément partagé n'a jamais de statut propre** : il écrit dans les écrans cochés, comme une saisie écran par écran. Le taux se calcule comme aujourd'hui, et reste comparable à celui du SIP.
-- Un `#nc` partagé rend le critère NC sur chaque écran coché. Un `#c` partagé laisse le critère « à confirmer » sur les autres écrans : d'autres éléments peuvent le violer.
-- Pour un composant, seule la mécanique se propage (rôle et état, focus, messages, erreurs) ; le contenu se vérifie sur chaque écran.
-- Une observation partagée donne un seul ticket Jira.
+**Décision (27 octobre 2026, simplifiée le même soir)** :
+- Une seule notion : une observation peut **valoir aussi sur** d'autres écrans. L'auditeur coche ces écrans dans le formulaire ; il peut nommer l'élément (ex. Menu principal), facultatif.
+- Plus de distinction entre élément identique et composant réutilisé : c'est l'auditeur qui coche les écrans où l'observation est vraie.
+- Les éléments nommés forment la liste « Éléments répétés », à côté des écrans.
+- **Une observation n'a jamais de statut propre** : elle écrit dans les écrans cochés, comme une saisie écran par écran. Le taux se calcule comme avant, et reste comparable à celui du SIP.
+- Une observation `#nc` rend le critère NC sur chaque écran coché. Une observation `#c` le laisse « à confirmer » sur les autres écrans : d'autres éléments peuvent le violer.
+- Une observation qui vaut sur plusieurs écrans donne un seul ticket Jira.
 
 ### 8.2 Flux et scénarios
 **Retour** : même problème dans un flux ou un scénario, où les étapes partagent les mêmes composants.

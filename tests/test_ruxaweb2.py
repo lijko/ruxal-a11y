@@ -48,11 +48,13 @@ def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit
         page.select_option('#obs-ajout', crit)
     page.click('[data-action="tag"][data-tag="%s"]' % tag)
     if partage:
-        page.click('[data-action="ailleurs"]')
-        page.check('input[name="genre"][value="%s"]' % partage[0])
-        page.fill('#obs-partage-nom', partage[1])
-        for cb in page.locator('[data-ecran-partage]').all():
-            cb.check()
+        nom, quels = partage
+        if nom:
+            page.fill('#obs-partage-nom', nom)
+        cases = page.locator('[data-ecran-partage]').all()
+        for i, cb in enumerate(cases):
+            if quels is None or i in quels:
+                cb.check()
     page.click('#form-obs button[type=submit]')
 
 
@@ -98,18 +100,20 @@ def main():
         verifier('Configurateur : 11.1 NT avec formulaire', statut(page, 0, 'raweb-11-1') == 'NT')
 
         # Partout #nc : NC sur les écrans cochés.
-        observer(page, 'Menu principal : focus invisible.', point='focus-invisible', partage=('partout', 'Menu principal'))
-        verifier('Partout #nc : NC sur les 3 écrans', [statut(page, i, 'raweb-10-7') for i in range(3)] == ['NC', 'NC', 'NC'])
+        observer(page, 'Menu principal : focus invisible.', point='focus-invisible', partage=('Menu principal', None))
+        verifier('Vaut aussi sur, #nc : NC sur les 3 écrans', [statut(page, i, 'raweb-10-7') for i in range(3)] == ['NC', 'NC', 'NC'])
         # Partout #c : conforme ici, à confirmer ailleurs.
-        observer(page, 'Liens du pied de page explicites.', point='nom-non-pertinent', element=2, tag='c', partage=('partout', 'Pied de page'))
-        verifier('Partout #c : C ici, à confirmer ailleurs', [statut(page, i, 'raweb-6-1') for i in range(3)] == ['C', 'C ?', 'C ?'])
-        # Composant : seule la mécanique se propage.
-        observer(page, 'Étiquette du champ e-mail absente.', point='etiquette', partage=('composant', 'Formulaire'))
-        verifier('Composant #nc : contenu (11.1) reste propre à l\'écran', statut(page, 0, 'raweb-11-1') == 'NC')
-        observer(page, 'Erreur non restituée.', point='erreur-saisie', partage=('composant', 'Formulaire'))
-        verifier('Composant #nc : mécanique (11.10) propagée, NA où le formulaire est absent', [statut(page, i, 'raweb-11-10') for i in range(3)] == ['NC', 'NA', 'NA'])
-        observer(page, 'Menu : état ouvert non annoncé.', point='role-etat', partage=('composant', 'Menu'))
-        verifier('Composant #nc : mécanique (7.1) propagée', [statut(page, i, 'raweb-7-1') for i in range(3)] == ['NC', 'NC', 'NC'])
+        observer(page, 'Liens du pied de page explicites.', point='nom-non-pertinent', element=2, tag='c', partage=('Pied de page', None))
+        verifier('Vaut aussi sur, #c : C ici, à confirmer ailleurs', [statut(page, i, 'raweb-6-1') for i in range(3)] == ['C', 'C ?', 'C ?'])
+        # Sans écran coché, l'observation reste propre à l'écran ; sur un écran sans formulaire, le critère reste NA.
+        observer(page, 'Étiquette du champ e-mail absente.', point='etiquette')
+        verifier('Sans « vaut aussi sur » : 11.1 NC sur cet écran seulement', [statut(page, i, 'raweb-11-1') for i in range(3)] == ['NC', 'NA', 'NA'])
+        observer(page, 'Erreur non restituée.', point='erreur-saisie', partage=(None, None))
+        verifier('Vaut aussi sur, sans nom : 11.10 NA là où le formulaire est absent', [statut(page, i, 'raweb-11-10') for i in range(3)] == ['NC', 'NA', 'NA'])
+        observer(page, 'Menu : état ouvert non annoncé.', point='role-etat', partage=('Menu', [0]))
+        verifier('Vaut aussi sur un seul écran : 7.1 NC sur les deux, NT sur le troisième', [statut(page, i, 'raweb-7-1') for i in range(3)] == ['NC', 'NC', 'NT'])
+        page.click('[data-action="vue"][data-vue="audit"]')
+        verifier('Éléments répétés : liste unique à gauche', 'éléments répétés' in page.locator('nav.ecrans').inner_text().lower() and 'Menu principal' in page.locator('nav.ecrans').inner_text())
 
         # Note libre : aucun statut.
         avant = page.evaluate('RUXAWEB.state().onglets[0].obs.length')
@@ -156,7 +160,7 @@ def main():
         j = telecharger(page, 'export-jira')
         rows = list(csv.reader(io.StringIO(j.read_text(encoding='utf-8-sig'))))
         menu = [r for r in rows[1:] if 'Menu principal' in r[0]]
-        verifier('Jira : un seul ticket pour l\'observation partagée', len(menu) == 1, [r[0] for r in rows[1:]])
+        verifier('Jira : un seul ticket pour l\'observation valable sur 3 écrans', len(menu) == 1, [r[0] for r in rows[1:]])
         verifier('Jira : référence RAWeb', 'RAWeb 1.1, Criterion 10.7' in menu[0][1] if menu else False)
         verifier('Jira : observation retestée sur un seul écran toujours exporté (encore NC ailleurs)', len(menu) == 1)
         s = telecharger(page, 'export-json')

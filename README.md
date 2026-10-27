@@ -68,9 +68,9 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 
 - **On note des observations, la grille se remplit** : chaque observation porte un tag (#c, #nc, #na) et un ou plusieurs critères, proposés à partir d'un point de contrôle (`data/symptomes-ruxaweb.json`). Sans critère, c'est une note libre.
 - **Parcours guidé, écran par écran** : tour à vide, puis les 4 étapes du protocole, puis clôture et résumé. Le panneau d'aide, toujours au même endroit, montre le parcours et dit quoi faire et quoi chercher à l'étape en cours.
-- **Aussi ailleurs** : une observation peut valoir sur d'autres écrans. « Partout » (même élément) : un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. « Composant » (même composant, autre contenu) : seuls les critères de mécanique se propagent (7.1, 7.3, 7.5, 10.7, 10.14, 11.10, 12.8, 12.9, 12.11, 13.11). Un élément partagé n'a pas de statut propre : le taux reste celui du SIP.
+- **Vaut aussi sur** : l'auditeur coche les autres écrans où l'observation est vraie, et peut nommer l'élément (ex. Menu principal), repris dans la liste « Éléments répétés ». Un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. Une observation n'a jamais de statut propre : le taux reste celui du SIP.
 - **Retest** : depuis la grille, un critère se remet à NT sur un écran ; les observations précédentes restent en historique.
-- **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation partagée), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
+- **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation qui vaut sur plusieurs écrans), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
 - **Import axe ou Lighthouse** : un rapport JSON (axe-core, ou Lighthouse depuis les outils de développement d'Edge ou de Chrome) s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json` (correspondance RUXAL, à relire), sinon par les critères WCAG que donne le rapport axe.
 - **Pas encore repris** : couche POUR/UX, PDF du référentiel.
 
@@ -117,7 +117,7 @@ python3 tests/test_ruxaweb.py
 python3 tests/test_ruxaweb2.py
 python3 tests/test_symptomes_ruxaweb.py
 ```
-Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript, gestion des écrans en cours d'audit et affichage un écran à la fois au-delà de 6. `tests/test_ruxaweb.py` fait les mêmes vérifications pour RUXAWEB (écrans, 8 déclencheurs, étapes web, support Ordinateur ou Mobile, lien RAWeb des tickets). `tests/test_ruxaweb2.py` vérifie les règles de RUXAWEB 2 : configurateur, propagation Partout et Composant, retest, deux taux, exports et import.
+Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript, gestion des écrans en cours d'audit et affichage un écran à la fois au-delà de 6. `tests/test_ruxaweb.py` fait les mêmes vérifications pour RUXAWEB (écrans, 8 déclencheurs, étapes web, support Ordinateur ou Mobile, lien RAWeb des tickets). `tests/test_ruxaweb2.py` vérifie les règles de RUXAWEB 2 : configurateur, observations valables sur plusieurs écrans, retest, deux taux, exports et import.
 
 ## Licences / Licences
 | Contenu | Licence |
