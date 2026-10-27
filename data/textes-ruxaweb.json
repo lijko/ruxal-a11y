@@ -105,6 +105,12 @@
       "impact": "RAWeb 3.2 (WCAG 1.4.3) : un contraste insuffisant rend le texte difficile ou impossible à lire pour les personnes malvoyantes, âgées, ou qui consultent la page en plein soleil.",
       "explication": "Mesure le contraste entre le texte et son fond avec un outil de mesure du contraste, en priorité sur les textes clairs ou petits, posés sur une image ou un dégradé, et dans les états au survol et au focus. Seuils : 4,5:1 pour le texte courant, 3:1 pour un texte d'au moins 24 px, ou 18,5 px en gras."
     },
+    "raweb-3-3": {
+      "raweb": "3.3",
+      "gravite": "serieux",
+      "impact": "RAWeb 3.3 (WCAG 1.4.11) : une icône, une bordure de champ, un indicateur de focus ou un graphique trop peu contrasté passe inaperçu pour les personnes malvoyantes ou qui consultent sur un écran au soleil : elles ne trouvent pas le champ à remplir ni l'élément actif.",
+      "explication": "Repère les éléments graphiques qui portent une information ou permettent d'agir : icônes seules, bordures de champs, cases à cocher, boutons sans fond, indicateur de focus, courbes et zones de graphique. Mesure le contraste de chacun avec la couleur voisine : il doit atteindre au moins 3:1. Les éléments purement décoratifs et les composants désactivés ne sont pas concernés."
+    },
     "raweb-4-1": {
       "raweb": "4.1",
       "gravite": "serieux",
@@ -177,11 +183,23 @@
       "impact": "RAWeb 6.2 (WCAG 1.1.1 / 2.4.4) : un lien sans intitulé est annoncé « lien » sans autre information : l'utilisateur de lecteur d'écran ne peut pas savoir où il mène, ni le distinguer des autres.",
       "explication": "Affiche la liste des liens proposée par le lecteur d'écran et cherche les liens annoncés sans nom (« lien » seul) : ce sont souvent des icônes ou des images cliquables (réseaux sociaux, logo). Chaque lien doit avoir un intitulé : son texte, l'alternative de son image, ou un libellé caché."
     },
+    "raweb-7-1": {
+      "raweb": "7.1",
+      "gravite": "critique",
+      "impact": "RAWeb 7.1 (WCAG 4.1.2 / 2.5.3) : un composant construit en script (bouton, onglet, menu, accordéon, case maison) dont le nom, le rôle ou l'état ne sont pas restitués est inutilisable au lecteur d'écran : on entend « groupe » ou rien, sans savoir à quoi il sert ni s'il est ouvert, sélectionné ou coché. Pour la commande vocale, un nom qui ne reprend pas le texte visible empêche de l'activer.",
+      "explication": "Au lecteur d'écran, parcours chaque composant qui réagit à un script. Pour chacun, vérifie que sont restitués : son nom (pertinent, et qui contient le texte visible quand il y en a un), son rôle (bouton, onglet, case à cocher, menu...), et son état quand il en a un (ouvert ou fermé, sélectionné, coché, désactivé). Active-le : le changement d'état doit être restitué. Dans le code, un élément cliquable doit être un élément natif (button, a, input) ou porter le rôle et les propriétés adaptés."
+    },
     "raweb-7-3": {
       "raweb": "7.3",
       "gravite": "critique",
       "impact": "RAWeb 7.3 (WCAG 1.3.1 / 2.1.1 / 2.4.7) : un composant scripté (menu, accordéon, onglet, carrousel, bouton fait d'un div) inutilisable au clavier bloque totalement les utilisateurs de clavier, de contacteur ou de commande vocale.",
       "explication": "Au clavier seul (Tab, Maj+Tab, Entrée, Espace, flèches), atteins et active chaque élément qui réagit à un script : il doit fonctionner comme à la souris. Un div ou un span cliquable sans tabindex ni gestion du clavier est non conforme. Vérifie aussi qu'aucun script ne retire le focus d'un élément qui vient de le recevoir."
+    },
+    "raweb-7-5": {
+      "raweb": "7.5",
+      "gravite": "serieux",
+      "impact": "RAWeb 7.5 (WCAG 4.1.3) : un message de statut non restitué (« Article ajouté au panier », « 3 résultats », « Enregistrement en cours ») laisse l'utilisateur de lecteur d'écran sans retour : il ne sait pas si son action a réussi et la répète, ou abandonne.",
+      "explication": "Déclenche les actions qui affichent un message sans déplacer le focus : ajout au panier, filtre ou recherche qui met à jour un nombre de résultats, enregistrement, chargement, erreur générale. Au lecteur d'écran, le message doit être lu automatiquement, sans que tu aies à le chercher, et sans que le focus bouge. Dans le code, la zone du message porte un rôle de statut ou d'alerte, présent avant l'apparition du message."
     },
     "raweb-8-2": {
       "raweb": "8.2",
@@ -236,6 +254,18 @@
       "gravite": "modere",
       "impact": "RAWeb 9.2 (WCAG 1.3.1) : sans zones structurantes (en-tête, navigation, contenu principal, pied de page), l'utilisateur de lecteur d'écran ne peut pas aller directement au contenu ou au menu.",
       "explication": "Affiche la liste des repères du lecteur d'écran (ou les zones dans l'inspecteur) : la page doit avoir un en-tête, une navigation principale, un seul contenu principal et un pied de page, chacun identifié comme tel (header, nav, main, footer)."
+    },
+    "raweb-9-3": {
+      "raweb": "9.3",
+      "gravite": "modere",
+      "impact": "RAWeb 9.3 (WCAG 1.3.1) : une liste visuelle qui n'est pas déclarée comme liste est lue comme une suite de lignes sans lien : l'utilisateur de lecteur d'écran ne sait pas combien d'éléments elle contient ni où elle se termine, et ne peut pas la sauter.",
+      "explication": "Repère tout contenu présenté comme une liste : énumérations à puces ou numérotées, menus, suites de liens, de cartes ou de résultats. Au lecteur d'écran, chacune doit être annoncée comme une liste avec son nombre d'éléments. Dans le code, elle utilise les éléments de liste (ul, ol et li, ou dl pour une liste de définitions), sans tirets ni retours à la ligne pour simuler les puces."
+    },
+    "raweb-10-4": {
+      "raweb": "10.4",
+      "gravite": "serieux",
+      "impact": "RAWeb 10.4 (WCAG 1.4.4) : quand le texte est agrandi, un contenu tronqué, superposé ou qui sort de son cadre devient illisible ou masque des boutons : les personnes malvoyantes qui agrandissent le texte perdent l'information ou ne peuvent plus agir.",
+      "explication": "Agrandis le texte jusqu'à 200 % : avec le zoom du navigateur, puis avec le réglage de la taille du texte seule quand il existe. Parcours tout l'écran : aucun texte ne doit être coupé, superposé à un autre ou masqué, et toutes les fonctions doivent rester disponibles. Un défilement horizontal reste acceptable pour les tableaux et les contenus qui en ont besoin."
     },
     "raweb-10-7": {
       "raweb": "10.7",

@@ -45,11 +45,12 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Formats d'export** : Liste des critères en **Excel (.xlsx)** : une ligne par critère et par onglet, colonnes dimensionnées, ligne d'en-tête figée, filtres, statuts colorés, numéros de critères gardés en texte (« 10.10 » reste 10.10). Tickets Jira en **CSV** (séparateur virgule), à importer dans Jira et non à ouvrir dans Excel. Le téléchargement passe uniquement par le navigateur, sans dépendance à une autre application. 
 - **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
 
-### RUXAWEB 1.6 (web, RAWeb 1.1)
+### RUXAWEB 1.7 (web, RAWeb 1.1)
 `src/ruxaweb.html` : même moteur, mêmes types d'audit, mêmes thèmes RUXAL, même couche POUR et UX, mêmes exports que RUXAAM, adaptés au web.
 
 - **Critères** : les **52 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) (47 testés manuellement, 19 avec Axe, 52 distincts), intitulés officiels non modifiés ; 24 « si présent ». Contrairement à RUXAAM, aucune adaptation : la grille du SIP est faite pour le web, le taux reste donc lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
-- **Critère 13.11 hors sélection** : critère officiel du RAWeb 1.1 absent de la méthode du SIP, évalué à titre indicatif et exclu du taux (champ `hors_selection` de `data/criteres-raweb.json`) ; ses non-conformités partent dans l'export Jira.
+- **6 critères hors sélection** : 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, critères officiels du RAWeb 1.1 absents de la méthode du SIP, ajoutés parce qu'ils couvrent des défauts fréquents (composant en script sans nom, rôle ni état ; message de statut non restitué ; contraste des icônes et du focus ; listes ; texte agrandi). Champ `hors_selection` de `data/criteres-raweb.json` ; leurs non-conformités partent dans l'export Jira.
+- **Deux taux** : le **taux sélection SIP**, taux principal, calculé sur les 52 critères de la méthode du SIP et comparable à leur audit simplifié ; le **taux élargi**, calculé sur les 58 critères RAWeb de l'outil, affiché à côté (audit, résumé, tableau de bord, export JSON). Même formule pour les deux.
 - **3 bonnes pratiques hors RAWeb** (hors taux) : taille des cibles (WCAG 2.2, 2.5.8), fermeture d'une fenêtre modale au clavier, retour du focus à sa fermeture.
 - **Écrans** : comme dans RUXAAM, l'objet testé s'appelle un écran (une page du site, ou un état de page : fenêtre modale ouverte, étape d'un formulaire). L'audit rapide porte sur 3 écrans au moins (accueil, écran avec formulaire, écran au contenu particulier), comme l'audit simplifié du SIP.
 - **Contenu des écrans** : 8 déclencheurs (CAPTCHA, image complexe, média temporel ou son, média non temporel, tableau de données, cadre, formulaire, autre langue). Pas de déclencheur global : la limite de temps (13.1) est un critère cœur.
@@ -71,7 +72,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 | `data/bonnes-pratiques.json` | 3 bonnes pratiques hors RAAM (hors taux), avec leur étape de test | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre et noms des 7 thèmes RUXAL | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
-| `data/criteres-raweb.json` | RUXAWEB : 52 critères officiels du RAWeb 1.1 (audit simplifié du SIP), plus 13.11 hors sélection et hors taux (intitulés non modifiés) ; 24 « si présent » ; étape de test | CC BY 3.0 LU |
+| `data/criteres-raweb.json` | RUXAWEB : 52 critères officiels du RAWeb 1.1 (audit simplifié du SIP), plus 6 critères hors sélection (3.3, 7.1, 7.5, 9.3, 10.4, 13.11), comptés dans le taux élargi seulement (intitulés non modifiés) ; 24 « si présent » ; étape de test | CC BY 3.0 LU |
 | `data/bonnes-pratiques-web.json` | RUXAWEB : 3 bonnes pratiques hors RAWeb (hors taux) | CC BY 4.0 |
 | `data/textes-ruxaweb.json` | RUXAWEB : gravité, impact et consigne de test de chaque critère ; 8 déclencheurs | CC BY 4.0 |
 

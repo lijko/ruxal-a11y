@@ -1,7 +1,7 @@
 {
   "source": "RAWeb 1.1, Service information et presse (SIP), Luxembourg, https://accessibilite.public.lu/fr/raweb1.1/",
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteWeb",
-  "selection": "Méthode de contrôle simplifié de l'accessibilité v1.2.1 du SIP (https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) : union des 47 critères testés manuellement et des 19 critères testés avec Axe, soit 52 critères distincts. Champ audit_simplifie : manière dont la méthode du SIP teste le critère. Ajout RUXAWEB (hors sélection du SIP) : critère 13.11, marqué hors_selection, évalué à titre indicatif et exclu du taux, pour garder un taux calculé sur la même sélection que l'audit simplifié du SIP.",
+  "selection": "Méthode de contrôle simplifié de l'accessibilité v1.2.1 du SIP (https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) : union des 47 critères testés manuellement et des 19 critères testés avec Axe, soit 52 critères distincts. Champ audit_simplifie : manière dont la méthode du SIP teste le critère. Ajouts RUXAWEB (hors sélection du SIP) : critères 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, marqués hors_selection. Ils n'entrent pas dans le taux « sélection SIP », calculé sur la même sélection que l'audit simplifié du SIP, mais comptent dans le taux élargi.",
   "licence": "CC BY 3.0 LU",
   "note": "Intitulés, niveaux et références WCAG / EN 301 549 repris du dépôt officiel (fr/json/criteres.json, fr/niveaux.json), nettoyés des liens de glossaire, sans autre modification. Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si la page contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxaweb.json). Champ etape : étape du protocole de test RUXAWEB où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4).",
   "criteres": [
@@ -183,6 +183,24 @@
         "9.1.4.3 Contrast (Minimum)"
       ],
       "audit_simplifie": "manuel et Axe",
+      "theme_ruxal": "Couleurs & Contrastes",
+      "statut": "cœur",
+      "etape": "1"
+    },
+    {
+      "raweb": "3.3",
+      "theme_raweb_numero": 3,
+      "theme_raweb": "Couleurs",
+      "intitule": "Dans chaque page web, les couleurs utilisées dans les composants d’interface ou les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ?",
+      "niveau": "AA",
+      "wcag": [
+        "1.4.11 Non-text Contrast (AA)"
+      ],
+      "en301549": [
+        "9.1.4.11 Non-text Contrast"
+      ],
+      "audit_simplifie": "",
+      "hors_selection": true,
       "theme_ruxal": "Couleurs & Contrastes",
       "statut": "cœur",
       "etape": "1"
@@ -422,6 +440,26 @@
       "etape": "3a"
     },
     {
+      "raweb": "7.1",
+      "theme_raweb_numero": 7,
+      "theme_raweb": "Scripts",
+      "intitule": "Chaque script est-il, si nécessaire, compatible avec les technologies d’assistance ?",
+      "niveau": "A",
+      "wcag": [
+        "2.5.3 Label in Name (A)",
+        "4.1.2 Name, Role, Value (A)"
+      ],
+      "en301549": [
+        "9.2.5.3 Label in Name",
+        "9.4.1.2 Name, Role, Value"
+      ],
+      "audit_simplifie": "",
+      "hors_selection": true,
+      "theme_ruxal": "Composants Interactifs",
+      "statut": "cœur",
+      "etape": "3a"
+    },
+    {
       "raweb": "7.3",
       "theme_raweb_numero": 7,
       "theme_raweb": "Scripts",
@@ -441,6 +479,24 @@
       "theme_ruxal": "Navigation & Structure",
       "statut": "cœur",
       "etape": "4"
+    },
+    {
+      "raweb": "7.5",
+      "theme_raweb_numero": 7,
+      "theme_raweb": "Scripts",
+      "intitule": "Dans chaque page web, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?",
+      "niveau": "AA",
+      "wcag": [
+        "4.1.3 Status Messages (AA)"
+      ],
+      "en301549": [
+        "9.4.1.3 Status Messages"
+      ],
+      "audit_simplifie": "",
+      "hors_selection": true,
+      "theme_ruxal": "Composants Interactifs",
+      "statut": "cœur",
+      "etape": "3a"
     },
     {
       "raweb": "8.2",
@@ -604,6 +660,42 @@
       "theme_ruxal": "Navigation & Structure",
       "statut": "cœur",
       "etape": "2"
+    },
+    {
+      "raweb": "9.3",
+      "theme_raweb_numero": 9,
+      "theme_raweb": "Structuration de l’information",
+      "intitule": "Dans chaque page web, chaque liste est-elle correctement structurée ?",
+      "niveau": "A",
+      "wcag": [
+        "1.3.1 Info and Relationships (A)"
+      ],
+      "en301549": [
+        "9.1.3.1 Info and Relationships"
+      ],
+      "audit_simplifie": "",
+      "hors_selection": true,
+      "theme_ruxal": "Navigation & Structure",
+      "statut": "cœur",
+      "etape": "3a"
+    },
+    {
+      "raweb": "10.4",
+      "theme_raweb_numero": 10,
+      "theme_raweb": "Présentation de l’information",
+      "intitule": "Dans chaque page web, le texte reste-t-il lisible lorsque la taille des caractères est augmentée jusqu’à 200 %, au moins (hors cas particuliers) ?",
+      "niveau": "AA",
+      "wcag": [
+        "1.4.4 Resize Text (AA)"
+      ],
+      "en301549": [
+        "9.1.4.4 Resize Text"
+      ],
+      "audit_simplifie": "",
+      "hors_selection": true,
+      "theme_ruxal": "Contenu & Lisibilité",
+      "statut": "cœur",
+      "etape": "1"
     },
     {
       "raweb": "10.7",

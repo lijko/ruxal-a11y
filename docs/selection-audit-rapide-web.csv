@@ -9,6 +9,7 @@
 2.1;Cadres;Chaque cadre a-t-il un titre de cadre ?;A;Axe;Navigation & Structure;si présent;Cadre (iframe);2 Code et outils;Modéré
 3.1;Couleurs;Dans chaque page web, l’information ne doit pas être donnée uniquement par la couleur. Cette règle est-elle respectée ?;A;manuel;Couleurs & Contrastes;cœur;;1 Usage standard;Sérieux
 3.2;Couleurs;Dans chaque page web, le contraste entre la couleur du texte et la couleur de son arrière-plan est-il suffisamment élevé (hors cas particuliers) ?;AA;manuel et Axe;Couleurs & Contrastes;cœur;;1 Usage standard;Sérieux
+3.3;Couleurs;Dans chaque page web, les couleurs utilisées dans les composants d’interface ou les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ?;AA;hors sélection (ajout RUXAWEB, taux élargi);Couleurs & Contrastes;cœur;;1 Usage standard;Sérieux
 4.1;Multimédia;Chaque média temporel pré-enregistré a-t-il, si nécessaire, une transcription textuelle ou une audiodescription (hors cas particuliers) ?;A;manuel;Images & Médias;si présent;Média temporel ou son;1 Usage standard;Sérieux
 4.2;Multimédia;Pour chaque média temporel pré-enregistré ayant une transcription textuelle ou une audiodescription synchronisée, celles-ci sont-elles pertinentes (hors cas particuliers) ?;A;manuel;Images & Médias;si présent;Média temporel ou son;1 Usage standard;Modéré
 4.3;Multimédia;Chaque média temporel synchronisé a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ?;A;manuel et Axe;Images & Médias;si présent;Média temporel ou son;1 Usage standard;Critique
@@ -21,7 +22,9 @@
 5.7;Tableaux;Pour chaque tableau de données, la technique appropriée permettant d’associer chaque cellule avec ses en-têtes est-elle utilisée (hors cas particuliers) ?;A;manuel et Axe;Contenu & Lisibilité;si présent;Tableau de données;2 Code et outils;Sérieux
 6.1;Liens;Chaque lien est-il explicite (hors cas particuliers) ?;A;manuel;Navigation & Structure;cœur;;3a Lecteur d'écran : contenus et structure;Sérieux
 6.2;Liens;Dans chaque page web, chaque lien a-t-il un intitulé ?;A;manuel et Axe;Navigation & Structure;cœur;;3a Lecteur d'écran : contenus et structure;Critique
+7.1;Scripts;Chaque script est-il, si nécessaire, compatible avec les technologies d’assistance ?;A;hors sélection (ajout RUXAWEB, taux élargi);Composants Interactifs;cœur;;3a Lecteur d'écran : contenus et structure;Critique
 7.3;Scripts;Chaque script est-il contrôlable par le clavier et par tout dispositif de pointage (hors cas particuliers) ?;A;manuel;Navigation & Structure;cœur;;4 Navigation au clavier;Critique
+7.5;Scripts;Dans chaque page web, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?;AA;hors sélection (ajout RUXAWEB, taux élargi);Composants Interactifs;cœur;;3a Lecteur d'écran : contenus et structure;Sérieux
 8.2;Éléments obligatoires;Pour chaque page web, le code source généré est-il valide selon le type de document spécifié ?;A;Axe;Fondations Techniques;cœur;;2 Code et outils;Sérieux
 8.3;Éléments obligatoires;Dans chaque page web, la langue par défaut est-elle présente ?;A;Axe;Fondations Techniques;cœur;;2 Code et outils;Sérieux
 8.4;Éléments obligatoires;Pour chaque page web ayant une langue par défaut, le code de langue est-il pertinent ?;A;manuel et Axe;Fondations Techniques;cœur;;2 Code et outils;Sérieux
@@ -31,6 +34,8 @@
 8.8;Éléments obligatoires;Dans chaque page web, le code de langue de chaque changement de langue est-il valide et pertinent ?;AA;manuel et Axe;Fondations Techniques;si présent;Autre langue;2 Code et outils;Modéré
 9.1;Structuration de l’information;Dans chaque page web, l’information est-elle structurée par l’utilisation appropriée de titres ?;A;manuel et Axe;Navigation & Structure;cœur;;3a Lecteur d'écran : contenus et structure;Modéré
 9.2;Structuration de l’information;Dans chaque page web, la structure du document est-elle cohérente ?;A;manuel et Axe;Navigation & Structure;cœur;;2 Code et outils;Modéré
+9.3;Structuration de l’information;Dans chaque page web, chaque liste est-elle correctement structurée ?;A;hors sélection (ajout RUXAWEB, taux élargi);Navigation & Structure;cœur;;3a Lecteur d'écran : contenus et structure;Modéré
+10.4;Présentation de l’information;Dans chaque page web, le texte reste-t-il lisible lorsque la taille des caractères est augmentée jusqu’à 200 %, au moins (hors cas particuliers) ?;AA;hors sélection (ajout RUXAWEB, taux élargi);Contenu & Lisibilité;cœur;;1 Usage standard;Sérieux
 10.7;Présentation de l’information;Dans chaque page web, pour chaque élément recevant le focus du clavier, la prise de focus est-elle visible ?;A;manuel;Navigation & Structure;cœur;;4 Navigation au clavier;Sérieux
 10.8;Présentation de l’information;Pour chaque page web, les contenus cachés ont-ils vocation à être ignorés par les technologies d’assistance ?;A;Axe;Fondations Techniques;cœur;;3a Lecteur d'écran : contenus et structure;Sérieux
 10.9;Présentation de l’information;Dans chaque page web, l’information ne doit pas être donnée uniquement par la forme, taille ou position. Cette règle est-elle respectée ?;A;manuel;Couleurs & Contrastes;cœur;;1 Usage standard;Modéré
@@ -51,4 +56,4 @@
 13.1;Consultation;Pour chaque page web, l’utilisateur a-t-il le contrôle de chaque limite de temps modifiant le contenu (hors cas particuliers) ?;A;manuel et Axe;Composants Interactifs;cœur;;1 Usage standard;Sérieux
 13.7;Consultation;Dans chaque page web, les changements brusques de luminosité ou les effets de flash sont-ils correctement utilisés ?;A;manuel;Contenu & Lisibilité;cœur;;1 Usage standard;Critique
 13.8;Consultation;Dans chaque page web, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur (hors cas particuliers) ?;A;manuel et Axe;Contenu & Lisibilité;cœur;;1 Usage standard;Sérieux
-13.11;Consultation;Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ?;A;hors sélection (ajout RUXAWEB, hors taux);Composants Interactifs;cœur;;1 Usage standard;Modéré
+13.11;Consultation;Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ?;A;hors sélection (ajout RUXAWEB, taux élargi);Composants Interactifs;cœur;;1 Usage standard;Modéré

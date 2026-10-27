@@ -1,20 +1,48 @@
 {
-  "note": "Table symptôme vers critères de RUXAWEB, pour l'audit par observations (docs/audit-par-observations.md). Le testeur choisit un point de contrôle ; le tag de l'observation (#c, #nc, #na, #nt) donne le statut ; l'outil propose les critères, selon le type d'élément quand il y a lieu. Textes originaux. Brouillon du 27 octobre 2026, non encore utilisé par l'outil.",
+  "note": "Table symptôme vers critères de RUXAWEB, pour l'audit par observations (docs/audit-par-observations.md). Le testeur choisit un point de contrôle ; le tag de l'observation (#c, #nc, #na, #nt) donne le statut ; l'outil propose les critères, selon le type d'élément quand il y a lieu. Textes originaux. Brouillon du 27 octobre 2026, couvre les 58 critères RAWeb de RUXAWEB 1.7, non encore utilisé par l'outil.",
   "licence": "CC BY 4.0, Bertrand Kempf",
   "regles": [
-    "Chaque critère de la sélection est atteignable par au moins un point de contrôle (vérifié par tests/test_symptomes_ruxaweb.py).",
+    "Chaque critère RAWeb de l'outil (sélection du SIP et critères hors sélection) est atteignable par au moins un point de contrôle (vérifié par tests/test_symptomes_ruxaweb.py).",
     "criteres : critères proposés quel que soit l'élément. selon : critères proposés pour un type d'élément précis.",
-    "hors_selection : critères RAWeb 1.1 concernés mais absents de la sélection de l'audit simplifié du SIP. Signalés au testeur, jamais proposés comme statut tant qu'ils ne sont pas ajoutés à l'outil.",
-    "bonnes_pratiques : bonnes pratiques RUXAL hors RAWeb concernées, jamais comptées dans le taux."
+    "hors_outil : critères RAWeb 1.1 concernés mais absents de l'outil. Signalés au testeur, jamais proposés comme statut tant qu'ils ne sont pas ajoutés.",
+    "bonnes_pratiques : bonnes pratiques RUXAL hors RAWeb concernées, jamais comptées dans un taux."
   ],
   "familles": [
-    {"id": "restitution", "libelle": "Restitution par le lecteur d'écran", "etape": "3"},
-    {"id": "structure", "libelle": "Structure et code", "etape": "2"},
-    {"id": "clavier", "libelle": "Clavier et focus", "etape": "4"},
-    {"id": "visuel", "libelle": "Perception visuelle", "etape": "1"},
-    {"id": "formulaires", "libelle": "Formulaires", "etape": "1"},
-    {"id": "medias", "libelle": "Médias", "etape": "1"},
-    {"id": "temps", "libelle": "Temps, mouvement et pointeur", "etape": "1"}
+    {
+      "id": "restitution",
+      "libelle": "Restitution par le lecteur d'écran",
+      "etape": "3"
+    },
+    {
+      "id": "structure",
+      "libelle": "Structure et code",
+      "etape": "2"
+    },
+    {
+      "id": "clavier",
+      "libelle": "Clavier et focus",
+      "etape": "4"
+    },
+    {
+      "id": "visuel",
+      "libelle": "Perception visuelle",
+      "etape": "1"
+    },
+    {
+      "id": "formulaires",
+      "libelle": "Formulaires",
+      "etape": "1"
+    },
+    {
+      "id": "medias",
+      "libelle": "Médias",
+      "etape": "1"
+    },
+    {
+      "id": "temps",
+      "libelle": "Temps, mouvement et pointeur",
+      "etape": "1"
+    }
   ],
   "symptomes": [
     {
@@ -23,14 +51,43 @@
       "controle": "Présence d'un nom",
       "symptome": "Élément restitué sans nom (seulement « bouton », « lien », « image »...)",
       "selon": [
-        {"element": "image porteuse d'information", "criteres": ["1.1"]},
-        {"element": "lien", "criteres": ["6.2"]},
-        {"element": "champ de formulaire", "criteres": ["11.1"]},
-        {"element": "bouton de formulaire", "criteres": ["11.9"]},
-        {"element": "cadre", "criteres": ["2.1"]}
-      ],
-      "hors_selection": ["7.1"],
-      "note": "Bouton, onglet ou menu construit en script hors formulaire : critère 7.1, hors sélection."
+        {
+          "element": "image porteuse d'information",
+          "criteres": [
+            "1.1"
+          ]
+        },
+        {
+          "element": "lien",
+          "criteres": [
+            "6.2"
+          ]
+        },
+        {
+          "element": "champ de formulaire",
+          "criteres": [
+            "11.1"
+          ]
+        },
+        {
+          "element": "bouton de formulaire",
+          "criteres": [
+            "11.9"
+          ]
+        },
+        {
+          "element": "cadre",
+          "criteres": [
+            "2.1"
+          ]
+        },
+        {
+          "element": "composant construit en script (bouton, onglet, menu)",
+          "criteres": [
+            "7.1"
+          ]
+        }
+      ]
     },
     {
       "id": "nom-non-pertinent",
@@ -38,37 +95,76 @@
       "controle": "Pertinence du nom",
       "symptome": "Nom restitué faux, vague ou incompréhensible hors contexte (« cliquez ici », « image123.png »)",
       "selon": [
-        {"element": "image porteuse d'information", "criteres": ["1.3"]},
-        {"element": "CAPTCHA", "criteres": ["1.4"]},
-        {"element": "lien", "criteres": ["6.1"]},
-        {"element": "champ de formulaire", "criteres": ["11.2"]},
-        {"element": "bouton de formulaire", "criteres": ["11.9"]},
-        {"element": "groupe de champs", "criteres": ["11.7"]}
-      ],
-      "hors_selection": ["7.1"]
+        {
+          "element": "image porteuse d'information",
+          "criteres": [
+            "1.3"
+          ]
+        },
+        {
+          "element": "CAPTCHA",
+          "criteres": [
+            "1.4"
+          ]
+        },
+        {
+          "element": "lien",
+          "criteres": [
+            "6.1"
+          ]
+        },
+        {
+          "element": "champ de formulaire",
+          "criteres": [
+            "11.2"
+          ]
+        },
+        {
+          "element": "bouton de formulaire",
+          "criteres": [
+            "11.9"
+          ]
+        },
+        {
+          "element": "groupe de champs",
+          "criteres": [
+            "11.7"
+          ]
+        },
+        {
+          "element": "composant construit en script (bouton, onglet, menu)",
+          "criteres": [
+            "7.1"
+          ]
+        }
+      ]
     },
     {
       "id": "decoratif-restitue",
       "famille": "restitution",
       "controle": "Éléments décoratifs ignorés",
       "symptome": "Image ou élément décoratif restitué par le lecteur d'écran",
-      "criteres": ["1.2"]
+      "criteres": [
+        "1.2"
+      ]
     },
     {
       "id": "cache-restitue",
       "famille": "restitution",
       "controle": "Contenus cachés",
       "symptome": "Contenu caché restitué, ou contenu visible ignoré par le lecteur d'écran",
-      "criteres": ["10.8"]
+      "criteres": [
+        "10.8"
+      ]
     },
     {
       "id": "role-etat",
       "famille": "restitution",
       "controle": "Rôle et état",
       "symptome": "Rôle ou état non restitué (bouton lu comme du texte, case cochée ou menu ouvert non annoncé)",
-      "criteres": [],
-      "hors_selection": ["7.1"],
-      "note": "Aucun critère de la sélection ne couvre ce cas : à noter, il sera rattaché si 7.1 est ajouté."
+      "criteres": [
+        "7.1"
+      ]
     },
     {
       "id": "message-non-restitue",
@@ -76,9 +172,17 @@
       "controle": "Messages",
       "symptome": "Message de confirmation, de chargement ou d'erreur affiché mais non restitué",
       "selon": [
-        {"element": "message d'erreur de formulaire", "criteres": ["11.10"]}
+        {
+          "element": "message d'erreur de formulaire",
+          "criteres": [
+            "11.10"
+          ]
+        }
       ],
-      "hors_selection": ["7.5"]
+      "criteres": [
+        "7.5"
+      ],
+      "note": "Erreur liée à un champ de formulaire : 11.10. Autre message (confirmation, chargement, nombre de résultats) : 7.5."
     },
     {
       "id": "langue",
@@ -86,8 +190,20 @@
       "controle": "Langue",
       "symptome": "Texte prononcé dans la mauvaise langue",
       "selon": [
-        {"element": "écran entier", "criteres": ["8.3", "8.4"]},
-        {"element": "passage dans une autre langue", "criteres": ["8.7", "8.8"]}
+        {
+          "element": "écran entier",
+          "criteres": [
+            "8.3",
+            "8.4"
+          ]
+        },
+        {
+          "element": "passage dans une autre langue",
+          "criteres": [
+            "8.7",
+            "8.8"
+          ]
+        }
       ]
     },
     {
@@ -95,53 +211,78 @@
       "famille": "restitution",
       "controle": "Titre de l'écran",
       "symptome": "Titre de l'écran (onglet du navigateur) absent, identique partout ou peu clair",
-      "criteres": ["8.5", "8.6"]
+      "criteres": [
+        "8.5",
+        "8.6"
+      ]
     },
     {
       "id": "titres",
       "famille": "structure",
       "controle": "Titres",
       "symptome": "Titres absents, sautés, mal hiérarchisés, ou texte mis en forme comme un titre sans en être un",
-      "criteres": ["9.1"]
+      "criteres": [
+        "9.1"
+      ]
     },
     {
       "id": "zones",
       "famille": "structure",
       "controle": "Zones principales",
       "symptome": "En-tête, navigation, contenu principal ou pied absents ou mal déclarés",
-      "criteres": ["9.2"]
+      "criteres": [
+        "9.2"
+      ]
     },
     {
       "id": "listes",
       "famille": "structure",
       "controle": "Listes",
       "symptome": "Liste visuelle non restituée comme une liste",
-      "criteres": [],
-      "hors_selection": ["9.3"]
+      "criteres": [
+        "9.3"
+      ]
     },
     {
       "id": "tableau",
       "famille": "structure",
       "controle": "Tableaux de données",
       "symptome": "En-têtes de tableau non restitués, ou cellule lue sans son en-tête",
-      "criteres": ["5.6", "5.7"]
+      "criteres": [
+        "5.6",
+        "5.7"
+      ]
     },
     {
       "id": "code-invalide",
       "famille": "structure",
       "controle": "Validité du code",
       "symptome": "Code source invalide (balises mal fermées, identifiants en double)",
-      "criteres": ["8.2"]
+      "criteres": [
+        "8.2"
+      ]
     },
     {
       "id": "non-atteignable",
       "famille": "clavier",
       "controle": "Atteinte et activation",
       "symptome": "Élément impossible à atteindre ou à activer au clavier, ou au pointeur",
-      "criteres": ["7.3"],
+      "criteres": [
+        "7.3"
+      ],
       "selon": [
-        {"element": "lecteur média", "criteres": ["4.11"]},
-        {"element": "contenu qui apparaît par la mise en forme seule", "criteres": ["10.14"]}
+        {
+          "element": "lecteur média",
+          "criteres": [
+            "4.11"
+          ]
+        },
+        {
+          "element": "contenu qui apparaît par la mise en forme seule",
+          "criteres": [
+            "10.14"
+          ]
+        }
       ]
     },
     {
@@ -149,75 +290,113 @@
       "famille": "clavier",
       "controle": "Visibilité du focus",
       "symptome": "On ne voit pas où se trouve le focus",
-      "criteres": ["10.7"]
+      "criteres": [
+        "10.7"
+      ]
     },
     {
       "id": "ordre-focus",
       "famille": "clavier",
       "controle": "Ordre du focus",
       "symptome": "Ordre de tabulation illogique, ou focus perdu ou déplacé de façon inattendue après une action",
-      "criteres": ["12.8"],
-      "bonnes_pratiques": ["bp3"]
+      "criteres": [
+        "12.8"
+      ],
+      "bonnes_pratiques": [
+        "bp3"
+      ]
     },
     {
       "id": "piege",
       "famille": "clavier",
       "controle": "Sortie au clavier",
       "symptome": "Focus bloqué dans un élément, impossible d'en sortir au clavier",
-      "criteres": ["12.9"],
-      "bonnes_pratiques": ["bp2"]
+      "criteres": [
+        "12.9"
+      ],
+      "bonnes_pratiques": [
+        "bp2"
+      ]
     },
     {
       "id": "contournement",
       "famille": "clavier",
       "controle": "Contournement des blocs",
       "symptome": "Aucun lien d'évitement, ou menus et blocs répétés impossibles à passer",
-      "criteres": ["12.6", "12.7"]
+      "criteres": [
+        "12.6",
+        "12.7"
+      ]
     },
     {
       "id": "contenu-additionnel",
       "famille": "clavier",
       "controle": "Contenus additionnels",
       "symptome": "Infobulle, sous-menu ou contenu au survol ou au focus impossible à atteindre, à garder affiché ou à fermer",
-      "criteres": ["12.11", "10.14"]
+      "criteres": [
+        "12.11",
+        "10.14"
+      ]
     },
     {
       "id": "contraste",
       "famille": "visuel",
-      "controle": "Contraste du texte",
-      "symptome": "Texte trop peu contrasté avec son fond",
-      "criteres": ["3.2"],
-      "hors_selection": ["3.3"],
-      "note": "Icône, bordure de champ ou indicateur de focus peu contrastés : critère 3.3, hors sélection."
+      "controle": "Contrastes",
+      "symptome": "Texte, icône, bordure de champ, indicateur de focus ou graphique trop peu contrasté avec son voisinage",
+      "criteres": [],
+      "note": "Texte : 3.2. Icône, bordure de champ, indicateur de focus ou graphique : 3.3.",
+      "selon": [
+        {
+          "element": "texte",
+          "criteres": [
+            "3.2"
+          ]
+        },
+        {
+          "element": "icône, bordure, focus ou graphique",
+          "criteres": [
+            "3.3"
+          ]
+        }
+      ]
     },
     {
       "id": "couleur-seule",
       "famille": "visuel",
       "controle": "Information par la couleur",
       "symptome": "Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)",
-      "criteres": ["3.1"]
+      "criteres": [
+        "3.1"
+      ]
     },
     {
       "id": "forme-position",
       "famille": "visuel",
       "controle": "Information par la forme ou la position",
       "symptome": "Information donnée uniquement par la forme, la taille ou la position (« le bouton rond à droite »)",
-      "criteres": ["10.9", "10.10"]
+      "criteres": [
+        "10.9",
+        "10.10"
+      ]
     },
     {
       "id": "image-complexe",
       "famille": "visuel",
       "controle": "Description détaillée",
       "symptome": "Graphique, schéma ou carte sans description détaillée, ou description incomplète",
-      "criteres": ["1.6", "1.7"]
+      "criteres": [
+        "1.6",
+        "1.7"
+      ]
     },
     {
       "id": "agrandissement",
       "famille": "visuel",
       "controle": "Agrandissement",
       "symptome": "Contenu tronqué, superposé ou illisible quand le texte est agrandi",
-      "criteres": [],
-      "hors_selection": ["10.4"]
+      "criteres": [
+        "10.4"
+      ]
     },
     {
       "id": "cible-petite",
@@ -225,105 +404,142 @@
       "controle": "Taille des cibles",
       "symptome": "Cible trop petite ou trop proche de ses voisines pour être activée sans erreur",
       "criteres": [],
-      "bonnes_pratiques": ["bp1"]
+      "bonnes_pratiques": [
+        "bp1"
+      ]
     },
     {
       "id": "etiquette",
       "famille": "formulaires",
       "controle": "Étiquettes",
       "symptome": "Champ sans étiquette, ou étiquette peu claire ou disparue à la saisie",
-      "criteres": ["11.1", "11.2"]
+      "criteres": [
+        "11.1",
+        "11.2"
+      ]
     },
     {
       "id": "regroupement",
       "famille": "formulaires",
       "controle": "Regroupements",
       "symptome": "Champs liés (adresse, boutons radio) non regroupés, ou groupe sans légende ou à la légende peu claire",
-      "criteres": ["11.5", "11.6", "11.7"]
+      "criteres": [
+        "11.5",
+        "11.6",
+        "11.7"
+      ]
     },
     {
       "id": "erreur-saisie",
       "famille": "formulaires",
       "controle": "Contrôle de saisie",
       "symptome": "Format attendu non indiqué, erreur non signalée, peu explicite ou non restituée",
-      "criteres": ["11.10"]
+      "criteres": [
+        "11.10"
+      ]
     },
     {
       "id": "bouton-formulaire",
       "famille": "formulaires",
       "controle": "Boutons de formulaire",
       "symptome": "Bouton d'envoi ou d'action à l'intitulé absent ou peu clair",
-      "criteres": ["11.9"]
+      "criteres": [
+        "11.9"
+      ]
     },
     {
       "id": "captcha",
       "famille": "formulaires",
       "controle": "CAPTCHA",
       "symptome": "CAPTCHA sans alternative, ou dont la nature n'est pas restituée",
-      "criteres": ["1.4", "1.5"]
+      "criteres": [
+        "1.4",
+        "1.5"
+      ]
     },
     {
       "id": "media-alternative",
       "famille": "medias",
       "controle": "Transcription et audiodescription",
       "symptome": "Audio ou vidéo sans transcription ni audiodescription, ou alternative incomplète",
-      "criteres": ["4.1", "4.2"]
+      "criteres": [
+        "4.1",
+        "4.2"
+      ]
     },
     {
       "id": "sous-titres",
       "famille": "medias",
       "controle": "Sous-titres",
       "symptome": "Vidéo sans sous-titres, ou sous-titres incomplets ou décalés",
-      "criteres": ["4.3", "4.4"]
+      "criteres": [
+        "4.3",
+        "4.4"
+      ]
     },
     {
       "id": "son-auto",
       "famille": "medias",
       "controle": "Son automatique",
       "symptome": "Son lancé automatiquement, sans moyen de l'arrêter",
-      "criteres": ["4.10"]
+      "criteres": [
+        "4.10"
+      ]
     },
     {
       "id": "commandes-media",
       "famille": "medias",
       "controle": "Commandes du lecteur",
       "symptome": "Lecteur audio ou vidéo inutilisable au clavier ou au pointeur",
-      "criteres": ["4.11"]
+      "criteres": [
+        "4.11"
+      ]
     },
     {
       "id": "media-non-temporel",
       "famille": "medias",
       "controle": "Médias non temporels",
       "symptome": "Carte interactive, visite virtuelle, animation ou objet embarqué sans alternative, ou alternative incomplète",
-      "criteres": ["4.8", "4.9"]
+      "criteres": [
+        "4.8",
+        "4.9"
+      ]
     },
     {
       "id": "limite-temps",
       "famille": "temps",
       "controle": "Limites de temps",
       "symptome": "Délai, déconnexion ou rafraîchissement automatique sans possibilité de l'arrêter ou de le prolonger",
-      "criteres": ["13.1"]
+      "criteres": [
+        "13.1"
+      ]
     },
     {
       "id": "mouvement",
       "famille": "temps",
       "controle": "Mouvement",
       "symptome": "Contenu qui bouge, défile ou clignote sans pouvoir le mettre en pause",
-      "criteres": ["13.8"]
+      "criteres": [
+        "13.8"
+      ]
     },
     {
       "id": "flash",
       "famille": "temps",
       "controle": "Flashs",
       "symptome": "Flashs ou changements brusques de luminosité",
-      "criteres": ["13.7"]
+      "criteres": [
+        "13.7"
+      ]
     },
     {
       "id": "annulation-pointeur",
       "famille": "temps",
       "controle": "Annulation au pointeur",
       "symptome": "Action déclenchée dès l'appui, sans pouvoir l'annuler en glissant hors de l'élément",
-      "criteres": ["13.11"]
+      "criteres": [
+        "13.11"
+      ]
     }
   ]
 }

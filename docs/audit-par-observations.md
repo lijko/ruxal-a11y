@@ -16,7 +16,7 @@ Pourquoi :
 - une observation peut toucher plusieurs critères, et un critère peut regrouper plusieurs observations ;
 - une observation non conforme a déjà la forme d'un ticket Jira.
 
-La grille officielle reste la sortie de référence : mêmes critères, même formule de taux, même comparabilité avec l'audit simplifié du SIP.
+La grille officielle reste la sortie de référence : mêmes critères, même formule de taux. Le taux sélection SIP reste comparable à l'audit simplifié du SIP ; un taux élargi y ajoute les critères hors sélection.
 
 ## 1. Configurateur par écran
 Avant de tester un écran, le testeur répond aux questions des déclencheurs (CAPTCHA, image complexe, média temporel, média non temporel, tableau de données, cadre, formulaire, changement de langue).
@@ -72,7 +72,7 @@ Le tag qualifie le **constat**, pas le critère : une observation `#nc` rend NC 
 ## 3. Rattachement aux critères
 Trois sources, toutes soumises à la validation du testeur :
 1. **Référence saisie** par le testeur (`RAWeb 11.1`).
-2. **Suggestion par symptôme**, sans IA : le testeur choisit un symptôme en langage de terrain (« non restitué », « nom incorrect », « focus perdu », « contraste faible », « non atteignable au clavier »...), l'outil propose les critères correspondants. La table symptôme vers critères est une donnée de RUXAL, à construire et à maintenir par référentiel.
+2. **Suggestion par symptôme**, sans IA : le testeur choisit un symptôme en langage de terrain (« non restitué », « nom incorrect », « focus perdu », « contraste faible », « non atteignable au clavier »...), l'outil propose les critères correspondants. La table symptôme vers critères est une donnée de RUXAL, maintenue par référentiel : `data/symptomes-ruxaweb.json` pour le web (39 points de contrôle, les 58 critères RAWeb de l'outil couverts, contrôle par `tests/test_symptomes_ruxaweb.py`). Chaque entrée a un intitulé neutre (« Présence d'un nom ») et un symptôme ; le même point sert pour un `#c` comme pour un `#nc`. Un même symptôme peut mener à des critères différents selon le type d'élément.
 3. **Import d'un rapport automatique** (section 5).
 
 ## 4. Calcul des statuts
@@ -83,7 +83,7 @@ Pour chaque critère et chaque écran :
 4. Une observation `#na` face à une observation `#c` ou `#nc` sur le même critère est signalée comme **incohérence** à trancher.
 5. Sans observation valide : **NT**.
 
-Le taux de conformité ne change pas : même formule, même sélection, critères hors sélection du SIP (comme RAWeb 13.11) évalués mais exclus du taux.
+Deux taux, même formule : le **taux sélection SIP**, sur la même sélection que l'audit simplifié du SIP, et le **taux élargi**, qui ajoute les critères RAWeb hors sélection retenus par RUXAWEB (3.3, 7.1, 7.5, 9.3, 10.4, 13.11).
 
 **Complétude** d'un écran : part des critères du périmètre qui ne sont plus NT. Une **passe de clôture** liste les critères restés NT pour les trancher (`#c`, `#nc`, `#na` justifié ou « à creuser »).
 
@@ -119,7 +119,7 @@ Les noms de règles des outils n'apparaissent pas dans les consignes de test ; i
 3. **Script local** (Node.js, Playwright, axe-core) pour tester plusieurs écrans d'affilée, dans leurs différents états : utilise l'Edge déjà installé, se lance par un fichier `.cmd`, produit un JSON importable dans l'outil.
 
 ## Points ouverts
-- Table symptôme vers critères : liste des symptômes et correspondances RAWeb, puis RAAM.
+- Table symptôme vers critères : relecture de la version web, puis version RAAM.
 - Coexistence avec la saisie actuelle critère par critère : garder les deux modes ou basculer entièrement.
 - Format d'export et de réimport des observations (sauvegarde d'un audit en cours).
 - Type de Copilot disponible et ouverture de la création d'agents.

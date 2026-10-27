@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: EUPL-1.2
 """Contrôle de data/symptomes-ruxaweb.json (aucune dépendance).
 
-Vérifie que chaque critère cité existe dans la sélection RUXAWEB, que chaque critère de la sélection
-est atteignable par au moins un point de contrôle, que les critères « hors sélection » ne sont pas dans
-la sélection, et que les identifiants, familles et bonnes pratiques sont cohérents.
+Vérifie que chaque critère cité existe dans RUXAWEB (sélection du SIP et critères hors sélection), que
+chaque critère RAWeb de l'outil est atteignable par au moins un point de contrôle, que les critères
+« hors outil » n'y sont pas, et que les identifiants, familles et bonnes pratiques sont cohérents.
 Lancement :
   python3 tests/test_symptomes_ruxaweb.py
 Code retour 0 si tout passe, 1 sinon.
@@ -42,25 +42,25 @@ def main():
             refs += cas['criteres']
         for r in refs:
             if r not in selection:
-                erreurs.append(sid + ' : critère ' + r + ' absent de la sélection')
+                erreurs.append(sid + ' : critère ' + r + ' absent de l\'outil')
             couverts.add(r)
-        for r in s.get('hors_selection', []):
+        for r in s.get('hors_outil', []):
             if r in selection:
-                erreurs.append(sid + ' : critère ' + r + ' marqué hors sélection mais présent dans la sélection')
+                erreurs.append(sid + ' : critère ' + r + ' marqué hors outil mais présent dans l\'outil')
         for b in s.get('bonnes_pratiques', []):
             if b not in bps:
                 erreurs.append(sid + ' : bonne pratique inconnue ' + b)
-        if not refs and not s.get('hors_selection') and not s.get('bonnes_pratiques'):
+        if not refs and not s.get('hors_outil') and not s.get('bonnes_pratiques'):
             erreurs.append(sid + ' : aucun critère ni bonne pratique')
         texte = json.dumps(s, ensure_ascii=False)
-        if '–' in texte or '—' in texte:
+        if '\u2013' in texte or '\u2014' in texte:
             erreurs.append(sid + ' : tiret cadratin ou demi-cadratin')
 
     manquants = sorted(selection - couverts, key=lambda x: [int(n) for n in x.split('.')])
     for r in manquants:
         erreurs.append('critère ' + r + ' atteint par aucun point de contrôle')
 
-    print('%d points de contrôle, %d/%d critères couverts' % (len(ids), len(couverts & selection), len(selection)))
+    print('%d points de contrôle, %d/%d critères RAWeb de l\'outil couverts' % (len(ids), len(couverts & selection), len(selection)))
     for e in erreurs:
         print('ÉCHEC', e)
     return 1 if erreurs else 0
