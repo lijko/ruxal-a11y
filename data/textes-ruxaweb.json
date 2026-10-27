@@ -1,5 +1,5 @@
 {
-  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAWeb 1.1 de data/criteres-raweb.json et aux bonnes pratiques de data/bonnes-pratiques-web.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAWeb x.y (références WCAG) : conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, alignée sur les critères équivalents de RUXAAM quand il y en a ; base de discussion, à relire. Explications rédigées d'après les tests et la méthodologie du RAWeb 1.1 (fr/json/criteres.json et fr/json/methodologies.json du dépôt officiel) et d'après la méthode de contrôle simplifié v1.2.1 du SIP. Les consignes restent compréhensibles sans outil spécialisé : un outil de test automatique n'y est évoqué qu'en appoint, sans nom de règle : même sens, formulation propre à RUXAL. Déclencheurs : liste fermée des contenus qui rendent applicables les critères « si présent ».",
+  "note": "Textes originaux RUXAL (impact, explication, gravité) associés aux critères RAWeb 1.1 de data/criteres-raweb.json et aux bonnes pratiques de data/bonnes-pratiques-web.json. Les intitulés officiels ne sont pas repris ici. Impact : « RAWeb x.y (références WCAG) : conséquence pour l'utilisateur ». Gravité (non normative, voir docs/gravite.md) : critique, serieux, modere ou mineur, alignée sur les critères équivalents de RUXAAM quand il y en a ; base de discussion, à relire. Explications rédigées d'après les tests et la méthodologie du RAWeb 1.1 (fr/json/criteres.json et fr/json/methodologies.json du dépôt officiel) et d'après la méthode de contrôle simplifié v1.2.1 du SIP. Les consignes restent compréhensibles sans outil spécialisé : un outil de test automatique n'y est évoqué qu'en appoint, sans nom de règle : même sens, formulation propre à RUXAL. Déclencheurs : liste fermée des contenus qui rendent applicables les critères « si présent ». Consignes « Comment vérifier » génériques (27 oct. 2026) : elles parlent du lecteur d'écran, du clavier ou d'un outil de mesure sans nommer de produit, de menu ni de raccourci propre à l'un d'eux ; le protocole de test de l'Aide nomme les lecteurs d'écran de l'environnement de test.",
   "licence": "CC BY 4.0",
   "verification_sources": "2026-10-12",
   "declencheurs": [
@@ -61,7 +61,7 @@
       "raweb": "1.3",
       "gravite": "serieux",
       "impact": "RAWeb 1.3 (WCAG 1.1.1 / 4.1.2) : une alternative non pertinente (vide, générique comme « image » ou « logo », ou erronée) prive l'utilisateur de lecteur d'écran de l'information que l'image donne aux autres.",
-      "explication": "Ne vérifie pas seulement la présence de l'alternative mais son contenu, tel que l'annonce le lecteur d'écran (NVDA ou VoiceOver) : il doit transmettre la même information que l'image, et pour une image lien ou bouton, sa fonction ou sa destination (« Accueil », pas « logo »). L'alternative doit rester courte ; une information longue relève de la description détaillée (critère 1.6)."
+      "explication": "Ne vérifie pas seulement la présence de l'alternative mais son contenu, tel que l'annonce le lecteur d'écran : il doit transmettre la même information que l'image, et pour une image lien ou bouton, sa fonction ou sa destination (« Accueil », pas « logo »). L'alternative doit rester courte ; une information longue relève de la description détaillée (critère 1.6)."
     },
     "raweb-1-4": {
       "raweb": "1.4",
@@ -103,7 +103,7 @@
       "raweb": "3.2",
       "gravite": "serieux",
       "impact": "RAWeb 3.2 (WCAG 1.4.3) : un contraste insuffisant rend le texte difficile ou impossible à lire pour les personnes malvoyantes, âgées, ou qui consultent la page en plein soleil.",
-      "explication": "Mesure le contraste entre le texte et son fond avec un outil comme Colour Contrast Analyser, en priorité sur les textes clairs ou petits, posés sur une image ou un dégradé, et dans les états au survol et au focus. Seuils : 4,5:1 pour le texte courant, 3:1 pour un texte d'au moins 24 px, ou 18,5 px en gras."
+      "explication": "Mesure le contraste entre le texte et son fond avec un outil de mesure du contraste, en priorité sur les textes clairs ou petits, posés sur une image ou un dégradé, et dans les états au survol et au focus. Seuils : 4,5:1 pour le texte courant, 3:1 pour un texte d'au moins 24 px, ou 18,5 px en gras."
     },
     "raweb-4-1": {
       "raweb": "4.1",
@@ -163,19 +163,19 @@
       "raweb": "5.7",
       "gravite": "serieux",
       "impact": "RAWeb 5.7 (WCAG 1.3.1) : une mauvaise association cellule et en-tête fait annoncer par le lecteur d'écran un en-tête faux ou aucun en-tête.",
-      "explication": "Avec NVDA ou VoiceOver, parcours quelques cellules du tableau : chacune doit être annoncée avec son ou ses en-têtes de ligne et de colonne. Si ce n'est pas le cas, le lien entre les cellules et leurs en-têtes est mal codé (attribut scope, ou id et headers pour un tableau complexe)."
+      "explication": "Avec le lecteur d'écran, parcours quelques cellules du tableau : chacune doit être annoncée avec son ou ses en-têtes de ligne et de colonne. Si ce n'est pas le cas, le lien entre les cellules et leurs en-têtes est mal codé (attribut scope, ou id et headers pour un tableau complexe)."
     },
     "raweb-6-1": {
       "raweb": "6.1",
       "gravite": "serieux",
       "impact": "RAWeb 6.1 (WCAG 1.1.1 / 2.4.4 / 2.5.3) : un lien vague (« cliquez ici », « en savoir plus ») ne dit pas où il mène : l'utilisateur de lecteur d'écran qui parcourt la liste des liens ne sait pas lequel choisir.",
-      "explication": "Affiche la liste des liens du lecteur d'écran (NVDA : Insert+F7 ; VoiceOver : rotor) : chaque intitulé, seul ou avec son contexte (phrase, titre, cellule), doit dire la fonction ou la destination. Si le lien a un texte visible, son nom accessible doit le contenir (attention aux aria-label différents du texte affiché)."
+      "explication": "Affiche la liste des liens proposée par le lecteur d'écran : chaque intitulé, seul ou avec son contexte (phrase, titre, cellule), doit dire la fonction ou la destination du lien. Si le lien a un texte visible, le nom annoncé doit contenir ce texte."
     },
     "raweb-6-2": {
       "raweb": "6.2",
       "gravite": "critique",
       "impact": "RAWeb 6.2 (WCAG 1.1.1 / 2.4.4) : un lien sans intitulé est annoncé « lien » sans autre information : l'utilisateur de lecteur d'écran ne peut pas savoir où il mène, ni le distinguer des autres.",
-      "explication": "Ouvre la liste des liens du lecteur d'écran (NVDA : Insert+F7 ; VoiceOver : rotor) et cherche les liens annoncés sans nom (« lien » seul) : ce sont souvent des icônes ou des images cliquables (réseaux sociaux, logo). Chaque lien doit avoir un intitulé : son texte, l'alternative de son image, ou un libellé caché."
+      "explication": "Affiche la liste des liens proposée par le lecteur d'écran et cherche les liens annoncés sans nom (« lien » seul) : ce sont souvent des icônes ou des images cliquables (réseaux sociaux, logo). Chaque lien doit avoir un intitulé : son texte, l'alternative de son image, ou un libellé caché."
     },
     "raweb-7-3": {
       "raweb": "7.3",
@@ -229,7 +229,7 @@
       "raweb": "9.1",
       "gravite": "modere",
       "impact": "RAWeb 9.1 (WCAG 1.3.1 / 2.4.1 / 2.4.6 / 4.1.2) : sans titres structurés, les utilisateurs de lecteur d'écran, qui naviguent souvent de titre en titre, ne peuvent ni survoler la page ni sauter à la partie qui les intéresse.",
-      "explication": "Affiche la liste des titres (NVDA : Insert+F7, Titres ; VoiceOver : rotor ; ou une extension comme HeadingsMap) : chaque texte qui joue visuellement le rôle de titre doit y figurer, avec un contenu pertinent et une hiérarchie cohérente (pas de saut de niveau illogique)."
+      "explication": "Affiche la liste des titres proposée par le lecteur d'écran (ou par une extension de navigateur) : chaque texte qui joue visuellement le rôle de titre doit y figurer, avec un contenu pertinent et une hiérarchie cohérente (pas de saut de niveau illogique)."
     },
     "raweb-9-2": {
       "raweb": "9.2",
@@ -349,7 +349,7 @@
       "raweb": "13.7",
       "gravite": "critique",
       "impact": "RAWeb 13.7 (WCAG 2.3.1) : un flash ou un changement brusque de luminosité au-delà du seuil peut déclencher une crise chez les personnes épileptiques photosensibles.",
-      "explication": "Repère tout contenu qui clignote ou flashe rapidement (vidéo, animation, GIF, effet CSS ou script). L'effet doit rester sous 3 flashs par seconde, ou couvrir une très petite surface (moins de 21 824 px cumulés). En cas de doute, outil d'analyse PEAT."
+      "explication": "Repère tout contenu qui clignote ou flashe rapidement (vidéo, animation, image animée). L'effet doit rester sous 3 flashs par seconde, ou couvrir une très petite surface. En cas de doute, utilise un outil d'analyse des flashs."
     },
     "raweb-13-8": {
       "raweb": "13.8",

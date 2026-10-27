@@ -32,7 +32,7 @@ Projet en cours de préparation pour publication. / Project being prepared for p
 ## Utilisation / Usage
 Ouvrir le fichier HTML de l'outil dans un navigateur. / Open the tool's HTML file in a browser.
 
-RUXAAM 1.26 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pratiques** hors taux, soit 57 éléments. Gravités par défaut des critères RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
+RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pratiques** hors taux, soit 57 éléments. Gravités par défaut des critères RAAM : 12 Critique, 29 Sérieux, 10 Modéré, 1 Mineur.
 
 - **Protocole de test en 4 étapes** : 1. usage standard, 2. agrandissement (texte, puis affichage), 3. lecteur d'écran (3a contenus et structure, 3b composants, formulaires et annonces), 4. navigation alternative (clavier externe, commande vocale ; contrôle de sélection et Switch Access optionnels). Chaque critère est rattaché à l'étape où on le constate le plus facilement. Séquence construite par RUXAAM à partir des pratiques décrites par Apple et Android ; ce n'est pas un protocole officiel. Le détail est dans l'écran Aide de l'outil.
 - **Vue « Par étape de test »** : dans un onglet RAAM, la liste peut être rangée par thème ou par étape. Un critère n'apparaît qu'une fois, dans son étape principale. Statuts, taux et exports ne changent pas.
@@ -45,7 +45,7 @@ RUXAAM 1.26 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Formats d'export** : Liste des critères en **Excel (.xlsx)** : une ligne par critère et par onglet, colonnes dimensionnées, ligne d'en-tête figée, filtres, statuts colorés, numéros de critères gardés en texte (« 10.10 » reste 10.10). Tickets Jira en **CSV** (séparateur virgule), à importer dans Jira et non à ouvrir dans Excel. Le téléchargement passe uniquement par le navigateur, sans dépendance à une autre application. 
 - **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
 
-### RUXAWEB 1.5 (web, RAWeb 1.1)
+### RUXAWEB 1.6 (web, RAWeb 1.1)
 `src/ruxaweb.html` : même moteur, mêmes types d'audit, mêmes thèmes RUXAL, même couche POUR et UX, mêmes exports que RUXAAM, adaptés au web.
 
 - **Critères** : les **52 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) (47 testés manuellement, 19 avec Axe, 52 distincts), intitulés officiels non modifiés ; 24 « si présent ». Contrairement à RUXAAM, aucune adaptation : la grille du SIP est faite pour le web, le taux reste donc lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
