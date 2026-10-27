@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier RUXAWEB 2</title>
+<!--
+SPDX-FileCopyrightText: 2026 Bertrand Kempf ; critères RAWeb 1.1 : Service information et presse (SIP), Luxembourg
+SPDX-License-Identifier: EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU
+RUXAWEB 2 : audit par observations. Version précédente (saisie critère par critère) : ruxaweb.html (1.7).
+-->
+<style>
+  :root{
+    --fond:#f1f4f6; --surface:#ffffff; --surface-alt:#f6f8f9; --texte:#1c2630; --texte-doux:#4a5864;
+    --bord:#cdd6dc; --bord-doux:#e3e8ec;
+    --accent:#2f6a7d; --accent-texte:#1f4e5d; --accent-doux:#e0eef2; --sur-accent:#ffffff;
+    --c:#1f7a4d; --c-doux:#e0f3e8; --c-texte:#17603c;
+    --nc:#b83a30; --nc-doux:#fbe5e2; --nc-texte:#8e2a22;
+    --nt:#7a5c00; --nt-doux:#fbf1d3; --nt-texte:#3d2e00;
+    --na:#5b6f7e; --na-doux:#e6ecf0; --na-texte:#3a4853;
+    --part:#5b45b8; --part-doux:#ece8fb; --part-texte:#3f2f8f;
+    --radius:10px; --radius-lg:14px;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --fond:#141a1f; --surface:#1c252c; --surface-alt:#182027; --texte:#e7edf2; --texte-doux:#aebac3;
+    --bord:#2c363f; --bord-doux:#242e36;
+    --accent:#84a7b1; --accent-texte:#cfe1e6; --accent-doux:#20343c; --sur-accent:#0d1418;
+    --c:#57b585; --c-doux:#17301f; --c-texte:#8fd3ae;
+    --nc:#e2776e; --nc-doux:#3a201d; --nc-texte:#f1a39c;
+    --nt:#d8b969; --nt-doux:#332a15; --nt-texte:#e9cf8a;
+    --na:#9aa9b4; --na-doux:#232c33; --na-texte:#c4cfd7;
+    --part:#a99bf0; --part-doux:#2a2547; --part-texte:#cfc6fa;
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --fond:#141a1f; --surface:#1c252c; --surface-alt:#182027; --texte:#e7edf2; --texte-doux:#aebac3;
+    --bord:#2c363f; --bord-doux:#242e36;
+    --accent:#84a7b1; --accent-texte:#cfe1e6; --accent-doux:#20343c; --sur-accent:#0d1418;
+    --c:#57b585; --c-doux:#17301f; --c-texte:#8fd3ae;
+    --nc:#e2776e; --nc-doux:#3a201d; --nc-texte:#f1a39c;
+    --nt:#d8b969; --nt-doux:#332a15; --nt-texte:#e9cf8a;
+    --na:#9aa9b4; --na-doux:#232c33; --na-texte:#c4cfd7;
+    --part:#a99bf0; --part-doux:#2a2547; --part-texte:#cfc6fa;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;background:var(--fond);color:var(--texte);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  a{color:var(--accent)}
+  button,input,select,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .lien-evitement{position:absolute;left:8px;top:-60px;background:var(--surface);padding:8px 12px;border-radius:8px;z-index:30}
+  .lien-evitement:focus{top:8px}
+
+  header.barre{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--bord)}
+  .barre-in{max-width:1440px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+  .marque{font-weight:800;font-size:18px;background:none;border:0;padding:4px 0;cursor:pointer}
+  .marque small{font-weight:600;color:var(--texte-doux);font-size:13px;margin-left:6px}
+  nav.onglet-nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav.onglet-nav button{background:none;border:1px solid transparent;border-radius:8px;padding:6px 12px;min-height:40px;cursor:pointer;color:var(--texte-doux);font-weight:600}
+  nav.onglet-nav button[aria-current="page"]{background:var(--accent-doux);color:var(--accent-texte);border-color:var(--accent-doux)}
+  .espace{flex:1}
+  .menu{position:relative}
+  .menu-liste{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--bord);border-radius:var(--radius);padding:6px;min-width:260px;display:flex;flex-direction:column;z-index:20;box-shadow:0 6px 20px rgba(20,30,40,.16)}
+  .menu-liste button{text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer}
+  .menu-liste button:hover{background:var(--accent-doux)}
+
+  .page{max-width:1440px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+  main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:72px;background:var(--surface);border:1px solid var(--bord);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+  aside.aide h2{margin:0;font-size:16px}
+  aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--texte-doux)}
+  aside.aide p{margin:0}
+  .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .parcours button,.parcours span.pas{width:100%;display:flex;gap:10px;align-items:center;text-align:left;background:none;border:0;border-radius:8px;padding:6px 8px;min-height:36px}
+  .parcours button{cursor:pointer}
+  .parcours button:hover{background:var(--surface-alt)}
+  .parcours .ici{background:var(--accent-doux);color:var(--accent-texte);font-weight:700}
+  .parcours .rond{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--bord);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+  .parcours .fait .rond{background:var(--c);border-color:var(--c);color:var(--surface)}
+  .parcours .ici .rond{border-color:var(--accent)}
+  .parcours .sous{padding-left:24px}
+
+  h1{margin:0;font-size:24px;text-wrap:balance}
+  h2{font-size:17px;margin:0}
+  .carte{background:var(--surface);border:1px solid var(--bord);border-radius:var(--radius-lg);padding:18px}
+  .pile{display:flex;flex-direction:column;gap:12px}
+  .rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .entre{justify-content:space-between}
+  .doux{color:var(--texte-doux)}
+  .petit{font-size:13px}
+  .btn{min-height:44px;padding:0 16px;border-radius:var(--radius);border:1px solid var(--bord);background:var(--surface);cursor:pointer;font-weight:600}
+  .btn:hover{border-color:var(--accent)}
+  .btn-p{background:var(--accent);border-color:var(--accent);color:var(--sur-accent);font-weight:700}
+  .btn-l{border-color:var(--accent);color:var(--accent)}
+  .btn-d{border-style:dashed}
+  .btn-s{min-height:36px;padding:0 10px;font-size:13px}
+  .btn-danger{border-color:var(--nc);color:var(--nc)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  label.lbl,.lbl{font-weight:700;font-size:13px;color:var(--texte-doux)}
+  input[type=text],select,textarea{border:1px solid var(--bord);border-radius:var(--radius);background:var(--surface);padding:9px 12px;min-height:44px;width:100%}
+  textarea{resize:vertical;min-height:72px}
+  .champ{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .grille2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .choix{display:flex;gap:10px;align-items:center;min-height:36px}
+  .choix input{width:18px;height:18px;accent-color:var(--accent);flex:none}
+
+  .pastille{display:inline-flex;align-items:center;justify-content:center;min-width:40px;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;flex:none}
+  .s-C{background:var(--c-doux);color:var(--c-texte)} .s-NC{background:var(--nc-doux);color:var(--nc-texte)}
+  .s-NT{background:var(--nt-doux);color:var(--nt-texte)} .s-NA{background:var(--na-doux);color:var(--na-texte)}
+  .s-AC{background:var(--nt-doux);color:var(--nt-texte);outline:1px dashed var(--nt);outline-offset:-1px}
+  .s-NOTE{background:var(--surface-alt);color:var(--texte-doux);border:1px solid var(--bord)}
+  .etiq{display:inline-flex;padding:1px 8px;border-radius:6px;font-size:12px;font-weight:700;background:var(--part-doux);color:var(--part-texte)}
+  .etiq-ref{background:var(--surface-alt);color:var(--texte-doux);border:1px solid var(--bord-doux);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  .tags{display:flex;gap:6px}
+  .tag{min-width:58px;min-height:44px;border-radius:var(--radius);background:var(--surface);cursor:pointer;font-weight:800}
+  .tag-c{border:1px solid var(--c);color:var(--c)} .tag-nc{border:1px solid var(--nc);color:var(--nc)} .tag-na{border:1px solid var(--na);color:var(--na)}
+  .tag-c[aria-pressed="true"]{background:var(--c);color:var(--surface)}
+  .tag-nc[aria-pressed="true"]{background:var(--nc);color:var(--surface)}
+  .tag-na[aria-pressed="true"]{background:var(--na);color:var(--surface)}
+
+  .audit{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+  .ecrans{flex:1 1 200px;max-width:250px;display:flex;flex-direction:column;gap:12px}
+  .ecrans .carte{padding:8px;display:flex;flex-direction:column;gap:2px}
+  .ecrans h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--texte-doux);padding:4px 8px}
+  .ecrans button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;background:none;border:0;border-radius:8px;padding:8px;min-height:40px;cursor:pointer}
+  .ecrans button:hover{background:var(--surface-alt)}
+  .ecrans button[aria-current="true"]{background:var(--accent);color:var(--sur-accent);font-weight:700}
+  .ecrans .elt{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;font-size:14px}
+  .centre{flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .obs{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--bord-doux)}
+  .obs:last-child{border-bottom:0}
+  .obs .corps{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .obs .texte{overflow-wrap:anywhere}
+  .obs.invalide .texte{text-decoration:line-through;color:var(--texte-doux)}
+  .crit-choix{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto;border:1px solid var(--bord-doux);border-radius:var(--radius);padding:6px 10px}
+  .ailleurs{border:1px dashed var(--part);border-radius:var(--radius);padding:12px}
+
+  .tableau{overflow-x:auto;border:1px solid var(--bord);border-radius:var(--radius-lg);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--bord-doux);text-align:left;vertical-align:top}
+  thead th{position:sticky;top:0;background:var(--surface-alt);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--texte-doux);white-space:nowrap}
+  tbody th{font-weight:400}
+  tr.theme th{background:var(--surface-alt);font-weight:800;font-size:13px}
+  .ref-btn{background:none;border:0;padding:0;cursor:pointer;color:var(--accent);font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+  td.statut{text-align:center;white-space:nowrap}
+
+  .taux{display:flex;flex-wrap:wrap;gap:16px 48px;align-items:flex-end}
+  .taux .val{font-size:44px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+  .taux .val.second{color:var(--texte-doux);font-size:32px}
+  .cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+  .tuile{text-align:left;background:var(--surface);border:1px solid var(--bord);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:4px;cursor:pointer;min-height:140px}
+  .tuile:hover{border-color:var(--accent)}
+  .tuile b{font-size:17px}
+  .tuile .val{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+  .tuile.nouveau{border-style:dashed;border-color:var(--accent);color:var(--accent);font-weight:700;align-items:center;justify-content:center}
+  .ecran-ligne{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bord-doux)}
+  .ecran-ligne:last-child{border-bottom:0}
+  .ecran-ligne input[type=text]{flex:1 1 200px;width:auto}
+  .contenus{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}
+  .puce{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bord);border-radius:99px;padding:4px 12px;min-height:34px;cursor:pointer;font-size:13px;background:var(--surface)}
+  .puce[aria-pressed="true"]{background:var(--accent-doux);border-color:var(--accent);color:var(--accent-texte);font-weight:700}
+
+  dialog{border:1px solid var(--bord);border-radius:var(--radius-lg);padding:0;max-width:720px;width:calc(100% - 32px);background:var(--surface);color:var(--texte)}
+  dialog::backdrop{background:rgba(10,15,20,.5)}
+  .dlg{padding:20px;display:flex;flex-direction:column;gap:14px;max-height:80vh;overflow:auto}
+  .dlg h2{font-size:19px}
+  #statut{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--texte);color:var(--fond);padding:10px 16px;border-radius:var(--radius);max-width:min(560px,calc(100% - 32px));z-index:40;font-weight:600}
+  #statut.erreur{background:var(--nc);color:var(--surface)}
+  footer.pied{max-width:1440px;margin:0 auto;padding:0 24px 32px;font-size:12.5px;color:var(--texte-doux)}
+  @media (max-width:900px){ aside.aide{position:static;max-width:none;flex-basis:100%;order:-1} }
+  @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+<a class="lien-evitement" href="#main">Aller au contenu</a>
+<header class="barre">
+  <div class="barre-in">
+    <button class="marque" type="button" data-action="accueil">Atelier RUXAWEB<small>2.0</small></button>
+    <nav class="onglet-nav" id="onglet-nav" aria-label="Onglet en cours"></nav>
+    <span class="espace"></span>
+    <div class="menu">
+      <button class="btn btn-s" type="button" id="btn-menu" aria-expanded="false" aria-controls="menu-fichier">Fichier</button>
+      <div class="menu-liste" id="menu-fichier" hidden>
+        <button type="button" data-action="export-xlsx">Grille des critères (Excel)</button>
+        <button type="button" data-action="export-jira">Tickets Jira (CSV)</button>
+        <button type="button" data-action="export-json">Sauvegarder l'audit (JSON)</button>
+        <button type="button" data-action="import-json">Ouvrir une sauvegarde</button>
+        <button type="button" data-action="reinit">Nouvel audit</button>
+      </div>
+    </div>
+    <input type="file" id="fichier-import" accept=".json,application/json" hidden>
+  </div>
+</header>
+<div class="page">
+  <main id="main" tabindex="-1"></main>
+  <aside class="aide" id="aide" aria-labelledby="aide-titre"></aside>
+</div>
+<footer class="pied">Critères : RAWeb 1.1, Service information et presse (SIP), Luxembourg, CC BY 3.0 LU, intitulés non modifiés. Sélection de la méthode de contrôle simplifié v1.2.1, plus critères hors sélection. Pré-diagnostic, pas un audit de conformité. Version précédente, saisie critère par critère : ruxaweb.html (1.7). Code : EUPL-1.2.</footer>
+<dialog id="dlg" aria-labelledby="dlg-titre"><div class="dlg" id="dlg-corps"></div></dialog>
+<div id="statut" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+  'use strict';
+  // <<< DEBUT_DONNEES : généré par scripts/build_ruxaweb2.py depuis data/, ne pas modifier à la main >>>
+  var CRITERES = [
+    {"id": "raweb-1-1", "ref": "1.1", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Chaque image porteuse d’information a-t-elle une alternative textuelle ?", "impact": "RAWeb 1.1 (WCAG 1.1.1) : sans alternative textuelle, une image porteuse d'information (icône de lien, bouton image, logo, graphique) n'existe pas pour l'utilisateur de lecteur d'écran, qui entend au mieux un nom de fichier.", "explication": "Repère chaque image qui porte une information (photo de produit, icône de lien ou de bouton, logo cliquable, graphique). Avec le lecteur d'écran, ou dans l'inspecteur du navigateur, vérifie qu'elle a une alternative textuelle (attribut alt ou équivalent). Un outil automatique signale les images sans alternative, mais c'est à toi de décider si une image porte une information."},
+    {"id": "raweb-1-2", "ref": "1.2", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "mineur", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Chaque image de décoration, sans légende, est-elle correctement ignorée par les technologies d’assistance ?", "impact": "RAWeb 1.2 (WCAG 1.1.1 / 4.1.2) : une image décorative non masquée est annoncée inutilement par le lecteur d'écran (nom de fichier, « image »), ce qui alourdit l'écoute sans rien apporter.", "explication": "À l'inspecteur, repère les images purement décoratives (fond, séparateur, illustration d'ambiance) : une balise img doit avoir alt=\"\" et aucun autre attribut d'alternative (title, aria-label) ; un svg, un canvas ou un object décoratif doit porter aria-hidden=\"true\". Une image décorative accompagnée d'une légende relève du critère 1.1, pas de celui-ci."},
+    {"id": "raweb-1-3", "ref": "1.3", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Pour chaque image porteuse d’information ayant une alternative textuelle, cette alternative est-elle pertinente (hors cas particuliers) ?", "impact": "RAWeb 1.3 (WCAG 1.1.1 / 4.1.2) : une alternative non pertinente (vide, générique comme « image » ou « logo », ou erronée) prive l'utilisateur de lecteur d'écran de l'information que l'image donne aux autres.", "explication": "Ne vérifie pas seulement la présence de l'alternative mais son contenu, tel que l'annonce le lecteur d'écran : il doit transmettre la même information que l'image, et pour une image lien ou bouton, sa fonction ou sa destination (« Accueil », pas « logo »). L'alternative doit rester courte ; une information longue relève de la description détaillée (critère 1.6)."},
+    {"id": "raweb-1-4", "ref": "1.4", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "captcha", "etape": "3a", "libelle": "Pour chaque image utilisée comme CAPTCHA ou comme image-test, ayant une alternative textuelle, cette alternative permet-elle d’identifier la nature et la fonction de l’image ?", "impact": "RAWeb 1.4 (WCAG 1.1.1) : sans alternative qui identifie sa nature, l'utilisateur de lecteur d'écran ne comprend pas qu'il fait face à un CAPTCHA, ni ce qu'on attend de lui.", "explication": "Avec le lecteur d'écran, place-toi sur le CAPTCHA imagé : ce qui est annoncé doit dire ce que c'est et ce qu'il faut faire (par exemple « Code de sécurité à recopier »), sans donner la réponse. Une alternative vide ou « image » est non conforme."},
+    {"id": "raweb-1-5", "ref": "1.5", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "critique", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "captcha", "etape": "1", "libelle": "Pour chaque image utilisée comme CAPTCHA, une solution d’accès alternatif au contenu ou à la fonction du CAPTCHA est-elle présente ?", "impact": "RAWeb 1.5 (WCAG 1.1.1) : sans alternative au CAPTCHA visuel, les personnes aveugles ou malvoyantes sont totalement bloquées : elles ne peuvent ni s'inscrire, ni se connecter, ni envoyer le formulaire.", "explication": "Le CAPTCHA visuel doit proposer au moins une autre forme non graphique (CAPTCHA audio, question logique) ou une autre solution d'accès à la même fonction (contact par téléphone ou par courriel, par exemple). Vérifie que cette alternative existe vraiment et qu'elle est utilisable au clavier."},
+    {"id": "raweb-1-6", "ref": "1.6", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "modere", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "image-complexe", "etape": "3a", "libelle": "Chaque image porteuse d’information a-t-elle, si nécessaire, une description détaillée ?", "impact": "RAWeb 1.6 (WCAG 1.1.1) : sans description détaillée, une image complexe (graphique, schéma, carte, infographie) reste incompréhensible pour l'utilisateur de lecteur d'écran, même avec une alternative courte.", "explication": "Pour chaque image complexe, cherche une description détaillée en plus de l'alternative courte : texte adjacent signalé par l'alternative, lien ou bouton vers une description, ou aria-describedby. Le lecteur d'écran doit permettre de la trouver depuis l'image."},
+    {"id": "raweb-1-7", "ref": "1.7", "theme_ruxal": "Images & Médias", "theme_ref": "1. Images", "niveau": "modere", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "image-complexe", "etape": "3a", "libelle": "Pour chaque image porteuse d’information ayant une description détaillée, cette description est-elle pertinente ?", "impact": "RAWeb 1.7 (WCAG 1.1.1) : une description détaillée incomplète ou erronée transmet une information fausse ou partielle : les données d'un graphique, par exemple, ne sont pas toutes restituées.", "explication": "Lis la description détaillée en regardant l'image : elle doit donner la même information (valeurs d'un graphique, étapes d'un schéma, trajet d'une carte). Un simple titre ou une phrase vague n'est pas pertinent."},
+    {"id": "raweb-2-1", "ref": "2.1", "theme_ruxal": "Navigation & Structure", "theme_ref": "2. Cadres", "niveau": "modere", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "cadre", "etape": "2", "libelle": "Chaque cadre a-t-il un titre de cadre ?", "impact": "RAWeb 2.1 (WCAG 4.1.2) : un cadre sans titre est annoncé « cadre » sans autre information : l'utilisateur de lecteur d'écran ne sait pas ce qu'il contient (vidéo, carte, formulaire externe) avant d'y entrer.", "explication": "Repère les contenus intégrés dans un cadre (vidéo, carte, formulaire externe : balise iframe). Dans l'inspecteur, chaque cadre doit avoir un titre (attribut title), que le lecteur d'écran annonce en entrant dans le cadre. Note aussi un titre vide de sens (« iframe », un nom de fichier)."},
+    {"id": "raweb-3-1", "ref": "3.1", "theme_ruxal": "Couleurs & Contrastes", "theme_ref": "3. Couleurs", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, l’information ne doit pas être donnée uniquement par la couleur. Cette règle est-elle respectée ?", "impact": "RAWeb 3.1 (WCAG 1.3.1 / 1.4.1) : les personnes daltoniennes, malvoyantes ou utilisant un lecteur d'écran ne perçoivent pas une information donnée seulement par la couleur (champ en erreur en rouge, statut vert ou rouge, lien seulement coloré dans un texte).", "explication": "Repère les cas où seule la couleur porte l'information (texte en rouge pour une erreur, légende de graphique par couleur, lien distingué du texte par sa seule couleur, onglet actif). Un autre repère visible doit exister (texte, icône, soulignement, motif) et l'information doit aussi être restituée au lecteur d'écran. Astuce : affiche la page en niveaux de gris."},
+    {"id": "raweb-3-2", "ref": "3.2", "theme_ruxal": "Couleurs & Contrastes", "theme_ref": "3. Couleurs", "niveau": "serieux", "niveau_wcag": "AA", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, le contraste entre la couleur du texte et la couleur de son arrière-plan est-il suffisamment élevé (hors cas particuliers) ?", "impact": "RAWeb 3.2 (WCAG 1.4.3) : un contraste insuffisant rend le texte difficile ou impossible à lire pour les personnes malvoyantes, âgées, ou qui consultent la page en plein soleil.", "explication": "Mesure le contraste entre le texte et son fond avec un outil de mesure du contraste, en priorité sur les textes clairs ou petits, posés sur une image ou un dégradé, et dans les états au survol et au focus. Seuils : 4,5:1 pour le texte courant, 3:1 pour un texte d'au moins 24 px, ou 18,5 px en gras."},
+    {"id": "raweb-3-3", "ref": "3.3", "theme_ruxal": "Couleurs & Contrastes", "theme_ref": "3. Couleurs", "niveau": "serieux", "niveau_wcag": "AA", "siPresent": false, "horsSelection": true, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, les couleurs utilisées dans les composants d’interface ou les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ?", "impact": "RAWeb 3.3 (WCAG 1.4.11) : une icône, une bordure de champ, un indicateur de focus ou un graphique trop peu contrasté passe inaperçu pour les personnes malvoyantes ou qui consultent sur un écran au soleil : elles ne trouvent pas le champ à remplir ni l'élément actif.", "explication": "Repère les éléments graphiques qui portent une information ou permettent d'agir : icônes seules, bordures de champs, cases à cocher, boutons sans fond, indicateur de focus, courbes et zones de graphique. Mesure le contraste de chacun avec la couleur voisine : il doit atteindre au moins 3:1. Les éléments purement décoratifs et les composants désactivés ne sont pas concernés."},
+    {"id": "raweb-4-1", "ref": "4.1", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-temporel", "etape": "1", "libelle": "Chaque média temporel pré-enregistré a-t-il, si nécessaire, une transcription textuelle ou une audiodescription (hors cas particuliers) ?", "impact": "RAWeb 4.1 (WCAG 1.2.1 / 1.2.3) : sans transcription ni audiodescription, une personne sourde, aveugle ou sourdaveugle n'a pas accès au contenu d'un audio ou d'une vidéo pré-enregistrés.", "explication": "Pour chaque audio seul, cherche une transcription textuelle adjacente ou liée. Pour chaque vidéo pré-enregistrée, cherche une transcription ou une version audiodécrite. L'alternative doit être atteignable depuis le média, au clavier et au lecteur d'écran."},
+    {"id": "raweb-4-2", "ref": "4.2", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "modere", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-temporel", "etape": "1", "libelle": "Pour chaque média temporel pré-enregistré ayant une transcription textuelle ou une audiodescription synchronisée, celles-ci sont-elles pertinentes (hors cas particuliers) ?", "impact": "RAWeb 4.2 (WCAG 1.2.1 / 1.2.3) : une transcription ou une audiodescription incomplète fait manquer une partie de l'information (paroles résumées, informations visuelles absentes).", "explication": "Compare la transcription ou l'audiodescription au média : toutes les paroles et les informations visuelles utiles (texte affiché, actions, changements de lieu) doivent s'y retrouver, dans le bon ordre."},
+    {"id": "raweb-4-3", "ref": "4.3", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "critique", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-temporel", "etape": "1", "libelle": "Chaque média temporel synchronisé a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ?", "impact": "RAWeb 4.3 (WCAG 1.2.2 / 1.2.4) : sans sous-titres, les personnes sourdes ou malentendantes n'ont accès à aucune parole de la vidéo.", "explication": "Lis la vidéo : si le son porte de l'information (quelqu'un parle, par exemple), des sous-titres synchronisés doivent pouvoir s'afficher, directement ou dans une version sous-titrée. Les sous-titres incrustés dans l'image comptent."},
+    {"id": "raweb-4-4", "ref": "4.4", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-temporel", "etape": "1", "libelle": "Pour chaque média temporel synchronisé ayant des sous-titres synchronisés, ces sous-titres sont-ils pertinents (hors cas particuliers) ?", "impact": "RAWeb 4.4 (WCAG 1.2.2 / 1.2.4) : des sous-titres décalés, incomplets ou dans une autre langue que la vidéo font perdre le sens du contenu.", "explication": "Regarde un extrait avec les sous-titres activés : ils doivent être dans la langue de la vidéo, reprendre les paroles et les sons utiles (« [applaudissements] », changement de locuteur) et rester synchronisés avec l'image."},
+    {"id": "raweb-4-8", "ref": "4.8", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-non-temporel", "etape": "1", "libelle": "Chaque média non temporel a-t-il, si nécessaire, une alternative (hors cas particuliers) ?", "impact": "RAWeb 4.8 (WCAG 1.1.1) : sans alternative, un média non temporel (carte interactive, visite virtuelle, animation ou objet embarqué sans déroulement) reste inaccessible aux personnes qui ne peuvent pas l'utiliser.", "explication": "Repère les médias non temporels (contenu embarqué interactif ou animé, sans lecture du début à la fin). Un lien ou un bouton adjacent et clairement identifiable doit mener à une alternative, dans la page ou dans une autre page, elle-même accessible."},
+    {"id": "raweb-4-9", "ref": "4.9", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "modere", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-non-temporel", "etape": "1", "libelle": "Pour chaque média non temporel ayant une alternative, cette alternative est-elle pertinente ?", "impact": "RAWeb 4.9 (WCAG 1.1.1) : une alternative qui ne donne pas le même contenu (adresse sans plan d'accès, liste partielle de points) laisse l'utilisateur avec une information incomplète.", "explication": "Compare l'alternative au média : elle doit donner accès au même contenu et à des fonctionnalités similaires (par exemple, pour une carte : adresses, horaires, itinéraire en texte)."},
+    {"id": "raweb-4-10", "ref": "4.10", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-temporel", "etape": "1", "libelle": "Chaque son déclenché automatiquement est-il contrôlable par l’utilisateur ?", "impact": "RAWeb 4.10 (WCAG 1.4.2) : un son qui se lance seul et ne peut pas être coupé couvre la voix du lecteur d'écran et gêne fortement les personnes sensibles au bruit.", "explication": "Ouvre la page avec le son activé : un son qui démarre seul doit durer 3 secondes au plus, ou pouvoir être arrêté (bouton atteignable au clavier en début de page), ou avoir un volume réglable indépendamment de celui du système."},
+    {"id": "raweb-4-11", "ref": "4.11", "theme_ruxal": "Images & Médias", "theme_ref": "4. Multimédia", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "media-temporel", "etape": "4", "libelle": "La consultation de chaque média temporel est-elle, si nécessaire, contrôlable par le clavier et tout dispositif de pointage ?", "impact": "RAWeb 4.11 (WCAG 2.1.1 / 2.1.2) : sans commandes utilisables au clavier, l'utilisateur ne peut pas lancer, mettre en pause, couper le son ou activer les sous-titres d'un média.", "explication": "Au clavier seul, atteins le lecteur de chaque média : les commandes nécessaires (lecture, pause ou arrêt, son, sous-titres et audiodescription s'ils existent) doivent être atteignables avec Tab et activables avec Entrée ou Espace, sans piège. Vérifie aussi à la souris."},
+    {"id": "raweb-5-6", "ref": "5.6", "theme_ruxal": "Contenu & Lisibilité", "theme_ref": "5. Tableaux", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "tableau-donnees", "etape": "2", "libelle": "Pour chaque tableau de données, chaque en-tête de colonne et chaque en-tête de ligne sont-ils correctement déclarés ?", "impact": "RAWeb 5.6 (WCAG 1.3.1) : des en-têtes de tableau non déclarés font lire au lecteur d'écran une suite de valeurs sans contexte : l'utilisateur ne sait plus à quoi correspond chaque chiffre.", "explication": "À l'inspecteur, vérifie que chaque en-tête de colonne et de ligne est structuré par une balise th (ou un rôle columnheader ou rowheader), et pas par une cellule td mise en gras."},
+    {"id": "raweb-5-7", "ref": "5.7", "theme_ruxal": "Contenu & Lisibilité", "theme_ref": "5. Tableaux", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "tableau-donnees", "etape": "2", "libelle": "Pour chaque tableau de données, la technique appropriée permettant d’associer chaque cellule avec ses en-têtes est-elle utilisée (hors cas particuliers) ?", "impact": "RAWeb 5.7 (WCAG 1.3.1) : une mauvaise association cellule et en-tête fait annoncer par le lecteur d'écran un en-tête faux ou aucun en-tête.", "explication": "Avec le lecteur d'écran, parcours quelques cellules du tableau : chacune doit être annoncée avec son ou ses en-têtes de ligne et de colonne. Si ce n'est pas le cas, le lien entre les cellules et leurs en-têtes est mal codé (attribut scope, ou id et headers pour un tableau complexe)."},
+    {"id": "raweb-6-1", "ref": "6.1", "theme_ruxal": "Navigation & Structure", "theme_ref": "6. Liens", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Chaque lien est-il explicite (hors cas particuliers) ?", "impact": "RAWeb 6.1 (WCAG 1.1.1 / 2.4.4 / 2.5.3) : un lien vague (« cliquez ici », « en savoir plus ») ne dit pas où il mène : l'utilisateur de lecteur d'écran qui parcourt la liste des liens ne sait pas lequel choisir.", "explication": "Affiche la liste des liens proposée par le lecteur d'écran : chaque intitulé, seul ou avec son contexte (phrase, titre, cellule), doit dire la fonction ou la destination du lien. Si le lien a un texte visible, le nom annoncé doit contenir ce texte."},
+    {"id": "raweb-6-2", "ref": "6.2", "theme_ruxal": "Navigation & Structure", "theme_ref": "6. Liens", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Dans chaque page web, chaque lien a-t-il un intitulé ?", "impact": "RAWeb 6.2 (WCAG 1.1.1 / 2.4.4) : un lien sans intitulé est annoncé « lien » sans autre information : l'utilisateur de lecteur d'écran ne peut pas savoir où il mène, ni le distinguer des autres.", "explication": "Affiche la liste des liens proposée par le lecteur d'écran et cherche les liens annoncés sans nom (« lien » seul) : ce sont souvent des icônes ou des images cliquables (réseaux sociaux, logo). Chaque lien doit avoir un intitulé : son texte, l'alternative de son image, ou un libellé caché."},
+    {"id": "raweb-7-1", "ref": "7.1", "theme_ruxal": "Composants Interactifs", "theme_ref": "7. Scripts", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "horsSelection": true, "declencheur": "", "etape": "3a", "libelle": "Chaque script est-il, si nécessaire, compatible avec les technologies d’assistance ?", "impact": "RAWeb 7.1 (WCAG 4.1.2 / 2.5.3) : un composant construit en script (bouton, onglet, menu, accordéon, case maison) dont le nom, le rôle ou l'état ne sont pas restitués est inutilisable au lecteur d'écran : on entend « groupe » ou rien, sans savoir à quoi il sert ni s'il est ouvert, sélectionné ou coché. Pour la commande vocale, un nom qui ne reprend pas le texte visible empêche de l'activer.", "explication": "Au lecteur d'écran, parcours chaque composant qui réagit à un script. Pour chacun, vérifie que sont restitués : son nom (pertinent, et qui contient le texte visible quand il y en a un), son rôle (bouton, onglet, case à cocher, menu...), et son état quand il en a un (ouvert ou fermé, sélectionné, coché, désactivé). Active-le : le changement d'état doit être restitué. Dans le code, un élément cliquable doit être un élément natif (button, a, input) ou porter le rôle et les propriétés adaptés."},
+    {"id": "raweb-7-3", "ref": "7.3", "theme_ruxal": "Navigation & Structure", "theme_ref": "7. Scripts", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Chaque script est-il contrôlable par le clavier et par tout dispositif de pointage (hors cas particuliers) ?", "impact": "RAWeb 7.3 (WCAG 1.3.1 / 2.1.1 / 2.4.7) : un composant scripté (menu, accordéon, onglet, carrousel, bouton fait d'un div) inutilisable au clavier bloque totalement les utilisateurs de clavier, de contacteur ou de commande vocale.", "explication": "Au clavier seul (Tab, Maj+Tab, Entrée, Espace, flèches), atteins et active chaque élément qui réagit à un script : il doit fonctionner comme à la souris. Un div ou un span cliquable sans tabindex ni gestion du clavier est non conforme. Vérifie aussi qu'aucun script ne retire le focus d'un élément qui vient de le recevoir."},
+    {"id": "raweb-7-5", "ref": "7.5", "theme_ruxal": "Composants Interactifs", "theme_ref": "7. Scripts", "niveau": "serieux", "niveau_wcag": "AA", "siPresent": false, "horsSelection": true, "declencheur": "", "etape": "3a", "libelle": "Dans chaque page web, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?", "impact": "RAWeb 7.5 (WCAG 4.1.3) : un message de statut non restitué (« Article ajouté au panier », « 3 résultats », « Enregistrement en cours ») laisse l'utilisateur de lecteur d'écran sans retour : il ne sait pas si son action a réussi et la répète, ou abandonne.", "explication": "Déclenche les actions qui affichent un message sans déplacer le focus : ajout au panier, filtre ou recherche qui met à jour un nombre de résultats, enregistrement, chargement, erreur générale. Au lecteur d'écran, le message doit être lu automatiquement, sans que tu aies à le chercher, et sans que le focus bouge. Dans le code, la zone du message porte un rôle de statut ou d'alerte, présent avant l'apparition du message."},
+    {"id": "raweb-8-2", "ref": "8.2", "theme_ruxal": "Fondations Techniques", "theme_ref": "8. Éléments obligatoires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Pour chaque page web, le code source généré est-il valide selon le type de document spécifié ?", "impact": "RAWeb 8.2 (WCAG 4.1.1 / 4.1.2) : un code ARIA ou HTML incorrect (attribut ARIA invalide, rôle sans ses enfants requis, identifiant dupliqué référencé) fausse ce que restituent les technologies d'assistance.", "explication": "Vérifie que le code ne trompe pas les technologies d'assistance : rôles et attributs ARIA valides et complets, listes bien construites, identifiants uniques quand d'autres éléments s'y réfèrent. Un outil de test automatique repère vite la plupart de ces erreurs ; vérifie ensuite chacune dans l'inspecteur. La validation complète du code n'est plus exigée."},
+    {"id": "raweb-8-3", "ref": "8.3", "theme_ruxal": "Fondations Techniques", "theme_ref": "8. Éléments obligatoires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Dans chaque page web, la langue par défaut est-elle présente ?", "impact": "RAWeb 8.3 (WCAG 3.1.1) : sans langue déclarée, le lecteur d'écran lit la page avec une prononciation par défaut, souvent incompréhensible (texte français lu avec un accent anglais).", "explication": "Dans l'inspecteur, vérifie que l'élément html de la page porte un attribut lang (par exemple lang=\"fr\")."},
+    {"id": "raweb-8-4", "ref": "8.4", "theme_ruxal": "Fondations Techniques", "theme_ref": "8. Éléments obligatoires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Pour chaque page web ayant une langue par défaut, le code de langue est-il pertinent ?", "impact": "RAWeb 8.4 (WCAG 3.1.1) : un code de langue faux ou invalide fait lire la page avec la mauvaise voix de synthèse.", "explication": "Vérifie que le code de langue de la page (attribut lang de l'élément html) est valide (fr, de, en, lb) et correspond à la langue principale réelle de la page. Une page en allemand déclarée lang=\"fr\" est non conforme."},
+    {"id": "raweb-8-5", "ref": "8.5", "theme_ruxal": "Navigation & Structure", "theme_ref": "8. Éléments obligatoires", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Chaque page web a-t-elle un titre de page ?", "impact": "RAWeb 8.5 (WCAG 2.4.2) : sans titre de page, l'utilisateur de lecteur d'écran, qui entend d'abord le titre, ne sait pas où il est, et les onglets ou favoris ne se distinguent pas.", "explication": "À l'inspecteur ou dans l'onglet du navigateur, vérifie que chaque page a une balise title non vide."},
+    {"id": "raweb-8-6", "ref": "8.6", "theme_ruxal": "Navigation & Structure", "theme_ref": "8. Éléments obligatoires", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Pour chaque page web ayant un titre de page, ce titre est-il pertinent ?", "impact": "RAWeb 8.6 (WCAG 2.4.2) : un titre de page générique ou identique sur toutes les pages (« Accueil », nom du site seul) empêche de savoir sur quelle page on se trouve, surtout après une action (erreur de formulaire, étape suivante).", "explication": "Lis le titre de chaque page (onglet du navigateur, ou annonce du lecteur d'écran à l'ouverture) : il doit identifier le contenu de la page, idéalement suivi du nom du site (« Contact : Nom du site »). Vérifie aussi les étapes d'un formulaire et les pages d'erreur."},
+    {"id": "raweb-8-7", "ref": "8.7", "theme_ruxal": "Fondations Techniques", "theme_ref": "8. Éléments obligatoires", "niveau": "modere", "niveau_wcag": "AA", "siPresent": true, "horsSelection": false, "declencheur": "changement-langue", "etape": "3a", "libelle": "Dans chaque page web, chaque changement de langue est-il indiqué dans le code source (hors cas particuliers) ?", "impact": "RAWeb 8.7 (WCAG 3.1.2) : un passage en langue étrangère non signalé est lu avec la prononciation de la langue de la page et devient incompréhensible.", "explication": "Repère les passages dans une autre langue que celle de la page (citation, nom d'une langue dans un sélecteur, document en anglais) : l'élément qui les contient doit porter un attribut lang. Les noms propres et les mots passés dans l'usage courant ne sont pas concernés."},
+    {"id": "raweb-8-8", "ref": "8.8", "theme_ruxal": "Fondations Techniques", "theme_ref": "8. Éléments obligatoires", "niveau": "modere", "niveau_wcag": "AA", "siPresent": true, "horsSelection": false, "declencheur": "changement-langue", "etape": "2", "libelle": "Dans chaque page web, le code de langue de chaque changement de langue est-il valide et pertinent ?", "impact": "RAWeb 8.8 (WCAG 3.1.2) : un code de langue faux sur un passage le fait lire avec une mauvaise voix de synthèse.", "explication": "Pour chaque passage marqué dans une autre langue, vérifie que son code de langue est valide et correspond bien à la langue du passage (par exemple lang=\"en\" sur une citation en anglais, lang=\"lb\" sur un texte en luxembourgeois)."},
+    {"id": "raweb-9-1", "ref": "9.1", "theme_ruxal": "Navigation & Structure", "theme_ref": "9. Structuration de l’information", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Dans chaque page web, l’information est-elle structurée par l’utilisation appropriée de titres ?", "impact": "RAWeb 9.1 (WCAG 1.3.1 / 2.4.1 / 2.4.6 / 4.1.2) : sans titres structurés, les utilisateurs de lecteur d'écran, qui naviguent souvent de titre en titre, ne peuvent ni survoler la page ni sauter à la partie qui les intéresse.", "explication": "Affiche la liste des titres proposée par le lecteur d'écran (ou par une extension de navigateur) : chaque texte qui joue visuellement le rôle de titre doit y figurer, avec un contenu pertinent et une hiérarchie cohérente (pas de saut de niveau illogique)."},
+    {"id": "raweb-9-2", "ref": "9.2", "theme_ruxal": "Navigation & Structure", "theme_ref": "9. Structuration de l’information", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "2", "libelle": "Dans chaque page web, la structure du document est-elle cohérente ?", "impact": "RAWeb 9.2 (WCAG 1.3.1) : sans zones structurantes (en-tête, navigation, contenu principal, pied de page), l'utilisateur de lecteur d'écran ne peut pas aller directement au contenu ou au menu.", "explication": "Affiche la liste des repères du lecteur d'écran (ou les zones dans l'inspecteur) : la page doit avoir un en-tête, une navigation principale, un seul contenu principal et un pied de page, chacun identifié comme tel (header, nav, main, footer)."},
+    {"id": "raweb-9-3", "ref": "9.3", "theme_ruxal": "Navigation & Structure", "theme_ref": "9. Structuration de l’information", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": true, "declencheur": "", "etape": "3a", "libelle": "Dans chaque page web, chaque liste est-elle correctement structurée ?", "impact": "RAWeb 9.3 (WCAG 1.3.1) : une liste visuelle qui n'est pas déclarée comme liste est lue comme une suite de lignes sans lien : l'utilisateur de lecteur d'écran ne sait pas combien d'éléments elle contient ni où elle se termine, et ne peut pas la sauter.", "explication": "Repère tout contenu présenté comme une liste : énumérations à puces ou numérotées, menus, suites de liens, de cartes ou de résultats. Au lecteur d'écran, chacune doit être annoncée comme une liste avec son nombre d'éléments. Dans le code, elle utilise les éléments de liste (ul, ol et li, ou dl pour une liste de définitions), sans tirets ni retours à la ligne pour simuler les puces."},
+    {"id": "raweb-10-4", "ref": "10.4", "theme_ruxal": "Contenu & Lisibilité", "theme_ref": "10. Présentation de l’information", "niveau": "serieux", "niveau_wcag": "AA", "siPresent": false, "horsSelection": true, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, le texte reste-t-il lisible lorsque la taille des caractères est augmentée jusqu’à 200 %, au moins (hors cas particuliers) ?", "impact": "RAWeb 10.4 (WCAG 1.4.4) : quand le texte est agrandi, un contenu tronqué, superposé ou qui sort de son cadre devient illisible ou masque des boutons : les personnes malvoyantes qui agrandissent le texte perdent l'information ou ne peuvent plus agir.", "explication": "Agrandis le texte jusqu'à 200 % : avec le zoom du navigateur, puis avec le réglage de la taille du texte seule quand il existe. Parcours tout l'écran : aucun texte ne doit être coupé, superposé à un autre ou masqué, et toutes les fonctions doivent rester disponibles. Un défilement horizontal reste acceptable pour les tableaux et les contenus qui en ont besoin."},
+    {"id": "raweb-10-7", "ref": "10.7", "theme_ruxal": "Navigation & Structure", "theme_ref": "10. Présentation de l’information", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Dans chaque page web, pour chaque élément recevant le focus du clavier, la prise de focus est-elle visible ?", "impact": "RAWeb 10.7 (WCAG 1.4.1 / 2.4.7) : sans indicateur de focus visible, l'utilisateur au clavier ne sait plus où il se trouve dans la page et ne peut plus l'utiliser.", "explication": "Parcours la page avec Tab : chaque élément qui reçoit le focus doit être clairement signalé (contour natif non supprimé, ou style de focus défini par le site et bien visible). Cherche dans les styles un outline: none ou outline: 0 sans remplacement."},
+    {"id": "raweb-10-8", "ref": "10.8", "theme_ruxal": "Fondations Techniques", "theme_ref": "10. Présentation de l’information", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Pour chaque page web, les contenus cachés ont-ils vocation à être ignorés par les technologies d’assistance ?", "impact": "RAWeb 10.8 (WCAG 1.3.2 / 4.1.2) : un contenu masqué visuellement mais lu par le lecteur d'écran (ou l'inverse) crée des annonces fantômes, ou cache une information utile aux seuls utilisateurs de lecteur d'écran.", "explication": "Repère les contenus cachés (menus repliés, fenêtres fermées, textes réservés aux lecteurs d'écran). Un contenu caché doit soit être vraiment ignoré par le lecteur d'écran, soit devenir accessible par une action (bouton, onglet). Un élément qu'on atteint au clavier mais que le lecteur d'écran n'annonce pas est non conforme."},
+    {"id": "raweb-10-9", "ref": "10.9", "theme_ruxal": "Couleurs & Contrastes", "theme_ref": "10. Présentation de l’information", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, l’information ne doit pas être donnée uniquement par la forme, taille ou position. Cette règle est-elle respectée ?", "impact": "RAWeb 10.9 (WCAG 1.3.3 / 1.4.1) : une information donnée seulement par la forme, la taille ou la position (« cliquez sur le bouton rond », « voir colonne de droite ») est inaccessible à qui ne voit pas la page ou la consulte sur un petit écran.", "explication": "Repère les consignes et repères qui s'appuient sur la forme, la taille ou la position (« bouton à droite », icône seule pour un état, élément actif signalé par sa seule taille). Un autre moyen doit donner la même information (texte visible, intitulé explicite)."},
+    {"id": "raweb-10-10", "ref": "10.10", "theme_ruxal": "Couleurs & Contrastes", "theme_ref": "10. Présentation de l’information", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Dans chaque page web, l’information ne doit pas être donnée par la forme, taille ou position uniquement. Cette règle est-elle implémentée de façon pertinente ?", "impact": "RAWeb 10.10 (WCAG 1.3.3 / 1.4.1) : un moyen de remplacement qui ne fonctionne pas dans tous les contextes (texte masqué non restitué, info-bulle inaccessible au clavier) laisse certains utilisateurs sans l'information.", "explication": "Pour chaque information donnée par la forme, la taille ou la position et doublée par un autre moyen (critère 10.9), vérifie que ce moyen fonctionne vraiment : il doit être visible ou restitué par le lecteur d'écran, et accessible au clavier comme à la souris."},
+    {"id": "raweb-10-14", "ref": "10.14", "theme_ruxal": "Navigation & Structure", "theme_ref": "10. Présentation de l’information", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Dans chaque page web, les contenus additionnels apparaissant via les styles CSS uniquement peuvent-ils être rendus visibles au clavier et par tout dispositif de pointage ?", "impact": "RAWeb 10.14 (WCAG 2.1.1) : un contenu qui n'apparaît qu'au survol de la souris (sous-menu, info-bulle CSS) reste hors de portée des utilisateurs de clavier.", "explication": "Repère les contenus qui apparaissent au survol ou au focus grâce aux styles CSS (sous-menus, info-bulles). Au clavier seul, ils doivent aussi apparaître à la prise de focus ou à l'activation du composant (ou d'un autre composant)."},
+    {"id": "raweb-11-1", "ref": "11.1", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "critique", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Chaque champ de formulaire a-t-il une étiquette ?", "impact": "RAWeb 11.1 (WCAG 1.3.1 / 2.4.6 / 3.3.2 / 4.1.2) : un champ sans étiquette est annoncé « zone d'édition » sans autre information : l'utilisateur de lecteur d'écran ne sait pas quoi saisir et le formulaire devient impossible à remplir.", "explication": "Avec le lecteur d'écran, place-toi sur chaque champ (texte, liste, case, bouton radio) : une étiquette doit être annoncée. Dans l'inspecteur, elle passe par une balise label liée au champ, ou par un libellé ARIA. Un texte indicatif dans le champ (placeholder) n'est pas une étiquette."},
+    {"id": "raweb-11-2", "ref": "11.2", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Chaque étiquette associée à un champ de formulaire est-elle pertinente (hors cas particuliers) ?", "impact": "RAWeb 11.2 (WCAG 2.4.6 / 2.5.3 / 3.3.2) : une étiquette imprécise (« Champ 1 », « Valeur ») fait saisir une mauvaise information ; un nom accessible différent du texte visible empêche aussi la commande vocale de viser le champ.", "explication": "Avec le lecteur d'écran, écoute l'étiquette de chaque champ : elle doit dire précisément ce qui est attendu. Si le champ a un intitulé visible, son nom accessible doit le contenir (attention aux aria-label qui le remplacent par un autre texte)."},
+    {"id": "raweb-11-5", "ref": "11.5", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Dans chaque formulaire, les champs de même nature sont-ils regroupés, si nécessaire ?", "impact": "RAWeb 11.5 (WCAG 1.3.1 / 3.3.2) : si des champs liés ne sont pas regroupés (boutons radio Oui / Non, jour / mois / année), l'utilisateur de lecteur d'écran entend les choix sans la question à laquelle ils répondent.", "explication": "Repère les champs qui forment un ensemble (boutons radio d'une même question, cases d'une même liste, date en trois champs, adresse) : ils doivent être regroupés dans un fieldset, ou dans un élément avec role=\"group\" (ou radiogroup pour des boutons radio)."},
+    {"id": "raweb-11-6", "ref": "11.6", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Dans chaque formulaire, chaque regroupement de champs de même nature a-t-il une légende ?", "impact": "RAWeb 11.6 (WCAG 1.3.1 / 3.3.2) : un regroupement sans légende ne donne pas la question commune : les choix « Oui » et « Non » restent annoncés sans contexte.", "explication": "Pour chaque regroupement trouvé au critère 11.5, vérifie qu'il a une légende : legend dans le fieldset, ou aria-label ou aria-labelledby sur l'élément role=\"group\". Au lecteur d'écran, la légende doit être annoncée en entrant dans le groupe."},
+    {"id": "raweb-11-7", "ref": "11.7", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "modere", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Dans chaque formulaire, chaque légende associée à un regroupement de champs de même nature est-elle pertinente ?", "impact": "RAWeb 11.7 (WCAG 1.3.1 / 3.3.2) : une légende vague (« Choix », « Informations ») ne dit pas à quoi répondent les champs du groupe.", "explication": "Lis chaque légende de regroupement : elle doit énoncer la question ou le thème commun aux champs (« Souhaitez-vous recevoir la newsletter ? », « Date de naissance »)."},
+    {"id": "raweb-11-9", "ref": "11.9", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Dans chaque formulaire, l’intitulé de chaque bouton est-il pertinent (hors cas particuliers) ?", "impact": "RAWeb 11.9 (WCAG 2.5.3 / 4.1.2) : un bouton sans intitulé ou à l'intitulé vague (« OK », icône seule) ne dit pas ce qu'il va faire ; un nom accessible différent du texte visible gêne aussi la commande vocale.", "explication": "Écoute chaque bouton du formulaire au lecteur d'écran : l'intitulé doit dire l'action (« Envoyer la demande », « Rechercher »), y compris pour un bouton icône. Si le bouton a un texte visible, le nom annoncé doit le contenir."},
+    {"id": "raweb-11-10", "ref": "11.10", "theme_ruxal": "Formulaires", "theme_ref": "11. Formulaires", "niveau": "serieux", "niveau_wcag": "A", "siPresent": true, "horsSelection": false, "declencheur": "formulaire", "etape": "3b", "libelle": "Dans chaque formulaire, le contrôle de saisie est-il utilisé de manière pertinente (hors cas particuliers) ?", "impact": "RAWeb 11.10 (WCAG 3.3.1 / 3.3.2) : un champ obligatoire ou un format attendu signalés seulement par un astérisque coloré, ou des erreurs non reliées à leur champ, font échouer la saisie sans que l'utilisateur comprenne pourquoi.", "explication": "Avant toute saisie, vérifie que les champs obligatoires et les formats attendus (date, téléphone) sont indiqués de façon visible et restitués au lecteur d'écran (dans l'étiquette, ou par required, aria-required ou aria-describedby). Puis envoie le formulaire vide ou mal rempli : chaque message d'erreur doit être visible, nommer le champ concerné et être restitué (étiquette, aria-describedby ou aria-invalid avec son message)."},
+    {"id": "raweb-12-6", "ref": "12.6", "theme_ruxal": "Navigation & Structure", "theme_ref": "12. Navigation", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "3a", "libelle": "Les zones de regroupement de contenus présentes dans plusieurs pages web (à l’exception des zones principales constituant la structure du document) peuvent-elles être atteintes ou évitées, si nécessaire ?", "impact": "RAWeb 12.6 (WCAG 1.3.1 / 2.4.1 / 4.1.2) : les blocs répétés de page en page (menu secondaire, encart, outils) sans moyen de les identifier ou de les éviter obligent à les reparcourir à chaque page.", "explication": "Repère les zones de contenu qui se répètent sur plusieurs pages, hors en-tête, navigation principale, contenu principal et pied de page. Chacune doit avoir un repère (landmark adapté), un titre, ou pouvoir être masquée ou évitée par un lien ou un bouton placé juste avant."},
+    {"id": "raweb-12-7", "ref": "12.7", "theme_ruxal": "Navigation & Structure", "theme_ref": "12. Navigation", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Dans chaque page web, un lien d’évitement ou d’accès rapide à la zone de contenu principal est-il présent (hors cas particuliers) ?", "impact": "RAWeb 12.7 (WCAG 2.4.1 / 2.4.3 / 3.2.3) : sans lien d'évitement, l'utilisateur au clavier doit traverser tout l'en-tête et le menu, à chaque page, avant d'atteindre le contenu.", "explication": "Charge la page et appuie sur Tab : un lien « Aller au contenu » (visible au moins quand il reçoit le focus) doit apparaître parmi les premiers et amener réellement le focus au début du contenu principal. Il doit être au même endroit sur toutes les pages."},
+    {"id": "raweb-12-8", "ref": "12.8", "theme_ruxal": "Navigation & Structure", "theme_ref": "12. Navigation", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Dans chaque page web, l’ordre de tabulation est-il cohérent ?", "impact": "RAWeb 12.8 (WCAG 2.4.3) : un ordre de tabulation illogique désoriente l'utilisateur au clavier, qui saute d'une zone à l'autre et perd le fil.", "explication": "Parcours la page avec Tab et Maj+Tab : l'ordre doit rester logique et suivre le sens de lecture. Vérifie aussi après une action qui insère ou met à jour un contenu (fenêtre modale, message, liste filtrée). Repère les tabindex positifs à l'inspecteur."},
+    {"id": "raweb-12-9", "ref": "12.9", "theme_ruxal": "Navigation & Structure", "theme_ref": "12. Navigation", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Dans chaque page web, la navigation ne doit pas contenir de piège au clavier. Cette règle est-elle respectée ?", "impact": "RAWeb 12.9 (WCAG 2.1.1 / 2.1.2) : un piège au clavier bloque totalement l'utilisateur, qui ne peut plus quitter un composant ni continuer dans la page.", "explication": "Au clavier seul, parcours toute la page, y compris les lecteurs vidéo, cartes, iframes et fenêtres modales : depuis chaque élément, Tab et Maj+Tab (ou une touche dont l'utilisateur est informé, comme les flèches ou Échap) doivent permettre d'en sortir."},
+    {"id": "raweb-12-11", "ref": "12.11", "theme_ruxal": "Composants Interactifs", "theme_ref": "12. Navigation", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "4", "libelle": "Dans chaque page web, les contenus additionnels apparaissant au survol, à la prise de focus ou à l’activation d’un composant d’interface sont-ils si nécessaire atteignables au clavier ?", "impact": "RAWeb 12.11 (WCAG 2.1.1) : un contenu additionnel (sous-menu, info-bulle, panneau) qui apparaît mais reste hors d'atteinte au clavier prive l'utilisateur de ses liens et de ses informations.", "explication": "Fais apparaître chaque contenu additionnel (survol, focus ou activation d'un composant) puis, au clavier, essaie d'y entrer : ses liens, boutons et informations doivent être atteignables avec Tab ou les flèches."},
+    {"id": "raweb-13-1", "ref": "13.1", "theme_ruxal": "Composants Interactifs", "theme_ref": "13. Consultation", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "1", "libelle": "Pour chaque page web, l’utilisateur a-t-il le contrôle de chaque limite de temps modifiant le contenu (hors cas particuliers) ?", "impact": "RAWeb 13.1 (WCAG 2.2.1 / 2.2.2) : une limite de temps non contrôlable (session qui expire, page qui se recharge ou redirige seule) fait perdre la saisie ou le contenu aux personnes qui lisent ou saisissent plus lentement.", "explication": "Repère les rafraîchissements, les redirections automatiques et les limites de session. Pour chacun, l'utilisateur doit pouvoir arrêter ou supprimer la limite, l'allonger, ou être prévenu avant l'échéance avec la possibilité de la prolonger. Une redirection automatique doit être immédiate. Une limite de session d'au moins 20 heures est acceptée."},
+    {"id": "raweb-13-7", "ref": "13.7", "theme_ruxal": "Contenu & Lisibilité", "theme_ref": "13. Consultation", "niveau": "critique", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, les changements brusques de luminosité ou les effets de flash sont-ils correctement utilisés ?", "impact": "RAWeb 13.7 (WCAG 2.3.1) : un flash ou un changement brusque de luminosité au-delà du seuil peut déclencher une crise chez les personnes épileptiques photosensibles.", "explication": "Repère tout contenu qui clignote ou flashe rapidement (vidéo, animation, image animée). L'effet doit rester sous 3 flashs par seconde, ou couvrir une très petite surface. En cas de doute, utilise un outil d'analyse des flashs."},
+    {"id": "raweb-13-8", "ref": "13.8", "theme_ruxal": "Contenu & Lisibilité", "theme_ref": "13. Consultation", "niveau": "serieux", "niveau_wcag": "A", "siPresent": false, "horsSelection": false, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur (hors cas particuliers) ?", "impact": "RAWeb 13.8 (WCAG 2.2.1 / 2.2.2) : un contenu qui bouge ou clignote sans fin (carrousel, bandeau défilant, animation) gêne la lecture et la concentration, et peut devenir illisible pour certaines personnes.", "explication": "Repère chaque contenu en mouvement ou clignotant lancé automatiquement (carrousel, bandeau défilant, animation) : il doit durer 5 secondes au plus, ou pouvoir être arrêté et relancé, masqué, ou affiché sans mouvement, par un contrôle atteignable au clavier."},
+    {"id": "raweb-13-11", "ref": "13.11", "theme_ruxal": "Composants Interactifs", "theme_ref": "13. Consultation", "niveau": "modere", "niveau_wcag": "A", "siPresent": false, "horsSelection": true, "declencheur": "", "etape": "1", "libelle": "Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ?", "impact": "RAWeb 13.11 (WCAG 2.5.2) : une action déclenchée dès l'appui (mousedown, touchstart) part sur une simple erreur de visée, sans rattrapage possible, ce qui pénalise surtout les personnes qui ont des tremblements ou une motricité réduite.", "explication": "Sur les boutons, liens et contrôles qui déclenchent une action, appuie (souris ou doigt), puis fais glisser le pointeur hors de la cible avant de relâcher : l'action ne doit pas avoir lieu. Elle doit se déclencher au relâchement (événement click) et pas dès l'appui, sauf si l'action peut être annulée ensuite, ou si l'appui est indispensable (touche de piano virtuel, par exemple). À l'inspecteur, repère les gestionnaires mousedown, pointerdown ou touchstart qui déclenchent une action."},
+    {"id": "bp1", "horsRef": true, "ref": "", "theme_ruxal": "Composants Interactifs", "theme_ref": "Hors référentiel RAWeb, bonne pratique", "etape": "1", "niveau": "modere", "niveau_wcag": "", "libelle": "Chaque cible isolée (bouton, icône, case à cocher, lien hors d'un texte) mesure au moins 24×24 px CSS, ou est assez espacée de ses voisines pour être activée sans erreur.", "impact": "Une cible trop petite, ou collée à sa voisine, provoque des clics ou des appuis ratés ou involontaires, surtout pour les personnes ayant des tremblements, une préhension limitée, ou sur écran tactile.", "explication": "Mesure à l'inspecteur la zone cliquable réelle des boutons, icônes, cases et liens isolés (pas seulement l'icône visible) : au moins 24 × 24 px CSS, ou assez d'espace autour pour qu'un cercle de 24 px centré sur la cible ne touche aucune autre cible. Les liens dans un paragraphe de texte ne sont pas concernés.", "note": "Pas une exigence du RAWeb 1.1 : le référentiel repose sur les WCAG 2.1, où la taille de cible n'est qu'un critère AAA (2.5.5, 44 × 44 px). Le seuil de 24 px vient du critère 2.5.8 des WCAG 2.2 (niveau AA).", "sources": [{"t": "W3C, WCAG 2.2, SC 2.5.8 Target Size (Minimum), niveau AA : 24×24 px", "u": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html"}, {"t": "W3C, WCAG 2.1, SC 2.5.5 Target Size, niveau AAA : 44×44 px", "u": "https://www.w3.org/WAI/WCAG21/Understanding/target-size.html"}]},
+    {"id": "bp2", "horsRef": true, "ref": "", "theme_ruxal": "Navigation & Structure", "theme_ref": "Hors référentiel RAWeb, bonne pratique", "etape": "4", "niveau": "serieux", "niveau_wcag": "", "libelle": "Chaque fenêtre modale se ferme par un bouton visible atteignable au clavier et par la touche Échap.", "impact": "Sans moyen évident de fermer une fenêtre modale, l'utilisateur au clavier ou au lecteur d'écran reste bloqué devant, ou doit recharger la page et perd ce qu'il faisait.", "explication": "Ouvre chaque fenêtre modale (boîte de dialogue, panneau, bannière de consentement) : elle doit se fermer par un bouton visible et atteignable au clavier, et par la touche Échap. Vérifie aussi que le focus est placé dans la fenêtre à l'ouverture.", "note": "Aucun critère du RAWeb 1.1 ne l'exige en tant que tel ; une fenêtre impossible à quitter au clavier relève en revanche du critère 12.9 (piège au clavier). Pattern décrit par les WAI-ARIA Authoring Practices.", "sources": [{"t": "W3C, WAI-ARIA Authoring Practices, Modal Dialog Pattern (Keyboard Interaction : Échap ferme la fenêtre)", "u": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"}]},
+    {"id": "bp3", "horsRef": true, "ref": "", "theme_ruxal": "Navigation & Structure", "theme_ref": "Hors référentiel RAWeb, bonne pratique", "etape": "4", "niveau": "modere", "niveau_wcag": "", "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouverte (s'il existe encore).", "impact": "Le focus retombe en haut de la page ou sur un élément sans rapport : l'utilisateur de lecteur d'écran ou de clavier perd sa position et doit reparcourir la page depuis le début.", "explication": "Au clavier, ouvre une fenêtre modale depuis un bouton puis ferme-la (bouton Fermer, Échap) : le focus doit revenir sur ce bouton (ou, s'il n'existe plus, sur un élément logique proche). Un focus perdu ou renvoyé au début de la page est à signaler ; selon l'appréciation de l'auditeur, il peut aussi se rattacher au critère 12.8 (ordre de tabulation).", "note": "Aucun critère du RAWeb 1.1 ne l'exige en tant que tel. Pattern décrit par les WAI-ARIA Authoring Practices.", "sources": [{"t": "W3C, WAI-ARIA Authoring Practices, Modal Dialog Pattern (Keyboard Interaction : le focus revient à l'élément qui a ouvert la fenêtre)", "u": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/"}]}
+  ];
+  var THEMES_RUXAL = ["Navigation & Structure", "Composants Interactifs", "Images & Médias", "Couleurs & Contrastes", "Contenu & Lisibilité", "Fondations Techniques", "Formulaires"];
+  var DECLENCHEURS = [{"id": "captcha", "libelle": "CAPTCHA", "question": "Cet écran contient-il un CAPTCHA ?"}, {"id": "image-complexe", "libelle": "Image complexe", "question": "Cet écran contient-il une image complexe (graphique, schéma, carte, infographie) ?"}, {"id": "media-temporel", "libelle": "Média temporel ou son", "question": "Cet écran contient-il un audio, une vidéo, ou un son qui se lance seul ?"}, {"id": "media-non-temporel", "libelle": "Média non temporel", "question": "Cet écran contient-il un média non temporel (carte interactive, visite virtuelle, animation ou objet embarqué) ?"}, {"id": "tableau-donnees", "libelle": "Tableau de données", "question": "Cet écran contient-il un tableau de données ?"}, {"id": "cadre", "libelle": "Cadre (iframe)", "question": "Cet écran contient-il un cadre (iframe : vidéo intégrée, carte, formulaire externe) ?"}, {"id": "formulaire", "libelle": "Formulaire", "question": "Cet écran contient-il au moins un champ de saisie ?"}, {"id": "changement-langue", "libelle": "Autre langue", "question": "Cet écran contient-il un passage dans une autre langue que celle de la page ?"}];
+  var FAMILLES = [{"id": "restitution", "libelle": "Restitution par le lecteur d'écran", "etape": "3"}, {"id": "structure", "libelle": "Structure et code", "etape": "2"}, {"id": "clavier", "libelle": "Clavier et focus", "etape": "4"}, {"id": "visuel", "libelle": "Perception visuelle", "etape": "1"}, {"id": "formulaires", "libelle": "Formulaires", "etape": "1"}, {"id": "medias", "libelle": "Médias", "etape": "1"}, {"id": "temps", "libelle": "Temps, mouvement et pointeur", "etape": "1"}];
+  var SYMPTOMES = [{"id": "nom-absent", "famille": "restitution", "controle": "Présence d'un nom", "symptome": "Élément restitué sans nom (seulement « bouton », « lien », « image »...)", "criteres": [], "selon": [{"element": "image porteuse d'information", "criteres": ["raweb-1-1"]}, {"element": "lien", "criteres": ["raweb-6-2"]}, {"element": "champ de formulaire", "criteres": ["raweb-11-1"]}, {"element": "bouton de formulaire", "criteres": ["raweb-11-9"]}, {"element": "cadre", "criteres": ["raweb-2-1"]}, {"element": "composant construit en script (bouton, onglet, menu)", "criteres": ["raweb-7-1"]}]}, {"id": "nom-non-pertinent", "famille": "restitution", "controle": "Pertinence du nom", "symptome": "Nom restitué faux, vague ou incompréhensible hors contexte (« cliquez ici », « image123.png »)", "criteres": [], "selon": [{"element": "image porteuse d'information", "criteres": ["raweb-1-3"]}, {"element": "CAPTCHA", "criteres": ["raweb-1-4"]}, {"element": "lien", "criteres": ["raweb-6-1"]}, {"element": "champ de formulaire", "criteres": ["raweb-11-2"]}, {"element": "bouton de formulaire", "criteres": ["raweb-11-9"]}, {"element": "groupe de champs", "criteres": ["raweb-11-7"]}, {"element": "composant construit en script (bouton, onglet, menu)", "criteres": ["raweb-7-1"]}]}, {"id": "decoratif-restitue", "famille": "restitution", "controle": "Éléments décoratifs ignorés", "symptome": "Image ou élément décoratif restitué par le lecteur d'écran", "criteres": ["raweb-1-2"], "selon": []}, {"id": "cache-restitue", "famille": "restitution", "controle": "Contenus cachés", "symptome": "Contenu caché restitué, ou contenu visible ignoré par le lecteur d'écran", "criteres": ["raweb-10-8"], "selon": []}, {"id": "role-etat", "famille": "restitution", "controle": "Rôle et état", "symptome": "Rôle ou état non restitué (bouton lu comme du texte, case cochée ou menu ouvert non annoncé)", "criteres": ["raweb-7-1"], "selon": []}, {"id": "message-non-restitue", "famille": "restitution", "controle": "Messages", "symptome": "Message de confirmation, de chargement ou d'erreur affiché mais non restitué", "criteres": ["raweb-7-5"], "selon": [{"element": "message d'erreur de formulaire", "criteres": ["raweb-11-10"]}]}, {"id": "langue", "famille": "restitution", "controle": "Langue", "symptome": "Texte prononcé dans la mauvaise langue", "criteres": [], "selon": [{"element": "écran entier", "criteres": ["raweb-8-3", "raweb-8-4"]}, {"element": "passage dans une autre langue", "criteres": ["raweb-8-7", "raweb-8-8"]}]}, {"id": "titre-ecran", "famille": "restitution", "controle": "Titre de l'écran", "symptome": "Titre de l'écran (onglet du navigateur) absent, identique partout ou peu clair", "criteres": ["raweb-8-5", "raweb-8-6"], "selon": []}, {"id": "titres", "famille": "structure", "controle": "Titres", "symptome": "Titres absents, sautés, mal hiérarchisés, ou texte mis en forme comme un titre sans en être un", "criteres": ["raweb-9-1"], "selon": []}, {"id": "zones", "famille": "structure", "controle": "Zones principales", "symptome": "En-tête, navigation, contenu principal ou pied absents ou mal déclarés", "criteres": ["raweb-9-2"], "selon": []}, {"id": "listes", "famille": "structure", "controle": "Listes", "symptome": "Liste visuelle non restituée comme une liste", "criteres": ["raweb-9-3"], "selon": []}, {"id": "tableau", "famille": "structure", "controle": "Tableaux de données", "symptome": "En-têtes de tableau non restitués, ou cellule lue sans son en-tête", "criteres": ["raweb-5-6", "raweb-5-7"], "selon": []}, {"id": "code-invalide", "famille": "structure", "controle": "Validité du code", "symptome": "Code source invalide (balises mal fermées, identifiants en double)", "criteres": ["raweb-8-2"], "selon": []}, {"id": "non-atteignable", "famille": "clavier", "controle": "Atteinte et activation", "symptome": "Élément impossible à atteindre ou à activer au clavier, ou au pointeur", "criteres": ["raweb-7-3"], "selon": [{"element": "lecteur média", "criteres": ["raweb-4-11"]}, {"element": "contenu qui apparaît par la mise en forme seule", "criteres": ["raweb-10-14"]}]}, {"id": "focus-invisible", "famille": "clavier", "controle": "Visibilité du focus", "symptome": "On ne voit pas où se trouve le focus", "criteres": ["raweb-10-7"], "selon": []}, {"id": "ordre-focus", "famille": "clavier", "controle": "Ordre du focus", "symptome": "Ordre de tabulation illogique, ou focus perdu ou déplacé de façon inattendue après une action", "criteres": ["raweb-12-8", "bp3"], "selon": []}, {"id": "piege", "famille": "clavier", "controle": "Sortie au clavier", "symptome": "Focus bloqué dans un élément, impossible d'en sortir au clavier", "criteres": ["raweb-12-9", "bp2"], "selon": []}, {"id": "contournement", "famille": "clavier", "controle": "Contournement des blocs", "symptome": "Aucun lien d'évitement, ou menus et blocs répétés impossibles à passer", "criteres": ["raweb-12-6", "raweb-12-7"], "selon": []}, {"id": "contenu-additionnel", "famille": "clavier", "controle": "Contenus additionnels", "symptome": "Infobulle, sous-menu ou contenu au survol ou au focus impossible à atteindre, à garder affiché ou à fermer", "criteres": ["raweb-12-11", "raweb-10-14"], "selon": []}, {"id": "contraste", "famille": "visuel", "controle": "Contrastes", "symptome": "Texte, icône, bordure de champ, indicateur de focus ou graphique trop peu contrasté avec son voisinage", "criteres": [], "selon": [{"element": "texte", "criteres": ["raweb-3-2"]}, {"element": "icône, bordure, focus ou graphique", "criteres": ["raweb-3-3"]}]}, {"id": "couleur-seule", "famille": "visuel", "controle": "Information par la couleur", "symptome": "Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)", "criteres": ["raweb-3-1"], "selon": []}, {"id": "forme-position", "famille": "visuel", "controle": "Information par la forme ou la position", "symptome": "Information donnée uniquement par la forme, la taille ou la position (« le bouton rond à droite »)", "criteres": ["raweb-10-9", "raweb-10-10"], "selon": []}, {"id": "image-complexe", "famille": "visuel", "controle": "Description détaillée", "symptome": "Graphique, schéma ou carte sans description détaillée, ou description incomplète", "criteres": ["raweb-1-6", "raweb-1-7"], "selon": []}, {"id": "agrandissement", "famille": "visuel", "controle": "Agrandissement", "symptome": "Contenu tronqué, superposé ou illisible quand le texte est agrandi", "criteres": ["raweb-10-4"], "selon": []}, {"id": "cible-petite", "famille": "visuel", "controle": "Taille des cibles", "symptome": "Cible trop petite ou trop proche de ses voisines pour être activée sans erreur", "criteres": ["bp1"], "selon": []}, {"id": "etiquette", "famille": "formulaires", "controle": "Étiquettes", "symptome": "Champ sans étiquette, ou étiquette peu claire ou disparue à la saisie", "criteres": ["raweb-11-1", "raweb-11-2"], "selon": []}, {"id": "regroupement", "famille": "formulaires", "controle": "Regroupements", "symptome": "Champs liés (adresse, boutons radio) non regroupés, ou groupe sans légende ou à la légende peu claire", "criteres": ["raweb-11-5", "raweb-11-6", "raweb-11-7"], "selon": []}, {"id": "erreur-saisie", "famille": "formulaires", "controle": "Contrôle de saisie", "symptome": "Format attendu non indiqué, erreur non signalée, peu explicite ou non restituée", "criteres": ["raweb-11-10"], "selon": []}, {"id": "bouton-formulaire", "famille": "formulaires", "controle": "Boutons de formulaire", "symptome": "Bouton d'envoi ou d'action à l'intitulé absent ou peu clair", "criteres": ["raweb-11-9"], "selon": []}, {"id": "captcha", "famille": "formulaires", "controle": "CAPTCHA", "symptome": "CAPTCHA sans alternative, ou dont la nature n'est pas restituée", "criteres": ["raweb-1-4", "raweb-1-5"], "selon": []}, {"id": "media-alternative", "famille": "medias", "controle": "Transcription et audiodescription", "symptome": "Audio ou vidéo sans transcription ni audiodescription, ou alternative incomplète", "criteres": ["raweb-4-1", "raweb-4-2"], "selon": []}, {"id": "sous-titres", "famille": "medias", "controle": "Sous-titres", "symptome": "Vidéo sans sous-titres, ou sous-titres incomplets ou décalés", "criteres": ["raweb-4-3", "raweb-4-4"], "selon": []}, {"id": "son-auto", "famille": "medias", "controle": "Son automatique", "symptome": "Son lancé automatiquement, sans moyen de l'arrêter", "criteres": ["raweb-4-10"], "selon": []}, {"id": "commandes-media", "famille": "medias", "controle": "Commandes du lecteur", "symptome": "Lecteur audio ou vidéo inutilisable au clavier ou au pointeur", "criteres": ["raweb-4-11"], "selon": []}, {"id": "media-non-temporel", "famille": "medias", "controle": "Médias non temporels", "symptome": "Carte interactive, visite virtuelle, animation ou objet embarqué sans alternative, ou alternative incomplète", "criteres": ["raweb-4-8", "raweb-4-9"], "selon": []}, {"id": "limite-temps", "famille": "temps", "controle": "Limites de temps", "symptome": "Délai, déconnexion ou rafraîchissement automatique sans possibilité de l'arrêter ou de le prolonger", "criteres": ["raweb-13-1"], "selon": []}, {"id": "mouvement", "famille": "temps", "controle": "Mouvement", "symptome": "Contenu qui bouge, défile ou clignote sans pouvoir le mettre en pause", "criteres": ["raweb-13-8"], "selon": []}, {"id": "flash", "famille": "temps", "controle": "Flashs", "symptome": "Flashs ou changements brusques de luminosité", "criteres": ["raweb-13-7"], "selon": []}, {"id": "annulation-pointeur", "famille": "temps", "controle": "Annulation au pointeur", "symptome": "Action déclenchée dès l'appui, sans pouvoir l'annuler en glissant hors de l'élément", "criteres": ["raweb-13-11"], "selon": []}];
+  var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
+  // <<< FIN_DONNEES >>>
+
+  var VERSION = '2.0';
+  var CLE = 'atelier-ruxaweb2';
+
+  // ---------- Référentiel ----------
+  var PAR_ID = {}; CRITERES.forEach(function(c){ PAR_ID[c.id] = c; });
+  var RAWEB = CRITERES.filter(function(c){ return !c.horsRef; });
+  var SELECTION = RAWEB.filter(function(c){ return !c.horsSelection; });
+  // Composant réutilisé : seuls les critères qui tiennent à la mécanique du composant se propagent aux autres
+  // écrans ; ceux qui dépendent du contenu (noms, étiquettes, alternatives) restent à vérifier écran par écran.
+  var MECANIQUE = ['7.1','7.3','7.5','10.7','10.14','11.10','12.8','12.9','12.11','13.11'];
+  var GRAVITE = {critique:'Critique', serieux:'Sérieux', modere:'Modéré', mineur:'Mineur'};
+  var PRIORITE = {critique:'Highest', serieux:'High', modere:'Medium', mineur:'Low'};
+  var RANG_GRAVITE = {critique:0, serieux:1, modere:2, mineur:3};
+
+  // Parcours d'audit : préparer, puis pour chaque écran le tour à vide et les 4 étapes, puis clôture et résumé.
+  var ETAPES = [
+    {id:'vide', nom:'Tour à vide', familles:[],
+     faire:"Parcours l'écran comme un utilisateur, sans outil ni lecteur d'écran. Note ce qui gêne ou surprend.",
+     chercher:"Le but de l'écran, ses contenus particuliers (formulaire, vidéo, tableau) et ce que tu retrouveras ailleurs (en-tête, menu, pied de page).",
+     note:"Sans point de contrôle, une observation reste une note : elle ne change aucun statut."},
+    {id:'1', nom:'Usage standard', familles:['visuel','medias','temps','formulaires'],
+     faire:"Utilise l'écran normalement, à la souris ou au doigt, puis agrandis le texte à 200 %.",
+     chercher:"Couleurs et contrastes, informations données par la couleur ou la position, médias, contenus en mouvement, limites de temps."},
+    {id:'2', nom:'Code et outils', familles:['structure'],
+     faire:"Ouvre l'inspecteur du navigateur. Un outil automatique peut aider, sans remplacer ton jugement.",
+     chercher:"Titre de l'écran, langue, zones principales, titres, tableaux, cadres, validité du code."},
+    {id:'3a', nom:"Lecteur d'écran : contenus", familles:['restitution','structure'],
+     faire:"Parcours l'écran au lecteur d'écran, du début à la fin, puis active chaque composant.",
+     chercher:"Nom, rôle et état de chaque élément, alternatives des images, titres, listes, messages."},
+    {id:'3b', nom:"Lecteur d'écran : formulaires", familles:['formulaires','restitution'],
+     faire:"Remplis chaque formulaire au lecteur d'écran, puis provoque des erreurs.",
+     chercher:"Étiquettes, regroupements, intitulés des boutons, messages d'erreur restitués et liés aux champs."},
+    {id:'4', nom:'Clavier', familles:['clavier'],
+     faire:"Laisse la souris. Parcours l'écran au clavier : Tab, Maj+Tab, Entrée, Espace, flèches, Échap.",
+     chercher:"Focus visible, ordre logique, aucun piège, accès à tout ce qui s'ouvre au survol ou au focus."}
+  ];
+  var ETAPE = {}; ETAPES.forEach(function(e, i){ e.i = i; ETAPE[e.id] = e; });
+
+  var AIDE = {
+    accueil:{faire:"Crée un onglet par objet audité : un audit rapide sur 3 écrans au moins (accueil, écran avec formulaire, écran au contenu particulier), ou un scénario qui suit un parcours.",
+      chercher:"Chaque onglet a son propre taux. Le taux sélection SIP se lit à côté d'un audit simplifié du SIP ; le taux élargi ajoute 6 critères hors sélection."},
+    preparer:{faire:"Nomme les écrans et indique ce que chacun contient. Les critères liés à un contenu absent passent non applicables (NA).",
+      chercher:"Le reste des critères forme le périmètre : chacun devra recevoir un statut, rien n'est conforme par défaut."},
+    grille:{faire:"Les statuts viennent des observations. Ouvre un critère pour lire comment le vérifier, voir ses observations ou le retester.",
+      chercher:"Pointillés : conforme ailleurs, à confirmer sur cet écran. Un critère reste NT tant qu'aucune observation ne le tranche."},
+    cloture:{faire:"Tranche chaque critère resté sans statut, écran par écran. Une non-conformité demande un constat.",
+      chercher:"Les critères « à confirmer » viennent d'un constat conforme fait sur un autre écran."},
+    resume:{faire:"Relis les non-conformités, puis exporte depuis le menu Fichier : grille Excel, tickets Jira, sauvegarde.",
+      chercher:"Un constat partagé donne un seul ticket. Pour retester après correction, ouvre le critère dans la grille."}
+  };
+
+  // ---------- État ----------
+  function etatVide(){ return {v:2, auditNom:'', support:'desktop', onglets:[], vue:'accueil', ongletId:null, ecranId:null, etape:'vide', compteur:0}; }
+  var state = charger();
+  function charger(){
+    try{ var s = JSON.parse(localStorage.getItem(CLE)); if(s && s.v === 2) return s; }catch(e){}
+    return etatVide();
+  }
+  function sauver(){ try{ localStorage.setItem(CLE, JSON.stringify(state)); }catch(e){} }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function suivant(){ state.compteur = (state.compteur || 0) + 1; return state.compteur; }
+  function esc(v){ return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function onglet(){ return state.onglets.filter(function(o){ return o.id === state.ongletId; })[0] || null; }
+  function ecranDe(o, id){ return o.ecrans.filter(function(e){ return e.id === id; })[0] || null; }
+  function refTxt(c){ return c.horsRef ? 'Bonne pratique ' + c.id.replace(/\D/g, '') : 'RAWeb ' + c.ref; }
+
+  // ---------- Calcul des statuts ----------
+  // Statut d'un critère sur un écran, tiré des observations. Un élément partagé n'a pas de statut propre : son
+  // constat écrit dans les écrans cochés, comme une saisie faite sur chacun. Un #nc partagé vaut NC ; un #c
+  // partagé laisse « à confirmer » (AC) sur les autres écrans, car d'autres éléments peuvent violer le critère.
+  function concerne(obs, ecranId, c){
+    if(obs.ecran === ecranId) return 'propre';
+    if(!obs.partage || obs.partage.ecrans.indexOf(ecranId) === -1) return null;
+    if(obs.partage.genre === 'composant' && MECANIQUE.indexOf(c.ref) === -1) return null;
+    return 'partage';
+  }
+  function statutEcran(o, e, c){
+    if(c.siPresent && !(e.contenus || {})[c.declencheur]) return {s:'NA', cfg:true};
+    var dernierNt = 0;
+    o.obs.forEach(function(x){ if(x.tag === 'nt' && x.ecran === e.id && x.criteres.indexOf(c.id) > -1 && x.n > dernierNt) dernierNt = x.n; });
+    var nc = false, cPropre = false, naPropre = false, cPartage = false;
+    o.obs.forEach(function(x){
+      if(x.n <= dernierNt || x.tag === 'nt' || x.criteres.indexOf(c.id) === -1) return;
+      var k = concerne(x, e.id, c); if(!k) return;
+      if(x.tag === 'nc') nc = true;
+      else if(x.tag === 'c'){ if(k === 'propre') cPropre = true; else cPartage = true; }
+      else if(x.tag === 'na' && k === 'propre') naPropre = true;
+    });
+    if(nc) return {s:'NC', conflit:naPropre};
+    if(naPropre) return {s:'NA', conflit:cPropre};
+    if(cPropre) return {s:'C'};
+    if(cPartage) return {s:'AC'};
+    return {s:'NT'};
+  }
+  // Statut d'ensemble de l'onglet : NA si non applicable partout, NC si NC sur un écran, NT s'il reste un écran
+  // à trancher, sinon C. Même règle que la version 1 et que la grille du SIP (le pire cas l'emporte).
+  function statutOnglet(o, c){
+    var tous = o.ecrans.map(function(e){ var r = statutEcran(o, e, c).s; return r === 'AC' ? 'NT' : r; });
+    if(!tous.length || tous.every(function(s){ return s === 'NA'; })) return 'NA';
+    if(tous.indexOf('NC') > -1) return 'NC';
+    if(tous.indexOf('NT') > -1) return 'NT';
+    return 'C';
+  }
+  function taux(o, liste){
+    var C = 0, total = 0, nt = 0;
+    liste.forEach(function(c){
+      var s = statutOnglet(o, c);
+      if(s === 'NA') return;
+      total++; if(s === 'C') C++; if(s === 'NT') nt++;
+    });
+    return {pct: total ? Math.round(C / total * 100) : null, C:C, total:total, nt:nt, complet: nt === 0};
+  }
+  function ntEcran(o, e){
+    return RAWEB.filter(function(c){ var s = statutEcran(o, e, c).s; return s === 'NT' || s === 'AC'; }).length;
+  }
+
+  // ---------- Rendu ----------
+  var $main = document.getElementById('main'), $aide = document.getElementById('aide'), $nav = document.getElementById('onglet-nav');
+  var brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:'nc', ailleurs:false, genre:'partout', nomPartage:'', ecransPartage:[]};
+  var confirmation = null;
+
+  function rendre(focus){
+    var o = onglet();
+    if(state.vue !== 'accueil' && !o){ state.vue = 'accueil'; }
+    $nav.innerHTML = o && state.vue !== 'accueil' ? [['audit','Audit'],['grille','Grille'],['cloture','Clôture'],['resume','Résumé'],['preparer','Écrans']].map(function(v){
+      return '<button type="button" data-action="vue" data-vue="'+v[0]+'"'+(state.vue === v[0] ? ' aria-current="page"' : '')+'>'+v[1]+'</button>';
+    }).join('') : '';
+    var vues = {accueil:vueAccueil, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, cloture:vueCloture, resume:vueResume};
+    $main.innerHTML = (vues[state.vue] || vueAccueil)(o);
+    $aide.innerHTML = vueAide(o);
+    document.title = (o && state.vue !== 'accueil' ? o.nom + ' · ' : '') + 'Atelier RUXAWEB 2';
+    sauver();
+    if(focus){ var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
+  }
+
+  // L'aide occupe toujours la même place et garde la même structure : le parcours, puis « À faire » et « À chercher ».
+  function vueAide(o){
+    var html = '<h2 id="aide-titre">Aide</h2><h3>Parcours</h3><ol class="parcours">';
+    var dansOnglet = !!o && state.vue !== 'accueil';
+    var e = o ? ecranDe(o, state.ecranId) : null;
+    function pas(id, txt, ici, fait, cls, action, extra){
+      var inner = '<span class="rond" aria-hidden="true">'+(fait ? '&#10003;' : '')+'</span><span>'+txt+(fait ? '<span class="sr"> (fait)</span>' : '')+'</span>';
+      var c = (ici ? 'ici ' : '') + (fait ? 'fait ' : '');
+      if(dansOnglet && action) return '<li class="'+(cls||'')+'"><button type="button" class="'+c+'" data-action="'+action+'"'+(extra||'')+(ici ? ' aria-current="step"' : '')+'>'+inner+'</button></li>';
+      return '<li class="'+(cls||'')+'"><span class="pas '+c+'">'+inner+'</span></li>';
+    }
+    html += pas('prep','Préparer les écrans', state.vue === 'preparer', !!o && o.ecrans.length > 0, '', 'vue', ' data-vue="preparer"');
+    html += '<li><span class="pas petit doux">Pour chaque écran'+(e && dansOnglet ? ' : <b>'+esc(e.nom)+'</b>' : '')+'</span></li>';
+    ETAPES.forEach(function(et){
+      var fait = !!(e && (e.etapes || {})[et.id]);
+      html += pas(et.id, (et.id === 'vide' ? '' : et.id + '. ') + et.nom, state.vue === 'audit' && state.etape === et.id, fait, 'sous', 'etape', ' data-etape="'+et.id+'"');
+    });
+    html += pas('clo','Clôture', state.vue === 'cloture', !!(o && o.valide), '', 'vue', ' data-vue="cloture"');
+    html += pas('res','Résumé et exports', state.vue === 'resume', false, '', 'vue', ' data-vue="resume"');
+    html += '</ol>';
+    var a = state.vue === 'audit' ? ETAPE[state.etape] : (AIDE[state.vue] || AIDE.accueil);
+    if(state.vue === 'grille') a = AIDE.grille;
+    html += '<h3>À faire</h3><p>'+esc(a.faire)+'</p><h3>À chercher</h3><p>'+esc(a.chercher)+'</p>';
+    if(a.note) html += '<p class="petit doux">'+esc(a.note)+'</p>';
+    return html;
+  }
+
+  function vueAccueil(){
+    var html = '<h1>Tableau de bord</h1>';
+    html += '<div class="carte grille2"><div class="champ"><label class="lbl" for="audit-nom">Nom de l\'audit</label><input type="text" id="audit-nom" value="'+esc(state.auditNom)+'" placeholder="Ex. Boutique en ligne" autocomplete="off"></div>' +
+      '<div class="champ"><label class="lbl" for="audit-support">Support</label><select id="audit-support"><option value="desktop"'+(state.support === 'desktop' ? ' selected' : '')+'>Ordinateur</option><option value="mobile"'+(state.support === 'mobile' ? ' selected' : '')+'>Mobile (web adaptatif)</option></select></div></div>';
+    html += '<div class="cartes">';
+    state.onglets.forEach(function(o){
+      var t = taux(o, SELECTION), te = taux(o, RAWEB);
+      var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP · élargi '+te.pct+' %</span>'
+        : '<span class="pastille s-NT" style="align-self:flex-start;margin-top:6px">'+te.nt+' critère'+(te.nt > 1 ? 's' : '')+' à trancher</span>';
+      html += '<button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux">'+(o.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span>'+info+'</button>';
+    });
+    html += '<button type="button" class="tuile nouveau" data-action="nouvel-onglet">+ Nouvel onglet</button></div>';
+    return html;
+  }
+
+  function vuePreparer(o){
+    var mini = o.type === 'scenario' ? 2 : 3;
+    var html = '<h1>Écrans de l\'onglet</h1><div class="carte grille2">' +
+      '<div class="champ"><label class="lbl" for="onglet-nom">Nom de l\'onglet</label><input type="text" id="onglet-nom" value="'+esc(o.nom)+'" autocomplete="off"></div>' +
+      '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl">Type</legend><div class="rangee">' +
+      '<label class="choix"><input type="radio" name="onglet-type" value="rapide"'+(o.type !== 'scenario' ? ' checked' : '')+'> Audit rapide</label>' +
+      '<label class="choix"><input type="radio" name="onglet-type" value="scenario"'+(o.type === 'scenario' ? ' checked' : '')+'> Scénario (parcours)</label></div></fieldset></div>';
+    html += '<section class="carte pile" aria-labelledby="t-ecrans"><h2 id="t-ecrans">'+(o.type === 'scenario' ? 'Écrans du parcours, dans l\'ordre' : 'Écrans de l\'échantillon')+' et ce qu\'ils contiennent</h2><div>';
+    o.ecrans.forEach(function(e, i){
+      html += '<div class="ecran-ligne"><label class="sr" for="ecran-'+e.id+'">Nom de l\'écran '+(i+1)+'</label><input type="text" id="ecran-'+e.id+'" data-ecran-nom="'+e.id+'" value="'+esc(e.nom)+'" autocomplete="off">' +
+        (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') +
+        '<div class="contenus" role="group" aria-label="Contenus de '+esc(e.nom)+'">' + DECLENCHEURS.map(function(d){
+          var on = !!(e.contenus || {})[d.id];
+          return '<button type="button" class="puce" aria-pressed="'+on+'" data-action="contenu" data-ecran="'+e.id+'" data-d="'+d.id+'" title="'+esc(d.question)+'">'+esc(d.libelle)+'</button>';
+        }).join('') + '</div></div>';
+    });
+    html += '</div><div class="rangee entre"><button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button><span class="doux petit">'+mini+' écrans au moins.</span></div></section>';
+    html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="vue" data-vue="audit">Auditer</button></div>';
+    return html;
+  }
+
+  function badgePartage(o, x){
+    if(!x.partage) return '';
+    var noms = x.partage.ecrans.map(function(id){ var e = ecranDe(o, id); return e ? e.nom : ''; }).filter(Boolean);
+    return '<span class="etiq">'+(x.partage.genre === 'partout' ? 'Partout' : 'Composant')+' · '+esc(x.partage.nom)+'</span><span class="doux petit">aussi : '+esc(noms.join(', '))+'</span>';
+  }
+  function ligneObs(o, x, e){
+    var origine = x.ecran !== e.id ? (ecranDe(o, x.ecran) || {}).nom : null;
+    var invalide = x.tag !== 'nt' && x.criteres.some(function(id){
+      return o.obs.some(function(y){ return y.tag === 'nt' && y.ecran === e.id && y.n > x.n && y.criteres.indexOf(id) > -1; });
+    });
+    var cl = x.tag === 'nt' ? 'NT' : (x.criteres.length ? x.tag.toUpperCase() : 'NOTE');
+    var lib = {C:'C', NC:'NC', NA:'NA', NT:'Retest', NOTE:'Note'}[cl];
+    return '<div class="obs'+(invalide ? ' invalide' : '')+'"><span class="pastille s-'+cl+'">'+lib+'</span><div class="corps">' +
+      '<span class="texte">'+esc(x.texte)+(x.attendu ? ' <span class="doux">Attendu : '+esc(x.attendu)+'</span>' : '')+'</span>' +
+      '<span class="rangee">'+x.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('')+badgePartage(o, x)+
+      (origine ? '<span class="doux petit">constaté sur '+esc(origine)+'</span>' : '')+(invalide ? '<span class="doux petit">remplacé par un retest</span>' : '')+'</span></div>' +
+      (origine ? '' : '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+(confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button>')+'</div>';
+  }
+
+  function criteresProposes(){
+    var s = SYMPTOMES.filter(function(x){ return x.id === brouillon.point; })[0];
+    if(!s) return [];
+    var l = s.criteres.slice();
+    s.selon.forEach(function(x, i){ if(String(i) === brouillon.element) l = l.concat(x.criteres); });
+    return l.filter(function(id, i){ return l.indexOf(id) === i; });
+  }
+
+  function vueAudit(o){
+    if(!o.ecrans.length){ state.vue = 'preparer'; return vuePreparer(o); }
+    var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
+    var et = ETAPE[state.etape] || ETAPES[0];
+    var html = '<div class="audit"><nav class="ecrans" aria-label="Écrans et éléments partagés"><div class="carte"><h2>Écrans</h2>';
+    o.ecrans.forEach(function(x, i){
+      var nc = RAWEB.filter(function(c){ return statutEcran(o, x, c).s === 'NC'; }).length;
+      html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id ? ' aria-current="true"' : '')+'><span>'+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
+    });
+    html += '</div>';
+    ['partout','composant'].forEach(function(g){
+      var elts = {};
+      o.obs.forEach(function(x){ if(x.partage && x.partage.genre === g){ elts[x.partage.nom] = (elts[x.partage.nom] || 0) + 1; } });
+      var noms = Object.keys(elts);
+      html += '<div class="carte"><h2>'+(g === 'partout' ? 'Partout' : 'Composants')+'</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(n)+'</span><span class="doux petit">'+elts[n]+' constat'+(elts[n] > 1 ? 's' : '')+'</span></div>'; }).join('')
+        : '<p class="doux petit" style="margin:4px 8px">'+(g === 'partout' ? 'Identique sur plusieurs écrans : en-tête, menu, pied de page.' : 'Même composant, contenu différent : formulaire, fenêtre modale.')+'</p>') + '</div>';
+    });
+    var nte = ntEcran(o, e);
+    html += '</nav><div class="centre"><div class="rangee entre"><h1>'+esc(e.nom)+'</h1>'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'</div>';
+    html += formulaireObs(o, e, et);
+    // Les critères tranchés à la clôture sans constat (C, NA) restent dans la grille ; ici, une seule ligne les résume.
+    var liste = o.obs.filter(function(x){ return x.ecran === e.id || (x.partage && x.partage.ecrans.indexOf(e.id) > -1); });
+    var cloture = liste.filter(function(x){ return x.etape === 'cloture' && x.tag !== 'nc'; }).length;
+    liste = liste.filter(function(x){ return !(x.etape === 'cloture' && x.tag !== 'nc'); }).reverse();
+    html += '<section class="carte" aria-labelledby="t-obs"><h2 id="t-obs">Observations de cet écran ('+liste.length+')</h2>' + (liste.length ? liste.map(function(x){ return ligneObs(o, x, e); }).join('') : '<p class="doux">Aucune observation pour l\'instant.</p>') +
+      (cloture ? '<p class="doux petit" style="margin:8px 0 0">'+cloture+' critère(s) tranché(s) à la clôture, sans constat : voir la <button type="button" class="ref-btn" data-action="vue" data-vue="grille">grille</button>.</p>' : '') + '</section>';
+    var dernier = et.i === ETAPES.length - 1;
+    html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+(dernier ? 'Étape terminée, écran suivant' : 'Étape terminée, passer à : '+esc(ETAPES[et.i+1].nom))+'</button></div></div></div>';
+    return html;
+  }
+
+  function formulaireObs(o, e, et){
+    var props = criteresProposes();
+    var html = '<form class="carte pile" id="form-obs" novalidate><h2>Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span></h2>';
+    html += '<div class="champ"><label class="lbl" for="obs-texte">Constat</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea></div>';
+    html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-point">Point de contrôle</label><select id="obs-point"><option value="">Aucun : note libre</option>';
+    var ici = SYMPTOMES.filter(function(s){ return et.familles.indexOf(s.famille) > -1; }), autres = SYMPTOMES.filter(function(s){ return et.familles.indexOf(s.famille) === -1; });
+    function opts(l){ return l.map(function(s){ return '<option value="'+s.id+'"'+(s.id === brouillon.point ? ' selected' : '')+'>'+esc(s.controle)+'</option>'; }).join(''); }
+    if(ici.length) html += '<optgroup label="Cette étape">'+opts(ici)+'</optgroup>';
+    html += '<optgroup label="'+(ici.length ? 'Autres étapes' : 'Tous les points')+'">'+opts(autres)+'</optgroup></select></div>';
+    var s = SYMPTOMES.filter(function(x){ return x.id === brouillon.point; })[0];
+    if(s && s.selon.length){
+      html += '<div class="champ"><label class="lbl" for="obs-element">Type d\'élément</label><select id="obs-element"><option value="">'+(s.criteres.length ? 'Autre élément' : 'Choisir')+'</option>' + s.selon.map(function(x, i){ return '<option value="'+i+'"'+(String(i) === brouillon.element ? ' selected' : '')+'>'+esc(x.element)+'</option>'; }).join('') + '</select></div>';
+    } else {
+      html += '<div class="champ"><label class="lbl" for="obs-attendu">Attendu</label><input type="text" id="obs-attendu" value="'+esc(brouillon.attendu)+'" autocomplete="off"></div>';
+    }
+    html += '</div>';
+    if(s) html += '<p class="doux petit" style="margin:0">'+esc(s.symptome)+'</p>';
+    if(s && s.selon.length) html += '<div class="champ"><label class="lbl" for="obs-attendu">Attendu</label><input type="text" id="obs-attendu" value="'+esc(brouillon.attendu)+'" autocomplete="off"></div>';
+    var choisis = brouillon.crits;
+    var affiches = props.concat(choisis.filter(function(id){ return props.indexOf(id) === -1; }));
+    if(affiches.length){
+      html += '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl">Critères concernés</legend><div class="crit-choix">' + affiches.map(function(id){
+        var c = PAR_ID[id];
+        return '<label class="choix"><input type="checkbox" data-crit="'+id+'"'+(choisis.indexOf(id) > -1 ? ' checked' : '')+'> <span><b>'+esc(refTxt(c))+'</b>'+(c.horsSelection ? ' <span class="doux petit">hors sélection SIP</span>' : '')+' · '+esc(c.libelle)+'</span></label>';
+      }).join('') + '</div></fieldset>';
+    }
+    html += '<div class="champ"><label class="lbl" for="obs-ajout">Ajouter un autre critère</label><select id="obs-ajout"><option value="">Choisir dans la liste</option>' + CRITERES.map(function(c){ return '<option value="'+c.id+'">'+esc(refTxt(c))+' · '+esc(c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle)+'</option>'; }).join('') + '</select></div>';
+    if(brouillon.ailleurs){
+      var noms = {}; o.obs.forEach(function(x){ if(x.partage) noms[x.partage.nom] = x.partage.genre; });
+      html += '<fieldset class="ailleurs pile"><legend class="lbl" style="padding:0 6px">Aussi ailleurs</legend>' +
+        '<div class="rangee" role="radiogroup" aria-label="Identique partout ?"><span class="lbl">Identique partout ?</span>' +
+        '<label class="choix"><input type="radio" name="genre" value="partout"'+(brouillon.genre === 'partout' ? ' checked' : '')+'> Oui</label>' +
+        '<label class="choix"><input type="radio" name="genre" value="composant"'+(brouillon.genre === 'composant' ? ' checked' : '')+'> Non, seul le contenu change</label></div>' +
+        '<div class="champ"><label class="lbl" for="obs-partage-nom">Nom de l\'élément</label><input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="'+(brouillon.genre === 'partout' ? 'Ex. Menu principal' : 'Ex. Formulaire')+'" autocomplete="off"><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
+        '<div class="rangee" role="group" aria-label="Autres écrans concernés"><span class="lbl">Sur quels écrans ?</span>' + o.ecrans.filter(function(x){ return x.id !== e.id; }).map(function(x){
+          return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>'; }).join('') + '</div>' +
+        '<p class="doux petit" style="margin:0">'+(brouillon.genre === 'partout' ? 'Un constat non conforme vaut tel quel sur les écrans cochés. Un constat conforme y reste à confirmer.' : 'Seule la mécanique du composant se propage (rôle et état, focus, messages, erreurs) ; le contenu reste à vérifier sur chaque écran.')+'</p></fieldset>';
+    }
+    html += '<div class="rangee entre"><div class="tags" role="group" aria-label="Statut du constat">' +
+      [['c','#c','conforme'],['nc','#nc','non conforme'],['na','#na','non applicable']].map(function(t){ return '<button type="button" class="tag tag-'+t[0]+'" data-action="tag" data-tag="'+t[0]+'" aria-pressed="'+(brouillon.tag === t[0])+'" aria-label="'+t[1]+', '+t[2]+'">'+t[1]+'</button>'; }).join('') +
+      '</div><div class="rangee"><button type="button" class="btn btn-l" data-action="ailleurs" aria-expanded="'+brouillon.ailleurs+'">Aussi ailleurs</button><button type="submit" class="btn btn-p">Enregistrer</button></div></div></form>';
+    return html;
+  }
+
+  function cellule(s, conflit){
+    var lib = {C:'C', NC:'NC', NT:'NT', NA:'NA', AC:'C ?'}[s];
+    var titre = {AC:'Conforme ailleurs, à confirmer ici'}[s] || '';
+    return '<span class="pastille s-'+s+'"'+(titre ? ' title="'+titre+'"' : '')+'>'+lib+(conflit ? ' !' : '')+'</span>'+(s === 'AC' ? '<span class="sr"> (à confirmer)</span>' : '')+(conflit ? '<span class="sr"> (observations contradictoires)</span>' : '');
+  }
+
+  function vueGrille(o){
+    var t = taux(o, SELECTION), te = taux(o, RAWEB);
+    var html = '<div class="rangee entre"><h1>Grille des critères</h1><span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : te.nt+' critère(s) à trancher')+'</span></div>';
+    html += '<div class="tableau"><table><thead><tr><th scope="col">Critère</th><th scope="col">Intitulé</th>' + o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '<th scope="col">Onglet</th></tr></thead><tbody>';
+    THEMES_RUXAL.forEach(function(th){
+      var cs = CRITERES.filter(function(c){ return c.theme_ruxal === th; });
+      if(!cs.length) return;
+      html += '<tr class="theme"><th colspan="'+(o.ecrans.length + 3)+'" scope="colgroup">'+esc(th)+'</th></tr>';
+      cs.forEach(function(c){
+        html += '<tr><th scope="row"><button type="button" class="ref-btn" data-action="critere" data-id="'+c.id+'">'+esc(refTxt(c))+'</button>'+(c.horsSelection ? '<div class="doux petit">hors sélection</div>' : '')+(c.horsRef ? '<div class="doux petit">hors taux</div>' : '')+'</th><td>'+esc(c.libelle)+'</td>' +
+          o.ecrans.map(function(e){ var r = statutEcran(o, e, c); return '<td class="statut">'+cellule(r.s, r.conflit)+'</td>'; }).join('') +
+          '<td class="statut">'+cellule(statutOnglet(o, c))+'</td></tr>';
+      });
+    });
+    return html + '</tbody></table></div>';
+  }
+
+  function aTrancher(o){
+    var l = [];
+    o.ecrans.forEach(function(e){ CRITERES.forEach(function(c){ var s = statutEcran(o, e, c).s; if(s === 'NT' || s === 'AC') l.push({e:e, c:c, s:s}); }); });
+    return l;
+  }
+  var clotureNc = null;
+  function vueCloture(o){
+    var l = aTrancher(o);
+    var html = '<h1>Clôture : '+l.length+' à trancher</h1>';
+    if(!l.length) html += '<div class="carte"><p style="margin:0">Tous les critères ont un statut. Tu peux valider l\'onglet.</p></div>';
+    o.ecrans.forEach(function(e){
+      var le = l.filter(function(x){ return x.e === e; });
+      if(!le.length) return;
+      html += '<section class="carte" aria-labelledby="clo-'+e.id+'"><h2 id="clo-'+e.id+'">'+esc(e.nom)+' ('+le.length+')</h2>' + le.map(function(x){
+        var cle = e.id+'|'+x.c.id;
+        return '<div class="obs"><div class="corps"><span><b>'+esc(refTxt(x.c))+'</b> · '+esc(x.c.libelle)+(x.s === 'AC' ? ' <span class="doux petit">(conforme ailleurs, à confirmer)</span>' : '')+'</span>' +
+          (clotureNc === cle ? '<div class="rangee"><label class="sr" for="clo-txt">Constat de non-conformité</label><input type="text" id="clo-txt" placeholder="Constat" autocomplete="off" style="flex:1 1 240px;width:auto"><button type="button" class="btn btn-s btn-p" data-action="clo-nc-ok" data-ecran="'+e.id+'" data-crit="'+x.c.id+'">Enregistrer</button></div>' : '') +
+          '</div><div class="tags" role="group" aria-label="Statut de '+esc(refTxt(x.c))+' sur '+esc(e.nom)+'">' +
+          '<button type="button" class="tag tag-c" data-action="clo" data-tag="c" data-ecran="'+e.id+'" data-crit="'+x.c.id+'" aria-pressed="false">C</button>' +
+          '<button type="button" class="tag tag-nc" data-action="clo-nc" data-ecran="'+e.id+'" data-crit="'+x.c.id+'" aria-pressed="'+(clotureNc === cle)+'">NC</button>' +
+          '<button type="button" class="tag tag-na" data-action="clo" data-tag="na" data-ecran="'+e.id+'" data-crit="'+x.c.id+'" aria-pressed="false">NA</button></div></div>';
+      }).join('') + '</section>';
+    });
+    html += '<div class="rangee entre"><button type="button" class="btn" data-action="vue" data-vue="audit">Retour à l\'audit</button><button type="button" class="btn btn-p" data-action="valider">'+(o.valide ? 'Onglet validé, voir le résumé' : 'Valider l\'onglet')+'</button></div>';
+    return html;
+  }
+
+  function vueResume(o){
+    var t = taux(o, SELECTION), te = taux(o, RAWEB);
+    var html = '<h1>Résumé : '+esc(o.nom)+'</h1><section class="carte pile" aria-label="Taux"><div class="taux">' +
+      '<div><div class="lbl">Taux sélection SIP</div><div class="val">'+(t.complet ? t.pct+' %' : '<span class="pastille s-NT" style="font-size:15px">incomplet</span>')+'</div><div class="doux petit">'+t.C+' conformes sur '+t.total+' applicables · 52 critères</div></div>' +
+      '<div><div class="lbl">Taux élargi</div><div class="val second">'+(te.complet ? te.pct+' %' : 'incomplet')+'</div><div class="doux petit">'+te.C+' sur '+te.total+' · '+RAWEB.length+' critères</div></div></div>' +
+      (!t.complet || !te.complet ? '<p class="doux" style="margin:0">'+te.nt+' critère(s) sans statut : passe par la clôture.</p>' : '') +
+      (o.valide ? '' : '<p class="doux petit" style="margin:0">Onglet non validé : les taux restent provisoires.</p>') + '</section>';
+    var nc = CRITERES.filter(function(c){ return statutOnglet(o, c) === 'NC'; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
+    html += '<section class="carte" aria-labelledby="t-nc"><h2 id="t-nc">Non conformes ('+nc.length+')</h2>' + (nc.length ? nc.map(function(c){
+      var ecr = o.ecrans.filter(function(e){ return statutEcran(o, e, c).s === 'NC'; }).map(function(e){ return e.nom; });
+      return '<div class="obs"><span class="pastille s-NC">'+GRAVITE[c.niveau]+'</span><div class="corps"><span><button type="button" class="ref-btn" data-action="critere" data-id="'+c.id+'">'+esc(refTxt(c))+'</button> · '+esc(c.libelle)+'</span><span class="doux petit">'+esc(ecr.length === o.ecrans.length ? 'tous les écrans' : ecr.join(', '))+'</span></div></div>';
+    }).join('') : '<p class="doux">Aucune non-conformité.</p>') + '</section>';
+    return html;
+  }
+
+  // Détail d'un critère : le seul endroit où figurent l'impact et la consigne de vérification.
+  function ouvrirCritere(id){
+    var o = onglet(), c = PAR_ID[id]; if(!c) return;
+    var obs = o ? o.obs.filter(function(x){ return x.criteres.indexOf(id) > -1; }) : [];
+    var html = '<div class="rangee entre"><h2 id="dlg-titre">'+esc(refTxt(c))+'</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
+      '<p style="margin:0"><b>'+esc(c.libelle)+'</b></p><p class="doux petit" style="margin:0">'+(c.horsRef ? 'Bonne pratique hors RAWeb, hors taux' : 'Niveau '+esc(c.niveau_wcag)+' · '+(c.horsSelection ? 'hors sélection SIP (taux élargi)' : 'sélection SIP'))+' · gravité '+GRAVITE[c.niveau]+(c.siPresent ? ' · si présent : '+esc((DECLENCHEURS.filter(function(d){ return d.id === c.declencheur; })[0] || {}).libelle) : '')+'</p>' +
+      '<h3 class="lbl" style="margin:4px 0 0">Comment vérifier</h3><p style="margin:0">'+esc(c.explication)+'</p>' +
+      '<h3 class="lbl" style="margin:4px 0 0">Impact</h3><p style="margin:0">'+esc(c.impact)+'</p>' +
+      (c.ref ? '<p style="margin:0"><a href="'+URL_CRITERE+c.ref.replace('.', '-')+'" target="_blank" rel="noopener">Critère officiel sur le site du SIP</a></p>' : '');
+    if(o){
+      html += '<h3 class="lbl" style="margin:4px 0 0">Par écran</h3>' + o.ecrans.map(function(e){
+        var r = statutEcran(o, e, c);
+        return '<div class="rangee entre" style="border-bottom:1px solid var(--bord-doux);padding:6px 0"><span>'+esc(e.nom)+' '+cellule(r.s, r.conflit)+'</span>'+(r.cfg ? '<span class="doux petit">contenu absent</span>' : (r.s !== 'NT' ? '<button type="button" class="btn btn-s" data-action="retest" data-ecran="'+e.id+'" data-crit="'+c.id+'">Retester (#nt)</button>' : ''))+'</div>';
+      }).join('');
+      html += '<h3 class="lbl" style="margin:4px 0 0">Observations ('+obs.length+')</h3>' + (obs.length ? obs.map(function(x){ return '<div class="petit">'+esc((ecranDe(o, x.ecran) || {}).nom)+' · '+(x.tag === 'nt' ? 'retest' : '#'+x.tag)+' · '+esc(x.texte)+'</div>'; }).join('') : '<p class="doux petit" style="margin:0">Aucune.</p>');
+    }
+    document.getElementById('dlg-corps').innerHTML = html;
+    var d = document.getElementById('dlg'); if(!d.open) d.showModal();
+  }
+
+  // ---------- Actions ----------
+  function message(txt, erreur){
+    var s = document.getElementById('statut'); s.textContent = txt; s.className = erreur ? 'erreur' : ''; s.hidden = false;
+    clearTimeout(message.t); message.t = setTimeout(function(){ s.hidden = true; }, 6000);
+  }
+  function lireBrouillon(){
+    var f = document.getElementById('form-obs'); if(!f) return;
+    var g = function(id){ var el = document.getElementById(id); return el ? el.value : null; };
+    if(g('obs-texte') !== null) brouillon.texte = g('obs-texte');
+    if(g('obs-attendu') !== null) brouillon.attendu = g('obs-attendu');
+    if(g('obs-partage-nom') !== null) brouillon.nomPartage = g('obs-partage-nom');
+    var cr = f.querySelectorAll('[data-crit]');
+    if(cr.length) brouillon.crits = Array.prototype.filter.call(cr, function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-crit'); });
+    var ep = f.querySelectorAll('[data-ecran-partage]');
+    if(ep.length) brouillon.ecransPartage = Array.prototype.filter.call(ep, function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-ecran-partage'); });
+  }
+  function viderBrouillon(){ brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:brouillon.tag, ailleurs:false, genre:'partout', nomPartage:'', ecransPartage:[]}; }
+  function nouvelOnglet(){
+    var n = state.onglets.length + 1;
+    var o = {id:uid(), nom:'Audit rapide '+n, type:'rapide', ecrans:['Accueil','Écran avec formulaire','Écran au contenu particulier'].map(function(nom){ return {id:uid(), nom:nom, contenus:{}, etapes:{}}; }), obs:[], valide:false};
+    state.onglets.push(o); state.ongletId = o.id; state.ecranId = o.ecrans[0].id; state.etape = 'vide'; state.vue = 'preparer';
+  }
+  function enregistrerObs(){
+    lireBrouillon();
+    var o = onglet(), e = ecranDe(o, state.ecranId);
+    var texte = brouillon.texte.trim();
+    if(!texte){ message('Écris le constat avant d\'enregistrer.', true); var t = document.getElementById('obs-texte'); if(t) t.focus(); return; }
+    var x = {id:uid(), n:suivant(), ecran:e.id, etape:state.etape, texte:texte, attendu:brouillon.attendu.trim(), point:brouillon.point, criteres:brouillon.crits.slice(), tag:brouillon.tag, partage:null};
+    if(brouillon.ailleurs && brouillon.ecransPartage.length){
+      var nom = brouillon.nomPartage.trim();
+      if(!nom){ message('Donne un nom à l\'élément partagé (ex. Menu principal).', true); var p = document.getElementById('obs-partage-nom'); if(p) p.focus(); return; }
+      x.partage = {genre:brouillon.genre, nom:nom, ecrans:brouillon.ecransPartage.slice()};
+    }
+    o.obs.push(x); o.valide = false;
+    var msg = x.criteres.length ? 'Observation enregistrée.' : 'Note enregistrée : aucun critère, aucun statut modifié.';
+    if(x.tag === 'nc' && x.criteres.length && !x.attendu) msg += ' Pense à préciser l\'attendu pour le ticket.';
+    if(x.partage) msg += ' Partagée avec '+x.partage.ecrans.length+' écran(s).';
+    viderBrouillon(); rendre(); message(msg);
+    var t2 = document.getElementById('obs-texte'); if(t2) t2.focus();
+  }
+
+  document.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-action]');
+    var menu = document.getElementById('menu-fichier');
+    if(!ev.target.closest('.menu')){ menu.hidden = true; document.getElementById('btn-menu').setAttribute('aria-expanded','false'); }
+    if(!b) return;
+    var a = b.getAttribute('data-action'), o = onglet();
+    if(['suppr-obs','suppr-ecran','reinit'].indexOf(a) === -1) confirmation = null;
+    lireBrouillon();
+    if(a === 'accueil'){ state.vue = 'accueil'; rendre(true); }
+    else if(a === 'nouvel-onglet'){ nouvelOnglet(); rendre(true); }
+    else if(a === 'ouvrir'){ state.ongletId = b.getAttribute('data-id'); o = onglet(); state.ecranId = o.ecrans.length ? o.ecrans[0].id : null; state.vue = o.obs.length ? 'audit' : 'preparer'; rendre(true); }
+    else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit rapide')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } state.vue = v; rendre(true); }
+    else if(a === 'etape'){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); }
+    else if(a === 'ecran'){ state.ecranId = b.getAttribute('data-id'); state.etape = 'vide'; var e0 = ecranDe(o, state.ecranId); ETAPES.some(function(et){ if(!(e0.etapes || {})[et.id]){ state.etape = et.id; return true; } }); rendre(true); }
+    else if(a === 'etape-faite'){
+      var e = ecranDe(o, state.ecranId); e.etapes = e.etapes || {}; e.etapes[state.etape] = true;
+      var i = ETAPE[state.etape].i;
+      if(i < ETAPES.length - 1){ state.etape = ETAPES[i+1].id; message('Étape suivante : '+ETAPES[i+1].nom+'.'); }
+      else {
+        var reste = o.ecrans.filter(function(x){ return !ETAPES.every(function(et){ return (x.etapes || {})[et.id]; }); })[0];
+        if(reste){ state.ecranId = reste.id; state.etape = ETAPES.filter(function(et){ return !(reste.etapes || {})[et.id]; })[0].id; message('Écran suivant : '+reste.nom+'.'); }
+        else { state.vue = 'cloture'; message('Tous les écrans sont parcourus : place à la clôture.'); }
+      }
+      rendre(true);
+    }
+    else if(a === 'tag'){ brouillon.tag = b.getAttribute('data-tag'); rendre(); var bt = document.querySelector('.tag[data-tag="'+brouillon.tag+'"]'); if(bt) bt.focus(); }
+    else if(a === 'ailleurs'){ brouillon.ailleurs = !brouillon.ailleurs; rendre(); var bb = document.querySelector('[data-action="ailleurs"]'); if(bb) bb.focus(); }
+    else if(a === 'suppr-obs'){
+      var id = b.getAttribute('data-id');
+      if(confirmation === 'obs-'+id){ o.obs = o.obs.filter(function(x){ return x.id !== id; }); confirmation = null; o.valide = false; rendre(); message('Observation supprimée.'); }
+      else { confirmation = 'obs-'+id; rendre(); var bs = document.querySelector('[data-action="suppr-obs"][data-id="'+id+'"]'); if(bs) bs.focus(); }
+    }
+    else if(a === 'ajout-ecran'){ o.ecrans.push({id:uid(), nom:'Écran '+(o.ecrans.length + 1), contenus:{}, etapes:{}}); o.valide = false; rendre(); var ins = $main.querySelectorAll('[data-ecran-nom]'); ins[ins.length - 1].focus(); }
+    else if(a === 'suppr-ecran'){
+      var ie = b.getAttribute('data-id');
+      if(confirmation === 'ecran-'+ie){
+        o.ecrans = o.ecrans.filter(function(x){ return x.id !== ie; });
+        o.obs = o.obs.filter(function(x){ return x.ecran !== ie; }).map(function(x){ if(x.partage) x.partage.ecrans = x.partage.ecrans.filter(function(y){ return y !== ie; }); return x; });
+        if(state.ecranId === ie) state.ecranId = o.ecrans[0].id;
+        confirmation = null; o.valide = false; rendre(); message('Écran supprimé, avec ses observations.');
+      } else { confirmation = 'ecran-'+ie; rendre(); var bse = document.querySelector('[data-action="suppr-ecran"][data-id="'+ie+'"]'); if(bse) bse.focus(); }
+    }
+    else if(a === 'contenu'){ var ec = ecranDe(o, b.getAttribute('data-ecran')); ec.contenus = ec.contenus || {}; var d = b.getAttribute('data-d'); ec.contenus[d] = !ec.contenus[d]; o.valide = false; rendre(); var bc = document.querySelector('[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus(); }
+    else if(a === 'critere'){ ouvrirCritere(b.getAttribute('data-id')); }
+    else if(a === 'fermer-dlg'){ document.getElementById('dlg').close(); }
+    else if(a === 'retest'){
+      o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'', texte:'Retest après correction', attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:'nt', partage:null});
+      o.valide = false; rendre(); ouvrirCritere(b.getAttribute('data-crit')); message('Critère remis à NT sur cet écran. Les observations précédentes restent en historique.');
+    }
+    else if(a === 'clo'){
+      o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'cloture', texte:'Vérifié à la clôture', attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:b.getAttribute('data-tag'), partage:null});
+      clotureNc = null; rendre(); var bf = $main.querySelector('.tag'); if(bf) bf.focus();
+    }
+    else if(a === 'clo-nc'){ clotureNc = b.getAttribute('data-ecran')+'|'+b.getAttribute('data-crit'); rendre(); var it = document.getElementById('clo-txt'); if(it) it.focus(); }
+    else if(a === 'clo-nc-ok'){
+      var tx = (document.getElementById('clo-txt').value || '').trim();
+      if(!tx){ message('Décris le constat de non-conformité.', true); document.getElementById('clo-txt').focus(); return; }
+      o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'cloture', texte:tx, attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:'nc', partage:null});
+      clotureNc = null; rendre(); var bf2 = $main.querySelector('.tag'); if(bf2) bf2.focus();
+    }
+    else if(a === 'valider'){
+      var n = aTrancher(o).length;
+      if(n){ message(n+' critère(s) restent à trancher. Tu peux valider plus tard.', true); return; }
+      o.valide = true; state.vue = 'resume'; rendre(true); message('Onglet validé.');
+    }
+    else if(a === 'export-xlsx'){ exporterXlsx(); }
+    else if(a === 'export-jira'){ exporterJira(); }
+    else if(a === 'export-json'){ telecharger(nomFichier('sauvegarde','json'), JSON.stringify(state, null, 1)); message('Sauvegarde téléchargée.'); }
+    else if(a === 'import-json'){ document.getElementById('fichier-import').click(); }
+    else if(a === 'reinit'){
+      if(confirmation !== 'reinit'){ confirmation = 'reinit'; b.textContent = 'Confirmer : tout effacer'; return; }
+      confirmation = null; state = etatVide(); viderBrouillon(); rendre(true); message('Nouvel audit. Pense à sauvegarder le précédent si besoin.');
+    }
+  });
+  document.getElementById('btn-menu').addEventListener('click', function(){
+    var m = document.getElementById('menu-fichier'); m.hidden = !m.hidden; this.setAttribute('aria-expanded', String(!m.hidden));
+    var r = m.querySelector('[data-action="reinit"]'); r.textContent = 'Nouvel audit';
+    if(!m.hidden) m.querySelector('button').focus();
+  });
+  document.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape'){ var m = document.getElementById('menu-fichier'); if(!m.hidden){ m.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false'); bm.focus(); } }
+  });
+  document.addEventListener('submit', function(ev){ if(ev.target.id === 'form-obs'){ ev.preventDefault(); enregistrerObs(); } });
+  document.addEventListener('change', function(ev){
+    var t = ev.target, o = onglet();
+    if(t.id === 'audit-nom'){ state.auditNom = t.value.trim(); sauver(); }
+    else if(t.id === 'audit-support'){ state.support = t.value; sauver(); }
+    else if(t.id === 'onglet-nom'){ o.nom = t.value.trim() || o.nom; sauver(); }
+    else if(t.name === 'onglet-type'){ o.type = t.value; rendre(); }
+    else if(t.hasAttribute('data-ecran-nom')){ var e = ecranDe(o, t.getAttribute('data-ecran-nom')); e.nom = t.value.trim() || e.nom; sauver(); }
+    else if(t.id === 'obs-point'){ lireBrouillon(); brouillon.point = t.value; brouillon.element = ''; brouillon.crits = criteresProposes(); rendre(); document.getElementById('obs-point').focus(); }
+    else if(t.id === 'obs-element'){ lireBrouillon(); brouillon.element = t.value; brouillon.crits = criteresProposes(); rendre(); document.getElementById('obs-element').focus(); }
+    else if(t.id === 'obs-ajout' && t.value){ lireBrouillon(); if(brouillon.crits.indexOf(t.value) === -1) brouillon.crits.push(t.value); rendre(); document.getElementById('obs-ajout').focus(); }
+    else if(t.name === 'genre'){ lireBrouillon(); brouillon.genre = t.value; rendre(); var r = document.querySelector('input[name="genre"][value="'+t.value+'"]'); if(r) r.focus(); }
+    else if(t.id === 'fichier-import' && t.files[0]){
+      var fr = new FileReader();
+      fr.onload = function(){
+        try{
+          var s = JSON.parse(fr.result);
+          if(s && s.v === 2 && Array.isArray(s.onglets)){ state = s; state.vue = 'accueil'; rendre(true); message('Sauvegarde ouverte.'); }
+          else message('Ce fichier n\'est pas une sauvegarde de RUXAWEB 2. Une sauvegarde de la version 1 s\'ouvre dans ruxaweb.html (1.7).', true);
+        }catch(e){ message('Fichier illisible : choisis un fichier .json enregistré par RUXAWEB 2.', true); }
+        t.value = '';
+      };
+      fr.readAsText(t.files[0]);
+    }
+  });
+
+  // ---------- Exports ----------
+  function nomFichier(type, ext){
+    var nom = (state.auditNom || 'audit').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0, 50) || 'audit';
+    var d = new Date(), p = function(n){ return String(n).padStart(2, '0'); };
+    return 'ruxaweb_'+nom+'_'+type+'_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.'+ext;
+  }
+  function telecharger(nom, data){
+    var types = {json:'application/json', csv:'text/csv;charset=utf-8', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};
+    var blob = new Blob([data], {type: types[nom.split('.').pop()] || 'application/octet-stream'});
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = nom; a.hidden = true; document.body.appendChild(a); a.click();
+    setTimeout(function(){ a.remove(); URL.revokeObjectURL(url); }, 10000);
+  }
+  function exporterXlsx(){
+    if(!state.onglets.length){ message('Rien à exporter : crée d\'abord un onglet.', true); return; }
+    var lignes = [];
+    state.onglets.forEach(function(o){
+      CRITERES.forEach(function(c){
+        var s = statutOnglet(o, c);
+        var ecr = o.ecrans.filter(function(e){ return statutEcran(o, e, c).s === 'NC'; }).map(function(e){ return e.nom; });
+        var constats = o.obs.filter(function(x){ return x.tag === 'nc' && x.criteres.indexOf(c.id) > -1; }).map(function(x){ return ((ecranDe(o, x.ecran) || {}).nom || '') + ' : ' + x.texte; });
+        lignes.push([o.nom, c.horsRef ? 'Bonne pratique' : c.ref, c.horsRef ? 'Hors RAWeb, hors taux' : (c.horsSelection ? 'Hors sélection SIP' : 'Sélection SIP'), c.theme_ref, c.libelle, c.niveau_wcag, s, ecr.join(', '), constats.join('\n')]);
+      });
+    });
+    var x = construireXlsx({nom:'Critères', colonnes:[['Onglet',26],['Critère',10],['Sélection',22],['Thématique RAWeb',26],['Intitulé',70],['Niveau',8],['Statut',8],['Écrans non conformes',28],['Constats',70]].map(function(c){ return {titre:c[0], largeur:c[1], statut:c[0] === 'Statut'}; }), lignes:lignes});
+    telecharger(nomFichier('grille','xlsx'), x); message('Grille des critères téléchargée (Excel).');
+  }
+  function csv(v){ var t = String(v == null ? '' : v); return /[,"\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; }
+  // Un ticket par constat non conforme encore valide (pas remplacé par un retest). Un constat partagé donne un
+  // seul ticket, qui liste tous les écrans concernés.
+  function exporterJira(){
+    var lignes = [['Summary','Description','Issue Type','Priority','Labels','Labels','Labels','Labels'].map(csv).join(',')], n = 0;
+    state.onglets.forEach(function(o){
+      o.obs.forEach(function(x){
+        if(x.tag !== 'nc' || !x.criteres.length) return;
+        // Un constat sort de l'export seulement s'il a été retesté sur tous les écrans qu'il touche.
+        var touches = [x.ecran].concat(x.partage ? x.partage.ecrans : []);
+        var invalide = touches.every(function(eid){ return x.criteres.every(function(id){ return o.obs.some(function(y){ return y.tag === 'nt' && y.n > x.n && y.ecran === eid && y.criteres.indexOf(id) > -1; }); }); });
+        if(invalide) return;
+        var cs = x.criteres.map(function(id){ return PAR_ID[id]; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
+        var e = ecranDe(o, x.ecran) || {nom:''};
+        var ecrans = [e.nom].concat(x.partage ? x.partage.ecrans.map(function(id){ return (ecranDe(o, id) || {}).nom; }) : []).filter(Boolean);
+        var objet = x.partage ? '['+x.partage.nom+']' : e.nom;
+        var defaut = x.texte.replace(/\s+/g, ' '); if(defaut.length > 90) defaut = defaut.slice(0, 87).trim() + '...';
+        var summary = '[A11Y] | '+(state.auditNom || o.nom)+' | '+cs[0].theme_ruxal+' | '+objet+' : '+defaut;
+        var desc = ['Flow(s) / Screen(s) / Element(s) in concern', x.partage ? objet+' ('+ecrans.join(', ')+')' : objet, '',
+          'Actual behavior / Impact', x.texte, 'Impact: '+String(cs[0].impact || '').replace(/^RAWeb [\d.]+ \([^)]*\)\s*:\s*/, ''), '',
+          'Expected behavior', x.attendu || cs[0].libelle, '', 'Recommendations', '- <to be completed>', '', 'Reference']
+          .concat(cs.map(function(c){ return c.horsRef ? '- Good practice outside RAWeb 1.1: '+c.libelle : '- RAWeb 1.1, Criterion '+c.ref+': '+c.libelle+'\n  '+URL_CRITERE.replace('/fr/','/en/')+c.ref.replace('.', '-'); })).join('\n');
+        var labels = ['accessibilite', state.support === 'mobile' ? 'mobile-web' : 'desktop', cs[0].horsRef ? 'hors-raweb' : 'RAWeb-'+cs[0].ref, cs[0].theme_ruxal.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')];
+        lignes.push([summary, desc, 'Task', PRIORITE[cs[0].niveau] || 'Medium'].concat(labels).map(csv).join(','));
+        n++;
+      });
+    });
+    if(!n){ message('Aucun ticket à créer : aucun constat non conforme.', true); return; }
+    telecharger(nomFichier('jira','csv'), '﻿' + lignes.join('\r\n')); message(n+' ticket(s) Jira téléchargé(s) (CSV, à importer dans Jira).');
+  }
+
+  // Classeur Excel écrit sans bibliothèque (archive ZIP sans compression), repris de RUXAWEB 1.7.
+  var CRC = (function(){ var t = [], c; for(var n = 0; n < 256; n++){ c = n; for(var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+  function crc32(u){ var c = 0xFFFFFFFF; for(var i = 0; i < u.length; i++) c = CRC[(c ^ u[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  function zip(fichiers){
+    var enc = new TextEncoder(), m = [], central = [], off = 0;
+    fichiers.forEach(function(f){
+      var nom = enc.encode(f.nom), data = enc.encode(f.contenu), crc = crc32(data);
+      var h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(12, 0x21, true);
+      h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, nom.length, true);
+      m.push(new Uint8Array(h.buffer), nom, data);
+      var c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(14, 0x21, true);
+      c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, nom.length, true); c.setUint32(42, off, true);
+      central.push(new Uint8Array(c.buffer), nom);
+      off += 30 + nom.length + data.length;
+    });
+    var tc = central.reduce(function(t, x){ return t + x.length; }, 0), fin = new DataView(new ArrayBuffer(22));
+    fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, fichiers.length, true); fin.setUint16(10, fichiers.length, true); fin.setUint32(12, tc, true); fin.setUint32(16, off, true);
+    var tout = m.concat(central, [new Uint8Array(fin.buffer)]), out = new Uint8Array(tout.reduce(function(t, x){ return t + x.length; }, 0)), p = 0;
+    tout.forEach(function(x){ out.set(x, p); p += x.length; });
+    return out;
+  }
+  function xmlEsc(v){ return String(v == null ? '' : v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function col(i){ var t = ''; i++; while(i > 0){ var m = (i - 1) % 26; t = String.fromCharCode(65 + m) + t; i = Math.floor((i - 1) / 26); } return t; }
+  var STYLE_STATUT = {C:3, NC:4, NT:5, NA:6};
+  function construireXlsx(f){
+    var der = col(f.colonnes.length - 1) + (f.lignes.length + 1);
+    var cel = function(r, v, s){ return '<c r="'+r+'" t="inlineStr" s="'+s+'"><is><t xml:space="preserve">'+xmlEsc(v)+'</t></is></c>'; };
+    var rows = ['<row r="1">' + f.colonnes.map(function(c, i){ return cel(col(i)+'1', c.titre, 1); }).join('') + '</row>'];
+    f.lignes.forEach(function(l, r){ rows.push('<row r="'+(r+2)+'">' + l.map(function(v, i){ return cel(col(i)+(r+2), v, (f.colonnes[i].statut && STYLE_STATUT[v]) ? STYLE_STATUT[v] : 2); }).join('') + '</row>'); });
+    var ent = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n', NS = 'http://schemas.openxmlformats.org/', NSR = NS+'officeDocument/2006/relationships';
+    var fill = function(rgb){ return '<fill><patternFill patternType="solid"><fgColor rgb="FF'+rgb+'"/><bgColor indexed="64"/></patternFill></fill>'; };
+    var xf = function(p, fo, c){ return '<xf numFmtId="49" fontId="'+p+'" fillId="'+fo+'" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="top" wrapText="1"'+(c ? ' horizontal="center"' : '')+'/></xf>'; };
+    return zip([
+      {nom:'[Content_Types].xml', contenu: ent+'<Types xmlns="'+NS+'package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+      {nom:'_rels/.rels', contenu: ent+'<Relationships xmlns="'+NS+'package/2006/relationships"><Relationship Id="rId1" Type="'+NSR+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+      {nom:'xl/workbook.xml', contenu: ent+'<workbook xmlns="'+NS+'spreadsheetml/2006/main" xmlns:r="'+NSR+'"><sheets><sheet name="'+xmlEsc(f.nom)+'" sheetId="1" r:id="rId1"/></sheets></workbook>'},
+      {nom:'xl/_rels/workbook.xml.rels', contenu: ent+'<Relationships xmlns="'+NS+'package/2006/relationships"><Relationship Id="rId1" Type="'+NSR+'/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+NSR+'/styles" Target="styles.xml"/></Relationships>'},
+      {nom:'xl/styles.xml', contenu: ent+'<styleSheet xmlns="'+NS+'spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="7"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>'+fill('E0EEF2')+fill('E0F3E8')+fill('FBE5E2')+fill('FBF1D3')+fill('E6ECF0')+'</fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+xf(1,2,false)+xf(0,0,false)+xf(1,3,true)+xf(1,4,true)+xf(1,5,true)+xf(1,6,true)+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'},
+      {nom:'xl/worksheets/sheet1.xml', contenu: ent+'<worksheet xmlns="'+NS+'spreadsheetml/2006/main"><dimension ref="A1:'+der+'"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>'+f.colonnes.map(function(c, i){ return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+c.largeur+'" customWidth="1"/>'; }).join('')+'</cols><sheetData>'+rows.join('')+'</sheetData><autoFilter ref="A1:'+der+'"/></worksheet>'}
+    ]);
+  }
+
+  window.RUXAWEB = {state: function(){ return state; }, taux: function(id, elargi){ var o = state.onglets.filter(function(x){ return x.id === id; })[0]; return taux(o, elargi ? RAWEB : SELECTION); }, version: VERSION};
+  rendre();
+})();
+</script>
+</body>
+</html>

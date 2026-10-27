@@ -5,3 +5,4 @@ private/
 post/
 *.xls
 *.xlsx
+__pycache__/
