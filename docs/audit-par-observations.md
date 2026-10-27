@@ -142,7 +142,7 @@ Constats de Bertrand après utilisation, et réponses proposées.
 
 **Analyse** : il servait à tester une fois des comportements globaux (fermer un écran, revenir en arrière, ouvrir le menu, passer d'une étape à l'autre, notification). Les composants communs couvrent la partie « une fois pour toutes », et le scénario couvre les transitions. Il ne reste en propre que l'évaluation POUR et UX, qui peut se rattacher à un composant commun ou à un scénario.
 
-**Proposition** : retirer ce type d'audit et le remplacer par les composants communs. À l'import d'une ancienne sauvegarde, un onglet de ce type est converti en composants communs, avec un message.
+**Décision (27 octobre 2026)** : ce type d'audit est retiré pour le moment, remplacé par les composants communs. À l'import d'une ancienne sauvegarde, un onglet de ce type est converti en composants communs, avec un message.
 
 ### 8.4 Accompagnement de l'auditeur
 **Constat** : l'accompagnement actuel (tour à vide, protocole en étapes) existe, mais surtout dans l'introduction et l'aide.
@@ -154,7 +154,6 @@ Constats de Bertrand après utilisation, et réponses proposées.
 - **Passe de clôture guidée** avant la validation de l'onglet.
 
 ## Points ouverts
-- Fonctionnalité primaire : confirmer le retrait au profit des composants communs.
 - Liste par défaut des composants communs, pour le web et pour le mobile (barre d'onglets, bouton retour).
 - Table symptôme vers critères : relecture de la version web, puis version RAAM.
 - Coexistence avec la saisie actuelle critère par critère : garder les deux modes ou basculer entièrement.
