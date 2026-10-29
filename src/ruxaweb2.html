@@ -735,9 +735,19 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function vueGrille(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
     var html = '<div class="rangee entre"><h1>Grille des critères</h1><span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : te.nt+' critère(s) à trancher')+'</span></div>';
+    // Regroupement : thématiques officielles du RAWeb par défaut (lecture du SIP), thèmes RUXAL au choix.
+    var officiel = state.theming !== 'ruxal';
+    html += '<div class="rangee" role="group" aria-label="Regroupement des critères"><span class="lbl">Regrouper par</span>' +
+      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="btn btn-s'+(on ? ' btn-p' : '')+'" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div>';
+    var groupes = [];
+    if(officiel){
+      CRITERES.forEach(function(c){ var g = c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref; if(groupes.indexOf(g) === -1) groupes.push(g); });
+      groupes.sort(function(a, b){ return (parseInt(a, 10) || 99) - (parseInt(b, 10) || 99); });
+    } else groupes = THEMES_RUXAL;
     html += '<div class="tableau"><table><thead><tr><th scope="col">Critère</th><th scope="col">Intitulé</th>' + o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '<th scope="col">Onglet</th></tr></thead><tbody>';
-    THEMES_RUXAL.forEach(function(th){
-      var cs = CRITERES.filter(function(c){ return c.theme_ruxal === th; });
+    groupes.forEach(function(th){
+      var cs = CRITERES.filter(function(c){ return officiel ? (c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref) === th : c.theme_ruxal === th; });
+      if(officiel) cs.sort(function(a, b){ var x = String(a.ref || '99.'+a.id).split('.').map(Number), y = String(b.ref || '99.'+b.id).split('.').map(Number); return (x[0]-y[0]) || ((x[1]||0)-(y[1]||0)); });
       if(!cs.length) return;
       html += '<tr class="theme"><th colspan="'+(o.ecrans.length + 3)+'" scope="colgroup">'+esc(th)+'</th></tr>';
       cs.forEach(function(c){
@@ -964,6 +974,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       cur.statut = b.getAttribute('data-v'); o.valide = false; rendre();
       var bh = document.querySelector('[data-action="heur"][data-h="'+hid+'"][data-v="'+cur.statut+'"]'); if(bh) bh.focus();
     }
+    else if(a === 'theming'){ state.theming = b.getAttribute('data-v'); rendre(); var bt = document.querySelector('[data-action="theming"][data-v="'+state.theming+'"]'); if(bt) bt.focus(); }
     else if(a === 'import-auto'){ document.getElementById('fichier-auto').click(); }
     else if(a === 'reprendre'){
       var k = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!k) return;

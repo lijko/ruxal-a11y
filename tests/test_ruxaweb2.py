@@ -96,6 +96,12 @@ def main():
         verifier('Audit : formulaire d\'observation', page.locator('#form-obs').count() == 1)
         verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#aide .ici').inner_text())
 
+        page.click('[data-action="vue"][data-vue="grille"]')
+        groupes = page.locator('tr.theme').all_inner_texts()
+        verifier('Grille : thématiques officielles par défaut', groupes[0].startswith('1. Images') and groupes[-1].startswith('Bonnes pratiques'), groupes[:2])
+        page.click('[data-action="theming"][data-v="ruxal"]')
+        verifier('Grille : thèmes RUXAL au choix', page.locator('tr.theme').first.inner_text() == 'Navigation & Structure')
+        page.click('[data-action="theming"][data-v="officiel"]')
         verifier('Configurateur : 11.1 NA sans formulaire', statut(page, 1, 'raweb-11-1') == 'NA')
         verifier('Configurateur : 11.1 NT avec formulaire', statut(page, 0, 'raweb-11-1') == 'NT')
 
