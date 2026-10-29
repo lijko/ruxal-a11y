@@ -166,6 +166,25 @@ RUXAWEB 2 : audit par observations.
   .choix{display:flex;gap:10px;align-items:center;min-height:36px}
   .choix input{width:18px;height:18px;accent-color:var(--accent);flex:none}
 
+  .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
+  .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
+  .grav-critique::before{background:var(--c-nc)} .grav-serieux::before{background:var(--c-nt)}
+  h3 .grav{vertical-align:middle;margin:0 0 0 8px}
+  .ref-groupe{display:flex;flex-direction:column;gap:10px}
+  .ref-groupe h2{margin:8px 0 0;font-size:18px}
+  .ref-fiche{gap:6px}
+  @media print{
+    :root{color-scheme:light}
+    body{background:#fff !important}
+    .barre,aside.aide,.lien-evitement,.ref-tete button,.ref-outils,#statut{display:none !important}
+    .page{display:block;padding:0;max-width:none;zoom:.8}
+    .carte{box-shadow:none !important;border:1px solid #888 !important;background:#fff !important;break-inside:avoid;display:block !important;margin-bottom:10px}
+    .carte > * + *{margin-top:6px !important}
+    main,.ref-groupe{display:block !important}
+    .ref-groupe h2{break-after:avoid;margin:14px 0 8px !important}
+    main,main *{color:#000 !important}
+    a{text-decoration:underline}
+  }
   .pastille{display:inline-flex;align-items:center;justify-content:center;min-width:40px;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:800;flex:none}
   .s-C{background:var(--c-conforme-soft);color:var(--c-conforme)} .s-NC{background:var(--c-nc-soft);color:var(--c-nc)}
   .s-NT{background:var(--c-nt-soft);color:var(--c-nt)} .s-NA{background:var(--c-na-soft);color:var(--c-na)}
@@ -271,11 +290,13 @@ RUXAWEB 2 : audit par observations.
       <button type="button" class="tag" data-action="support" data-support="mobile">Mobile</button>
     </div>
     <span class="espace"></span>
+    <button class="btn btn-s" type="button" id="btn-ref" data-action="referentiel">Référentiel</button>
     <div class="menu">
       <button class="btn btn-s" type="button" id="btn-menu" aria-expanded="false" aria-controls="menu-fichier">Fichier</button>
       <div class="menu-liste" id="menu-fichier" hidden>
         <button type="button" data-action="export-xlsx">Grille des critères (Excel)</button>
         <button type="button" data-action="export-jira">Tickets Jira (CSV)</button>
+        <button type="button" data-action="export-jira-tout">Tickets Jira : tout réexporter</button>
         <button type="button" data-action="export-json">Sauvegarder l'audit (JSON)</button>
         <button type="button" data-action="import-json">Ouvrir une sauvegarde</button>
         <button type="button" data-action="reinit">Nouvel audit</button>
@@ -434,12 +455,14 @@ RUXAWEB 2 : audit par observations.
       chercher:"Les critères « à confirmer » viennent d'une observation conforme faite sur un autre écran."},
     ux:{faire:"Une fois le parcours testé écran par écran, réponds à chaque question pour le parcours entier. Difficile ou échec demande un commentaire.",
       chercher:"Ce que vit l'utilisateur d'un bout à l'autre : repères, cohérence, retour après action, retour arrière. Ce score est qualitatif et n'entre jamais dans le taux."},
+    referentiel:{faire:"Lis les fiches pour apprendre les critères : chacune dit comment vérifier, à quelle étape du parcours, l'impact et la gravité. Le bouton Imprimer produit un PDF.",
+      chercher:"La gravité classe les non-conformités et donne la priorité des tickets Jira. Elle n'est pas normative : ni le RAWeb ni WCAG n'en définissent."},
     resume:{faire:"Relis les non-conformités, puis exporte depuis le menu Fichier : grille Excel, tickets Jira, sauvegarde.",
       chercher:"Une observation qui vaut sur plusieurs écrans donne un seul ticket. Pour retester après correction, ouvre le critère dans la grille."}
   };
 
   // ---------- État ----------
-  function etatVide(){ return {v:2, auditNom:'', support:'desktop', onglets:[], vue:'accueil', ongletId:null, ecranId:null, etape:'vide', compteur:0}; }
+  function etatVide(){ return {v:2, auditNom:'', support:'desktop', onglets:[], vue:'accueil', ongletId:null, ecranId:null, etape:'vide', compteur:0, exportesJira:[]}; }
   var state = charger();
   function charger(){
     try{ var s = JSON.parse(localStorage.getItem(CLE)); if(s && s.v === 2) return s; }catch(e){}
@@ -516,19 +539,20 @@ RUXAWEB 2 : audit par observations.
 
   function rendre(focus){
     var o = onglet();
-    if(state.vue !== 'accueil' && !o){ state.vue = 'accueil'; }
+    if(state.vue !== 'accueil' && state.vue !== 'referentiel' && !o){ state.vue = 'accueil'; }
     // Ligne des onglets : un bouton par onglet de l'audit, avec son état, plus le tableau de bord et l'ajout.
     $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="accueil"'+(state.vue === 'accueil' ? ' aria-current="page"' : '')+' style="justify-content:center"><b>Tableau de bord</b></button>' +
       state.onglets.map(function(x){
         var t = taux(x, SELECTION), te = taux(x, RAWEB);
         var etat = t.complet ? t.pct+' % sélection SIP' : criteresATrancher(x).length+' à trancher';
-        var ici = state.vue !== 'accueil' && x.id === state.ongletId;
+        var ici = state.vue !== 'accueil' && state.vue !== 'referentiel' && x.id === state.ongletId;
         return '<button type="button" class="onglet-tab" data-action="ouvrir" data-id="'+x.id+'"'+(ici ? ' aria-current="page"' : '')+'><b>'+esc(x.nom)+'</b><span>'+(x.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+esc(etat)+'</span></button>';
       }).join('') + '<button type="button" class="onglet-tab ajout" data-action="nouvel-onglet">+ Nouvel onglet</button>';
     var nomAudit = document.getElementById('audit-nom'); if(nomAudit && document.activeElement !== nomAudit) nomAudit.value = state.auditNom || '';
+    var bRef = document.getElementById('btn-ref'); if(state.vue === 'referentiel') bRef.setAttribute('aria-current', 'page'); else bRef.removeAttribute('aria-current');
     document.querySelectorAll('#audit-support .tag').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-support') === state.support)); });
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
-    var vues = {accueil:vueAccueil, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, cloture:vueCloture, resume:vueResume};
+    var vues = {accueil:vueAccueil, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, cloture:vueCloture, resume:vueResume, referentiel:vueReferentiel};
     $main.innerHTML = (vues[state.vue] || vueAccueil)(o);
     // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
     var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
@@ -556,7 +580,7 @@ RUXAWEB 2 : audit par observations.
   window.addEventListener('resize', function(){ focusParcours(); });
   function vueAide(o){
     var html = '<ol class="parcours" id="parcours-liste">';
-    var dansOnglet = !!o && state.vue !== 'accueil';
+    var dansOnglet = !!o && state.vue !== 'accueil' && state.vue !== 'referentiel';
     var e = o ? ecranDe(o, state.ecranId) : null;
     var tous = [];
     function pas(marque, txt, sous, ici, fait, fin, action, extra){
@@ -584,12 +608,11 @@ RUXAWEB 2 : audit par observations.
     html += pas(icone('res'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
     html += '</ol>';
     // Parcours replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
-    var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? state.vue === 'accueil' : !!state.parcoursOuvert;
+    var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? (state.vue === 'accueil' || state.vue === 'referentiel') : !!state.parcoursOuvert;
     var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
-    var nbFaits = tous.filter(function(t){ return t.fait; }).length;
-    var resume = k > -1 ? 'En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '') : nbFaits+' étape'+(nbFaits > 1 ? 's' : '')+' faite'+(nbFaits > 1 ? 's' : '')+' sur '+tous.length;
+    var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '')+'</p>' : '';
     var points = '<span class="points" aria-hidden="true">'+tous.map(function(t){ return '<i class="'+(t.ici ? 'ici' : t.fait ? 'fait' : '')+'"></i>'; }).join('')+'</span>';
-    var ecr = e && dansOnglet ? '<p class="petit doux">Écran : <b>'+esc(e.nom)+'</b></p>' : '';
+    var ecr = e && dansOnglet ? '<p class="petit doux">Écran : <b>'+esc(e.nom)+'</b> · '+faits+'/'+ETAPES.length+' étapes faites</p>' : '';
     // Navigation sans déplier : étape précédente et suivante, ou reprise à la première étape non faite.
     function aller(t, sens, lib){ return '<button type="button" class="btn btn-s'+(sens === 'suiv' ? ' btn-l' : '')+'" data-action="'+t.action+'"'+t.extra+' aria-label="'+lib+' : '+esc(t.txt)+'">'+(sens === 'prec' ? '&larr; ' : '')+lib+(sens === 'suiv' ? ' &rarr;' : '')+'</button>'; }
     var nav = '';
@@ -604,7 +627,7 @@ RUXAWEB 2 : audit par observations.
       if(nav) nav = '<div class="rangee nav-parcours">'+nav+'</div>';
     }
     ecr += nav;
-    html = '<h2 id="aide-titre">Parcours</h2><div class="parcours-court">'+points+'<p class="en-cours">'+resume+'</p>'+ecr+
+    html = '<h2 id="aide-titre">Parcours</h2><div class="parcours-court">'+points+resume+ecr+
       '<button type="button" class="lien-parcours" data-action="parcours-bascule" aria-expanded="'+ouvert+'" aria-controls="parcours-liste">'+(ouvert ? 'Masquer les étapes' : 'Voir toutes les étapes')+'</button></div>' +
       html.replace('<ol class="parcours" id="parcours-liste">', '<ol class="parcours" id="parcours-liste"'+(ouvert ? '' : ' hidden')+'>');
     var a = state.vue === 'audit' ? ETAPE[state.etape] : (AIDE[state.vue] || AIDE.accueil);
@@ -848,7 +871,7 @@ RUXAWEB 2 : audit par observations.
     // Élément et écrans : les mêmes champs pour toute observation. L'écran en cours est toujours concerné ;
     // une observation qui touche plusieurs écrans est une observation sur un élément répété, sans autre saisie.
     var noms = {}; o.obs.forEach(function(x){ if(x.elementNom) noms[x.elementNom] = true; });
-    html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-partage-nom">Élément</label><input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. Menu principal, bouton « Payer »" autocomplete="off"><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
+    html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-partage-nom">Élément</label><input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. button &quot;Payer&quot;" autocomplete="off" aria-describedby="aide-element"><p class="doux petit" id="aide-element" style="margin:0">Type et libellé, sans l\'écran : l\'export Jira note Écran[button "Payer"], ou [Menu principal] pour un élément répété.</p><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
       '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl" style="padding:0">Écrans concernés</legend><div class="rangee" style="column-gap:20px">' + o.ecrans.map(function(x){
         if(x.id === e.id) return '<label class="choix"><input type="checkbox" checked disabled> '+esc(x.nom)+' <span class="doux petit">(écran en cours)</span></label>';
         return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>';
@@ -892,26 +915,52 @@ RUXAWEB 2 : audit par observations.
     return '<span class="pastille s-'+s+'"'+(titre ? ' title="'+titre+'"' : '')+'>'+lib+(conflit ? ' !' : '')+'</span>'+(s === 'AC' ? '<span class="sr"> (à confirmer)</span>' : '')+(conflit ? '<span class="sr"> (observations contradictoires)</span>' : '');
   }
 
+  // Regroupement des critères : thématiques officielles du RAWeb (triées par numéro) ou thèmes RUXAL.
+  function groupesCriteres(officiel){
+    var noms = [];
+    if(officiel){
+      CRITERES.forEach(function(c){ var g = c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref; if(noms.indexOf(g) === -1) noms.push(g); });
+      noms.sort(function(a, b){ return (parseInt(a, 10) || 99) - (parseInt(b, 10) || 99); });
+    } else noms = THEMES_RUXAL;
+    return noms.map(function(th){
+      var cs = CRITERES.filter(function(c){ return officiel ? (c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref) === th : c.theme_ruxal === th; });
+      if(officiel) cs.sort(function(a, b){ var x = String(a.ref || '99.'+a.id).split('.').map(Number), y = String(b.ref || '99.'+b.id).split('.').map(Number); return (x[0]-y[0]) || ((x[1]||0)-(y[1]||0)); });
+      return {th:th, cs:cs};
+    }).filter(function(g){ return g.cs.length; });
+  }
+  function boutonsRegroupement(){
+    var officiel = state.theming !== 'ruxal';
+    return '<div class="rangee"><span class="lbl" id="lbl-regroup">Regrouper par</span><div class="tags" role="group" aria-labelledby="lbl-regroup">' +
+      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="tag" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div></div>';
+  }
+  // Référentiel : toutes les fiches, pour apprendre les critères ou les imprimer (PDF par l'impression du navigateur).
+  function vueReferentiel(){
+    var officiel = state.theming !== 'ruxal';
+    var html = '<div class="rangee entre ref-tete"><h1>Référentiel</h1><button type="button" class="btn btn-s" data-action="imprimer-ref">Imprimer ou enregistrer en PDF</button></div>' +
+      '<p class="doux" style="margin:0">'+RAWEB.length+' critères RAWeb 1.1 ('+SELECTION.length+' de la sélection SIP, '+(RAWEB.length - SELECTION.length)+' hors sélection) et '+(CRITERES.length - RAWEB.length)+' bonnes pratiques hors RAWeb. Chaque fiche dit comment vérifier le critère, à quelle étape, son impact et sa gravité.</p>' +
+      '<div class="ref-outils">'+boutonsRegroupement()+'</div>' +
+      '<section class="carte pile" aria-labelledby="t-noter"><h2 id="t-noter">Noter les éléments</h2>' +
+      '<p style="margin:0">Dans une observation, le champ Élément reçoit le type et le libellé de l\'élément, par exemple <code>button "Payer"</code>, avec son état entre parenthèses si besoin : <code>button "Payer" (désactivé)</code>.</p>' +
+      '<p style="margin:0">L\'export Jira ajoute l\'écran devant : <code>Panier[button "Payer"]</code>. Un élément répété sur plusieurs écrans est noté sans écran : <code>[Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>';
+    groupesCriteres(officiel).forEach(function(g){
+      html += '<section class="ref-groupe" aria-labelledby="g-'+g.cs[0].id+'"><h2 id="g-'+g.cs[0].id+'">'+esc(g.th)+' <span class="doux petit">('+g.cs.length+')</span></h2>' +
+        g.cs.map(function(c){ return '<article class="carte pile ref-fiche"><h3 style="margin:0">'+esc(refTxt(c))+' <span class="grav grav-'+c.niveau+'">'+GRAVITE[c.niveau]+'</span></h3>'+infoCritere(c, 'h4', true)+'</article>'; }).join('') + '</section>';
+    });
+    return html;
+  }
   function vueGrille(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
     var html = '<h2 class="sr">Grille des critères</h2>';
     // Regroupement : thématiques officielles du RAWeb par défaut (lecture du SIP), thèmes RUXAL au choix.
     var officiel = state.theming !== 'ruxal';
-    html += '<div class="rangee"><span class="lbl" id="lbl-regroup">Regrouper par</span><div class="tags" role="group" aria-labelledby="lbl-regroup">' +
-      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="tag" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div></div>';
-    var groupes = [];
-    if(officiel){
-      CRITERES.forEach(function(c){ var g = c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref; if(groupes.indexOf(g) === -1) groupes.push(g); });
-      groupes.sort(function(a, b){ return (parseInt(a, 10) || 99) - (parseInt(b, 10) || 99); });
-    } else groupes = THEMES_RUXAL;
+    html += boutonsRegroupement();
+    var groupes = groupesCriteres(officiel);
     html += '<div class="tableau"><table><thead><tr><th scope="col">Critère</th><th scope="col">Intitulé</th>' + o.ecrans.map(function(e){ return '<th scope="col" class="col-ecran'+(e.id === state.ecranId ? ' col-ici' : '')+'">'+esc(e.nom)+'</th>'; }).join('') + '<th scope="col" class="col-ecran">Onglet</th></tr></thead><tbody>';
-    groupes.forEach(function(th){
-      var cs = CRITERES.filter(function(c){ return officiel ? (c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref) === th : c.theme_ruxal === th; });
-      if(officiel) cs.sort(function(a, b){ var x = String(a.ref || '99.'+a.id).split('.').map(Number), y = String(b.ref || '99.'+b.id).split('.').map(Number); return (x[0]-y[0]) || ((x[1]||0)-(y[1]||0)); });
-      if(!cs.length) return;
+    groupes.forEach(function(g){
+      var th = g.th, cs = g.cs;
       html += '<tr class="theme"><th colspan="'+(o.ecrans.length + 3)+'" scope="colgroup">'+esc(th)+'</th></tr>';
       cs.forEach(function(c){
-        html += '<tr><th scope="row"><button type="button" class="ref-btn" data-action="critere" data-id="'+c.id+'">'+esc(refTxt(c))+'</button>'+(c.horsSelection ? '<div class="doux petit">hors sélection</div>' : '')+(c.horsRef ? '<div class="doux petit">hors taux</div>' : '')+'</th><td class="intitule">'+esc(c.libelle)+'</td>' +
+        html += '<tr><th scope="row"><button type="button" class="ref-btn" data-action="critere" data-id="'+c.id+'">'+esc(refTxt(c))+'</button><div class="grav grav-'+c.niveau+'">'+GRAVITE[c.niveau]+'</div>'+(c.horsSelection ? '<div class="doux petit">hors sélection</div>' : '')+(c.horsRef ? '<div class="doux petit">hors taux</div>' : '')+'</th><td class="intitule">'+esc(c.libelle)+'</td>' +
           o.ecrans.map(function(e){ var r = statutEcran(o, e, c); return '<td class="statut'+(e.id === state.ecranId ? ' col-ici' : '')+'">'+cellule(r.s, r.conflit)+'</td>'; }).join('') +
           '<td class="statut">'+cellule(statutOnglet(o, c))+'</td></tr>';
       });
@@ -1019,8 +1068,8 @@ RUXAWEB 2 : audit par observations.
 
   // Détail d'un critère : le seul endroit où figurent l'impact et la consigne de vérification.
   // Fiche d'un critère, la même dans la grille (fenêtre) et à la clôture.
-  function infoCritere(c, niv){
-    return '<p style="margin:0"><b>'+esc(c.libelle)+'</b></p><p class="doux petit" style="margin:0">'+(c.horsRef ? 'Bonne pratique hors RAWeb, hors taux' : 'Niveau '+esc(c.niveau_wcag)+' · '+(c.horsSelection ? 'hors sélection SIP (taux élargi)' : 'sélection SIP'))+' · gravité '+GRAVITE[c.niveau]+(c.siPresent ? ' · si présent : '+esc((DECLENCHEURS.filter(function(d){ return d.id === c.declencheur; })[0] || {}).libelle) : '')+'</p>' +
+  function infoCritere(c, niv, sansGravite){
+    return '<p style="margin:0"><b>'+esc(c.libelle)+'</b></p><p class="doux petit" style="margin:0">'+(c.horsRef ? 'Bonne pratique hors RAWeb, hors taux' : 'Niveau '+esc(c.niveau_wcag)+' · '+(c.horsSelection ? 'hors sélection SIP (taux élargi)' : 'sélection SIP'))+(sansGravite ? '' : ' · gravité '+GRAVITE[c.niveau])+(ETAPE[c.etape] ? ' · étape '+(c.etape === 'vide' ? '' : c.etape+' ')+ETAPE[c.etape].nom : '')+(c.siPresent ? ' · si présent : '+esc((DECLENCHEURS.filter(function(d){ return d.id === c.declencheur; })[0] || {}).libelle) : '')+'</p>' +
       '<'+niv+' class="lbl" style="margin:4px 0 0">Comment vérifier</'+niv+'><p style="margin:0">'+esc(c.explication)+'</p>' +
       '<'+niv+' class="lbl" style="margin:4px 0 0">Impact</'+niv+'><p style="margin:0">'+esc(c.impact)+'</p>' +
       (c.ref ? '<p style="margin:0"><a href="'+URL_CRITERE+c.ref.replace('.', '-')+'" target="_blank" rel="noopener">Critère officiel sur le site du SIP</a></p>' : '');
@@ -1092,6 +1141,11 @@ RUXAWEB 2 : audit par observations.
     if(!ev.target.closest('.menu')){ menu.hidden = true; document.getElementById('btn-menu').setAttribute('aria-expanded','false'); }
     if(!b) return;
     var a = b.getAttribute('data-action'), o = onglet();
+    // Un choix dans le menu Fichier le referme (sauf la première demande de « Nouvel audit », qui attend sa confirmation).
+    if(b.closest('#menu-fichier') && !(a === 'reinit' && confirmation !== 'reinit')){
+      menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
+      setTimeout(function(){ var f = document.activeElement; if(!f || f === document.body || menu.contains(f)) bm.focus(); }, 0);
+    }
     if(['suppr-obs','suppr-ecran','reinit'].indexOf(a) === -1) confirmation = null;
     lireBrouillon();
     if(a === 'parcours-bascule'){
@@ -1102,6 +1156,8 @@ RUXAWEB 2 : audit par observations.
       return;
     }
     if(a === 'accueil'){ state.vue = 'accueil'; rendre(true); }
+    else if(a === 'referentiel'){ state.vue = 'referentiel'; rendre(true); }
+    else if(a === 'imprimer-ref'){ window.print(); }
     else if(a === 'nouvel-onglet'){ nouvelOnglet(b.getAttribute('data-type')); rendre(true); }
     else if(a === 'support'){ state.support = b.getAttribute('data-support'); sauver(); rendre(); }
     else if(a === 'ouvrir'){
@@ -1191,7 +1247,8 @@ RUXAWEB 2 : audit par observations.
       rendre(); message('Résultat écarté.'); var nx = $main.querySelector('[data-action="reprendre"]') || document.getElementById('obs-texte'); if(nx) nx.focus();
     }
     else if(a === 'export-xlsx'){ exporterXlsx(); }
-    else if(a === 'export-jira'){ exporterJira(); }
+    else if(a === 'export-jira'){ exporterJira(false); }
+    else if(a === 'export-jira-tout'){ exporterJira(true); }
     else if(a === 'export-json'){ telecharger(nomFichier('sauvegarde','json'), JSON.stringify(state, null, 1)); message('Sauvegarde téléchargée.'); }
     else if(a === 'import-json'){ document.getElementById('fichier-import').click(); }
     else if(a === 'reinit'){
@@ -1274,7 +1331,10 @@ RUXAWEB 2 : audit par observations.
   function csv(v){ var t = String(v == null ? '' : v); return /[,"\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; }
   // Un ticket par observation non conforme encore valide (pas remplacé par un retest). Une observation qui vaut sur
   // plusieurs écrans donne un seul ticket, qui les liste tous.
-  function exporterJira(){
+  function pluriel(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
+  // Mémoire des exports : un ticket déjà exporté ne repart pas, sauf demande « tout réexporter ».
+  function exporterJira(tout){
+    var deja = state.exportesJira || [], nouveaux = [], ignores = 0;
     var lignes = [['Summary','Description','Issue Type','Priority','Labels','Labels','Labels','Labels'].map(csv).join(',')], n = 0;
     state.onglets.forEach(function(o){
       o.obs.forEach(function(x){
@@ -1283,6 +1343,9 @@ RUXAWEB 2 : audit par observations.
         var touches = [x.ecran].concat(x.partage ? x.partage.ecrans : []);
         var invalide = touches.every(function(eid){ return x.criteres.every(function(id){ return o.obs.some(function(y){ return y.tag === 'nt' && y.n > x.n && y.ecran === eid && y.criteres.indexOf(id) > -1; }); }); });
         if(invalide) return;
+        var cle = o.id + ':' + x.id;
+        if(!tout && deja.indexOf(cle) > -1){ ignores++; return; }
+        nouveaux.push(cle);
         var cs = x.criteres.map(function(id){ return PAR_ID[id]; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
         var e = ecranDe(o, x.ecran) || {nom:''};
         var ecrans = [e.nom].concat(x.partage ? x.partage.ecrans.map(function(id){ return (ecranDe(o, id) || {}).nom; }) : []).filter(Boolean);
@@ -1299,8 +1362,14 @@ RUXAWEB 2 : audit par observations.
         n++;
       });
     });
-    if(!n){ message('Aucun ticket à créer : aucune observation non conforme.', true); return; }
-    telecharger(nomFichier('jira','csv'), '﻿' + lignes.join('\r\n')); message(n+' ticket(s) Jira téléchargé(s) (CSV, à importer dans Jira).');
+    if(!n){
+      if(ignores) message('Aucun nouveau ticket : '+(ignores > 1 ? 'les '+ignores+' tickets ont déjà été exportés' : 'le ticket a déjà été exporté')+'. Pour les reprendre : Fichier, « Tickets Jira : tout réexporter ».', true);
+      else message('Aucun ticket à créer : aucune observation non conforme.', true);
+      return;
+    }
+    telecharger(nomFichier('jira','csv'), '﻿' + lignes.join('\r\n'));
+    state.exportesJira = deja.concat(nouveaux.filter(function(k){ return deja.indexOf(k) === -1; })); sauver();
+    message((tout ? pluriel(n, 'ticket Jira réexporté', 'tickets Jira réexportés') : pluriel(n, 'nouveau ticket Jira', 'nouveaux tickets Jira'))+' (CSV, à importer dans Jira).'+(ignores ? ' '+pluriel(ignores, 'ticket déjà exporté non repris', 'tickets déjà exportés non repris')+'.' : ''));
   }
 
   // Classeur Excel écrit sans bibliothèque (archive ZIP sans compression).
