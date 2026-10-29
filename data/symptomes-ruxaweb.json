@@ -55,38 +55,94 @@
           "element": "image porteuse d'information",
           "criteres": [
             "1.1"
+          ],
+          "mots": [
+            "image",
+            "img",
+            "icone",
+            "logo",
+            "photo",
+            "picto"
           ]
         },
         {
           "element": "lien",
           "criteres": [
             "6.2"
+          ],
+          "mots": [
+            "lien",
+            "liens",
+            "link"
           ]
         },
         {
           "element": "champ de formulaire",
           "criteres": [
             "11.1"
+          ],
+          "mots": [
+            "champ",
+            "input",
+            "zone de saisie"
           ]
         },
         {
           "element": "bouton de formulaire",
           "criteres": [
             "11.9"
+          ],
+          "mots": [
+            "bouton d envoi",
+            "envoyer",
+            "valider",
+            "submit"
           ]
         },
         {
           "element": "cadre",
           "criteres": [
             "2.1"
+          ],
+          "mots": [
+            "iframe",
+            "cadre"
           ]
         },
         {
           "element": "composant construit en script (bouton, onglet, menu)",
           "criteres": [
             "7.1"
+          ],
+          "mots": [
+            "bouton",
+            "onglet",
+            "menu",
+            "accordeon",
+            "carrousel"
           ]
         }
+      ],
+      "mots": [
+        "sans nom",
+        "pas de nom",
+        "aucun nom",
+        "nom vide",
+        "sans libelle",
+        "pas de libelle",
+        "sans intitule",
+        "pas d intitule",
+        "sans alternative",
+        "pas d alternative",
+        "sans alt",
+        "alt vide",
+        "alt absent",
+        "annonce juste",
+        "annonce seulement",
+        "seulement bouton",
+        "juste bouton",
+        "juste lien",
+        "aria-label"
       ]
     },
     {
@@ -99,44 +155,103 @@
           "element": "image porteuse d'information",
           "criteres": [
             "1.3"
+          ],
+          "mots": [
+            "image",
+            "img",
+            "icone",
+            "logo",
+            "photo",
+            "picto"
           ]
         },
         {
           "element": "CAPTCHA",
           "criteres": [
             "1.4"
+          ],
+          "mots": [
+            "captcha"
           ]
         },
         {
           "element": "lien",
           "criteres": [
             "6.1"
+          ],
+          "mots": [
+            "lien",
+            "liens",
+            "link"
           ]
         },
         {
           "element": "champ de formulaire",
           "criteres": [
             "11.2"
+          ],
+          "mots": [
+            "champ",
+            "input",
+            "zone de saisie"
           ]
         },
         {
           "element": "bouton de formulaire",
           "criteres": [
             "11.9"
+          ],
+          "mots": [
+            "bouton d envoi",
+            "envoyer",
+            "valider",
+            "submit"
           ]
         },
         {
           "element": "groupe de champs",
           "criteres": [
             "11.7"
+          ],
+          "mots": [
+            "groupe",
+            "radio",
+            "fieldset"
           ]
         },
         {
           "element": "composant construit en script (bouton, onglet, menu)",
           "criteres": [
             "7.1"
+          ],
+          "mots": [
+            "bouton",
+            "onglet",
+            "menu",
+            "accordeon",
+            "carrousel"
           ]
         }
+      ],
+      "mots": [
+        "nom incorrect",
+        "nom faux",
+        "nom vague",
+        "nom pas clair",
+        "libelle vague",
+        "libelle incorrect",
+        "intitule vague",
+        "alternative incorrecte",
+        "alternative fausse",
+        "alt incorrect",
+        "cliquez ici",
+        "en savoir plus",
+        "lire la suite",
+        "nom de fichier",
+        ".png",
+        ".jpg",
+        "pas pertinent",
+        "incomprehensible"
       ]
     },
     {
@@ -146,6 +261,15 @@
       "symptome": "Image ou élément décoratif restitué par le lecteur d'écran",
       "criteres": [
         "1.2"
+      ],
+      "mots": [
+        "decorati",
+        "image de decor",
+        "icone de decor",
+        "ne devrait pas etre lu",
+        "ne devrait pas etre lue",
+        "lu inutilement",
+        "vocalise inutile"
       ]
     },
     {
@@ -155,6 +279,15 @@
       "symptome": "Contenu caché restitué, ou contenu visible ignoré par le lecteur d'écran",
       "criteres": [
         "10.8"
+      ],
+      "mots": [
+        "cache",
+        "masque",
+        "aria-hidden",
+        "display none",
+        "contenu invisible",
+        "lu alors qu",
+        "ignore par le lecteur"
       ]
     },
     {
@@ -164,6 +297,24 @@
       "symptome": "Rôle ou état non restitué (bouton lu comme du texte, case cochée ou menu ouvert non annoncé)",
       "criteres": [
         "7.1"
+      ],
+      "mots": [
+        "role",
+        "etat",
+        "coche",
+        "decoche",
+        "pas annonce",
+        "non annonce",
+        "n est pas annonce",
+        "ouvert",
+        "ferme",
+        "deplie",
+        "replie",
+        "aria-expanded",
+        "selectionne",
+        "lu comme du texte",
+        "lu comme un texte",
+        "onglet actif"
       ]
     },
     {
@@ -176,13 +327,30 @@
           "element": "message d'erreur de formulaire",
           "criteres": [
             "11.10"
+          ],
+          "mots": [
+            "erreur"
           ]
         }
       ],
       "criteres": [
         "7.5"
       ],
-      "note": "Erreur liée à un champ de formulaire : 11.10. Autre message (confirmation, chargement, nombre de résultats) : 7.5."
+      "note": "Erreur liée à un champ de formulaire : 11.10. Autre message (confirmation, chargement, nombre de résultats) : 7.5.",
+      "mots": [
+        "message",
+        "confirmation",
+        "chargement",
+        "notification",
+        "alerte",
+        "toast",
+        "pas lu",
+        "non lu",
+        "n est pas lu",
+        "pas restitue",
+        "non restitue",
+        "n est pas restitue"
+      ]
     },
     {
       "id": "langue",
@@ -195,6 +363,11 @@
           "criteres": [
             "8.3",
             "8.4"
+          ],
+          "mots": [
+            "page",
+            "ecran entier",
+            "toute la page"
           ]
         },
         {
@@ -202,8 +375,23 @@
           "criteres": [
             "8.7",
             "8.8"
+          ],
+          "mots": [
+            "passage",
+            "mot",
+            "phrase",
+            "citation"
           ]
         }
+      ],
+      "mots": [
+        "langue",
+        "anglais",
+        "allemand",
+        "luxembourgeois",
+        "prononc",
+        "accent",
+        "attribut lang"
       ]
     },
     {
@@ -214,6 +402,13 @@
       "criteres": [
         "8.5",
         "8.6"
+      ],
+      "mots": [
+        "titre de la page",
+        "titre de l ecran",
+        "titre de l onglet",
+        "onglet du navigateur",
+        "balise title"
       ]
     },
     {
@@ -223,6 +418,16 @@
       "symptome": "Titres absents, sautés, mal hiérarchisés, ou texte mis en forme comme un titre sans en être un",
       "criteres": [
         "9.1"
+      ],
+      "mots": [
+        "titre",
+        "titres",
+        "heading",
+        "h1",
+        "h2",
+        "h3",
+        "hierarchie",
+        "niveau de titre"
       ]
     },
     {
@@ -232,6 +437,17 @@
       "symptome": "En-tête, navigation, contenu principal ou pied absents ou mal déclarés",
       "criteres": [
         "9.2"
+      ],
+      "mots": [
+        "landmark",
+        "region",
+        "zone principale",
+        "banner",
+        "balise main",
+        "pied de page",
+        "footer",
+        "en-tete",
+        "navigation principale"
       ]
     },
     {
@@ -241,6 +457,13 @@
       "symptome": "Liste visuelle non restituée comme une liste",
       "criteres": [
         "9.3"
+      ],
+      "mots": [
+        "liste",
+        "puce",
+        "puces",
+        "ul ",
+        "ol "
       ]
     },
     {
@@ -251,6 +474,13 @@
       "criteres": [
         "5.6",
         "5.7"
+      ],
+      "mots": [
+        "tableau",
+        "cellule",
+        "en-tete de colonne",
+        "colonne",
+        "entete de tableau"
       ]
     },
     {
@@ -260,6 +490,16 @@
       "symptome": "Code source invalide (balises mal fermées, identifiants en double)",
       "criteres": [
         "8.2"
+      ],
+      "mots": [
+        "code invalide",
+        "validite du code",
+        "id en double",
+        "identifiant en double",
+        "doublon d id",
+        "balise mal fermee",
+        "html invalide",
+        "w3c"
       ]
     },
     {
@@ -275,14 +515,37 @@
           "element": "lecteur média",
           "criteres": [
             "4.11"
+          ],
+          "mots": [
+            "video",
+            "audio",
+            "lecteur"
           ]
         },
         {
           "element": "contenu qui apparaît par la mise en forme seule",
           "criteres": [
             "10.14"
+          ],
+          "mots": [
+            "css",
+            "mise en forme"
           ]
         }
+      ],
+      "mots": [
+        "pas atteignable",
+        "inatteignable",
+        "impossible d atteindre",
+        "n est pas atteignable",
+        "pas focusable",
+        "ne prend pas le focus",
+        "pas activable",
+        "impossible d activer",
+        "ne s active pas",
+        "inaccessible au clavier",
+        "pas au clavier",
+        "clavier"
       ]
     },
     {
@@ -292,6 +555,18 @@
       "symptome": "On ne voit pas où se trouve le focus",
       "criteres": [
         "10.7"
+      ],
+      "mots": [
+        "focus invisible",
+        "focus pas visible",
+        "focus n est pas visible",
+        "pas de focus visible",
+        "ne voit pas le focus",
+        "on ne voit pas ou",
+        "ne vois pas ou",
+        "indicateur de focus",
+        "outline",
+        "focus"
       ]
     },
     {
@@ -304,6 +579,17 @@
       ],
       "bonnes_pratiques": [
         "bp3"
+      ],
+      "mots": [
+        "ordre",
+        "illogique",
+        "saute",
+        "focus perdu",
+        "perd le focus",
+        "focus revient",
+        "revient en haut",
+        "focus deplace",
+        "ordre de tabulation"
       ]
     },
     {
@@ -316,6 +602,15 @@
       ],
       "bonnes_pratiques": [
         "bp2"
+      ],
+      "mots": [
+        "piege",
+        "bloque",
+        "coince",
+        "impossible de sortir",
+        "ne peut pas sortir",
+        "ne peux pas sortir",
+        "boucle"
       ]
     },
     {
@@ -326,6 +621,14 @@
       "criteres": [
         "12.6",
         "12.7"
+      ],
+      "mots": [
+        "lien d evitement",
+        "evitement",
+        "aller au contenu",
+        "skip link",
+        "passer le menu",
+        "blocs repetes"
       ]
     },
     {
@@ -336,6 +639,15 @@
       "criteres": [
         "12.11",
         "10.14"
+      ],
+      "mots": [
+        "infobulle",
+        "tooltip",
+        "survol",
+        "hover",
+        "sous-menu",
+        "sous menu",
+        "disparait"
       ]
     },
     {
@@ -350,14 +662,37 @@
           "element": "texte",
           "criteres": [
             "3.2"
+          ],
+          "mots": [
+            "texte",
+            "police",
+            "paragraphe",
+            "ecrit"
           ]
         },
         {
           "element": "icône, bordure, focus ou graphique",
           "criteres": [
             "3.3"
+          ],
+          "mots": [
+            "icone",
+            "bordure",
+            "focus",
+            "graphique",
+            "contour",
+            "picto"
           ]
         }
+      ],
+      "mots": [
+        "contraste",
+        "peu lisible",
+        "gris clair",
+        "trop clair",
+        "pale",
+        "illisible",
+        "ratio"
       ]
     },
     {
@@ -367,6 +702,15 @@
       "symptome": "Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)",
       "criteres": [
         "3.1"
+      ],
+      "mots": [
+        "couleur",
+        "en rouge",
+        "en vert",
+        "seulement la couleur",
+        "que la couleur",
+        "uniquement la couleur",
+        "par la couleur"
       ]
     },
     {
@@ -377,6 +721,16 @@
       "criteres": [
         "10.9",
         "10.10"
+      ],
+      "mots": [
+        "forme",
+        "position",
+        "a droite",
+        "a gauche",
+        "le bouton rond",
+        "le carre",
+        "en haut a",
+        "en bas a"
       ]
     },
     {
@@ -387,6 +741,15 @@
       "criteres": [
         "1.6",
         "1.7"
+      ],
+      "mots": [
+        "graphique",
+        "schema",
+        "carte",
+        "infographie",
+        "diagramme",
+        "description detaillee",
+        "courbe"
       ]
     },
     {
@@ -396,6 +759,21 @@
       "symptome": "Contenu tronqué, superposé ou illisible quand le texte est agrandi",
       "criteres": [
         "10.4"
+      ],
+      "mots": [
+        "zoom",
+        "agrandi",
+        "200 %",
+        "200%",
+        "400 %",
+        "400%",
+        "reflow",
+        "tronque",
+        "coupe",
+        "chevauche",
+        "superpose",
+        "deborde",
+        "texte agrandi"
       ]
     },
     {
@@ -406,6 +784,15 @@
       "criteres": [],
       "bonnes_pratiques": [
         "bp1"
+      ],
+      "mots": [
+        "trop petit",
+        "trop petite",
+        "cible",
+        "trop proche",
+        "difficile a cliquer",
+        "difficile a toucher",
+        "taille de la cible"
       ]
     },
     {
@@ -416,6 +803,14 @@
       "criteres": [
         "11.1",
         "11.2"
+      ],
+      "mots": [
+        "etiquette",
+        "label",
+        "placeholder",
+        "champ sans",
+        "intitule du champ",
+        "nom du champ"
       ]
     },
     {
@@ -427,6 +822,15 @@
         "11.5",
         "11.6",
         "11.7"
+      ],
+      "mots": [
+        "regroup",
+        "fieldset",
+        "legend",
+        "boutons radio",
+        "bouton radio",
+        "groupe de champs",
+        "cases a cocher"
       ]
     },
     {
@@ -436,6 +840,14 @@
       "symptome": "Format attendu non indiqué, erreur non signalée, peu explicite ou non restituée",
       "criteres": [
         "11.10"
+      ],
+      "mots": [
+        "erreur",
+        "format attendu",
+        "obligatoire",
+        "validation",
+        "message d erreur",
+        "saisie incorrecte"
       ]
     },
     {
@@ -445,6 +857,14 @@
       "symptome": "Bouton d'envoi ou d'action à l'intitulé absent ou peu clair",
       "criteres": [
         "11.9"
+      ],
+      "mots": [
+        "bouton d envoi",
+        "envoyer",
+        "valider",
+        "soumettre",
+        "submit",
+        "bouton du formulaire"
       ]
     },
     {
@@ -455,6 +875,11 @@
       "criteres": [
         "1.4",
         "1.5"
+      ],
+      "mots": [
+        "captcha",
+        "recaptcha",
+        "pas un robot"
       ]
     },
     {
@@ -465,6 +890,12 @@
       "criteres": [
         "4.1",
         "4.2"
+      ],
+      "mots": [
+        "transcription",
+        "audiodescription",
+        "audio-description",
+        "podcast"
       ]
     },
     {
@@ -475,6 +906,12 @@
       "criteres": [
         "4.3",
         "4.4"
+      ],
+      "mots": [
+        "sous-titre",
+        "sous titre",
+        "sous-titres",
+        "caption"
       ]
     },
     {
@@ -484,6 +921,13 @@
       "symptome": "Son lancé automatiquement, sans moyen de l'arrêter",
       "criteres": [
         "4.10"
+      ],
+      "mots": [
+        "son automatique",
+        "demarre tout seul",
+        "lecture automatique",
+        "autoplay",
+        "se lance tout seul"
       ]
     },
     {
@@ -493,6 +937,14 @@
       "symptome": "Lecteur audio ou vidéo inutilisable au clavier ou au pointeur",
       "criteres": [
         "4.11"
+      ],
+      "mots": [
+        "lecteur video",
+        "lecteur audio",
+        "player",
+        "bouton lecture",
+        "volume",
+        "commandes du lecteur"
       ]
     },
     {
@@ -503,6 +955,13 @@
       "criteres": [
         "4.8",
         "4.9"
+      ],
+      "mots": [
+        "carte interactive",
+        "visite virtuelle",
+        "objet embarque",
+        "iframe",
+        "embed"
       ]
     },
     {
@@ -512,6 +971,15 @@
       "symptome": "Délai, déconnexion ou rafraîchissement automatique sans possibilité de l'arrêter ou de le prolonger",
       "criteres": [
         "13.1"
+      ],
+      "mots": [
+        "delai",
+        "deconnect",
+        "session expire",
+        "temps limite",
+        "minuteur",
+        "rafraichi",
+        "timeout"
       ]
     },
     {
@@ -521,6 +989,16 @@
       "symptome": "Contenu qui bouge, défile ou clignote sans pouvoir le mettre en pause",
       "criteres": [
         "13.8"
+      ],
+      "mots": [
+        "carrousel",
+        "carousel",
+        "defile",
+        "clignot",
+        "bouge",
+        "slider",
+        "animation",
+        "pause"
       ]
     },
     {
@@ -530,6 +1008,10 @@
       "symptome": "Flashs ou changements brusques de luminosité",
       "criteres": [
         "13.7"
+      ],
+      "mots": [
+        "flash",
+        "luminosite"
       ]
     },
     {
@@ -539,7 +1021,15 @@
       "symptome": "Action déclenchée dès l'appui, sans pouvoir l'annuler en glissant hors de l'élément",
       "criteres": [
         "13.11"
+      ],
+      "mots": [
+        "des l appui",
+        "au mousedown",
+        "pointeur",
+        "annuler l action",
+        "en glissant"
       ]
     }
-  ]
+  ],
+  "note_mots": "mots : mots-clés (minuscules, sans accents) qui font proposer ce point de contrôle quand ils apparaissent dans une observation. Un mot-clé d'un seul mot vaut aussi pour les mots qui commencent par lui."
 }

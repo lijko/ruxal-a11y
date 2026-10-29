@@ -153,7 +153,8 @@ def bloc():
         sortie.append({
             'id': s['id'], 'famille': s['famille'], 'controle': s['controle'], 'symptome': s['symptome'],
             'criteres': conv(s.get('criteres', [])) + bps,
-            'selon': [{'element': x['element'], 'criteres': conv(x['criteres'])} for x in s.get('selon', [])],
+            'mots': s.get('mots', []),
+            'selon': [{'element': x['element'], 'criteres': conv(x['criteres']), 'mots': x.get('mots', [])} for x in s.get('selon', [])],
         })
     axe = {}
     for regle, refs in charger('axe-raweb.json')['regles'].items():
