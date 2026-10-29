@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 -->
 # Projet A11Y : modules Audit et Scénario
 
-**Statut : spécification, à relire avant développement (29 octobre 2026), choix du questionnaire intégrés.** Cible : RUXAWEB 2.x. Rien de ce qui est décrit ici n'est encore construit, sauf mention contraire.
+**Statut : spécification construite dans RUXAWEB 2.x (29 octobre 2026), sauf le mode Complet (affiché « à venir »).** L'import axe ou Lighthouse se lance au tour à vide ; ses pistes apparaissent à l'étape où leur critère se vérifie.
 
 ## Principe
 Le fichier de travail devient un **projet** : « Projet A11Y - nom du projet ». Un projet contient un ou plusieurs onglets, chacun relevant d'un **module** :
