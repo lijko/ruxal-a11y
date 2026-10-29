@@ -161,11 +161,23 @@ def main():
             tous.click()
             verifier('Clôture : conforme sur les écrans restants en un clic', all(statut(page, i, cid) in ('C', 'NA') for i in range(3)))
             page.click('[data-action="vue"][data-vue="cloture"]')
-        for _ in range(400):
-            b = page.locator('[data-action="clo"][data-tag="c"]')
-            if b.count() == 0:
+        page.locator('[data-action="clo-crit"]').first.click()
+        b = page.locator('[data-action="clo"][data-tag="c"][aria-pressed="false"]:not([disabled])').first
+        b.click()
+        verifier('Clôture : le choix reste affiché (C allumé)', page.locator('[data-action="clo"][data-tag="c"][aria-pressed="true"]').count() >= 1)
+        page.locator('[data-action="clo"][data-tag="na"]:not([disabled])').first.click()
+        verifier('Clôture : choix modifiable (NA allumé, C éteint)', page.locator('[data-action="clo"][data-tag="na"][aria-pressed="true"]').count() >= 1)
+        for _ in range(600):
+            b = page.locator('[data-action="clo"][data-tag="c"][aria-pressed="false"]:not([disabled])')
+            ecr = page.locator('.obs:has([data-action="clo"])')
+            libres = [i for i in range(ecr.count()) if ecr.nth(i).locator('[aria-pressed="true"]').count() == 0 and ecr.nth(i).locator('[disabled]').count() == 0]
+            if libres:
+                ecr.nth(libres[0]).locator('[data-action="clo"][data-tag="c"]').click()
+                continue
+            suivant = page.locator('[data-action="clo-crit"]')
+            if suivant.count() == 0:
                 break
-            b.first.click()
+            suivant.first.click()
         sel = page.evaluate('RUXAWEB.taux("%s")' % oid)
         ela = page.evaluate('RUXAWEB.taux("%s", true)' % oid)
         verifier('Clôture : plus rien à trancher', sel['complet'] and ela['complet'], (sel, ela))

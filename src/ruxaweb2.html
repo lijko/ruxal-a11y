@@ -147,12 +147,16 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   .etiq{display:inline-flex;padding:2px 8px;border-radius:99px;font-size:11.5px;font-weight:800;background:var(--c-ref);color:var(--c-ref-ink)}
   .etiq-ref{background:var(--surface-alt);color:var(--ink-soft);border:1px solid var(--border);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
-  .tags{display:flex;gap:6px}
-  .tag{min-width:58px;min-height:44px;border-radius:var(--radius);background:var(--surface);cursor:pointer;font-weight:800}
-  .tag-c{border:1px solid var(--c-conforme);color:var(--c-conforme)} .tag-nc{border:1px solid var(--c-nc);color:var(--c-nc)} .tag-na{border:1px solid var(--c-na);color:var(--c-na)}
-  .tag-c[aria-pressed="true"]{background:var(--c-conforme);color:var(--surface)}
-  .tag-nc[aria-pressed="true"]{background:var(--c-nc);color:var(--surface)}
-  .tag-na[aria-pressed="true"]{background:var(--c-na);color:var(--surface)}
+  /* Interrupteur à trois positions, repris de la 1.7 : une seule position allumée, les autres éteintes. */
+  .tags{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex:none;align-self:center}
+  .tag{min-width:48px;min-height:36px;padding:0 12px;border:0;border-right:1px solid var(--border);background:var(--surface);color:var(--ink-soft);cursor:pointer;font-weight:800;font-size:13px}
+  .tag:last-child{border-right:0}
+  .tag:hover{background:var(--surface-alt);color:var(--ink)}
+  .tag[disabled]{cursor:not-allowed}
+  .tag-c[aria-pressed="true"]{background:var(--c-conforme);color:var(--accent-ink)}
+  .tag-nc[aria-pressed="true"]{background:var(--c-nc);color:var(--accent-ink)}
+  .tag-na[aria-pressed="true"]{background:var(--c-na);color:var(--accent-ink)}
+  .tag:focus-visible{outline-offset:-3px}
 
   .audit{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
   .ecrans{flex:1 1 200px;max-width:250px;display:flex;flex-direction:column;gap:12px}
@@ -770,31 +774,51 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function criteresATrancher(o){
     var l = aTrancher(o), ids = [];
     l.forEach(function(x){ if(ids.indexOf(x.c.id) === -1) ids.push(x.c.id); });
+    ids.sort(function(a, b){ return CRITERES.indexOf(PAR_ID[a]) - CRITERES.indexOf(PAR_ID[b]); });
     return ids.map(function(id){ return {c:PAR_ID[id], ecrans:l.filter(function(x){ return x.c.id === id; })}; });
+  }
+  // Observation de clôture d'un critère sur un écran (la dernière), modifiable tant qu'on est en clôture.
+  function obsCloture(o, eid, cid){
+    var l = o.obs.filter(function(x){ return x.etape === 'cloture' && x.ecran === eid && x.criteres.length === 1 && x.criteres[0] === cid && x.tag !== 'nt'; });
+    return l[l.length - 1] || null;
+  }
+  function poserCloture(o, eid, cid, tag, texte){
+    o.obs = o.obs.filter(function(x){ return !(x.etape === 'cloture' && x.ecran === eid && x.criteres.length === 1 && x.criteres[0] === cid && x.tag !== 'nt'); });
+    o.obs.push({id:uid(), n:suivant(), ecran:eid, etape:'cloture', texte:texte || 'Vérifié à la clôture', attendu:'', point:'', criteres:[cid], tag:tag, partage:null});
+    o.valide = false;
   }
   function vueCloture(o){
     var l = criteresATrancher(o);
     var html = '<div class="rangee entre"><h1>Clôture : '+l.length+' critère'+(l.length > 1 ? 's' : '')+' à trancher</h1><button type="button" class="btn btn-p" data-action="valider">'+(o.valide ? 'Onglet validé, voir le résumé' : 'Valider l\'onglet')+'</button></div>';
-    if(!l.length) return html + '<div class="carte"><p style="margin:0">Tous les critères ont un statut. Tu peux valider l\'onglet.</p></div>';
-    var cur = l.filter(function(x){ return x.c.id === state.clotureCrit; })[0] || l[0];
-    state.clotureCrit = cur.c.id;
-    var c = cur.c;
-    html += '<section class="carte pile" aria-labelledby="clo-titre"><div class="rangee entre"><h2 id="clo-titre">'+esc(refTxt(c))+'</h2><span class="doux petit">'+(l.indexOf(cur) + 1)+' sur '+l.length+'</span></div>' +
+    // Le critère en cours reste affiché même une fois tranché : le choix reste visible, on passe au suivant quand on veut.
+    var c = PAR_ID[state.clotureCrit] && o.ecrans.some(function(e){ return !statutEcran(o, e, PAR_ID[state.clotureCrit]).cfg; }) ? PAR_ID[state.clotureCrit] : (l[0] ? l[0].c : null);
+    if(!c) return html + '<div class="carte"><p style="margin:0">Tous les critères ont un statut. Tu peux valider l\'onglet.</p></div>';
+    state.clotureCrit = c.id;
+    var autres = l.filter(function(x){ return x.c.id !== c.id; });
+    var pos = l.map(function(x){ return x.c.id; }).indexOf(c.id);
+    html += '<section class="carte pile" aria-labelledby="clo-titre"><div class="rangee entre"><h2 id="clo-titre">'+esc(refTxt(c))+'</h2><span class="doux petit">'+(pos > -1 ? (pos + 1)+' sur '+l.length : 'tranché')+'</span></div>' +
       '<p style="margin:0"><b>'+esc(c.libelle)+'</b></p>' +
       '<div><div class="lbl">Comment vérifier</div><p style="margin:2px 0 0">'+esc(c.explication)+'</p></div>';
-    html += cur.ecrans.map(function(x){
-      var e = x.e, cle = e.id+'|'+c.id;
-      return '<div class="obs"><div class="corps"><span><b>'+esc(e.nom)+'</b>'+(x.s === 'AC' ? ' <span class="doux petit">(conforme sur un autre écran, à confirmer ici)</span>' : '')+'</span>' +
+    var restants = 0;
+    html += o.ecrans.map(function(e){
+      var r = statutEcran(o, e, c); if(r.cfg) return '';
+      var clo = obsCloture(o, e.id, c.id), cle = e.id+'|'+c.id;
+      var modifiable = !!clo || r.s === 'NT' || r.s === 'AC';
+      if(r.s === 'NT' || r.s === 'AC') restants++;
+      var sel = r.s === 'AC' || r.s === 'NT' ? '' : r.s;
+      var note = r.s === 'AC' ? 'conforme sur un autre écran, à confirmer ici' : (!modifiable ? 'tranché pendant l\'audit' : (clo && clo.tag === 'nc' ? clo.texte : ''));
+      return '<div class="obs" style="align-items:center"><div class="corps"><span><b>'+esc(e.nom)+'</b>'+(note ? ' <span class="doux petit">('+esc(note)+')</span>' : '')+'</span>' +
         (clotureNc === cle ? '<div class="rangee"><label class="sr" for="clo-txt">Observation de non-conformité sur '+esc(e.nom)+'</label><input type="text" id="clo-txt" placeholder="Observation" autocomplete="off" style="flex:1 1 240px;width:auto"><button type="button" class="btn btn-s btn-p" data-action="clo-nc-ok" data-ecran="'+e.id+'" data-crit="'+c.id+'">Enregistrer</button></div>' : '') +
         '</div><div class="tags" role="group" aria-label="Statut sur '+esc(e.nom)+'">' +
-        '<button type="button" class="tag tag-c" data-action="clo" data-tag="c" data-ecran="'+e.id+'" data-crit="'+c.id+'" aria-pressed="false">C</button>' +
-        '<button type="button" class="tag tag-nc" data-action="clo-nc" data-ecran="'+e.id+'" data-crit="'+c.id+'" aria-pressed="'+(clotureNc === cle)+'">NC</button>' +
-        '<button type="button" class="tag tag-na" data-action="clo" data-tag="na" data-ecran="'+e.id+'" data-crit="'+c.id+'" aria-pressed="false">NA</button></div></div>';
+        [['c','C','clo'],['nc','NC','clo-nc'],['na','NA','clo']].map(function(t){
+          var on = sel === t[1] || (t[0] === 'nc' && clotureNc === cle);
+          return '<button type="button" class="tag tag-'+t[0]+'" data-action="'+t[2]+'" data-tag="'+t[0]+'" data-ecran="'+e.id+'" data-crit="'+c.id+'" aria-pressed="'+on+'"'+(modifiable ? '' : ' disabled')+'>'+t[1]+'</button>';
+        }).join('') + '</div></div>';
     }).join('');
-    if(cur.ecrans.length > 1) html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-l" data-action="clo-tous" data-crit="'+c.id+'">Conforme sur les '+cur.ecrans.length+' écrans</button></div>';
-    html += '</section>';
-    if(l.length > 1){
-      html += '<section class="carte" aria-labelledby="clo-autres"><h2 id="clo-autres">Autres critères à trancher</h2><div class="rangee" style="margin-top:8px">' + l.filter(function(x){ return x !== cur; }).map(function(x){
+    html += '<div class="rangee entre">' + (restants > 1 ? '<button type="button" class="btn btn-l" data-action="clo-tous" data-crit="'+c.id+'">Conforme sur les '+restants+' écrans restants</button>' : '<span></span>') +
+      (autres.length ? '<button type="button" class="btn btn-p" data-action="clo-crit" data-crit="'+autres[0].c.id+'">Critère suivant : '+esc(refTxt(autres[0].c))+'</button>' : '') + '</div></section>';
+    if(autres.length > 1){
+      html += '<section class="carte" aria-labelledby="clo-autres"><h2 id="clo-autres">Autres critères à trancher</h2><div class="rangee" style="margin-top:8px">' + autres.map(function(x){
         return '<button type="button" class="btn btn-s" data-action="clo-crit" data-crit="'+x.c.id+'" title="'+esc(x.c.libelle)+'">'+esc(refTxt(x.c))+' <span class="doux">('+x.ecrans.length+')</span></button>';
       }).join('') + '</div></section>';
     }
@@ -945,22 +969,21 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       o.valide = false; rendre(); ouvrirCritere(b.getAttribute('data-crit')); message('Critère remis à NT sur cet écran. Les observations précédentes restent en historique.');
     }
     else if(a === 'clo'){
-      o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'cloture', texte:'Vérifié à la clôture', attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:b.getAttribute('data-tag'), partage:null});
-      clotureNc = null; rendre(); focusCloture();
+      var eid = b.getAttribute('data-ecran'), cid0 = b.getAttribute('data-crit');
+      poserCloture(o, eid, cid0, b.getAttribute('data-tag'));
+      clotureNc = null; rendre(); var bc = document.querySelector('[data-action="clo"][data-ecran="'+eid+'"][data-crit="'+cid0+'"][data-tag="'+b.getAttribute('data-tag')+'"]'); if(bc) bc.focus();
     }
     else if(a === 'clo-tous'){
-      var cid = b.getAttribute('data-crit');
-      criteresATrancher(o).filter(function(x){ return x.c.id === cid; }).forEach(function(x){
-        x.ecrans.forEach(function(y){ o.obs.push({id:uid(), n:suivant(), ecran:y.e.id, etape:'cloture', texte:'Vérifié à la clôture', attendu:'', point:'', criteres:[cid], tag:'c', partage:null}); });
-      });
-      clotureNc = null; rendre(); focusCloture(); message(refTxt(PAR_ID[cid])+' : conforme sur les écrans restants.');
+      var cid = b.getAttribute('data-crit'), cc = PAR_ID[cid];
+      o.ecrans.forEach(function(e){ var r = statutEcran(o, e, cc); if(r.s === 'NT' || r.s === 'AC') poserCloture(o, e.id, cid, 'c'); });
+      clotureNc = null; rendre(); var bs = document.querySelector('[data-action="clo-crit"]') || document.getElementById('clo-titre'); if(bs) bs.focus(); message(refTxt(cc)+' : conforme sur les écrans restants.');
     }
     else if(a === 'clo-crit'){ state.clotureCrit = b.getAttribute('data-crit'); clotureNc = null; rendre(); focusCloture(); }
     else if(a === 'clo-nc'){ clotureNc = b.getAttribute('data-ecran')+'|'+b.getAttribute('data-crit'); rendre(); var it = document.getElementById('clo-txt'); if(it) it.focus(); }
     else if(a === 'clo-nc-ok'){
       var tx = (document.getElementById('clo-txt').value || '').trim();
       if(!tx){ message('Décris l\'observation de non-conformité.', true); document.getElementById('clo-txt').focus(); return; }
-      o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'cloture', texte:tx, attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:'nc', partage:null});
+      poserCloture(o, b.getAttribute('data-ecran'), b.getAttribute('data-crit'), 'nc', tx);
       clotureNc = null; rendre(); focusCloture();
     }
     else if(a === 'valider'){
