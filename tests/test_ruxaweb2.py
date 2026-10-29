@@ -30,15 +30,21 @@ def verifier(nom, condition, detail=''):
     print(('OK    ' if condition else 'ÉCHEC ') + nom + ('' if condition else ' , ' + str(detail)))
 
 
+def aller_audit(page):
+    """Vue Saisie de l'onglet en cours, depuis n'importe quelle vue (onglet courant dans la ligne des onglets)."""
+    page.click('#onglet-nav .onglet-tab[aria-current="page"]')
+
+
 def statut(page, ecran, crit):
     """Statut d'un critère sur un écran (par index), lu dans la grille."""
+    aller_audit(page)
     page.click('[data-action="vue"][data-vue="grille"]')
     ligne = page.locator('tr', has=page.locator('[data-action="critere"][data-id="%s"]' % crit))
     return ligne.locator('td.statut').nth(ecran).inner_text().split('\n')[0].strip()
 
 
 def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit=None):
-    page.click('[data-action="vue"][data-vue="audit"]')
+    aller_audit(page)
     page.fill('#obs-texte', texte)
     if point:
         page.select_option('#obs-point', point)
@@ -59,7 +65,7 @@ def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit
 
 
 def ecran(page, i):
-    page.click('[data-action="vue"][data-vue="audit"]')
+    aller_audit(page)
     page.locator('.ecrans [data-action="ecran"]').nth(i).click()
 
 
@@ -118,7 +124,7 @@ def main():
         verifier('Aussi sur, sans nom : 11.10 NA là où le formulaire est absent', [statut(page, i, 'raweb-11-10') for i in range(3)] == ['NC', 'NA', 'NA'])
         observer(page, 'Menu : état ouvert non annoncé.', point='role-etat', partage=('Menu', [0]))
         verifier('Aussi sur un seul écran : 7.1 NC sur les deux, NT sur le troisième', [statut(page, i, 'raweb-7-1') for i in range(3)] == ['NC', 'NC', 'NT'])
-        page.click('[data-action="vue"][data-vue="audit"]')
+        aller_audit(page)
         verifier('Éléments répétés : liste unique à gauche', 'éléments répétés' in page.locator('nav.ecrans').inner_text().lower() and 'Menu principal' in page.locator('nav.ecrans').inner_text())
 
         # Noms d'élément : casse, accents et espaces ne créent pas un nouvel élément.
@@ -126,7 +132,7 @@ def main():
         observer(page, 'Lien du menu sans nom.', point='nom-absent', element=1, partage=('  menu   PRINCIPAL ', []))
         derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
         verifier('Élément : nom ramené à l\'orthographe existante', derniere.get('elementNom') == 'Menu principal', derniere.get('elementNom'))
-        page.click('[data-action="vue"][data-vue="audit"]')
+        aller_audit(page)
         verifier('Éléments répétés : pas de doublon', page.locator('nav.ecrans .elt', has_text='Menu principal').count() == 1)
         ecran(page, 0)
 
@@ -251,7 +257,7 @@ def main():
         page.locator('[data-action="ouvrir"]').first.click()
 
         # Import d'un rapport axe-core puis Lighthouse : des résultats à reprendre, jamais un statut.
-        page.click('[data-action="vue"][data-vue="audit"]')
+        aller_audit(page)
         ecran(page, 1)
         axe = {'testEngine': {'name': 'axe-core', 'version': '4.13.0'}, 'url': 'https://exemple.lu/',
                'violations': [{'id': 'image-alt', 'help': 'Images must have alternative text', 'tags': ['wcag2a', 'wcag111'],
@@ -263,7 +269,7 @@ def main():
         f = pathlib.Path(tempfile.mkdtemp()) / 'axe.json'
         f.write_text(json.dumps(axe), encoding='utf-8')
         avant = statut(page, 1, 'raweb-1-1')
-        page.click('[data-action="vue"][data-vue="audit"]')
+        aller_audit(page)
         page.set_input_files('#fichier-auto', str(f))
         page.wait_for_timeout(300)
         verifier('axe : 3 résultats à vérifier (2 échecs, 1 incomplet)', page.locator('[data-action="reprendre"]').count() == 3)
@@ -273,14 +279,14 @@ def main():
         par = {c['regle']: c['criteres'] for c in cands}
         verifier('axe : image-alt vers 1.1 (table RUXAL)', par.get('image-alt') == ['raweb-1-1'], par)
         verifier('axe : règle hors table rapprochée par WCAG 1.4.3 (3.2)', par.get('regle-inconnue') == ['raweb-3-2'], par)
-        page.click('[data-action="vue"][data-vue="audit"]')
+        aller_audit(page)
         page.locator('[data-action="reprendre"]').first.click()
         verifier('Reprendre : observation préremplie', 'Images must have alternative text' in page.input_value('#obs-texte'))
         page.click('#form-obs button[type=submit]')
         derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
         verifier('Reprendre : observation #nc avec sa source', derniere['tag'] == 'nc' and derniere.get('source', {}).get('regle') == 'image-alt', derniere)
         verifier('Reprendre : 1.1 NC', statut(page, 1, 'raweb-1-1') == 'NC')
-        page.click('[data-action="vue"][data-vue="audit"]')
+        aller_audit(page)
         verifier('Reprendre : résultat retiré de la liste', page.locator('[data-action="reprendre"]').count() == 2)
         page.locator('[data-action="ecarter"]').first.click()
         verifier('Écarter : résultat retiré', page.locator('[data-action="reprendre"]').count() == 1)

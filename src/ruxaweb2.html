@@ -76,6 +76,16 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   .barre-in{max-width:1440px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
   .marque{font-weight:800;font-size:18px;background:none;border:0;padding:4px 0;cursor:pointer}
   .marque small{font-weight:600;color:var(--ink-soft);font-size:13px;margin-left:6px}
+  .nom-audit{flex:1 1 260px;max-width:420px;min-height:40px;font-weight:600;border:1px solid transparent;background:transparent}
+  .nom-audit:hover,.nom-audit:focus{border-color:var(--border);background:var(--surface)}
+  nav.onglets{max-width:1440px;margin:0 auto;padding:0 24px 10px;display:flex;gap:6px;overflow-x:auto}
+  .onglet-tab{flex:0 0 auto;display:flex;flex-direction:column;gap:1px;text-align:left;padding:7px 14px;border-radius:9px;border:1px solid var(--border);background:var(--surface);cursor:pointer;min-width:130px}
+  .onglet-tab b{font-size:13px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .onglet-tab span{font-size:11.5px;color:var(--ink-soft)}
+  .onglet-tab[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .onglet-tab[aria-current="page"] span{color:var(--accent-ink);opacity:.85}
+  .onglet-tab.ajout{border-style:dashed;color:var(--ink-soft);font-weight:700;justify-content:center;min-width:0}
+  .onglet-tab.ajout:hover{border-color:var(--accent);color:var(--accent)}
   nav.onglet-nav{display:flex;gap:4px;flex-wrap:wrap}
   nav.onglet-nav button{background:none;border:1px solid transparent;border-radius:8px;padding:6px 12px;min-height:40px;cursor:pointer;color:var(--ink-soft);font-weight:600}
   nav.onglet-nav button[aria-current="page"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft)}
@@ -87,7 +97,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
 
   .page{max-width:1440px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
   main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
-  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:72px;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:140px;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
   aside.aide h2{margin:0;font-size:16px}
   aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
   aside.aide p{margin:0}
@@ -153,6 +163,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   .tag:last-child{border-right:0}
   .tag:hover{background:var(--surface-alt);color:var(--ink)}
   .tag[disabled]{cursor:not-allowed}
+  .tag:not(.tag-c):not(.tag-nc):not(.tag-na)[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
   .tag-c[aria-pressed="true"]{background:var(--c-conforme);color:var(--accent-ink)}
   .tag-nc[aria-pressed="true"]{background:var(--c-nc);color:var(--accent-ink)}
   .tag-na[aria-pressed="true"]{background:var(--c-na);color:var(--accent-ink)}
@@ -223,7 +234,8 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
 <header class="barre">
   <div class="barre-in">
     <button class="marque" type="button" data-action="accueil">Atelier RUXAWEB<small>2.0</small></button>
-    <nav class="onglet-nav" id="onglet-nav" aria-label="Onglet en cours"></nav>
+    <label class="sr" for="audit-nom">Nom de l'audit</label>
+    <input type="text" id="audit-nom" class="nom-audit" placeholder="Nom de l'audit (ex. Boutique en ligne)" autocomplete="off">
     <span class="espace"></span>
     <div class="menu">
       <button class="btn btn-s" type="button" id="btn-menu" aria-expanded="false" aria-controls="menu-fichier">Fichier</button>
@@ -238,6 +250,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     <input type="file" id="fichier-import" accept=".json,application/json" hidden>
     <input type="file" id="fichier-auto" accept=".json,application/json" hidden>
   </div>
+  <nav class="onglets" id="onglet-nav" aria-label="Onglets de l'audit"></nav>
 </header>
 <div class="page">
   <main id="main" tabindex="-1"></main>
@@ -470,9 +483,15 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function rendre(focus){
     var o = onglet();
     if(state.vue !== 'accueil' && !o){ state.vue = 'accueil'; }
-    $nav.innerHTML = o && state.vue !== 'accueil' ? [['audit','Audit'],['grille','Grille']].concat(o.type === 'scenario' ? [['ux','POUR/UX']] : [], [['cloture','Clôture'],['resume','Résumé']]).map(function(v){
-      return '<button type="button" data-action="vue" data-vue="'+v[0]+'"'+(state.vue === v[0] ? ' aria-current="page"' : '')+'>'+v[1]+'</button>';
-    }).join('') : '';
+    // Ligne des onglets : un bouton par onglet de l'audit, avec son état, plus le tableau de bord et l'ajout.
+    $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="accueil"'+(state.vue === 'accueil' ? ' aria-current="page"' : '')+'><b>Tableau de bord</b><span>'+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</span></button>' +
+      state.onglets.map(function(x){
+        var t = taux(x, SELECTION), te = taux(x, RAWEB);
+        var etat = t.complet ? t.pct+' % sélection SIP' : te.nt+' à trancher';
+        var ici = state.vue !== 'accueil' && x.id === state.ongletId;
+        return '<button type="button" class="onglet-tab" data-action="ouvrir" data-id="'+x.id+'"'+(ici ? ' aria-current="page"' : '')+'><b>'+esc(x.nom)+'</b><span>'+(x.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+esc(etat)+'</span></button>';
+      }).join('') + '<button type="button" class="onglet-tab ajout" data-action="nouvel-onglet">+ Nouvel onglet</button>';
+    var nomAudit = document.getElementById('audit-nom'); if(nomAudit && document.activeElement !== nomAudit) nomAudit.value = state.auditNom || '';
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
     var vues = {accueil:vueAccueil, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, cloture:vueCloture, resume:vueResume};
     $main.innerHTML = (vues[state.vue] || vueAccueil)(o);
@@ -526,10 +545,14 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     return html;
   }
 
+  function bascule(vue){
+    return '<div class="tags" role="group" aria-label="Vue de l\'onglet">' + [['audit','Saisie'],['grille','Grille']].map(function(v){
+      return '<button type="button" class="tag" style="min-width:80px" data-action="vue" data-vue="'+v[0]+'" aria-pressed="'+(vue === v[0])+'">'+v[1]+'</button>';
+    }).join('') + '</div>';
+  }
   function vueAccueil(){
     var html = '<h1>Tableau de bord</h1>';
-    html += '<div class="carte grille2"><div class="champ"><label class="lbl" for="audit-nom">Nom de l\'audit</label><input type="text" id="audit-nom" value="'+esc(state.auditNom)+'" placeholder="Ex. Boutique en ligne" autocomplete="off"></div>' +
-      '<div class="champ"><label class="lbl" for="audit-support">Support</label><select id="audit-support"><option value="desktop"'+(state.support === 'desktop' ? ' selected' : '')+'>Ordinateur</option><option value="mobile"'+(state.support === 'mobile' ? ' selected' : '')+'>Mobile (web adaptatif)</option></select></div></div>';
+    html += '<div class="carte grille2"><div class="champ"><label class="lbl" for="audit-support">Support</label><select id="audit-support"><option value="desktop"'+(state.support === 'desktop' ? ' selected' : '')+'>Ordinateur</option><option value="mobile"'+(state.support === 'mobile' ? ' selected' : '')+'>Mobile (web adaptatif)</option></select></div></div>';
     html += '<div class="cartes">';
     state.onglets.forEach(function(o){
       var t = taux(o, SELECTION), te = taux(o, RAWEB);
@@ -614,7 +637,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     html += '<div class="carte"><h2>Éléments répétés</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(libelles[n])+'</span><span class="doux petit">'+elts[n].length+' écrans</span></div>'; }).join('')
       : '<p class="doux petit" style="margin:4px 8px">Un élément observé sur plusieurs écrans apparaît ici.</p>') + '</div>';
     var nte = ntEcran(o, e);
-    html += '</nav><div class="centre"><div class="rangee entre"><h1>'+esc(e.nom)+'</h1><span class="rangee">'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'<button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></span></div>';
+    html += '</nav><div class="centre"><div class="rangee entre"><span class="rangee"><h1>'+esc(e.nom)+'</h1>'+bascule('audit')+'</span><span class="rangee">'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'<button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></span></div>';
     html += formulaireObs(o, e, et);
     html += vueCandidats(o, e);
     // Les critères tranchés à la clôture sans observation (C, NA) restent dans la grille ; ici, une seule ligne les résume.
@@ -738,7 +761,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
 
   function vueGrille(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
-    var html = '<div class="rangee entre"><h1>Grille des critères</h1><span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : te.nt+' critère(s) à trancher')+'</span></div>';
+    var html = '<div class="rangee entre"><span class="rangee"><h1>Grille des critères</h1>'+bascule('grille')+'</span><span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : te.nt+' critère(s) à trancher')+'</span></div>';
     // Regroupement : thématiques officielles du RAWeb par défaut (lecture du SIP), thèmes RUXAL au choix.
     var officiel = state.theming !== 'ruxal';
     html += '<div class="rangee" role="group" aria-label="Regroupement des critères"><span class="lbl">Regrouper par</span>' +
@@ -930,7 +953,12 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     lireBrouillon();
     if(a === 'accueil'){ state.vue = 'accueil'; rendre(true); }
     else if(a === 'nouvel-onglet'){ nouvelOnglet(); rendre(true); }
-    else if(a === 'ouvrir'){ state.ongletId = b.getAttribute('data-id'); o = onglet(); state.ecranId = o.ecrans.length ? o.ecrans[0].id : null; state.vue = o.obs.length ? 'audit' : 'preparer'; rendre(true); }
+    else if(a === 'ouvrir'){
+      var deja = state.ongletId === b.getAttribute('data-id') && state.vue !== 'accueil';
+      state.ongletId = b.getAttribute('data-id'); o = onglet();
+      if(!deja || !ecranDe(o, state.ecranId)) state.ecranId = o.ecrans.length ? o.ecrans[0].id : null;
+      state.vue = deja || o.obs.length ? 'audit' : 'preparer'; rendre(true);
+    }
     else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit rapide')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } state.vue = v; rendre(true); }
     else if(a === 'etape'){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); }
     else if(a === 'ecran'){ state.ecranId = b.getAttribute('data-id'); state.etape = 'vide'; var e0 = ecranDe(o, state.ecranId); ETAPES.some(function(et){ if(!(e0.etapes || {})[et.id]){ state.etape = et.id; return true; } }); rendre(true); }
@@ -1035,7 +1063,12 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     else if(t.id === 'audit-nom'){ state.auditNom = t.value.trim(); sauver(); }
     else if(t.id === 'audit-support'){ state.support = t.value; sauver(); }
     else if(t.id === 'onglet-nom'){ o.nom = t.value.trim() || o.nom; sauver(); }
-    else if(t.name === 'onglet-type'){ o.type = t.value; rendre(); }
+    else if(t.name === 'onglet-type'){
+      // Un nom encore par défaut suit le type choisi (« Audit rapide 2 » devient « Scénario 2 »).
+      var m = /^(Audit rapide|Scénario) (\d+)$/.exec(o.nom);
+      o.type = t.value; if(m) o.nom = (o.type === 'scenario' ? 'Scénario ' : 'Audit rapide ')+m[2];
+      rendre(); var r = document.querySelector('input[name="onglet-type"][value="'+o.type+'"]'); if(r) r.focus();
+    }
     else if(t.hasAttribute('data-ecran-nom')){ var e = ecranDe(o, t.getAttribute('data-ecran-nom')); e.nom = t.value.trim() || e.nom; sauver(); }
     else if(t.id === 'obs-point'){ lireBrouillon(); brouillon.point = t.value; brouillon.element = ''; brouillon.crits = criteresProposes(); rendre(); document.getElementById('obs-point').focus(); }
     else if(t.id === 'obs-element'){ lireBrouillon(); brouillon.element = t.value; brouillon.crits = criteresProposes(); rendre(); document.getElementById('obs-element').focus(); }
