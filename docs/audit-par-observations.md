@@ -125,9 +125,9 @@ Retours de Bertrand après utilisation, et réponses proposées.
 **Retour** : en audit rapide, reprendre les mêmes non-conformités sur chaque écran de l'échantillon (en-tête, pied de page, menu principal...) est très long et source d'erreurs.
 
 **Décision (27 octobre 2026, simplifiée le même soir)** :
-- Une seule notion, l'**élément récurrent** (terme choisi le 29 octobre 2026) : dans le formulaire, l'auditeur peut nommer l'élément (ex. Menu principal) et cocher les autres écrans où l'observation est vraie (« Aussi sur »).
+- Une seule notion, l'**élément répété** (terme choisi le 29 octobre 2026, celui de WCAG et du RAWeb) : dans le formulaire, l'auditeur peut nommer l'élément (ex. Menu principal) et cocher les autres écrans où l'observation est vraie (« Aussi sur »).
 - Plus de distinction entre élément identique et composant réutilisé : c'est l'auditeur qui coche les écrans où l'observation est vraie.
-- Les éléments nommés forment la liste « Éléments récurrents », à côté des écrans.
+- Les éléments nommés forment la liste « Éléments répétés », à côté des écrans.
 - **Une observation n'a jamais de statut propre** : elle écrit dans les écrans cochés, comme une saisie écran par écran. Le taux se calcule comme avant, et reste comparable à celui du SIP.
 - Une observation `#nc` rend le critère NC sur chaque écran coché. Une observation `#c` le laisse « à confirmer » sur les autres écrans : d'autres éléments peuvent le violer.
 - Une observation qui vaut sur plusieurs écrans donne un seul ticket Jira.
