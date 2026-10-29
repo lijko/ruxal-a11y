@@ -109,6 +109,15 @@ RUXAWEB 2 : audit par observations.
   aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
   aside.aide p{margin:0}
   aside.aide:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .parcours-court{display:flex;flex-direction:column;gap:6px}
+  .parcours-court .points{display:flex;gap:5px;flex-wrap:wrap}
+  .parcours-court .points i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink-faint);background:var(--surface)}
+  .parcours-court .points i.fait{background:var(--c-conforme);border-color:var(--c-conforme)}
+  .parcours-court .points i.ici{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .parcours-court .en-cours{font-weight:700}
+  .nav-parcours{gap:8px;flex-wrap:wrap}
+  .lien-parcours{align-self:flex-start;background:none;border:0;padding:4px 0;color:var(--accent);font:inherit;font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .lien-parcours:hover{text-decoration-thickness:2px}
   .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
   .parcours .phase{display:flex;flex-direction:column;gap:6px;padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
   .parcours .phase:first-child{padding-top:0}
@@ -546,10 +555,12 @@ RUXAWEB 2 : audit par observations.
   }
   window.addEventListener('resize', function(){ focusParcours(); });
   function vueAide(o){
-    var html = '<h2 id="aide-titre">Parcours</h2><ol class="parcours">';
+    var html = '<ol class="parcours" id="parcours-liste">';
     var dansOnglet = !!o && state.vue !== 'accueil';
     var e = o ? ecranDe(o, state.ecranId) : null;
+    var tous = [];
     function pas(marque, txt, sous, ici, fait, fin, action, extra){
+      tous.push({txt:txt, sous:sous, ici:ici, fait:fait, action:action, extra:extra || ''});
       var inner = '<span class="rond" aria-hidden="true">'+(fait ? '&#10003;' : marque)+'</span><span class="lib">'+txt+(sous ? '<small>'+sous+'</small>' : '')+(fait ? '<span class="sr"> (fait)</span>' : '')+'</span>';
       var c = (ici ? 'ici ' : '') + (fait ? 'fait' : '');
       var li = '<li class="pas-li'+(fait ? ' ok' : '')+(fin ? ' fin' : '')+'">';
@@ -572,6 +583,30 @@ RUXAWEB 2 : audit par observations.
     html += pas(icone('clo'), 'Clôture', 'trancher les NT', state.vue === 'cloture', !!(o && o.valide), false, 'vue', ' data-vue="cloture"');
     html += pas(icone('res'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
     html += '</ol>';
+    // Parcours replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
+    var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? state.vue === 'accueil' : !!state.parcoursOuvert;
+    var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
+    var nbFaits = tous.filter(function(t){ return t.fait; }).length;
+    var resume = k > -1 ? 'En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '') : nbFaits+' étape'+(nbFaits > 1 ? 's' : '')+' faite'+(nbFaits > 1 ? 's' : '')+' sur '+tous.length;
+    var points = '<span class="points" aria-hidden="true">'+tous.map(function(t){ return '<i class="'+(t.ici ? 'ici' : t.fait ? 'fait' : '')+'"></i>'; }).join('')+'</span>';
+    var ecr = e && dansOnglet ? '<p class="petit doux">Écran : <b>'+esc(e.nom)+'</b></p>' : '';
+    // Navigation sans déplier : étape précédente et suivante, ou reprise à la première étape non faite.
+    function aller(t, sens, lib){ return '<button type="button" class="btn btn-s'+(sens === 'suiv' ? ' btn-l' : '')+'" data-action="'+t.action+'"'+t.extra+' aria-label="'+lib+' : '+esc(t.txt)+'">'+(sens === 'prec' ? '&larr; ' : '')+lib+(sens === 'suiv' ? ' &rarr;' : '')+'</button>'; }
+    var nav = '';
+    if(dansOnglet){
+      if(k > -1){
+        if(k > 0) nav += aller(tous[k - 1], 'prec', 'Précédente');
+        if(k < tous.length - 1) nav += aller(tous[k + 1], 'suiv', 'Suivante');
+      } else {
+        var r = tous.filter(function(t){ return !t.fait; })[0] || tous[tous.length - 1];
+        nav += aller(r, 'suiv', 'Reprendre');
+      }
+      if(nav) nav = '<div class="rangee nav-parcours">'+nav+'</div>';
+    }
+    ecr += nav;
+    html = '<h2 id="aide-titre">Parcours</h2><div class="parcours-court">'+points+'<p class="en-cours">'+resume+'</p>'+ecr+
+      '<button type="button" class="lien-parcours" data-action="parcours-bascule" aria-expanded="'+ouvert+'" aria-controls="parcours-liste">'+(ouvert ? 'Masquer les étapes' : 'Voir toutes les étapes')+'</button></div>' +
+      html.replace('<ol class="parcours" id="parcours-liste">', '<ol class="parcours" id="parcours-liste"'+(ouvert ? '' : ' hidden')+'>');
     var a = state.vue === 'audit' ? ETAPE[state.etape] : (AIDE[state.vue] || AIDE.accueil);
     if(state.vue === 'grille') a = AIDE.grille;
     if(state.vue === 'ux') a = AIDE.ux;
@@ -1059,6 +1094,13 @@ RUXAWEB 2 : audit par observations.
     var a = b.getAttribute('data-action'), o = onglet();
     if(['suppr-obs','suppr-ecran','reinit'].indexOf(a) === -1) confirmation = null;
     lireBrouillon();
+    if(a === 'parcours-bascule'){
+      var ouvert = b.getAttribute('aria-expanded') === 'true';
+      state.parcoursOuvert = !ouvert; sauver();
+      $aide.innerHTML = vueAide(onglet()); focusParcours();
+      var nb = $aide.querySelector('[data-action="parcours-bascule"]'); if(nb) nb.focus();
+      return;
+    }
     if(a === 'accueil'){ state.vue = 'accueil'; rendre(true); }
     else if(a === 'nouvel-onglet'){ nouvelOnglet(b.getAttribute('data-type')); rendre(true); }
     else if(a === 'support'){ state.support = b.getAttribute('data-support'); sauver(); rendre(); }
