@@ -462,8 +462,8 @@
         "liste",
         "puce",
         "puces",
-        "ul ",
-        "ol "
+        "balise ul",
+        "balise ol"
       ]
     },
     {
@@ -610,7 +610,8 @@
         "impossible de sortir",
         "ne peut pas sortir",
         "ne peux pas sortir",
-        "boucle"
+        "boucle",
+        "sortir"
       ]
     },
     {
@@ -710,7 +711,10 @@
         "seulement la couleur",
         "que la couleur",
         "uniquement la couleur",
-        "par la couleur"
+        "par la couleur",
+        "la couleur",
+        "seul facteur",
+        "un seul indicateur"
       ]
     },
     {

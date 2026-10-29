@@ -197,7 +197,7 @@ def main():
             suivant.first.click()
         sel = page.evaluate('RUXAWEB.taux("%s")' % oid)
         ela = page.evaluate('RUXAWEB.taux("%s", true)' % oid)
-        verifier('Clôture : plus rien à trancher', sel['complet'] and ela['complet'], (sel, ela))
+        verifier('Clôture : plus rien à valider', sel['complet'] and ela['complet'], (sel, ela))
         verifier('Taux sélection SIP : 5 NC (6.2, 10.7, 11.1, 11.2, 11.10), sans 7.1', sel['C'] == sel['total'] - 5, sel)
         verifier('Taux élargi : 7.1 en plus', ela['C'] == ela['total'] - 6, ela)
         page.click('[data-action="valider"]')
@@ -439,7 +439,7 @@ def main():
 
         # Coller des observations : format lisible, changement d'écran, critères proposés si absents.
         page.click('[data-action="coller-obs"]')
-        verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and '10.7 ' in page.input_value('#consigne-dlg'))
+        verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and '- Visibilité du focus :' in page.input_value('#consigne-dlg'))
         noms = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].ecrans.map(function(e){return e.nom})')
         page.fill('#coller-texte', 'NC | Menu principal | Focus invisible dans le menu. | 10.7\n- C | | Les titres sont bien hiérarchisés. |\nÉcran : %s\nLe contraste du texte gris clair est trop faible\nNC | button "Payer" | Bouton sans nom. | 99.9' % noms[1])
         page.click('[data-action="coller-ok"]')
@@ -450,6 +450,16 @@ def main():
         verifier('Coller : ligne C sans critère', pistes[1]['tag'] == 'c' and pistes[1]['titre'].startswith('Les titres'))
         verifier('Coller : « Écran : » change d\'écran, critère proposé par mots-clés', pistes[2]['ecran'] != pistes[0]['ecran'] and pistes[2]['propose'] and 'raweb-3-2' in pistes[2]['criteres'], pistes[2])
         verifier('Coller : critère inconnu signalé', '99.9' in page.inner_text('#statut'))
+        # Lignes rendues par une IA avec la consigne : point de contrôle (et type) à la place des critères.
+        page.click('[data-action="coller-obs"]')
+        page.fill('#coller-texte', open(pathlib.Path(__file__).parent / 'collage-points-de-controle.txt', encoding='utf-8').read())
+        page.click('[data-action="coller-ok"]')
+        page.wait_for_timeout(100)
+        attendus = json.loads((pathlib.Path(__file__).parent / 'collage-points-de-controle.json').read_text(encoding='utf-8'))
+        pc = [k for k in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats') if k.get('source') == 'collage'][-len(attendus):]
+        bons = [k['point'] == a[0] and set('raweb-' + r.replace('.', '-') for r in a[1]) <= set(k['criteres']) for k, a in zip(pc, attendus)]
+        verifier('Coller (points de contrôle) : %d lignes, critères déduits' % len(attendus), all(bons) and len(pc) == len(attendus), [k['point'] for k, b in zip(pc, bons) if not b])
+        verifier('Coller (points de contrôle) : type d\'élément gardé', any(k['point'] == 'nom-absent' and k['typeElement'] != '' for k in pc))
         page.locator('[data-action="reprendre"]').first.click()
         verifier('Reprendre une piste collée : formulaire rempli', page.input_value('#obs-texte') == 'Focus invisible dans le menu.' and page.input_value('#obs-partage-nom') == 'Menu principal' and page.locator('[data-crit="raweb-10-7"]:checked').count() == 1)
         page.fill('#obs-texte', '')

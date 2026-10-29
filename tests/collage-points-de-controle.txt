@@ -1,0 +1,17 @@
+Écran : Accueil
+NC | Menu principal | On ne voit pas où est le focus en tabulant dans le menu du haut. | Visibilité du focus
+NC | button "Recherche" | Le bouton loupe est annoncé seulement « bouton » par le lecteur d'écran. | Présence d'un nom (composant construit en script)
+NC | Pied de page | Texte gris clair sur fond blanc, presque illisible. | Contrastes (texte)
+NC | input "E-mail" | Le champ n'a pas d'étiquette, seulement un texte indicatif qui disparaît à la saisie. | Étiquettes
+NC | link "En savoir plus" | Les liens « En savoir plus » sont identiques hors contexte. | Pertinence du nom (lien)
+NC | Carrousel | Le carrousel défile seul, sans bouton pause. | Mouvement
+NC | Modale de connexion | Impossible de sortir de la modale au clavier. | Sortie au clavier
+NC | Menu principal | À 200 %, le texte du menu se superpose au logo. | Agrandissement
+NC | | Le message « mot de passe incorrect » s'affiche mais n'est pas lu par le lecteur d'écran. | Messages (message d'erreur de formulaire)
+NC | | Le titre de l'onglet du navigateur est identique sur toutes les pages. | Titre de l'écran
+NC | Navigation principale | L'état actif n'est signalé que par la couleur. | Information par la couleur
+NC | | Pas de titre h1, les niveaux de titres sautent de h2 à h4. | Titres
+NC | Vidéo de présentation | La vidéo n'a pas de sous-titres. | Sous-titres
+NC | Formulaire | Après validation, le focus revient en haut de la page. | Ordre du focus
+NC | img "Panier" | L'icône du panier n'a pas d'alternative textuelle. | Présence d'un nom (image porteuse d'information)
+NC | | La session expire au bout de 5 minutes sans avertissement. | Limites de temps
