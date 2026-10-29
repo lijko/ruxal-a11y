@@ -435,6 +435,12 @@ def main():
         page.locator('#obs-sugg [data-point="focus-invisible"]').click()
         verifier('Suggestion choisie : point de contrôle et critère 10.7', page.input_value('#obs-point') == 'focus-invisible' and page.locator('[data-crit="raweb-10-7"]:checked').count() == 1 and page.input_value('#obs-texte').startswith('On ne voit pas'))
         verifier('Attendu : aide sur le ticket Jira', 'Expected behavior' in page.inner_text('#aide-attendu'))
+        verifier('Champs obligatoires : Observation marquée, Attendu facultatif', page.get_attribute('#obs-texte', 'aria-required') == 'true' and page.locator('label[for="obs-texte"] .oblig').count() == 1 and 'facultatif' in page.inner_text('label[for="obs-attendu"]') and page.locator('label[for="obs-attendu"] .oblig').count() == 0)
+        page.fill('#obs-texte', '')
+        page.click('#form-obs button[type=submit]')
+        verifier('Champ obligatoire vide : marqué invalide', page.get_attribute('#obs-texte', 'aria-invalid') == 'true')
+        page.fill('#obs-texte', 'x')
+        verifier('Champ rempli : plus invalide', page.get_attribute('#obs-texte', 'aria-invalid') is None)
         page.fill('#obs-texte', '')
 
         # Coller des observations : format lisible, changement d'écran, critères proposés si absents.
