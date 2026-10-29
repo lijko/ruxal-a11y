@@ -97,7 +97,8 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
 
   .page{max-width:1440px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
   main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
-  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:140px;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:calc(var(--barre-h, 130px) + 16px);max-height:calc(100vh - var(--barre-h, 130px) - 32px);overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+  html{scroll-padding-top:calc(var(--barre-h, 130px) + 16px)}
   aside.aide h2{margin:0;font-size:16px}
   aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
   aside.aide p{margin:0}
@@ -225,7 +226,18 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   #statut{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--surface-alt);padding:10px 16px;border-radius:var(--radius);max-width:min(560px,calc(100% - 32px));z-index:40;font-weight:600}
   #statut.erreur{background:var(--c-nc);color:var(--surface)}
   footer.pied{max-width:1440px;margin:0 auto;padding:0 24px 32px;font-size:12.5px;color:var(--ink-soft)}
-  @media (max-width:900px){ aside.aide{position:static;max-width:none;flex-basis:100%;order:-1} }
+  @media (max-width:900px){ aside.aide{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1} }
+  /* Écran large : mise en page d'application. L'en-tête reste en haut, la zone de travail et l'aide défilent
+     chacune de leur côté, sous l'en-tête : l'aide ne peut plus passer dessous, quelle que soit sa hauteur. */
+  @media (min-width:901px){
+    html,body{height:100%}
+    body{display:flex;flex-direction:column;overflow:hidden}
+    header.barre{position:static;flex:none}
+    .page{flex:1 1 auto;min-height:0;width:100%;flex-wrap:nowrap;align-items:stretch;padding-bottom:16px}
+    main{overflow-y:auto;padding:0 4px 24px;margin:0 -4px}
+    aside.aide{position:static;max-height:none;overflow-y:auto}
+    footer.pied{flex:none;padding-bottom:12px}
+  }
   @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto!important} }
 </style>
 </head>
@@ -1196,6 +1208,14 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       {nom:'xl/worksheets/sheet1.xml', contenu: ent+'<worksheet xmlns="'+NS+'spreadsheetml/2006/main"><dimension ref="A1:'+der+'"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>'+f.colonnes.map(function(c, i){ return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+c.largeur+'" customWidth="1"/>'; }).join('')+'</cols><sheetData>'+rows.join('')+'</sheetData><autoFilter ref="A1:'+der+'"/></worksheet>'}
     ]);
   }
+
+  // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : l'aide se cale toujours dessous.
+  (function(){
+    var barre = document.querySelector('header.barre');
+    function caler(){ document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px'); }
+    caler();
+    if(window.ResizeObserver) new ResizeObserver(caler).observe(barre); else window.addEventListener('resize', caler);
+  })();
 
   window.RUXAWEB = {state: function(){ return state; }, taux: function(id, elargi){ var o = state.onglets.filter(function(x){ return x.id === id; })[0]; return taux(o, elargi ? RAWEB : SELECTION); }, version: VERSION};
   rendre();
