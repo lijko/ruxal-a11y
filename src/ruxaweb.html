@@ -19,7 +19,7 @@ RUXAWEB 2 : audit par observations.
     --c-conforme:#1f7a4d; --c-conforme-soft:#e0f3e8;
     --c-nc:#b83a30; --c-nc-soft:#fbe5e2;
     --c-nt:#7a5c00; --c-nt-soft:#fbf1d3; --c-nt-ink:#3d2e00;
-    --c-na:#5b6f7e; --c-na-soft:#e6ecf0;
+    --c-na:#4d5f6c; --c-na-soft:#e6ecf0;
     /* Badges d'approche (RAWeb / POUR·UX) : hors de la famille bleue pour ne pas se fondre dans l'onglet actif. */
     --c-ref:#6b4fd1; --c-ref-ink:#ffffff;
     --c-pourux:#a82f93; --c-pourux-ink:#ffffff;
@@ -108,6 +108,7 @@ RUXAWEB 2 : audit par observations.
   aside.aide h2{margin:0;font-size:16px}
   aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
   aside.aide p{margin:0}
+  aside.aide:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
   .parcours .phase{display:flex;flex-direction:column;gap:6px;padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
   .parcours .phase:first-child{padding-top:0}
@@ -523,6 +524,7 @@ RUXAWEB 2 : audit par observations.
     // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
     var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
     $aide.innerHTML = vueAide(o);
+    focusParcours();
     document.title = (o && state.vue !== 'accueil' ? o.nom + ' · ' : '') + 'Atelier RUXAWEB 2';
     sauver();
     if(focus){ var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
@@ -537,6 +539,12 @@ RUXAWEB 2 : audit par observations.
     ux:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'
   };
   function icone(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONES[n]+'</svg>'; }
+  // Quand le panneau Parcours défile, il doit être atteignable au clavier pour faire défiler son contenu.
+  function focusParcours(){
+    if($aide.scrollHeight > $aide.clientHeight + 1) $aide.setAttribute('tabindex', '0');
+    else $aide.removeAttribute('tabindex');
+  }
+  window.addEventListener('resize', function(){ focusParcours(); });
   function vueAide(o){
     var html = '<h2 id="aide-titre">Parcours</h2><ol class="parcours">';
     var dansOnglet = !!o && state.vue !== 'accueil';
@@ -715,7 +723,7 @@ RUXAWEB 2 : audit par observations.
     }
     // Export de l'extension axe DevTools (Chrome) : une liste d'anomalies à plat, une ligne par élément.
     function extension(liste, version){
-      outil = 'axe DevTools ' + (version || '');
+      outil = 'axe DevTools' + (version ? ' (axe-core ' + version + ')' : '');
       var parRegle = {};
       liste.forEach(function(i){
         var regle = i.ruleId || i.rule || i.ruleID || i.id;
@@ -793,7 +801,9 @@ RUXAWEB 2 : audit par observations.
     });
     var nv = r.resultats.filter(function(x){ return x.type === 'violation'; }).length, ni = r.resultats.length - nv;
     rendre();
-    message(r.resultats.length ? r.outil+' : '+nv+' échec(s) et '+ni+' point(s) à vérifier sur '+e.nom+'. Rien n\'est compté tant que tu ne l\'as pas repris.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
+    function nb(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
+    var parts = []; if(nv) parts.push(nb(nv, 'échec', 'échecs')); if(ni) parts.push(nb(ni, 'point à vérifier', 'points à vérifier'));
+    message(r.resultats.length ? r.outil+' : '+parts.join(' et ')+' sur '+e.nom+'. Rien n\'est compté tant que tu ne l\'as pas repris.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
   }
 
   function formulaireObs(o, e, et){
@@ -1298,7 +1308,7 @@ RUXAWEB 2 : audit par observations.
   // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : l'aide se cale toujours dessous.
   (function(){
     var barre = document.querySelector('header.barre');
-    function caler(){ document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px'); }
+    function caler(){ document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px'); focusParcours(); }
     caler();
     if(window.ResizeObserver) new ResizeObserver(caler).observe(barre); else window.addEventListener('resize', caler);
   })();

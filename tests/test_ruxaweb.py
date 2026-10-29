@@ -317,6 +317,7 @@ def main():
         page.wait_for_timeout(300)
         cands = [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert']
         verifier('Extension axe (JSON) : 2 règles, éléments regroupés', len(cands) == 2 and [c['nb'] for c in cands] == [2, 1] and cands[1]['type'] == 'incomplet', cands)
+        verifier('Extension axe : version du moteur et pluriels', 'axe DevTools (axe-core 4.13.0) : 1 échec et 1 point à vérifier' in page.locator('#statut').inner_text(), page.locator('#statut').inner_text())
         verifier('Extension axe (JSON) : image-alt vers 1.1', cands and cands[0]['criteres'] == ['raweb-1-1'], cands)
         f5 = f.parent / 'axe-devtools.csv'
         f5.write_text('\ufeffRule ID;Description;Selector;Needs Review\nimage-alt;Images must have alternative text;#logo;false\nbutton-name;"Buttons must have; discernible text";button.close;false\n', encoding='utf-8')
