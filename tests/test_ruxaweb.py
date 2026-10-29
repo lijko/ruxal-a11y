@@ -365,6 +365,10 @@ def main():
         page.emulate_media(media='screen')
         page.locator('[data-action="ouvrir"]').first.click()
         aller_audit(page)
+        page.click('[data-action="tag"][data-tag="c"]')
+        verifier('Résultat : aide qui suit le choix (C)', 'restent à confirmer' in page.inner_text('#aide-resultat') and page.get_attribute('[data-action="tag"][data-tag="c"]', 'aria-describedby') == 'aide-resultat')
+        page.click('[data-action="tag"][data-tag="nc"]')
+        verifier('Résultat : aide qui suit le choix (NC)', 'non conformes' in page.inner_text('#aide-resultat'))
         verifier('Saisie : rappel de notation sous Élément', 'Écran[button' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 61)
@@ -391,6 +395,18 @@ def main():
         page.click('[data-action="parcours-bascule"]')
         verifier('Étape d\'abord : Tour à vide fait (3/3 écrans)', '3/3 écrans' in page.locator('#parcours-liste').inner_text() and '(fait)' in page.locator('#parcours-liste [data-etape="vide"]').inner_text())
 
+        page.click('[data-action="vue"][data-vue="grille"]')
+        # Grille : un critère se pose conforme sans observation, depuis sa fiche.
+        ligne = page.locator('tbody tr', has=page.locator('td.statut .s-NT')).first
+        cid = ligne.locator('[data-action="critere"]').get_attribute('data-id')
+        ligne.locator('[data-action="critere"]').click()
+        verifier('Fiche (grille) : boutons C / NC / NA par écran', page.locator('#dlg [data-action="clo"][data-tag="c"]').count() >= 1)
+        page.locator('#dlg [data-action="clo"][data-tag="c"]:not([disabled])').first.click()
+        verifier('Fiche (grille) : C posé, la fiche reste ouverte et à jour', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg [data-action="clo"][data-tag="c"][aria-pressed="true"]').count() == 1)
+        page.click('#dlg [data-action="fermer-dlg"]')
+        verifier('Fiche fermée : contenu vidé', page.locator('#dlg-corps').inner_html() == '')
+        ligne2 = page.locator('tbody tr', has=page.locator('[data-action="critere"][data-id="%s"]' % cid))
+        verifier('Grille : critère conforme sans observation', 'C' in [x.strip() for x in ligne2.locator('td.statut').all_inner_texts()])
         # Le panneau Parcours ne bouge pas au début du défilement.
         hauts = []
         for y in (0, 30, 120):
