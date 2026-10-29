@@ -169,6 +169,11 @@ RUXAWEB 2 : audit par observations.
   .tuile-bloc{display:flex;flex-direction:column;gap:8px}
   .tuile-bloc .tuile{flex:1}
   .tuile-bloc .btn-danger{align-self:flex-start}
+  .sous-titre-form{margin:6px 0 -4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border-top:1px solid var(--border);padding-top:12px}
+  .tags.tags-resultat{align-self:flex-start}
+  .tags-resultat .tag{min-height:40px;padding:0 14px;font-weight:700}
+  .code-tag{font-size:12px;margin-left:4px;font-weight:600}
+  .pied-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
   .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
   .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
   .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
@@ -890,10 +895,19 @@ RUXAWEB 2 : audit par observations.
     message(r.resultats.length ? r.outil+' : '+parts.join(' et ')+' sur '+e.nom+'. Rien n\'est compté tant que tu ne l\'as pas repris.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
   }
 
+  // Récapitulatif au pied du formulaire : ce qui sera enregistré.
+  function recapObs(e){
+    var libRes = {nc:'Non conforme', c:'Conforme', na:'Non applicable'}[brouillon.tag] || '';
+    var n = brouillon.crits.length, p = brouillon.ecransPartage.length;
+    return libRes+' · '+(n ? n+' critère'+(n > 1 ? 's' : '') : 'aucun critère : note libre')+' · '+esc(e.nom)+(p ? ' et '+p+' autre'+(p > 1 ? 's' : '')+' écran'+(p > 1 ? 's' : '') : '');
+  }
   function formulaireObs(o, e, et){
     var props = criteresProposes();
     var html = '<form class="carte pile" id="form-obs" novalidate><h2>Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span></h2>';
     html += '<div class="champ"><label class="lbl" for="obs-texte">Observation</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea></div>';
+    html += '<div class="champ"><span class="lbl" id="lbl-resultat">Résultat</span><div class="tags tags-resultat" role="group" aria-labelledby="lbl-resultat">' +
+      [['nc','Non conforme','#nc'],['c','Conforme','#c'],['na','Non applicable','#na']].map(function(t){ return '<button type="button" class="tag tag-'+t[0]+'" data-action="tag" data-tag="'+t[0]+'" aria-pressed="'+(brouillon.tag === t[0])+'">'+t[1]+' <span class="code-tag">'+t[2]+'</span></button>'; }).join('') + '</div></div>';
+    html += '<h3 class="sous-titre-form">Où</h3>';
     // Élément et écrans : les mêmes champs pour toute observation. L'écran en cours est toujours concerné ;
     // une observation qui touche plusieurs écrans est une observation sur un élément répété, sans autre saisie.
     var noms = {}; o.obs.forEach(function(x){ if(x.elementNom) noms[x.elementNom] = true; });
@@ -906,6 +920,7 @@ RUXAWEB 2 : audit par observations.
       var autresEcr = o.ecrans.filter(function(x){ return x.id !== e.id; });
       html += '<div class="champ" style="max-width:420px"><label class="lbl" for="obs-vers">Transition vers (scénario)</label><select id="obs-vers"><option value="">Aucune : sur l\'écran lui-même</option>' + autresEcr.map(function(x){ return '<option value="'+x.id+'"'+(brouillon.vers === x.id ? ' selected' : '')+'>'+esc(e.nom)+' -> '+esc(x.nom)+'</option>'; }).join('') + '</select></div>';
     }
+    html += '<h3 class="sous-titre-form">Critères</h3>';
     html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-point">Point de contrôle</label><select id="obs-point"><option value="">Aucun : note libre</option>';
     var ici = SYMPTOMES.filter(function(s){ return et.familles.indexOf(s.famille) > -1; }), autres = SYMPTOMES.filter(function(s){ return et.familles.indexOf(s.famille) === -1; });
     function opts(l){ return l.map(function(s){ return '<option value="'+s.id+'"'+(s.id === brouillon.point ? ' selected' : '')+'>'+esc(s.controle)+'</option>'; }).join(''); }
@@ -923,15 +938,13 @@ RUXAWEB 2 : audit par observations.
     var choisis = brouillon.crits;
     var affiches = props.concat(choisis.filter(function(id){ return props.indexOf(id) === -1; }));
     if(affiches.length){
-      html += '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl">Critères concernés</legend><div class="crit-choix">' + affiches.map(function(id){
+      html += '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl">Critères retenus</legend><div class="crit-choix">' + affiches.map(function(id){
         var c = PAR_ID[id];
         return '<label class="choix"><input type="checkbox" data-crit="'+id+'"'+(choisis.indexOf(id) > -1 ? ' checked' : '')+'> <span><b>'+esc(refTxt(c))+'</b>'+(c.horsSelection ? ' <span class="doux petit">hors sélection SIP</span>' : '')+' · '+esc(c.libelle)+'</span></label>';
       }).join('') + '</div></fieldset>';
     }
-    html += '<div class="champ"><label class="lbl" for="obs-ajout">Ajouter un autre critère</label><select id="obs-ajout"><option value="">Choisir dans la liste</option>' + CRITERES.map(function(c){ return '<option value="'+c.id+'">'+esc(refTxt(c))+' · '+esc(c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle)+'</option>'; }).join('') + '</select></div>';
-    html += '<div class="rangee entre"><div class="tags" role="group" aria-label="Statut de l\'observation">' +
-      [['c','#c','conforme'],['nc','#nc','non conforme'],['na','#na','non applicable']].map(function(t){ return '<button type="button" class="tag tag-'+t[0]+'" data-action="tag" data-tag="'+t[0]+'" aria-pressed="'+(brouillon.tag === t[0])+'" aria-label="'+t[1]+', '+t[2]+'">'+t[1]+'</button>'; }).join('') +
-      '</div><button type="submit" class="btn btn-p">Enregistrer</button></div></form>';
+    html += '<div class="champ"><label class="lbl" for="obs-ajout">Ajouter un critère</label><select id="obs-ajout"><option value="">Choisir dans la liste</option>' + CRITERES.map(function(c){ return '<option value="'+c.id+'">'+esc(refTxt(c))+' · '+esc(c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle)+'</option>'; }).join('') + '</select></div>';
+    html += '<div class="pied-form"><p class="doux petit" id="recap-obs" style="margin:0">'+recapObs(e)+'</p><button type="submit" class="btn btn-p">Enregistrer l\'observation</button></div></form>';
     return html;
   }
 
@@ -1325,6 +1338,9 @@ RUXAWEB 2 : audit par observations.
       rendre(); var r = document.querySelector('input[name="onglet-type"][value="'+o.type+'"]'); if(r) r.focus();
     }
     else if(t.hasAttribute('data-ecran-nom')){ var e = ecranDe(o, t.getAttribute('data-ecran-nom')); e.nom = t.value.trim() || e.nom; sauver(); }
+    else if(t.hasAttribute('data-crit') || t.hasAttribute('data-ecran-partage')){
+      lireBrouillon(); var rc = document.getElementById('recap-obs'), eo = o && ecranDe(o, state.ecranId); if(rc && eo) rc.innerHTML = recapObs(eo);
+    }
     else if(t.id === 'obs-point'){ lireBrouillon(); brouillon.point = t.value; brouillon.element = ''; brouillon.crits = criteresProposes(); rendre(); document.getElementById('obs-point').focus(); }
     else if(t.id === 'obs-element'){ lireBrouillon(); brouillon.element = t.value; brouillon.crits = criteresProposes(); rendre(); document.getElementById('obs-element').focus(); }
     else if(t.id === 'obs-ajout' && t.value){ lireBrouillon(); if(brouillon.crits.indexOf(t.value) === -1) brouillon.crits.push(t.value); rendre(); document.getElementById('obs-ajout').focus(); }
