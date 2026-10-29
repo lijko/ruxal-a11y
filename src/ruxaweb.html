@@ -103,7 +103,7 @@ RUXAWEB 2 : audit par observations.
 
   .page{max-width:1440px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
   main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
-  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:calc(var(--barre-h, 130px) + 16px);max-height:calc(100vh - var(--barre-h, 130px) - 32px);overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:calc(var(--barre-h, 130px) + 20px);max-height:calc(100vh - var(--barre-h, 130px) - 40px);overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
   html{scroll-padding-top:calc(var(--barre-h, 130px) + 16px)}
   aside.aide h2{margin:0;font-size:16px}
   aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
@@ -166,6 +166,9 @@ RUXAWEB 2 : audit par observations.
   .choix{display:flex;gap:10px;align-items:center;min-height:36px}
   .choix input{width:18px;height:18px;accent-color:var(--accent);flex:none}
 
+  .tuile-bloc{display:flex;flex-direction:column;gap:8px}
+  .tuile-bloc .tuile{flex:1}
+  .tuile-bloc .btn-danger{align-self:flex-start}
   .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
   .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
   .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
@@ -271,7 +274,7 @@ RUXAWEB 2 : audit par observations.
   @media (max-width:900px){ aside.aide{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1} }
   /* Écran large : la page défile normalement ; l'en-tête, la colonne des écrans, l'aide et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
-    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 16px);max-height:calc(100vh - var(--barre-h, 130px) - 32px);overflow-y:auto}
+    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 20px);max-height:calc(100vh - var(--barre-h, 130px) - 40px);overflow-y:auto}
     .tableau{overflow:visible}
     .tableau.large{overflow-x:auto}
     thead th{top:var(--barre-h, 130px);z-index:2}
@@ -644,6 +647,10 @@ RUXAWEB 2 : audit par observations.
       return '<button type="button" class="tag" style="min-width:80px" data-action="vue" data-vue="'+v[0]+'" aria-pressed="'+(vue === v[0])+'">'+v[1]+'</button>';
     }).join('') + '</div>';
   }
+  function boutonSupprOnglet(o){
+    var arme = confirmation === 'onglet-'+o.id;
+    return '<button type="button" class="btn btn-s btn-danger" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+(arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet')+'</button>';
+  }
   function vueAccueil(){
     var html = '<h1 class="sr">Tableau de bord</h1>';
     if(!state.onglets.length){
@@ -658,7 +665,7 @@ RUXAWEB 2 : audit par observations.
       var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP · élargi '+te.pct+' %</span>'
         : '<span class="pastille s-NT" style="align-self:flex-start;margin-top:6px">'+criteresATrancher(o).length+' critère'+(criteresATrancher(o).length > 1 ? 's' : '')+' à trancher</span>';
       if(o.type === 'scenario'){ var u = scoreUx(o); if(u.pct != null) info += '<span class="doux petit">POUR/UX '+u.pct+' %</span>'; }
-      html += '<button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux">'+(o.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span>'+info+'</button>';
+      html += '<div class="tuile-bloc"><button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux">'+(o.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span>'+info+'</button>'+boutonSupprOnglet(o)+'</div>';
     });
     html += '</div>';
     return html;
@@ -677,6 +684,7 @@ RUXAWEB 2 : audit par observations.
         (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') + '</div>';
     });
     html += '</div><div class="rangee entre"><button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button><span class="doux petit">'+mini+' écrans au moins.</span></div></section>';
+    html += '<section class="carte rangee entre" aria-labelledby="t-suppr-onglet"><div><h2 id="t-suppr-onglet" style="font-size:16px;margin:0">Supprimer cet onglet</h2><p class="doux petit" style="margin:2px 0 0">Ses écrans et ses observations sont effacés. Pense à sauvegarder l\'audit avant.</p></div>'+boutonSupprOnglet(o)+'</section>';
     // Contenu des écrans : un interrupteur par contenu et par écran. Activé : l'écran contient ce contenu.
     html += '<section class="carte pile" aria-labelledby="t-contenus"><h2 id="t-contenus">Contenu des écrans</h2><div class="tableau" style="border:0"><table class="contenus-table"><thead><tr><th scope="col">L\'écran contient</th>' +
       o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>' + DECLENCHEURS.map(function(d){
@@ -1164,7 +1172,7 @@ RUXAWEB 2 : audit par observations.
       menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
       setTimeout(function(){ var f = document.activeElement; if(!f || f === document.body || menu.contains(f)) bm.focus(); }, 0);
     }
-    if(['suppr-obs','suppr-ecran','reinit'].indexOf(a) === -1) confirmation = null;
+    if(['suppr-obs','suppr-ecran','suppr-onglet','reinit'].indexOf(a) === -1) confirmation = null;
     lireBrouillon();
     if(a === 'parcours-bascule'){
       var ouvert = b.getAttribute('aria-expanded') === 'true';
@@ -1208,6 +1216,19 @@ RUXAWEB 2 : audit par observations.
       rendre(true);
     }
     else if(a === 'tag'){ brouillon.tag = b.getAttribute('data-tag'); rendre(); var bt = document.querySelector('.tag[data-tag="'+brouillon.tag+'"]'); if(bt) bt.focus(); }
+    else if(a === 'suppr-onglet'){
+      var oid = b.getAttribute('data-id'), cible = state.onglets.filter(function(x){ return x.id === oid; })[0]; if(!cible) return;
+      if(confirmation !== 'onglet-'+oid){
+        confirmation = 'onglet-'+oid; rendre();
+        var bc = document.querySelector('[data-action="suppr-onglet"][data-id="'+oid+'"]'); if(bc) bc.focus();
+        return;
+      }
+      confirmation = null;
+      state.onglets = state.onglets.filter(function(x){ return x.id !== oid; });
+      state.exportesJira = (state.exportesJira || []).filter(function(k){ return k.indexOf(oid + ':') !== 0; });
+      if(state.ongletId === oid){ state.ongletId = state.onglets.length ? state.onglets[0].id : null; state.ecranId = null; }
+      state.vue = 'accueil'; sauver(); rendre(true); message('Onglet « '+cible.nom+' » supprimé.');
+    }
     else if(a === 'suppr-obs'){
       var id = b.getAttribute('data-id');
       if(confirmation === 'obs-'+id){ o.obs = o.obs.filter(function(x){ return x.id !== id; }); confirmation = null; o.valide = false; rendre(); message('Observation supprimée.'); }

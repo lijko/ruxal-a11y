@@ -391,6 +391,28 @@ def main():
         page.click('[data-action="parcours-bascule"]')
         verifier('Étape d\'abord : Tour à vide fait (3/3 écrans)', '3/3 écrans' in page.locator('#parcours-liste').inner_text() and '(fait)' in page.locator('#parcours-liste [data-etape="vide"]').inner_text())
 
+        # Le panneau Parcours ne bouge pas au début du défilement.
+        hauts = []
+        for y in (0, 30, 120):
+            page.evaluate('window.scrollTo(0, %d)' % y)
+            page.wait_for_timeout(50)
+            hauts.append(round(page.evaluate("document.getElementById('aide').getBoundingClientRect().top")))
+        page.evaluate('window.scrollTo(0, 0)')
+        verifier('Parcours fixe au défilement, sans saut', len(set(hauts)) == 1, hauts)
+
+        # Suppression d'un onglet en deux clics, depuis le tableau de bord.
+        page.click('[data-action="accueil"]')
+        avant = page.evaluate('RUXAWEB.state().onglets.length')
+        dernier = page.locator('[data-action="suppr-onglet"]').last
+        oid = dernier.get_attribute('data-id')
+        dernier.click()
+        verifier('Supprimer un onglet : confirmation demandée', page.evaluate('RUXAWEB.state().onglets.length') == avant and 'Confirmer' in page.locator('[data-action="suppr-onglet"][data-id="%s"]' % oid).inner_text())
+        page.click('[data-action="suppr-onglet"][data-id="%s"]' % oid)
+        verifier('Supprimer un onglet : onglet retiré', page.evaluate('RUXAWEB.state().onglets.length') == avant - 1 and 'supprimé' in page.locator('#statut').inner_text())
+        page.locator('[data-action="ouvrir"]').first.click()
+        page.click('.ecrans [data-action="vue"][data-vue="preparer"]')
+        verifier('Page des écrans : suppression de l\'onglet proposée', page.locator('main [data-action="suppr-onglet"]').count() == 1)
+
         page.emulate_media(color_scheme='dark')
         page.click('[data-action="accueil"]')
         verifier('Mode sombre : pas d\'erreur', not erreurs, erreurs)
