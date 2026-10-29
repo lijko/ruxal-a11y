@@ -182,6 +182,8 @@ RUXAWEB 2 : audit par observations.
   .pastille-btn{border:0;cursor:pointer;font:inherit;font-size:11.5px;font-weight:800;text-decoration:underline;text-underline-offset:2px}
   .oblig{color:var(--c-nc);font-weight:800;margin-left:3px}
   [aria-invalid="true"]{border-color:var(--c-nc) !important;box-shadow:0 0 0 1px var(--c-nc)}
+  .prefixe-projet{font-weight:800;white-space:nowrap}
+  .tuile-avenir{opacity:1;border-style:dashed;cursor:default;box-shadow:none}
   .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
   .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
   .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
@@ -300,8 +302,9 @@ RUXAWEB 2 : audit par observations.
 <header class="barre">
   <div class="barre-in">
     <button class="marque" type="button" data-action="accueil">Atelier RUXAWEB<small>2.0</small></button>
-    <label class="sr" for="audit-nom">Nom de l'audit</label>
-    <input type="text" id="audit-nom" class="nom-audit" placeholder="Nom de l'audit (ex. Boutique en ligne)" autocomplete="off">
+    <span class="prefixe-projet" aria-hidden="true">Projet A11Y -</span>
+    <label class="sr" for="audit-nom">Nom du projet (Projet A11Y)</label>
+    <input type="text" id="audit-nom" class="nom-audit" placeholder="Nom du projet (ex. Boutique en ligne)" autocomplete="off">
     <div class="tags" id="audit-support" role="group" aria-label="Support">
       <button type="button" class="tag" data-action="support" data-support="desktop">Ordinateur</button>
       <button type="button" class="tag" data-action="support" data-support="mobile">Mobile</button>
@@ -440,14 +443,14 @@ RUXAWEB 2 : audit par observations.
   // Parcours d'audit : préparer, puis le tour à vide et les 4 étapes, chacune sur tous les écrans, puis clôture et résumé.
   var ETAPES = [
     {id:'vide', nom:'Tour à vide', outil:'sans outil', familles:[],
-     faire:"Parcours l'écran comme un utilisateur, sans outil ni lecteur d'écran. Note ce qui gêne ou surprend.",
+     faire:"Parcours l'écran comme un utilisateur, sans outil ni lecteur d'écran. Note ce qui gêne ou surprend. Lance aussi l'import axe ou Lighthouse : ses pistes restent rangées et apparaîtront à l'étape où chaque critère se vérifie.",
      chercher:"Le but de l'écran, ses contenus particuliers (formulaire, vidéo, tableau) et ce que tu retrouveras ailleurs (en-tête, menu, pied de page).",
      note:"Sans point de contrôle, une observation reste une note : elle ne change aucun statut."},
     {id:'1', nom:'Usage standard', outil:'souris et zoom', familles:['visuel','medias','temps','formulaires'],
      faire:"Utilise l'écran normalement, à la souris ou au doigt, puis agrandis le texte à 200 %.",
      chercher:"Couleurs et contrastes, informations données par la couleur ou la position, médias, contenus en mouvement, limites de temps."},
     {id:'2', nom:'Code et outils', outil:'inspecteur', familles:['structure'],
-     faire:"Ouvre l'inspecteur du navigateur. Importe un rapport axe ou Lighthouse si tu en as un : ses résultats arrivent à confirmer, sans remplacer ton jugement.",
+     faire:"Ouvre l'inspecteur du navigateur. Les pistes axe ou Lighthouse liées à cette étape s'affichent sous le formulaire : confirme-les dans une observation ou écarte-les.",
      chercher:"Titre de l'écran, langue, zones principales, titres, tableaux, cadres, validité du code."},
     {id:'3a', nom:"Lecteur d'écran : contenus", court:'Contenus', outil:"lecteur d'écran", familles:['restitution','structure'],
      faire:"Parcours l'écran au lecteur d'écran, du début à la fin, puis active chaque composant.",
@@ -462,7 +465,7 @@ RUXAWEB 2 : audit par observations.
   var ETAPE = {}; ETAPES.forEach(function(e, i){ e.i = i; ETAPE[e.id] = e; });
 
   var AIDE = {
-    accueil:{faire:"Crée un onglet par objet audité : un audit rapide sur 3 écrans au moins (accueil, écran avec formulaire, écran au contenu particulier), ou un scénario qui suit un parcours.",
+    accueil:{faire:"Crée un onglet par objet audité : un audit simple sur 3 à 5 écrans (accueil, écran avec formulaire, écran au contenu particulier), ou un scénario qui suit un enchaînement d'écrans.",
       chercher:"Chaque onglet a son propre taux. Le taux sélection SIP se lit à côté d'un audit simplifié du SIP ; le taux élargi ajoute 6 critères hors sélection."},
     preparer:{faire:"Nomme les écrans et indique ce que chacun contient. Les critères liés à un contenu absent passent non applicables (NA).",
       chercher:"Le reste des critères forme le périmètre : chacun devra recevoir un statut, rien n'est conforme par défaut."},
@@ -566,7 +569,7 @@ RUXAWEB 2 : audit par observations.
         var t = taux(x, SELECTION), te = taux(x, RAWEB);
         var etat = t.complet ? t.pct+' % sélection SIP' : criteresATrancher(x).length+' à définir';
         var ici = state.vue !== 'accueil' && state.vue !== 'referentiel' && x.id === state.ongletId;
-        return '<button type="button" class="onglet-tab" data-action="ouvrir" data-id="'+x.id+'"'+(ici ? ' aria-current="page"' : '')+'><b>'+esc(x.nom)+'</b><span>'+(x.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+esc(etat)+'</span></button>';
+        return '<button type="button" class="onglet-tab" data-action="ouvrir" data-id="'+x.id+'"'+(ici ? ' aria-current="page"' : '')+'><b>'+esc(x.nom)+'</b><span>'+(x.type === 'scenario' ? 'Scénario' : 'Audit simple')+' · '+esc(etat)+'</span></button>';
       }).join('') + '<button type="button" class="onglet-tab ajout" data-action="nouvel-onglet">+ Nouvel onglet</button>';
     var nomAudit = document.getElementById('audit-nom'); if(nomAudit && document.activeElement !== nomAudit) nomAudit.value = state.auditNom || '';
     var bRef = document.getElementById('btn-ref'); if(state.vue === 'referentiel') bRef.setAttribute('aria-current', 'page'); else bRef.removeAttribute('aria-current');
@@ -578,7 +581,7 @@ RUXAWEB 2 : audit par observations.
     var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
     $aide.innerHTML = vueAide(o);
     focusParcours();
-    document.title = (o && state.vue !== 'accueil' ? o.nom + ' · ' : '') + 'Atelier RUXAWEB 2';
+    document.title = (o && state.vue !== 'accueil' && state.vue !== 'referentiel' ? o.nom + ' · ' : '') + 'Projet A11Y - ' + (state.auditNom || 'sans nom') + ' · RUXAWEB';
     sauver();
     if(focus){ var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
   }
@@ -647,7 +650,7 @@ RUXAWEB 2 : audit par observations.
       if(nav) nav = '<div class="rangee nav-parcours">'+nav+'</div>';
     }
     ecr += nav;
-    html = '<h2 id="aide-titre">Parcours</h2><div class="parcours-court">'+points+resume+ecr+
+    html = '<h2 id="aide-titre" class="sr">'+(o && o.type === 'scenario' ? 'Étapes du scénario' : 'Étapes de l\'audit')+'</h2><div class="parcours-court">'+points+resume+ecr+
       '<button type="button" class="lien-parcours" data-action="parcours-bascule" aria-expanded="'+ouvert+'" aria-controls="parcours-liste">'+(ouvert ? 'Masquer les étapes' : 'Voir toutes les étapes')+'</button></div>' +
       html.replace('<ol class="parcours" id="parcours-liste">', '<ol class="parcours" id="parcours-liste"'+(ouvert ? '' : ' hidden')+'>');
     var a = state.vue === 'audit' ? ETAPE[state.etape] : (AIDE[state.vue] || AIDE.accueil);
@@ -671,17 +674,18 @@ RUXAWEB 2 : audit par observations.
     var html = '<h1 class="sr">Tableau de bord</h1>';
     if(!state.onglets.length){
       return html + '<div class="vide"><p>Commence par choisir ce que tu audites. Tu pourras ajouter d\'autres onglets ensuite.</p><div class="vide-choix">' +
-        '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="rapide"><b>Audit rapide</b><span class="doux">3 écrans au moins : accueil, formulaire, contenu particulier.</span></button>' +
-        '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="scenario"><b>Scénario</b><span class="doux">Un parcours écran par écran, avec la lecture POUR/UX.</span></button>' +
+        '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="rapide"><b>Audit simple</b><span class="doux">3 à 5 écrans : accueil, formulaire, contenu particulier. Taux sélection SIP et taux élargi.</span></button>' +
+        '<div class="tuile tuile-avenir"><b>Audit complet <span class="pastille s-NT">à venir</span></b><span class="doux">Les 136 critères du RAWeb 1.1, en vue d\'une déclaration d\'accessibilité.</span></div>' +
+        '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="scenario"><b>Scénario</b><span class="doux">Un enchaînement d\'écrans (achat, souscription), avec la lecture UX/POUR. Taux sélection SIP.</span></button>' +
         '</div></div>';
     }
     html += '<div class="cartes">';
     state.onglets.forEach(function(o){
       var t = taux(o, SELECTION), te = taux(o, RAWEB);
-      var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP · élargi '+te.pct+' %</span>'
+      var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %')+'</span>'
         : '<span class="pastille s-NT" style="align-self:flex-start;margin-top:6px">'+criteresATrancher(o).length+' critère'+(criteresATrancher(o).length > 1 ? 's' : '')+' à définir</span>';
       if(o.type === 'scenario'){ var u = scoreUx(o); if(u.pct != null) info += '<span class="doux petit">POUR/UX '+u.pct+' %</span>'; }
-      html += '<div class="tuile-bloc"><button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux">'+(o.type === 'scenario' ? 'Scénario' : 'Audit rapide')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span>'+info+'</button>'+boutonSupprOnglet(o)+'</div>';
+      html += '<div class="tuile-bloc"><button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux">'+(o.type === 'scenario' ? 'Scénario' : 'Audit simple')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span>'+info+'</button>'+boutonSupprOnglet(o)+'</div>';
     });
     html += '</div>';
     return html;
@@ -692,14 +696,15 @@ RUXAWEB 2 : audit par observations.
     var html = '<h1>Écrans de l\'onglet</h1><div class="carte grille2">' +
       '<div class="champ"><label class="lbl" for="onglet-nom">Nom de l\'onglet<span class="oblig" aria-hidden="true">*</span></label><input type="text" id="onglet-nom" value="'+esc(o.nom)+'" autocomplete="off" aria-required="true"></div>' +
       '<fieldset class="champ" style="border:0;padding:0;margin:0"><legend class="lbl">Type</legend><div class="rangee">' +
-      '<label class="choix"><input type="radio" name="onglet-type" value="rapide"'+(o.type !== 'scenario' ? ' checked' : '')+'> Audit rapide</label>' +
-      '<label class="choix"><input type="radio" name="onglet-type" value="scenario"'+(o.type === 'scenario' ? ' checked' : '')+'> Scénario (parcours)</label></div></fieldset></div>';
+      '<label class="choix"><input type="radio" name="onglet-type" value="rapide"'+(o.type !== 'scenario' ? ' checked' : '')+'> Audit simple</label>' +
+      '<label class="choix doux"><input type="radio" name="onglet-type" value="complet" disabled> Audit complet (à venir)</label>' +
+      '<label class="choix"><input type="radio" name="onglet-type" value="scenario"'+(o.type === 'scenario' ? ' checked' : '')+'> Scénario</label></div></fieldset></div>';
     html += '<section class="carte pile" aria-labelledby="t-ecrans"><h2 id="t-ecrans">'+(o.type === 'scenario' ? 'Écrans du parcours, dans l\'ordre' : 'Écrans de l\'échantillon')+'</h2><p class="doux petit" style="margin:0"><span class="oblig" aria-hidden="true">*</span> Chaque écran doit avoir un nom.</p><div>';
     o.ecrans.forEach(function(e, i){
       html += '<div class="ecran-ligne"><label class="sr" for="ecran-'+e.id+'">Nom de l\'écran '+(i+1)+'</label><input type="text" id="ecran-'+e.id+'" aria-required="true" data-ecran-nom="'+e.id+'" value="'+esc(e.nom)+'" autocomplete="off">' +
         (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') + '</div>';
     });
-    html += '</div><div class="rangee entre"><button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button><span class="doux petit">'+mini+' écrans au moins.</span></div></section>';
+    html += '</div><div class="rangee entre">'+(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT ? '<span class="doux petit">5 écrans au plus pour un audit simple.</span>' : '<button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button>')+'<span class="doux petit">'+(o.type === 'scenario' ? mini+' écrans au moins.' : mini+' à '+MAX_AUDIT+' écrans.')+'</span></div></section>';
     html += '<section class="carte rangee entre" aria-labelledby="t-suppr-onglet"><div><h2 id="t-suppr-onglet" style="font-size:16px;margin:0">Supprimer cet onglet</h2><p class="doux petit" style="margin:2px 0 0">Ses écrans et ses observations sont effacés. Pense à sauvegarder l\'audit avant.</p></div>'+boutonSupprOnglet(o)+'</section>';
     // Contenu des écrans : un interrupteur par contenu et par écran. Activé : l'écran contient ce contenu.
     html += '<section class="carte pile" aria-labelledby="t-contenus"><h2 id="t-contenus">Contenu des écrans</h2><div class="tableau" style="border:0"><table class="contenus-table"><thead><tr><th scope="col">L\'écran contient</th>' +
@@ -783,6 +788,10 @@ RUXAWEB 2 : audit par observations.
     var et = ETAPE[state.etape] || ETAPES[0];
     var nte = ntEcran(o, e);
     var html = '<div class="rangee entre"><span class="rangee"><h2 class="titre-ecran">'+esc(e.nom)+'</h2>'+(nte ? '<button type="button" class="pastille s-NT pastille-btn" data-action="vue" data-vue="grille" title="Voir et définir dans la grille">'+nte+' à définir sur cet écran</button>' : '<span class="pastille s-C">tous les statuts définis</span>')+'</span><span class="rangee"><button type="button" class="btn btn-s" data-action="coller-obs">'+ico('coller')+'Coller des observations</button><button type="button" class="btn btn-s" data-action="import-auto">'+ico('import')+'Importer axe ou Lighthouse</button></span></div>';
+    if(et.id === 'vide'){
+      var att = pistesEnAttente(o, e).length;
+      html += '<section class="carte rangee entre" aria-labelledby="t-import-vide"><div><h2 id="t-import-vide" style="font-size:16px;margin:0">Import automatique</h2><p class="doux petit" style="margin:2px 0 0">'+(att ? pluriel(att, 'piste axe ou Lighthouse en attente', 'pistes axe ou Lighthouse en attente')+' : elles apparaîtront à l\'étape où chaque critère se vérifie.' : 'Lance axe ou Lighthouse pendant ton tour à vide, puis importe le rapport. Les pistes apparaîtront plus tard, à l\'étape où chaque critère se vérifie.')+'</p></div><button type="button" class="btn btn-s" data-action="import-auto">'+ico('import')+'Importer axe ou Lighthouse</button></section>';
+    }
     html += formulaireObs(o, e, et);
     html += vueCandidats(o, e);
     // Les statuts définis sans observation (C, NA) restent dans la grille ; ici, une seule ligne les résume.
@@ -799,8 +808,17 @@ RUXAWEB 2 : audit par observations.
   }
 
   // Résultats d'un outil automatique : jamais un statut, seulement des pistes à reprendre dans une observation.
+  // Une piste automatique se montre à l'étape où son critère se vérifie (sans critère : étape Code et outils).
+  // Ainsi le tour à vide reste sans outil : l'import y est lancé, mais ses pistes n'orientent pas le regard.
+  function etapeDuCritere(c, etId){ return !!c && (c.etape === etId || (c.etape === '3' && /^3/.test(etId))); }
+  function pisteVisible(k, etId){
+    if(k.source === 'collage') return true;
+    if(!k.criteres.length) return etId === '2';
+    return k.criteres.some(function(id){ return etapeDuCritere(PAR_ID[id], etId); });
+  }
+  function pistesEnAttente(o, e){ return (o.candidats || []).filter(function(k){ return k.ecran === e.id && k.etat === 'ouvert' && k.source !== 'collage'; }); }
   function vueCandidats(o, e){
-    var l = (o.candidats || []).filter(function(k){ return k.ecran === e.id && k.etat === 'ouvert'; });
+    var l = (o.candidats || []).filter(function(k){ return k.ecran === e.id && k.etat === 'ouvert' && (state.vue !== 'audit' || pisteVisible(k, state.etape)); });
     if(!l.length) return '';
     var sources = []; l.forEach(function(k){ if(sources.indexOf(k.outil) === -1) sources.push(k.outil); });
     return '<section class="carte" aria-labelledby="t-auto"><h2 id="t-auto">Pistes à vérifier ('+l.length+')</h2><p class="doux petit" style="margin:4px 0 0">'+esc(sources.join(', '))+'. Une piste ne compte pas tant que tu ne l\'as pas reprise dans une observation.</p>' + l.map(function(k){
@@ -1024,7 +1042,7 @@ RUXAWEB 2 : audit par observations.
     rendre();
     function nb(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
     var parts = []; if(nv) parts.push(nb(nv, 'échec', 'échecs')); if(ni) parts.push(nb(ni, 'point à vérifier', 'points à vérifier'));
-    message(r.resultats.length ? r.outil+' : '+parts.join(' et ')+' sur '+e.nom+'. Rien n\'est compté tant que tu ne l\'as pas repris.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
+    message(r.resultats.length ? r.outil+' : '+parts.join(' et ')+' sur '+e.nom+'. Les pistes apparaîtront à l\'étape où chaque critère se vérifie ; rien n\'est compté tant que tu ne les as pas reprises.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
   }
 
   // Récapitulatif au pied du formulaire : ce qui sera enregistré.
@@ -1153,7 +1171,7 @@ RUXAWEB 2 : audit par observations.
   }
   function infoOnglet(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresATrancher(o).length;
-    return '<span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : n+' critère'+(n > 1 ? 's' : '')+' à définir sur l\'ensemble des écrans')+'</span>';
+    return '<span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' %'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %') : n+' critère'+(n > 1 ? 's' : '')+' à définir sur l\'ensemble des écrans')+'</span>';
   }
 
   function aTrancher(o){
@@ -1245,9 +1263,9 @@ RUXAWEB 2 : audit par observations.
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
     var html = '<h1>Résumé : '+esc(o.nom)+'</h1><section class="carte pile" aria-label="Taux"><div class="taux">' +
       '<div><div class="lbl">Taux sélection SIP</div><div class="val">'+(t.complet ? t.pct+' %' : '<span class="pastille s-NT" style="font-size:15px">incomplet</span>')+'</div><div class="doux petit">'+t.C+' conformes sur '+t.total+' applicables · 52 critères</div></div>' +
-      '<div><div class="lbl">Taux élargi</div><div class="val second">'+(te.complet ? te.pct+' %' : 'incomplet')+'</div><div class="doux petit">'+te.C+' sur '+te.total+' · '+RAWEB.length+' critères</div></div>' +
+      (o.type === 'scenario' ? '' : '<div><div class="lbl">Taux élargi</div><div class="val second">'+(te.complet ? te.pct+' %' : 'incomplet')+'</div><div class="doux petit">'+te.C+' sur '+te.total+' · '+RAWEB.length+' critères</div></div>') +
       (o.type === 'scenario' ? (function(){ var u = scoreUx(o); return '<div><div class="lbl">Score POUR/UX</div><div class="val second">'+(u.pct != null ? u.pct+' %' : '-')+'</div><div class="doux petit">'+u.succes+' succès, '+u.difficile+' difficile(s), '+u.echec+' échec(s) · hors taux</div></div>'; })() : '') + '</div>' +
-      (!t.complet || !te.complet ? '<p class="doux" style="margin:0">'+criteresATrancher(o).length+' critère(s) à définir : passe par la grille ou la clôture.</p>' : '') +
+      (!t.complet || (o.type !== 'scenario' && !te.complet) ? '<p class="doux" style="margin:0">'+criteresATrancher(o).length+' critère(s) à définir : passe par la grille ou la clôture.</p>' : '') +
       (o.valide ? '' : '<p class="doux petit" style="margin:0">Onglet non validé : les taux restent provisoires.</p>') + '</section>';
     var nc = CRITERES.filter(function(c){ return statutOnglet(o, c) === 'NC'; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
     html += '<section class="carte" aria-labelledby="t-nc"><h2 id="t-nc">Non conformes ('+nc.length+')</h2>' + (nc.length ? nc.map(function(c){
@@ -1299,9 +1317,10 @@ RUXAWEB 2 : audit par observations.
     if(ep.length) brouillon.ecransPartage = Array.prototype.filter.call(ep, function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-ecran-partage'); });
   }
   function viderBrouillon(){ brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:brouillon.modif ? 'nc' : brouillon.tag, nomPartage:'', ecransPartage:[], vers:'', candidat:null, modif:null}; }
+  var MAX_AUDIT = 5;
   function nouvelOnglet(type){
     var n = state.onglets.length + 1, sc = type === 'scenario';
-    var o = {id:uid(), nom:(sc ? 'Scénario ' : 'Audit rapide ')+n, type:sc ? 'scenario' : 'rapide', ecrans:['Accueil','Écran avec formulaire','Écran au contenu particulier'].map(function(nom){ return {id:uid(), nom:nom, contenus:{}, etapes:{}}; }), obs:[], valide:false};
+    var o = {id:uid(), nom:(sc ? 'Scénario ' : 'Audit ')+n, type:sc ? 'scenario' : 'rapide', ecrans:['Accueil','Écran avec formulaire','Écran au contenu particulier'].map(function(nom){ return {id:uid(), nom:nom, contenus:{}, etapes:{}}; }), obs:[], valide:false};
     state.onglets.push(o); state.ongletId = o.id; state.ecranId = o.ecrans[0].id; state.etape = 'vide'; state.vue = 'preparer';
   }
   function enregistrerObs(){
@@ -1370,7 +1389,7 @@ RUXAWEB 2 : audit par observations.
       }
       state.vue = deja || o.obs.length ? 'audit' : 'preparer'; rendre(true);
     }
-    else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit rapide')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } state.vue = v; rendre(true); }
+    else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit simple')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } state.vue = v; rendre(true); }
     else if(a === 'etape'){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); }
     else if(a === 'ecran'){ if(brouillon.modif) viderBrouillon(); state.ecranId = b.getAttribute('data-id'); rendre(true); }
     else if(a === 'etape-faite'){
@@ -1417,7 +1436,7 @@ RUXAWEB 2 : audit par observations.
       if(confirmation === 'obs-'+id){ if(brouillon.modif === id) viderBrouillon(); o.obs = o.obs.filter(function(x){ return x.id !== id; }); confirmation = null; o.valide = false; rendre(); message('Observation supprimée.'); }
       else { confirmation = 'obs-'+id; rendre(); var bs = document.querySelector('[data-action="suppr-obs"][data-id="'+id+'"]'); if(bs) bs.focus(); }
     }
-    else if(a === 'ajout-ecran'){ o.ecrans.push({id:uid(), nom:'Écran '+(o.ecrans.length + 1), contenus:{}, etapes:{}}); o.valide = false; rendre(); var ins = $main.querySelectorAll('[data-ecran-nom]'); ins[ins.length - 1].focus(); }
+    else if(a === 'ajout-ecran'){ if(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT){ message('Un audit simple compte 5 écrans au plus.', true); return; } o.ecrans.push({id:uid(), nom:'Écran '+(o.ecrans.length + 1), contenus:{}, etapes:{}}); o.valide = false; rendre(); var ins = $main.querySelectorAll('[data-ecran-nom]'); ins[ins.length - 1].focus(); }
     else if(a === 'suppr-ecran'){
       var ie = b.getAttribute('data-id');
       if(confirmation === 'ecran-'+ie){
@@ -1541,9 +1560,9 @@ RUXAWEB 2 : audit par observations.
     else if(t.id === 'audit-nom'){ state.auditNom = t.value.trim(); sauver(); }
     else if(t.id === 'onglet-nom'){ o.nom = t.value.trim() || o.nom; sauver(); }
     else if(t.name === 'onglet-type'){
-      // Un nom encore par défaut suit le type choisi (« Audit rapide 2 » devient « Scénario 2 »).
-      var m = /^(Audit rapide|Scénario) (\d+)$/.exec(o.nom);
-      o.type = t.value; if(m) o.nom = (o.type === 'scenario' ? 'Scénario ' : 'Audit rapide ')+m[2];
+      // Un nom encore par défaut suit le type choisi (« Audit 2 » devient « Scénario 2 »).
+      var m = /^(Audit rapide|Audit|Scénario) (\d+)$/.exec(o.nom);
+      o.type = t.value; if(m) o.nom = (o.type === 'scenario' ? 'Scénario ' : 'Audit ')+m[2];
       rendre(); var r = document.querySelector('input[name="onglet-type"][value="'+o.type+'"]'); if(r) r.focus();
     }
     else if(t.hasAttribute('data-ecran-nom')){ var e = ecranDe(o, t.getAttribute('data-ecran-nom')); e.nom = t.value.trim() || e.nom; sauver(); }
@@ -1572,9 +1591,9 @@ RUXAWEB 2 : audit par observations.
 
   // ---------- Exports ----------
   function nomFichier(type, ext){
-    var nom = (state.auditNom || 'audit').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0, 50) || 'audit';
+    var nom = (state.auditNom || 'projet').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0, 50) || 'projet';
     var d = new Date(), p = function(n){ return String(n).padStart(2, '0'); };
-    return 'ruxaweb_'+nom+'_'+type+'_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.'+ext;
+    return 'projet-a11y_'+nom+'_'+type+'_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.'+ext;
   }
   function telecharger(nom, data){
     var types = {json:'application/json', csv:'text/csv;charset=utf-8', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};

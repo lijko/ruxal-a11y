@@ -64,6 +64,14 @@ def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit
     page.click('#form-obs button[type=submit]')
 
 
+def aller_etape(page, etape):
+    """Étape du protocole, par la liste des étapes (dépliée au besoin)."""
+    aller_audit(page)
+    if page.locator('#parcours-liste').is_hidden():
+        page.click('[data-action="parcours-bascule"]')
+    page.click('#parcours-liste [data-etape="%s"]' % etape)
+
+
 def ecran(page, i):
     aller_audit(page)
     page.locator('.ecrans [data-action="ecran"]').nth(i).click()
@@ -86,7 +94,7 @@ def main():
         page.on('pageerror', lambda e: erreurs.append(str(e)))
         page.goto(URL)
         verifier('Ouverture : tableau de bord', page.locator('h1').inner_text() == 'Tableau de bord')
-        verifier('Panneau Parcours présent, déplié sur le tableau de bord', page.locator('#aide .parcours li').count() >= 9 and page.locator('#parcours-liste').is_visible() and page.locator('#aide-titre').inner_text() == 'Parcours')
+        verifier('Panneau des étapes présent, déplié sur le tableau de bord, titre masqué', page.locator('#aide .parcours li').count() >= 9 and page.locator('#parcours-liste').is_visible() and 'Étapes' in page.locator('#aide-titre').inner_text() and 'sr' in (page.get_attribute('#aide-titre', 'class') or ''))
         txt = page.content().lower()
         verifier('Aucune mention de Claude', 'claude' not in txt and 'anthropic' not in txt)
 
@@ -94,6 +102,16 @@ def main():
         page.locator('#audit-nom').blur()
         page.click('[data-action="nouvel-onglet"]')
         verifier('Nouvel onglet : 3 écrans par défaut', page.locator('[data-ecran-nom]').count() == 3)
+        verifier('Projet A11Y : titre de la page', page.title().startswith('Projet A11Y - Boutique test') or 'Projet A11Y - Boutique test' in page.title(), page.title())
+        verifier('Projet A11Y : préfixe et nom du projet', 'Projet A11Y -' in page.inner_text('.barre') and page.get_attribute('#audit-nom', 'placeholder').startswith('Nom du projet'))
+        verifier('Modules : Audit complet affiché à venir, non sélectionnable', page.locator('input[name="onglet-type"][value="complet"][disabled]').count() == 1)
+        page.click('[data-action="ajout-ecran"]')
+        page.click('[data-action="ajout-ecran"]')
+        verifier('Audit simple : 5 écrans au plus', page.locator('[data-ecran-nom]').count() == 5 and page.locator('[data-action="ajout-ecran"]').count() == 0 and '5 écrans au plus' in page.inner_text('main'))
+        for _ in range(2):
+            page.locator('[data-action="suppr-ecran"]').last.click()
+            page.locator('[data-action="suppr-ecran"]').last.click()
+        verifier('Audit simple : retour à 3 écrans', page.locator('[data-ecran-nom]').count() == 3)
         # Écran 1 : formulaire présent ; les autres sans formulaire.
         page.click('[data-action="contenu"][data-d="formulaire"] >> nth=0')
         sw = page.locator('[data-action="contenu"][data-d="formulaire"]').first
@@ -265,6 +283,7 @@ def main():
         verifier('POUR/UX : score 86 % (6 succès sur 7), hors taux', '86 %' in page.locator('main').inner_text())
         verifier('POUR/UX : commentaire gardé', page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id==="%s"})[0].heuristiques.h7.commentaire' % oid2) == 'Six étapes pour une simple commande.')
         page.click('[data-action="vue"][data-vue="resume"]')
+        verifier('Résumé du scénario : pas de taux élargi', 'Taux élargi' not in page.locator('main').inner_text() and 'Taux sélection SIP' in page.locator('main').inner_text())
         verifier('Résumé du scénario : score POUR/UX à part', 'Score POUR/UX' in page.locator('main').inner_text())
         x2 = telecharger(page, 'export-xlsx')
         verifier('Excel : lignes POUR/UX du scénario', sum(1 for r in openpyxl.load_workbook(x2).active.iter_rows(values_only=True) if str(r[1] or '').startswith('POUR/UX')) == 8)
@@ -286,27 +305,34 @@ def main():
         f = pathlib.Path(tempfile.mkdtemp()) / 'axe.json'
         f.write_text(json.dumps(axe), encoding='utf-8')
         avant = statut(page, 1, 'raweb-1-1')
-        aller_audit(page)
+        aller_etape(page, 'vide')
+        verifier('Tour à vide : invitation à importer axe ou Lighthouse', page.locator('#t-import-vide').count() == 1)
         page.set_input_files('#fichier-auto', str(f))
         page.wait_for_timeout(300)
-        verifier('axe : 3 résultats à vérifier (2 échecs, 1 incomplet)', page.locator('[data-action="reprendre"]').count() == 3)
+        ouvertes = lambda: [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert' and c.get('source') != 'collage']
+        verifier('axe : 3 pistes rangées (2 échecs, 1 incomplet)', len(ouvertes()) == 3)
+        verifier('Tour à vide : pistes rangées, pas affichées', page.locator('[data-action="reprendre"]').count() == 0 and '3 pistes' in page.inner_text('#t-import-vide ~ p, section[aria-labelledby="t-import-vide"]'))
         verifier('axe : règle réussie ignorée', 'document-title' not in page.locator('main').inner_text())
         verifier('axe : rien de compté avant reprise', statut(page, 1, 'raweb-1-1') == avant)
         cands = page.evaluate('RUXAWEB.state().onglets[0].candidats')
         par = {c['regle']: c['criteres'] for c in cands}
         verifier('axe : image-alt vers 1.1 (table RUXAL)', par.get('image-alt') == ['raweb-1-1'], par)
         verifier('axe : règle hors table rapprochée par WCAG 1.4.3 (3.2)', par.get('regle-inconnue') == ['raweb-3-2'], par)
-        aller_audit(page)
+        aller_etape(page, '1')
+        verifier('Étape 1 : les 2 pistes de contraste (3.2)', page.locator('[data-action="reprendre"]').count() == 2)
+        aller_etape(page, '2')
+        verifier('Étape 2 : la piste image-alt (1.1)', page.locator('[data-action="reprendre"]').count() == 1)
         page.locator('[data-action="reprendre"]').first.click()
         verifier('Reprendre : observation préremplie', 'Images must have alternative text' in page.input_value('#obs-texte'))
         page.click('#form-obs button[type=submit]')
         derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
         verifier('Reprendre : observation #nc avec sa source', derniere['tag'] == 'nc' and derniere.get('source', {}).get('regle') == 'image-alt', derniere)
         verifier('Reprendre : 1.1 NC', statut(page, 1, 'raweb-1-1') == 'NC')
-        aller_audit(page)
-        verifier('Reprendre : résultat retiré de la liste', page.locator('[data-action="reprendre"]').count() == 2)
+        aller_etape(page, '2')
+        verifier('Reprendre : piste retirée de la liste', page.locator('[data-action="reprendre"]').count() == 0 and len(ouvertes()) == 2)
+        aller_etape(page, '1')
         page.locator('[data-action="ecarter"]').first.click()
-        verifier('Écarter : résultat retiré', page.locator('[data-action="reprendre"]').count() == 1)
+        verifier('Écarter : piste retirée', page.locator('[data-action="reprendre"]').count() == 1 and len(ouvertes()) == 1)
         lh = {'lighthouseVersion': '13.5.0', 'categories': {'accessibility': {'auditRefs': [{'id': 'button-name'}, {'id': 'html-has-lang'}, {'id': 'focus-traps'}]}},
               'audits': {'button-name': {'id': 'button-name', 'title': 'Buttons do not have an accessible name', 'score': 0, 'scoreDisplayMode': 'binary',
                                          'details': {'items': [{'node': {'selector': 'button.close'}}]}},
@@ -316,9 +342,11 @@ def main():
         f2.write_text(json.dumps(lh), encoding='utf-8')
         page.set_input_files('#fichier-auto', str(f2))
         page.wait_for_timeout(300)
-        verifier('Lighthouse : un seul échec, réussites et contrôles manuels ignorés', page.locator('[data-action="reprendre"]').count() == 1 and 'Buttons do not have' in page.locator('main').inner_text())
-        cands = [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert']
+        cands = ouvertes()
+        verifier('Lighthouse : un seul échec, réussites et contrôles manuels ignorés', len(cands) == 1 and cands[0]['titre'].startswith('Buttons do not have'), cands)
         verifier('Lighthouse : button-name vers 7.1 et 11.9', cands and cands[0]['criteres'] == ['raweb-7-1', 'raweb-11-9'], cands)
+        aller_etape(page, '3a')
+        verifier('Étape 3a : la piste button-name (7.1)', page.locator('[data-action="reprendre"]').count() == 1 and 'Buttons do not have' in page.locator('main').inner_text())
         # Export de l'extension axe DevTools (Chrome) : JSON à plat puis CSV.
         # Même structure qu'un vrai export de l'extension (failedRules et needsReview avant allIssues).
         ext = {'url': 'https://exemple.lu/', 'extensionVersion': '4.140.0', 'axeVersion': '4.13.0',
