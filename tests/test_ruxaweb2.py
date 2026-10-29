@@ -101,19 +101,19 @@ def main():
 
         # Partout #nc : NC sur les écrans cochés.
         observer(page, 'Menu principal : focus invisible.', point='focus-invisible', partage=('Menu principal', None))
-        verifier('Vaut aussi sur, #nc : NC sur les 3 écrans', [statut(page, i, 'raweb-10-7') for i in range(3)] == ['NC', 'NC', 'NC'])
+        verifier('Élément récurrent, #nc : NC sur les 3 écrans', [statut(page, i, 'raweb-10-7') for i in range(3)] == ['NC', 'NC', 'NC'])
         # Partout #c : conforme ici, à confirmer ailleurs.
         observer(page, 'Liens du pied de page explicites.', point='nom-non-pertinent', element=2, tag='c', partage=('Pied de page', None))
-        verifier('Vaut aussi sur, #c : C ici, à confirmer ailleurs', [statut(page, i, 'raweb-6-1') for i in range(3)] == ['C', 'C ?', 'C ?'])
+        verifier('Élément récurrent, #c : C ici, à confirmer ailleurs', [statut(page, i, 'raweb-6-1') for i in range(3)] == ['C', 'C ?', 'C ?'])
         # Sans écran coché, l'observation reste propre à l'écran ; sur un écran sans formulaire, le critère reste NA.
         observer(page, 'Étiquette du champ e-mail absente.', point='etiquette')
-        verifier('Sans « vaut aussi sur » : 11.1 NC sur cet écran seulement', [statut(page, i, 'raweb-11-1') for i in range(3)] == ['NC', 'NA', 'NA'])
+        verifier('Sans autre écran coché : 11.1 NC sur cet écran seulement', [statut(page, i, 'raweb-11-1') for i in range(3)] == ['NC', 'NA', 'NA'])
         observer(page, 'Erreur non restituée.', point='erreur-saisie', partage=(None, None))
-        verifier('Vaut aussi sur, sans nom : 11.10 NA là où le formulaire est absent', [statut(page, i, 'raweb-11-10') for i in range(3)] == ['NC', 'NA', 'NA'])
+        verifier('Aussi sur, sans nom : 11.10 NA là où le formulaire est absent', [statut(page, i, 'raweb-11-10') for i in range(3)] == ['NC', 'NA', 'NA'])
         observer(page, 'Menu : état ouvert non annoncé.', point='role-etat', partage=('Menu', [0]))
-        verifier('Vaut aussi sur un seul écran : 7.1 NC sur les deux, NT sur le troisième', [statut(page, i, 'raweb-7-1') for i in range(3)] == ['NC', 'NC', 'NT'])
+        verifier('Aussi sur un seul écran : 7.1 NC sur les deux, NT sur le troisième', [statut(page, i, 'raweb-7-1') for i in range(3)] == ['NC', 'NC', 'NT'])
         page.click('[data-action="vue"][data-vue="audit"]')
-        verifier('Éléments répétés : liste unique à gauche', 'éléments répétés' in page.locator('nav.ecrans').inner_text().lower() and 'Menu principal' in page.locator('nav.ecrans').inner_text())
+        verifier('Éléments récurrents : liste unique à gauche', 'éléments récurrents' in page.locator('nav.ecrans').inner_text().lower() and 'Menu principal' in page.locator('nav.ecrans').inner_text())
 
         # Note libre : aucun statut.
         avant = page.evaluate('RUXAWEB.state().onglets[0].obs.length')

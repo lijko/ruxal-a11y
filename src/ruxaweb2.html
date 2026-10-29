@@ -511,7 +511,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function badgePartage(o, x){
     if(!x.partage) return '';
     var noms = x.partage.ecrans.map(function(id){ var e = ecranDe(o, id); return e ? e.nom : ''; }).filter(Boolean);
-    return (x.partage.nom ? '<span class="etiq">'+esc(x.partage.nom)+'</span>' : '')+'<span class="doux petit">vaut aussi sur : '+esc(noms.join(', '))+'</span>';
+    return (x.partage.nom ? '<span class="etiq">'+esc(x.partage.nom)+'</span>' : '')+'<span class="doux petit">aussi sur : '+esc(noms.join(', '))+'</span>';
   }
   function ligneObs(o, x, e){
     var origine = x.ecran !== e.id ? (ecranDe(o, x.ecran) || {}).nom : null;
@@ -548,8 +548,8 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     var elts = {};
     o.obs.forEach(function(x){ if(x.partage && x.partage.nom){ var l = elts[x.partage.nom] = elts[x.partage.nom] || []; [x.ecran].concat(x.partage.ecrans).forEach(function(id){ if(l.indexOf(id) === -1) l.push(id); }); } });
     var noms = Object.keys(elts);
-    html += '<div class="carte"><h2>Éléments répétés</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(n)+'</span><span class="doux petit">'+elts[n].length+' écrans</span></div>'; }).join('')
-      : '<p class="doux petit" style="margin:4px 8px">Une observation qui vaut sur plusieurs écrans, avec un nom d\'élément, apparaît ici.</p>') + '</div>';
+    html += '<div class="carte"><h2>Éléments récurrents</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(n)+'</span><span class="doux petit">'+elts[n].length+' écrans</span></div>'; }).join('')
+      : '<p class="doux petit" style="margin:4px 8px">Un élément nommé dans une observation, avec les écrans où il revient, apparaît ici.</p>') + '</div>';
     var nte = ntEcran(o, e);
     html += '</nav><div class="centre"><div class="rangee entre"><h1>'+esc(e.nom)+'</h1><span class="rangee">'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'<button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></span></div>';
     html += formulaireObs(o, e, et);
@@ -649,14 +649,14 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       }).join('') + '</div></fieldset>';
     }
     html += '<div class="champ"><label class="lbl" for="obs-ajout">Ajouter un autre critère</label><select id="obs-ajout"><option value="">Choisir dans la liste</option>' + CRITERES.map(function(c){ return '<option value="'+c.id+'">'+esc(refTxt(c))+' · '+esc(c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle)+'</option>'; }).join('') + '</select></div>';
-    // Vaut aussi sur : l'auditeur coche les écrans où l'observation est vraie aussi ; l'élément est facultatif.
+    // Élément récurrent : l'auditeur nomme l'élément (facultatif) et coche les autres écrans où l'observation est vraie.
     var autres = o.ecrans.filter(function(x){ return x.id !== e.id; });
     if(autres.length){
       var noms = {}; o.obs.forEach(function(x){ if(x.partage && x.partage.nom) noms[x.partage.nom] = true; });
-      html += '<fieldset class="ailleurs grille2"><legend class="lbl" style="padding:0 6px">Vaut aussi sur</legend>' +
-        '<div class="rangee" role="group" aria-label="Autres écrans où cette observation est vraie">' + autres.map(function(x){
-          return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>'; }).join('') + '</div>' +
-        '<div class="champ"><label class="lbl" for="obs-partage-nom">Élément (facultatif)</label><input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. Menu principal" autocomplete="off"><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div></fieldset>';
+      html += '<fieldset class="ailleurs grille2"><legend class="lbl" style="padding:0 6px">Élément récurrent</legend>' +
+        '<div class="champ"><label class="lbl" for="obs-partage-nom">Nom de l\'élément</label><input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. Menu principal" autocomplete="off"><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
+        '<div class="champ" role="group" aria-labelledby="lbl-aussi"><span class="lbl" id="lbl-aussi">Aussi sur</span><div class="rangee" style="column-gap:20px">' + autres.map(function(x){
+          return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>'; }).join('') + '</div></div></fieldset>';
     }
     html += '<div class="rangee entre"><div class="tags" role="group" aria-label="Statut de l\'observation">' +
       [['c','#c','conforme'],['nc','#nc','non conforme'],['na','#na','non applicable']].map(function(t){ return '<button type="button" class="tag tag-'+t[0]+'" data-action="tag" data-tag="'+t[0]+'" aria-pressed="'+(brouillon.tag === t[0])+'" aria-label="'+t[1]+', '+t[2]+'">'+t[1]+'</button>'; }).join('') +
@@ -785,7 +785,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
     o.obs.push(x); o.valide = false;
     var msg = x.criteres.length ? 'Observation enregistrée.' : 'Note enregistrée : aucun critère, aucun statut modifié.';
     if(x.tag === 'nc' && x.criteres.length && !x.attendu) msg += ' Pense à préciser l\'attendu pour le ticket.';
-    if(x.partage) msg += ' Elle vaut aussi sur '+x.partage.ecrans.length+' autre(s) écran(s).';
+    if(x.partage) msg += ' Aussi sur '+x.partage.ecrans.length+' autre(s) écran(s).';
     viderBrouillon(); rendre(); message(msg);
     var t2 = document.getElementById('obs-texte'); if(t2) t2.focus();
   }
