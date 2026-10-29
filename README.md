@@ -62,7 +62,7 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Clôture** : un critère à la fois, avec sa fiche (niveau, comment vérifier, impact, lien officiel, observations), puis le statut de chaque écran encore sans statut (C, NC avec une observation, NA).
 - **Scénario** : champ « Transition vers » pour une observation sur le passage d'un écran à l'autre (notation Écran -> Écran), et **lecture POUR/UX** : 8 questions sur le parcours entier (Succès, Difficile, Échec, N/A). Score à part, jamais dans le taux.
 - **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation qui vaut sur plusieurs écrans), sauvegarde JSON. Référence des tickets : « RAWeb 1.1, Criterion X.Y » avec un lien `criteres.html#crit-X-Y`.
-- **Import axe ou Lighthouse** : un rapport JSON s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json`, sinon par les critères WCAG du rapport axe.
+- **Import axe ou Lighthouse** : un rapport (JSON d'axe-core, export JSON ou CSV de l'extension axe DevTools, JSON de Lighthouse) s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json`, sinon par les critères WCAG du rapport axe.
 - **Données séparées de RUXAAM** : stockage local et sauvegardes distincts.
 - **Gravités** : base de discussion, alignées sur les critères équivalents de RUXAAM quand il y en a.
 - **Pas encore repris** : PDF du référentiel. RUXAAM garde pour le moment la saisie critère par critère.

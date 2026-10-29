@@ -272,7 +272,7 @@ RUXAWEB 2 : audit par observations.
       </div>
     </div>
     <input type="file" id="fichier-import" accept=".json,application/json" hidden>
-    <input type="file" id="fichier-auto" accept=".json,application/json" hidden>
+    <input type="file" id="fichier-auto" accept=".json,.csv,application/json,text/csv" hidden>
   </div>
   <nav class="onglets" id="onglet-nav" aria-label="Onglets de l'audit"></nav>
 </header>
@@ -713,8 +713,32 @@ RUXAWEB 2 : audit par observations.
         });
       });
     }
-    if(Array.isArray(j)) j.forEach(function(r){ if(r && r.violations) axe(r); });
+    // Export de l'extension axe DevTools (Chrome) : une liste d'anomalies à plat, une ligne par élément.
+    function extension(liste, version){
+      outil = 'axe DevTools ' + (version || '');
+      var parRegle = {};
+      liste.forEach(function(i){
+        var regle = i.ruleId || i.rule || i.ruleID || i.id;
+        if(!regle || i.isIgnored === true) return;
+        var statut = String(i.status || i.result || '').toLowerCase();
+        if(/pass|réussi|inapplicable/.test(statut)) return;
+        var type = (i.needsReview === true || i.isManual === true || /review|manual|incomplet|vérifier/.test(statut)) ? 'incomplet' : 'violation';
+        var k = type + '|' + regle;
+        if(!parRegle[k]){ parRegle[k] = {regle:regle, type:type, titre:i.help || i.description || i.summary || regle, wcag:sc(i.tags), noeuds:[]}; res.push(parRegle[k]); }
+        var cible = i.selector || i.target || i.selectors || i.element || '';
+        parRegle[k].noeuds.push([].concat(cible).join(' '));
+      });
+    }
+    function listeExtension(o, prof){
+      if(!o || typeof o !== 'object' || prof > 4) return null;
+      if(Array.isArray(o)) return (o.length && o.every(function(x){ return x && typeof x === 'object' && (x.ruleId || x.ruleID || x.rule); })) ? o : null;
+      for(var c in o){ var t = listeExtension(o[c], prof + 1); if(t) return t; }
+      return null;
+    }
+    var plate;
+    if(Array.isArray(j) && j.some(function(r){ return r && r.violations; })) j.forEach(function(r){ if(r && r.violations) axe(r); });
     else if(j && j.violations) axe(j);
+    else if((plate = (j && Array.isArray(j.allIssues)) ? j.allIssues : listeExtension(j, 0))) extension(plate, j.axeVersion || j.engineVersion || (j.testEngine || {}).version);
     else if(j && j.audits && j.categories && j.categories.accessibility){
       outil = 'Lighthouse ' + (j.lighthouseVersion || '');
       j.categories.accessibility.auditRefs.forEach(function(ref){
@@ -731,11 +755,37 @@ RUXAWEB 2 : audit par observations.
     if(AXE_RAWEB[r.regle]) return AXE_RAWEB[r.regle].slice();
     return RAWEB.filter(function(c){ return (c.wcag || []).some(function(w){ return r.wcag.indexOf(w.split(' ')[0]) > -1; }); }).map(function(c){ return c.id; });
   }
+  // Export CSV de l'extension axe : une colonne de règle, et si possible sélecteur, description, revue manuelle.
+  function csvVersListe(texte){
+    texte = String(texte).replace(/^\ufeff/, '');
+    var prem = texte.split(/\r?\n/)[0] || '', sep = (prem.split(';').length > prem.split(',').length) ? ';' : ',';
+    var lignes = [], ligne = [], champ = '', guil = false;
+    for(var i = 0; i < texte.length; i++){
+      var ch = texte[i];
+      if(guil){ if(ch === '"'){ if(texte[i+1] === '"'){ champ += '"'; i++; } else guil = false; } else champ += ch; }
+      else if(ch === '"') guil = true;
+      else if(ch === sep){ ligne.push(champ); champ = ''; }
+      else if(ch === '\n' || ch === '\r'){ if(ch === '\r' && texte[i+1] === '\n') i++; ligne.push(champ); lignes.push(ligne); ligne = []; champ = ''; }
+      else champ += ch;
+    }
+    if(champ || ligne.length){ ligne.push(champ); lignes.push(ligne); }
+    if(lignes.length < 2) return null;
+    var tete = lignes[0].map(function(h){ return h.trim().toLowerCase(); });
+    function col(re){ for(var k = 0; k < tete.length; k++) if(re.test(tete[k])) return k; return -1; }
+    var cR = col(/rule|règle|regle/), cS = col(/selector|sélecteur|target|élément|element/), cD = col(/^help$|description|summary|issue|titre/), cV = col(/review|manual|revue|statut|status/), cT = col(/tags|wcag/);
+    if(cR < 0) return null;
+    return {issues: lignes.slice(1).filter(function(l){ return (l[cR] || '').trim(); }).map(function(l){
+      var v = cV > -1 ? (l[cV] || '').trim().toLowerCase() : '';
+      return {ruleId:l[cR].trim(), selector:cS > -1 ? l[cS] : '', help:cD > -1 ? l[cD] : '', tags:cT > -1 ? (l[cT] || '').split(/[\s,;|]+/) : [],
+        needsReview: /^(true|yes|oui|1)$/.test(v) || /review|manual|vérifier/.test(v), status: /pass/.test(v) ? 'pass' : ''};
+    })};
+  }
   function importerRapport(texte){
     var o = onglet(), e = ecranDe(o, state.ecranId), j;
-    try{ j = JSON.parse(texte); }catch(err){ message('Fichier illisible : choisis le rapport JSON enregistré par axe ou Lighthouse.', true); return; }
+    try{ j = JSON.parse(texte); }catch(err){ j = csvVersListe(texte); }
+    if(!j){ message('Fichier illisible : choisis le rapport JSON ou CSV enregistré par axe, ou le rapport JSON de Lighthouse.', true); return; }
     var r = lireRapport(j);
-    if(!r){ message('Ce fichier n\'est ni un rapport axe-core ni un rapport Lighthouse (catégorie accessibilité).', true); return; }
+    if(!r){ message('Ce fichier n\'est ni un rapport axe (axe-core ou extension axe DevTools) ni un rapport Lighthouse (catégorie accessibilité).', true); return; }
     o.candidats = (o.candidats || []).filter(function(k){ return !(k.ecran === e.id && k.etat === 'ouvert'); });
     r.resultats.forEach(function(x){
       var noeuds = x.noeuds.filter(Boolean);

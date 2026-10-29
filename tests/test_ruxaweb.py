@@ -302,6 +302,28 @@ def main():
         verifier('Lighthouse : un seul échec, réussites et contrôles manuels ignorés', page.locator('[data-action="reprendre"]').count() == 1 and 'Buttons do not have' in page.locator('main').inner_text())
         cands = [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert']
         verifier('Lighthouse : button-name vers 7.1 et 11.9', cands and cands[0]['criteres'] == ['raweb-7-1', 'raweb-11-9'], cands)
+        # Export de l'extension axe DevTools (Chrome) : JSON à plat puis CSV.
+        # Même structure qu'un vrai export de l'extension (failedRules et needsReview avant allIssues).
+        ext = {'url': 'https://exemple.lu/', 'extensionVersion': '4.140.0', 'axeVersion': '4.13.0',
+               'failedRules': [{'name': 'image-alt', 'count': 2, 'mode': 'automated'}], 'needsReview': [],
+               'source': {'productName': 'axe-devtools-html', 'productComponentName': 'extension-chrome'}, 'allIssues': [
+            {'ruleId': 'link-name', 'help': 'Ignored', 'tags': ['wcag244'], 'selector': ['a.x'], 'needsReview': False, 'isIgnored': True},
+            {'ruleId': 'image-alt', 'help': 'Images must have alternative text', 'tags': ['wcag111'], 'selector': ['#logo'], 'needsReview': False},
+            {'ruleId': 'image-alt', 'help': 'Images must have alternative text', 'tags': ['wcag111'], 'selector': ['.promo img'], 'needsReview': False},
+            {'ruleId': 'color-contrast', 'help': 'Contrast to review', 'tags': ['wcag143'], 'selector': ['h2'], 'needsReview': True}]}
+        f4 = f.parent / 'axe-devtools.json'
+        f4.write_text(json.dumps(ext), encoding='utf-8')
+        page.set_input_files('#fichier-auto', str(f4))
+        page.wait_for_timeout(300)
+        cands = [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert']
+        verifier('Extension axe (JSON) : 2 règles, éléments regroupés', len(cands) == 2 and [c['nb'] for c in cands] == [2, 1] and cands[1]['type'] == 'incomplet', cands)
+        verifier('Extension axe (JSON) : image-alt vers 1.1', cands and cands[0]['criteres'] == ['raweb-1-1'], cands)
+        f5 = f.parent / 'axe-devtools.csv'
+        f5.write_text('\ufeffRule ID;Description;Selector;Needs Review\nimage-alt;Images must have alternative text;#logo;false\nbutton-name;"Buttons must have; discernible text";button.close;false\n', encoding='utf-8')
+        page.set_input_files('#fichier-auto', str(f5))
+        page.wait_for_timeout(300)
+        cands = [c for c in page.evaluate('RUXAWEB.state().onglets[0].candidats') if c['etat'] == 'ouvert']
+        verifier('Extension axe (CSV) : 2 règles reconnues', [c['regle'] for c in cands] == ['image-alt', 'button-name'], cands)
         f3 = f.parent / 'autre.json'
         f3.write_text(json.dumps({'foo': 1}), encoding='utf-8')
         page.set_input_files('#fichier-auto', str(f3))
