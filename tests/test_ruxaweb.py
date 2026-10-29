@@ -86,7 +86,7 @@ def main():
         page.on('pageerror', lambda e: erreurs.append(str(e)))
         page.goto(URL)
         verifier('Ouverture : tableau de bord', page.locator('h1').inner_text() == 'Tableau de bord')
-        verifier('Aide présente avec le parcours', page.locator('#aide .parcours li').count() >= 9)
+        verifier('Panneau Parcours présent', page.locator('#aide .parcours li').count() >= 9 and page.locator('#aide-titre').inner_text() == 'Parcours')
         txt = page.content().lower()
         verifier('Aucune mention de Claude', 'claude' not in txt and 'anthropic' not in txt)
 

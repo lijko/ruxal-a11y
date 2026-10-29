@@ -528,7 +528,7 @@ RUXAWEB 2 : audit par observations.
     if(focus){ var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
   }
 
-  // L'aide occupe toujours la même place et garde la même structure : le parcours, puis « À faire » et « À chercher ».
+  // Le panneau Parcours occupe toujours la même place et garde la même structure : le parcours, puis « À faire » et « À chercher ».
   var ICONES = {
     prep:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
     vide:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
@@ -538,7 +538,7 @@ RUXAWEB 2 : audit par observations.
   };
   function icone(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONES[n]+'</svg>'; }
   function vueAide(o){
-    var html = '<h2 id="aide-titre">Aide</h2><ol class="parcours">';
+    var html = '<h2 id="aide-titre">Parcours</h2><ol class="parcours">';
     var dansOnglet = !!o && state.vue !== 'accueil';
     var e = o ? ecranDe(o, state.ecranId) : null;
     function pas(marque, txt, sous, ici, fait, fin, action, extra){
