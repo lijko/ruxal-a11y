@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Bertrand Kempf
 # SPDX-License-Identifier: EUPL-1.2
-"""Injecte les données de data/ dans src/ruxaweb.html (outil autonome, un seul fichier).
+"""Injecte les données de data/ dans src/ruxaweb.html (audit par observations, outil autonome, un seul fichier).
 
 Le bloc situé entre les marqueurs DEBUT_DONNEES et FIN_DONNEES de src/ruxaweb.html est
 remplacé à chaque exécution : ne pas le modifier à la main, modifier les fichiers JSON.
@@ -11,6 +11,8 @@ Sources :
   data/bonnes-pratiques-web.json bonnes pratiques hors RAWeb
   data/themes-ruxal.json         ordre et noms des thèmes RUXAL (communs à toute la famille)
   data/textes-ruxaweb.json       impact, explication, gravité, questions des déclencheurs (textes originaux)
+  data/symptomes-ruxaweb.json    points de contrôle et critères proposés pour une observation
+  data/axe-raweb.json            correspondance des règles axe-core et Lighthouse vers les critères
 
 Usage :
   python3 scripts/build_ruxaweb.py          régénère src/ruxaweb.html
@@ -128,36 +130,70 @@ def js(valeur):
     return json.dumps(valeur, ensure_ascii=False).replace('</', '<\\/')
 
 
-def bloc(criteres, themes, verif, declencheurs):
+def bloc():
+    criteres, themes, verif, declencheurs = construire()
+    # Critères WCAG de chaque critère RAWeb (numéros seuls), pour rapprocher une règle axe absente de la table.
+    wcag = {c['raweb']: [w.split(' ')[0] for w in c.get('wcag', [])] for c in charger('criteres-raweb.json')['criteres']}
+    criteres = [dict(c, wcag=wcag.get(c['ref'], [])) if c.get('ref') else c for c in criteres]
+    symptomes = charger('symptomes-ruxaweb.json')
+    ids = {c['id'] for c in criteres}
+    par_ref = {c['ref']: c['id'] for c in criteres if c.get('ref')}
+    erreurs = []
+    sortie = []
+    for s in symptomes['symptomes']:
+        def conv(refs):
+            out = []
+            for r in refs:
+                if r not in par_ref:
+                    erreurs.append('%s : critère %s inconnu' % (s['id'], r))
+                else:
+                    out.append(par_ref[r])
+            return out
+        bps = [b for b in s.get('bonnes_pratiques', []) if b in ids]
+        sortie.append({
+            'id': s['id'], 'famille': s['famille'], 'controle': s['controle'], 'symptome': s['symptome'],
+            'criteres': conv(s.get('criteres', [])) + bps,
+            'selon': [{'element': x['element'], 'criteres': conv(x['criteres'])} for x in s.get('selon', [])],
+        })
+    axe = {}
+    for regle, refs in charger('axe-raweb.json')['regles'].items():
+        cible = []
+        for r in refs:
+            if r in ids:
+                cible.append(r)
+            elif r in par_ref:
+                cible.append(par_ref[r])
+            else:
+                erreurs.append('axe-raweb.json, %s : critère %s inconnu' % (regle, r))
+        axe[regle] = cible
+    if erreurs:
+        sys.exit('Données invalides :\n- ' + '\n- '.join(erreurs))
+    j = js
     lignes = [DEBUT, '  var CRITERES = [']
-    lignes += ['    ' + js(c) + ',' for c in criteres]
+    lignes += ['    ' + j(c) + ',' for c in criteres]
     lignes[-1] = lignes[-1].rstrip(',')
-    lignes.append('  ];')
-    lignes.append('  var THEMES_RUXAL_ORDRE = ' + js(themes) + ';')
-    lignes.append('  var DECLENCHEURS = ' + js(declencheurs) + ';')
-    # ETAPES : id -> [étape ou sous-étape, libellé de l'étape] ; ETAPES_ORDRE : titres des 4 groupes de la vue par étape.
-    etapes = {c['id']: [c['etape'], ETAPES[c['etape'][0]]] for c in criteres}
-    lignes.append('  var ETAPES = ' + js(etapes) + ';')
-    lignes.append('  var ETAPES_ORDRE = ' + js(['%s · %s' % (n, ETAPES[n]) for n in sorted(ETAPES)]) + ';')
-    lignes.append('  var URL_CRITERE = ' + js(URL_CRITERE) + ';')
-    if verif:
-        a, m, j = verif.split('-')
-        lignes.append("  var REF_VERIF = '%s/%s/%s';" % (j, m, a))
-    lignes.append(FIN)
-    return '\n'.join(lignes)
+    lignes += ['  ];',
+               '  var THEMES_RUXAL = ' + j(themes) + ';',
+               '  var DECLENCHEURS = ' + j(declencheurs) + ';',
+               '  var FAMILLES = ' + j(symptomes['familles']) + ';',
+               '  var SYMPTOMES = ' + j(sortie) + ';',
+               '  var AXE_RAWEB = ' + j(axe) + ';',
+               '  var URL_CRITERE = ' + j(URL_CRITERE) + ';',
+               FIN]
+    nb_sel = sum(1 for c in criteres if c.get('horsSelection'))
+    nb_ref = sum(1 for c in criteres if not c.get('horsRef')) - nb_sel
+    resume = '%d critères RAWeb + %d hors sélection SIP + %d bonnes pratiques, %d points de contrôle, %d règles axe' % (
+        nb_ref, nb_sel, len(criteres) - nb_ref - nb_sel, len(sortie), len(axe))
+    return '\n'.join(lignes), resume
 
 
 def main():
-    criteres, themes, verif, declencheurs = construire()
+    donnees, resume = bloc()
     html = HTML.read_text(encoding='utf-8')
     debut, fin = html.find(DEBUT), html.find(FIN)
     if debut < 0 or fin < debut:
         sys.exit('Marqueurs DEBUT_DONNEES / FIN_DONNEES introuvables dans ' + str(HTML))
-    nouveau = html[:debut] + bloc(criteres, themes, verif, declencheurs) + html[fin + len(FIN):]
-    nb_sel = sum(1 for c in criteres if c.get('horsSelection'))
-    nb_ref = sum(1 for c in criteres if not c.get('horsRef')) - nb_sel
-    resume = '%d critères RAWeb (%d « si présent ») + %d hors sélection SIP + %d bonnes pratiques' % (
-        nb_ref, sum(1 for c in criteres if c.get('siPresent')), nb_sel, len(criteres) - nb_ref - nb_sel)
+    nouveau = html[:debut] + donnees + html[fin + len(FIN):]
     if '--check' in sys.argv:
         if nouveau != html:
             sys.exit('src/ruxaweb.html n\'est pas à jour : lancer python3 scripts/build_ruxaweb.py')

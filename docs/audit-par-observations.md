@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 -->
 # Audit par observations
 
-**Statut : spécification, première version construite (RUXAWEB 2.0, `src/ruxaweb2.html`, 27 octobre 2026).** Import axe et Lighthouse construit (résultats à reprendre ou écarter, `data/axe-raweb.json`). Pas encore construit : couche POUR/UX, niveaux 2 et 3 du déploiement. Cible : RUXAWEB d'abord, RUXAAM ensuite (sans l'import d'outils automatiques, qui n'existent que pour le web).
+**Statut : spécification, construite dans RUXAWEB 2.0 (`src/ruxaweb.html`, 27 octobre 2026), qui remplace la saisie critère par critère.** Import axe et Lighthouse construit (résultats à reprendre ou écarter, `data/axe-raweb.json`). Pas encore construit : couche POUR/UX, niveaux 2 et 3 du déploiement. Cible : RUXAWEB d'abord, RUXAAM ensuite (sans l'import d'outils automatiques, qui n'existent que pour le web).
 
 ## Principe
 Aujourd'hui, l'audit part de la liste des critères : le testeur lit chaque critère, cherche s'il est respecté, puis décrit les problèmes.
@@ -85,7 +85,7 @@ Pour chaque critère et chaque écran :
 
 Deux taux, même formule : le **taux sélection SIP**, sur la même sélection que l'audit simplifié du SIP, et le **taux élargi**, qui ajoute les critères RAWeb hors sélection retenus par RUXAWEB (3.3, 7.1, 7.5, 9.3, 10.4, 13.11).
 
-\1 Dans l'outil, la passe de clôture présente un critère à la fois, avec sa consigne, puis le statut de chaque écran.
+**Complétude** d'un écran : part des critères du périmètre qui ne sont plus NT. Une **passe de clôture** liste les critères restés NT pour les trancher (`#c`, `#nc`, `#na` justifié ou « à creuser »). Dans l'outil, la passe de clôture présente un critère à la fois, avec sa consigne, puis le statut de chaque écran.
 
 ## 5. Import des outils automatiques (web)
 La méthode de contrôle simplifié du SIP s'appuie déjà sur Axe pour une partie des critères ; l'import prolonge cette pratique.
@@ -156,7 +156,6 @@ Retours de Bertrand après utilisation, et réponses proposées.
 ## Points ouverts
 - Liste par défaut des éléments partagés, pour le web et pour le mobile (barre d'onglets, bouton retour).
 - Table symptôme vers critères : relecture de la version web, puis version RAAM.
-- Coexistence avec la saisie actuelle critère par critère : garder les deux modes ou basculer entièrement.
 - Format d'export et de réimport des observations (sauvegarde d'un audit en cours).
 - Type de Copilot disponible et ouverture de la création d'agents.
 - Application à RUXAAM : configurateur et tags identiques, sans import automatique.

@@ -45,37 +45,29 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Formats d'export** : Liste des critères en **Excel (.xlsx)** : une ligne par critère et par onglet, colonnes dimensionnées, ligne d'en-tête figée, filtres, statuts colorés, numéros de critères gardés en texte (« 10.10 » reste 10.10). Tickets Jira en **CSV** (séparateur virgule), à importer dans Jira et non à ouvrir dans Excel. Le téléchargement passe uniquement par le navigateur, sans dépendance à une autre application. 
 - **Exports** : aucun fichier vide n'est produit. Sans onglet, sans onglet RAAM, sans critère testé ou sans critère non conforme, un message explique pourquoi l'export n'a pas lieu. À l'import d'une sauvegarde plus ancienne, l'outil signale les critères qui n'existent plus dans cette version.
 
-### RUXAWEB 1.7 (web, RAWeb 1.1)
-`src/ruxaweb.html` : même moteur, mêmes types d'audit, mêmes thèmes RUXAL, même couche POUR et UX, mêmes exports que RUXAAM, adaptés au web.
+### RUXAWEB 2.0 (web, RAWeb 1.1)
+`src/ruxaweb.html` : audit par observations. L'auditeur note ce qu'il constate, la grille des critères se remplit. Spécification : [`docs/audit-par-observations.md`](docs/audit-par-observations.md).
 
-- **Critères** : les **52 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) (47 testés manuellement, 19 avec Axe, 52 distincts), intitulés officiels non modifiés ; 24 « si présent ». Contrairement à RUXAAM, aucune adaptation : la grille du SIP est faite pour le web, le taux reste donc lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
-- **6 critères hors sélection** : 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, critères officiels du RAWeb 1.1 absents de la méthode du SIP, ajoutés parce qu'ils couvrent des défauts fréquents (composant en script sans nom, rôle ni état ; message de statut non restitué ; contraste des icônes et du focus ; listes ; texte agrandi). Champ `hors_selection` de `data/criteres-raweb.json` ; leurs non-conformités partent dans l'export Jira.
-- **Deux taux** : le **taux sélection SIP**, taux principal, calculé sur les 52 critères de la méthode du SIP et comparable à leur audit simplifié ; le **taux élargi**, calculé sur les 58 critères RAWeb de l'outil, affiché à côté (audit, résumé, tableau de bord, export JSON). Même formule pour les deux.
+- **Critères** : les **52 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html), intitulés officiels non modifiés, dont 24 « si présent ». Aucune adaptation : le taux reste lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
+- **6 critères hors sélection** : 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, critères officiels absents de la méthode du SIP, ajoutés parce qu'ils couvrent des défauts fréquents. Champ `hors_selection` de `data/criteres-raweb.json`.
+- **Deux taux**, même formule : le **taux sélection SIP** (52 critères), taux principal, et le **taux élargi** (58 critères).
 - **3 bonnes pratiques hors RAWeb** (hors taux) : taille des cibles (WCAG 2.2, 2.5.8), fermeture d'une fenêtre modale au clavier, retour du focus à sa fermeture.
-- **Écrans** : comme dans RUXAAM, l'objet testé s'appelle un écran (une page du site, ou un état de page : fenêtre modale ouverte, étape d'un formulaire). L'audit rapide porte sur 3 écrans au moins (accueil, écran avec formulaire, écran au contenu particulier), comme l'audit simplifié du SIP.
-- **Contenu des écrans** : 8 déclencheurs (CAPTCHA, image complexe, média temporel ou son, média non temporel, tableau de données, cadre, formulaire, autre langue). Pas de déclencheur global : la limite de temps (13.1) est un critère cœur.
-- **Protocole de test en 4 étapes** : 1. usage standard, 2. code et outils (inspecteur du navigateur, outil automatique en appoint), 3. lecteur d'écran (NVDA ou VoiceOver ; 3a contenus et structure, 3b formulaires), 4. navigation au clavier. Construit à partir de l'environnement de test et de la méthodologie du RAWeb 1.1 et de la méthode simplifiée du SIP ; pas un protocole officiel.
-- **Écrans testés** : dans un onglet, le panneau « Écrans testés » permet de renommer, d'ajouter ou de supprimer (en deux clics) un écran en cours d'audit. Un ajout ou une suppression repasse l'onglet en brouillon ; un nouvel écran part en NT. L'audit rapide garde au moins 3 écrans. Les tickets Jira déjà créés ne sont pas modifiés.
-- **Un écran à la fois** : au-delà de 6 écrans (outil pensé pour l'ordinateur), la liste n'affiche plus que l'écran choisi dans une barre qui reste visible pendant le défilement (avec Précédent / Suivant et le nombre de non-conformités par écran), plus la colonne « Tous » et le statut d'ensemble de l'onglet sur chaque critère.
-- **Support** : Ordinateur ou Mobile (un audit = un support), repris dans le bloc « Recommendations » et une étiquette des tickets Jira. Référence des tickets : « RAWeb 1.1, Criterion X.Y » avec un lien `criteres.html#crit-X-Y`.
-- **Données séparées de RUXAAM** : stockage local (`atelier-ruxaweb-state`) et sauvegardes (`RUXAWEB-etat`) distincts ; une sauvegarde RUXAAM ne s'ouvre pas dans RUXAWEB.
-- **Gravités** : base de discussion, alignées sur les critères équivalents de RUXAAM quand il y en a (8 Critique, 25 Sérieux, 18 Modéré, 1 Mineur).
+- **On note des observations, la grille se remplit** : chaque observation porte un tag (#c, #nc, #na) et un ou plusieurs critères, proposés à partir d'un point de contrôle (`data/symptomes-ruxaweb.json`). Sans critère, c'est une note libre. Un critère sans observation reste NT ; le pire statut l'emporte.
+- **Écrans** : une page du site, ou un état de page (fenêtre modale ouverte, étape d'un formulaire). L'audit rapide porte sur 3 écrans au moins (accueil, écran avec formulaire, écran au contenu particulier), comme l'audit simplifié du SIP.
+- **Contenu des écrans** : un interrupteur par écran et par contenu (CAPTCHA, image complexe, média temporel ou son, média non temporel, tableau de données, cadre, formulaire, autre langue). Un contenu absent rend ses critères « si présent » non applicables.
+- **Parcours guidé, écran par écran** : tour à vide, puis les 4 étapes du protocole (1. usage standard, 2. code et outils, 3. lecteur d'écran, 3a contenus et 3b formulaires, 4. clavier), puis clôture et résumé. Le panneau d'aide, toujours au même endroit, montre le parcours et dit quoi faire et quoi chercher. Protocole construit à partir de la méthodologie du RAWeb 1.1 et de la méthode du SIP ; pas un protocole officiel.
+- **Navigation** : en haut le nom de l'audit, le support (Ordinateur ou Mobile) et le menu Fichier, puis les onglets de l'audit ; dans un onglet, les vues Saisie et Grille.
+- **Élément et écrans concernés** : deux champs ordinaires de toute observation. L'écran en cours est toujours coché ; l'auditeur coche les autres écrans où l'observation est vraie et peut nommer l'élément (ex. Menu principal). Un élément observé sur au moins deux écrans figure dans la liste « Éléments répétés ». Un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. Le taux reste comparable à celui du SIP.
+- **Retest** : depuis la grille, un critère se remet à NT sur un écran ; les observations précédentes restent visibles, barrées.
+- **Clôture** : un critère à la fois, avec sa fiche (niveau, comment vérifier, impact, lien officiel, observations), puis le statut de chaque écran encore sans statut (C, NC avec une observation, NA).
+- **Scénario** : champ « Transition vers » pour une observation sur le passage d'un écran à l'autre (notation Écran -> Écran), et **lecture POUR/UX** : 8 questions sur le parcours entier (Succès, Difficile, Échec, N/A). Score à part, jamais dans le taux.
+- **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation qui vaut sur plusieurs écrans), sauvegarde JSON. Référence des tickets : « RAWeb 1.1, Criterion X.Y » avec un lien `criteres.html#crit-X-Y`.
+- **Import axe ou Lighthouse** : un rapport JSON s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json`, sinon par les critères WCAG du rapport axe.
+- **Données séparées de RUXAAM** : stockage local et sauvegardes distincts.
+- **Gravités** : base de discussion, alignées sur les critères équivalents de RUXAAM quand il y en a.
+- **Pas encore repris** : PDF du référentiel. RUXAAM garde pour le moment la saisie critère par critère.
 
-**EN**: `src/ruxaweb.html` applies the same engine to the web, with the 52 RAWeb 1.1 criteria of the SIP simplified audit method, a 4-step web test protocol, and the same notion of screens.
-
-### RUXAWEB 2.0 (web, audit par observations)
-`src/ruxaweb2.html` : nouvelle façon d'auditer, à côté de la 1.7 qui reste disponible (`src/ruxaweb.html`, branche `archive/ruxaweb-v1.7`). Mêmes critères, mêmes textes, même formule de taux. Spécification : [`docs/audit-par-observations.md`](docs/audit-par-observations.md).
-
-- **On note des observations, la grille se remplit** : chaque observation porte un tag (#c, #nc, #na) et un ou plusieurs critères, proposés à partir d'un point de contrôle (`data/symptomes-ruxaweb.json`). Sans critère, c'est une note libre.
-- **Navigation** : en haut l'audit et ses onglets ; dans un onglet, les vues Saisie et Grille ; les étapes dans le parcours de l'aide, seul fil des étapes.
-- **Parcours guidé, écran par écran** : tour à vide, puis les 4 étapes du protocole, puis clôture et résumé. Le panneau d'aide, toujours au même endroit, montre le parcours et dit quoi faire et quoi chercher à l'étape en cours.
-- **Élément et écrans concernés** : deux champs ordinaires de toute observation, sans saisie à part. L'écran en cours est toujours coché ; l'auditeur coche les autres écrans où l'observation est vraie et peut nommer l'élément (ex. Menu principal). Un élément observé sur au moins deux écrans figure dans la liste « Éléments répétés ». Un #nc vaut NC sur les écrans cochés, un #c y reste à confirmer. Une observation n'a jamais de statut propre : le taux reste comparable à celui du SIP.
-\1\n- **Clôture** : un critère à la fois, avec sa consigne « Comment vérifier », puis le statut de chaque écran encore sans statut (C, NC avec une observation, NA). « Conforme sur les N écrans » existe, mais critère par critère, pour éviter de tout valider en série.
-- **Scénario** : champ « Transition vers » pour une observation sur le passage d'un écran à l'autre (notation Écran -> Écran).
-- **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation qui vaut sur plusieurs écrans), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
-- **Import axe ou Lighthouse** : un rapport JSON (axe-core, ou Lighthouse depuis les outils de développement d'Edge ou de Chrome) s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json` (correspondance RUXAL, relue contre la documentation officielle d'axe-core), sinon par les critères WCAG que donne le rapport axe.
-- **Lecture POUR/UX** (scénarios seulement) : les 8 questions de la 1.7, sur le parcours entier (Succès, Difficile, Échec, N/A, avec un commentaire si difficile ou échec). Score à part, jamais dans le taux ; repris dans le résumé et l'export Excel.
-- **Pas encore repris** : PDF du référentiel. RUXAAM reste sur le modèle 1.x pour le moment.
+**EN**: `src/ruxaweb.html` is an observation-based audit tool for the web: the auditor records observations, and the RAWeb 1.1 criteria grid (52 criteria of the SIP simplified audit method, plus 6) fills itself. Guided screen-by-screen flow, two compliance rates, axe and Lighthouse report import.
 
 ## Données et génération / Data and build
 Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
@@ -97,7 +89,6 @@ Après toute modification de `data/`, régénérer l'outil (Python 3, sans dépe
 ```bash
 python3 scripts/build_ruxaam.py
 python3 scripts/build_ruxaweb.py
-python3 scripts/build_ruxaweb2.py
 ```
 
 Le script valide les données (texte manquant, thème ou gravité inconnus, identifiant en double) puis remplace le bloc compris entre les marqueurs `DEBUT_DONNEES` et `FIN_DONNEES` de `src/ruxaam.html`. Ne pas modifier ce bloc à la main. `python3 scripts/build_ruxaam.py --check` vérifie que le HTML est à jour (code retour 1 sinon), utile avant un commit.
@@ -117,10 +108,9 @@ python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/test_ruxaam.py
 python3 tests/test_ruxaweb.py
-python3 tests/test_ruxaweb2.py
 python3 tests/test_symptomes_ruxaweb.py
 ```
-Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript, gestion des écrans en cours d'audit et affichage un écran à la fois au-delà de 6. `tests/test_ruxaweb.py` fait les mêmes vérifications pour RUXAWEB (écrans, 8 déclencheurs, étapes web, support Ordinateur ou Mobile, lien RAWeb des tickets). `tests/test_ruxaweb2.py` vérifie les règles de RUXAWEB 2 : configurateur, observations valables sur plusieurs écrans, retest, deux taux, exports et import.
+Les tests ouvrent `src/ruxaam.html` en `file://` et vérifient notamment : nombre de critères et de pastilles d'étape, vues par thème et par étape, « Contenu des écrans », « Élément concerné » et aide à la notation, export Jira selon la plateforme et mémoire des exports, messages d'export sans fichier vide, import d'une sauvegarde 1.21 (migration), absence d'erreur JavaScript, gestion des écrans en cours d'audit et affichage un écran à la fois au-delà de 6. `tests/test_ruxaweb.py` vérifie les règles de RUXAWEB : contenu des écrans, observations valables sur plusieurs écrans, retest, clôture, deux taux, exports et import.
 
 ## Licences / Licences
 | Contenu | Licence |

@@ -26,7 +26,7 @@ Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur
    Source : https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html
    RUXAWEB reprend la liste des 52 critères RAWeb 1.1 de cette méthode (critères testés manuellement et avec Axe) et cite les règles Axe qu'elle associe aux critères. Le fichier Excel de la grille n'est ni reproduit ni versionné. Le statut de réutilisation de la grille elle-même reste à confirmer auprès du SIP.
 
-5. Bibliothèque tierce embarquée dans src/ruxaam.html et src/ruxaweb.html
+5. Bibliothèque tierce embarquée dans src/ruxaam.html
    jsPDF 2.5.1, © 2010-2021 James Hall et contributeurs, licence MIT.
    Greffons de jsPDF inclus, avec leurs en-têtes de copyright conservés dans le fichier : Aras Abbasi, Steven Spungin, Youssef Beddad, James Robb, Dominik Homberger, Eduardo Menezes de Morais, Jussi Utunen, et notice « Adobe Systems Incorporated » (2008) pour les données de glyphes.
    html2canvas, DOMPurify et canvg ne sont pas embarqués : jsPDF les mentionne comme dépendances facultatives.
