@@ -536,7 +536,7 @@ RUXAWEB 2 : audit par observations.
     return {pct: total ? Math.round(C / total * 100) : null, C:C, total:total, nt:nt, complet: nt === 0};
   }
   function ntEcran(o, e){
-    return RAWEB.filter(function(c){ var s = statutEcran(o, e, c).s; return s === 'NT' || s === 'AC'; }).length;
+    return CRITERES.filter(function(c){ var s = statutEcran(o, e, c).s; return s === 'NT' || s === 'AC'; }).length;
   }
 
   // ---------- Rendu ----------
@@ -768,7 +768,7 @@ RUXAWEB 2 : audit par observations.
     var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
     var et = ETAPE[state.etape] || ETAPES[0];
     var nte = ntEcran(o, e);
-    var html = '<div class="rangee entre"><span class="rangee"><h2 class="titre-ecran">'+esc(e.nom)+'</h2>'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'</span><button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></div>';
+    var html = '<div class="rangee entre"><span class="rangee"><h2 class="titre-ecran">'+esc(e.nom)+'</h2>'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher sur cet écran</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'</span><button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></div>';
     html += formulaireObs(o, e, et);
     html += vueCandidats(o, e);
     // Les critères tranchés à la clôture sans observation (C, NA) restent dans la grille ; ici, une seule ligne les résume.
@@ -1013,7 +1013,7 @@ RUXAWEB 2 : audit par observations.
   }
   function infoOnglet(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresATrancher(o).length;
-    return '<span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : n+' critère'+(n > 1 ? 's' : '')+' à trancher')+'</span>';
+    return '<span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : n+' critère'+(n > 1 ? 's' : '')+' à trancher sur l\'ensemble des écrans')+'</span>';
   }
 
   function aTrancher(o){
