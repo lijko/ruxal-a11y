@@ -185,6 +185,10 @@ RUXAWEB 2 : audit par observations.
   .ecrans button[aria-current="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
   .ecrans .elt{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;font-size:14px}
   .centre{flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .titre-onglet{margin-bottom:-4px}
+  h2.titre-ecran{font-size:22px}
+  th.col-ici{color:var(--accent)}
+  td.col-ici{background:var(--accent-soft)}
   .obs{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border-soft)}
   .obs:last-child{border-bottom:0}
   .obs .corps{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
@@ -201,6 +205,8 @@ RUXAWEB 2 : audit par observations.
   tr.theme th{background:var(--surface-alt);font-weight:800;font-size:13px}
   .ref-btn{background:none;border:0;padding:0;cursor:pointer;color:var(--accent);font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
   td.statut{text-align:center;white-space:nowrap}
+  thead th.col-ecran{white-space:normal;text-align:center;min-width:72px;max-width:120px}
+  td.intitule{min-width:260px}
 
   .taux{display:flex;flex-wrap:wrap;gap:16px 48px;align-items:flex-end}
   .taux .val{font-size:44px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -233,16 +239,12 @@ RUXAWEB 2 : audit par observations.
   #statut.erreur{background:var(--c-nc);color:var(--surface)}
   footer.pied{max-width:1440px;margin:0 auto;padding:0 24px 32px;font-size:12.5px;color:var(--ink-soft)}
   @media (max-width:900px){ aside.aide{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1} }
-  /* Écran large : mise en page d'application. L'en-tête reste en haut, la zone de travail et l'aide défilent
-     chacune de leur côté, sous l'en-tête : l'aide ne peut plus passer dessous, quelle que soit sa hauteur. */
+  /* Écran large : la page défile normalement ; l'en-tête, la colonne des écrans, l'aide et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
-    html,body{height:100%}
-    body{display:flex;flex-direction:column;overflow:hidden}
-    header.barre{position:static;flex:none}
-    .page{flex:1 1 auto;min-height:0;width:100%;flex-wrap:nowrap;align-items:stretch;padding-bottom:16px}
-    main{overflow-y:auto;padding:0 4px 24px;margin:0 -4px}
-    aside.aide{position:static;max-height:none;overflow-y:auto}
-    footer.pied{flex:none;padding-bottom:12px}
+    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 16px);max-height:calc(100vh - var(--barre-h, 130px) - 32px);overflow-y:auto}
+    .tableau{overflow:visible}
+    .tableau.large{overflow-x:auto}
+    thead th{top:var(--barre-h, 130px);z-index:2}
   }
   @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto!important} }
 </style>
@@ -518,6 +520,8 @@ RUXAWEB 2 : audit par observations.
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
     var vues = {accueil:vueAccueil, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, cloture:vueCloture, resume:vueResume};
     $main.innerHTML = (vues[state.vue] || vueAccueil)(o);
+    // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
+    var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
     $aide.innerHTML = vueAide(o);
     document.title = (o && state.vue !== 'accueil' ? o.nom + ' · ' : '') + 'Atelier RUXAWEB 2';
     sauver();
@@ -647,11 +651,11 @@ RUXAWEB 2 : audit par observations.
     return l.filter(function(id, i){ return l.indexOf(id) === i; });
   }
 
-  function vueAudit(o){
-    if(!o.ecrans.length){ state.vue = 'preparer'; return vuePreparer(o); }
+  // Cadre commun aux vues Saisie et Grille : titre de l'onglet, puis les écrans (colonne qui reste visible) et le contenu.
+  function cadreOnglet(o, vue, info, contenu){
     var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
-    var et = ETAPE[state.etape] || ETAPES[0];
-    var html = '<div class="audit"><nav class="ecrans" aria-label="Écrans et éléments partagés"><div class="carte"><h2>Écrans</h2>';
+    var html = '<div class="rangee entre titre-onglet"><span class="rangee"><h1>'+esc(o.nom)+'</h1>'+bascule(vue)+'</span><span class="rangee">'+info+'</span></div>';
+    html += '<div class="audit"><nav class="ecrans" aria-label="Écrans et éléments partagés"><div class="carte"><h2>Écrans</h2>';
     o.ecrans.forEach(function(x, i){
       var nc = RAWEB.filter(function(c){ return statutEcran(o, x, c).s === 'NC'; }).length;
       html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id ? ' aria-current="true"' : '')+'><span>'+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
@@ -664,8 +668,14 @@ RUXAWEB 2 : audit par observations.
     var noms = Object.keys(elts).filter(function(n){ return elts[n].length > 1; });
     html += '<div class="carte"><h2>Éléments répétés</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(libelles[n])+'</span><span class="doux petit">'+elts[n].length+' écrans</span></div>'; }).join('')
       : '<p class="doux petit" style="margin:4px 8px">Un élément observé sur plusieurs écrans apparaît ici.</p>') + '</div>';
+    return html + '</nav><div class="centre">' + contenu + '</div></div>';
+  }
+  function vueAudit(o){
+    if(!o.ecrans.length){ state.vue = 'preparer'; return vuePreparer(o); }
+    var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
+    var et = ETAPE[state.etape] || ETAPES[0];
     var nte = ntEcran(o, e);
-    html += '</nav><div class="centre"><div class="rangee entre"><span class="rangee"><h1>'+esc(e.nom)+'</h1>'+bascule('audit')+'</span><span class="rangee">'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'<button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></span></div>';
+    var html = '<div class="rangee entre"><span class="rangee"><h2 class="titre-ecran">'+esc(e.nom)+'</h2>'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'</span><button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></div>';
     html += formulaireObs(o, e, et);
     html += vueCandidats(o, e);
     // Les critères tranchés à la clôture sans observation (C, NA) restent dans la grille ; ici, une seule ligne les résume.
@@ -675,8 +685,8 @@ RUXAWEB 2 : audit par observations.
     html += '<section class="carte" aria-labelledby="t-obs"><h2 id="t-obs">Observations de cet écran ('+liste.length+')</h2>' + (liste.length ? liste.map(function(x){ return ligneObs(o, x, e); }).join('') : '<p class="doux">Aucune observation pour l\'instant.</p>') +
       (cloture ? '<p class="doux petit" style="margin:8px 0 0">'+cloture+' critère(s) tranché(s) à la clôture, sans observation : voir la <button type="button" class="ref-btn" data-action="vue" data-vue="grille">grille</button>.</p>' : '') + '</section>';
     var dernier = et.i === ETAPES.length - 1;
-    html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+(dernier ? 'Étape terminée, écran suivant' : 'Étape terminée, passer à : '+esc(ETAPES[et.i+1].nom))+'</button></div></div></div>';
-    return html;
+    html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+(dernier ? 'Étape terminée, écran suivant' : 'Étape terminée, passer à : '+esc(ETAPES[et.i+1].nom))+'</button></div>';
+    return cadreOnglet(o, 'audit', infoOnglet(o), html);
   }
 
   // Résultats d'un outil automatique : jamais un statut, seulement des pistes à reprendre dans une observation.
@@ -789,29 +799,33 @@ RUXAWEB 2 : audit par observations.
 
   function vueGrille(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
-    var html = '<div class="rangee entre"><span class="rangee"><h1>Grille des critères</h1>'+bascule('grille')+'</span><span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : criteresATrancher(o).length+' critère(s) à trancher')+'</span></div>';
+    var html = '<h2 class="sr">Grille des critères</h2>';
     // Regroupement : thématiques officielles du RAWeb par défaut (lecture du SIP), thèmes RUXAL au choix.
     var officiel = state.theming !== 'ruxal';
-    html += '<div class="rangee" role="group" aria-label="Regroupement des critères"><span class="lbl">Regrouper par</span>' +
-      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="btn btn-s'+(on ? ' btn-p' : '')+'" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div>';
+    html += '<div class="rangee"><span class="lbl" id="lbl-regroup">Regrouper par</span><div class="tags" role="group" aria-labelledby="lbl-regroup">' +
+      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="tag" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div></div>';
     var groupes = [];
     if(officiel){
       CRITERES.forEach(function(c){ var g = c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref; if(groupes.indexOf(g) === -1) groupes.push(g); });
       groupes.sort(function(a, b){ return (parseInt(a, 10) || 99) - (parseInt(b, 10) || 99); });
     } else groupes = THEMES_RUXAL;
-    html += '<div class="tableau"><table><thead><tr><th scope="col">Critère</th><th scope="col">Intitulé</th>' + o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '<th scope="col">Onglet</th></tr></thead><tbody>';
+    html += '<div class="tableau"><table><thead><tr><th scope="col">Critère</th><th scope="col">Intitulé</th>' + o.ecrans.map(function(e){ return '<th scope="col" class="col-ecran'+(e.id === state.ecranId ? ' col-ici' : '')+'">'+esc(e.nom)+'</th>'; }).join('') + '<th scope="col" class="col-ecran">Onglet</th></tr></thead><tbody>';
     groupes.forEach(function(th){
       var cs = CRITERES.filter(function(c){ return officiel ? (c.horsRef ? 'Bonnes pratiques hors RAWeb' : c.theme_ref) === th : c.theme_ruxal === th; });
       if(officiel) cs.sort(function(a, b){ var x = String(a.ref || '99.'+a.id).split('.').map(Number), y = String(b.ref || '99.'+b.id).split('.').map(Number); return (x[0]-y[0]) || ((x[1]||0)-(y[1]||0)); });
       if(!cs.length) return;
       html += '<tr class="theme"><th colspan="'+(o.ecrans.length + 3)+'" scope="colgroup">'+esc(th)+'</th></tr>';
       cs.forEach(function(c){
-        html += '<tr><th scope="row"><button type="button" class="ref-btn" data-action="critere" data-id="'+c.id+'">'+esc(refTxt(c))+'</button>'+(c.horsSelection ? '<div class="doux petit">hors sélection</div>' : '')+(c.horsRef ? '<div class="doux petit">hors taux</div>' : '')+'</th><td>'+esc(c.libelle)+'</td>' +
-          o.ecrans.map(function(e){ var r = statutEcran(o, e, c); return '<td class="statut">'+cellule(r.s, r.conflit)+'</td>'; }).join('') +
+        html += '<tr><th scope="row"><button type="button" class="ref-btn" data-action="critere" data-id="'+c.id+'">'+esc(refTxt(c))+'</button>'+(c.horsSelection ? '<div class="doux petit">hors sélection</div>' : '')+(c.horsRef ? '<div class="doux petit">hors taux</div>' : '')+'</th><td class="intitule">'+esc(c.libelle)+'</td>' +
+          o.ecrans.map(function(e){ var r = statutEcran(o, e, c); return '<td class="statut'+(e.id === state.ecranId ? ' col-ici' : '')+'">'+cellule(r.s, r.conflit)+'</td>'; }).join('') +
           '<td class="statut">'+cellule(statutOnglet(o, c))+'</td></tr>';
       });
     });
-    return html + '</tbody></table></div>';
+    return cadreOnglet(o, 'grille', infoOnglet(o), html + '</tbody></table></div>');
+  }
+  function infoOnglet(o){
+    var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresATrancher(o).length;
+    return '<span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' % · élargi '+te.pct+' %' : n+' critère'+(n > 1 ? 's' : '')+' à trancher')+'</span>';
   }
 
   function aTrancher(o){
