@@ -172,6 +172,7 @@ RUXAWEB 2 : audit par observations.
   .sous-titre-form{margin:6px 0 -4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border-top:1px solid var(--border);padding-top:12px}
   .tags.tags-resultat{align-self:flex-start}
   .pied-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
+  .form-modif{outline:2px solid var(--accent);outline-offset:2px}
   .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
   .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
   .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
@@ -718,7 +719,8 @@ RUXAWEB 2 : audit par observations.
       '<span class="texte">'+esc(x.texte)+(x.attendu ? ' <span class="doux">Attendu : '+esc(x.attendu)+'</span>' : '')+'</span>' +
       '<span class="rangee">'+x.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('')+badgePartage(o, x)+
       (origine ? '<span class="doux petit">observé sur '+esc(origine)+'</span>' : '')+(invalide ? '<span class="doux petit">remplacé par un retest</span>' : '')+'</span></div>' +
-      (origine ? '' : '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+(confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button>')+'</div>';
+      (origine ? '' : '<span class="rangee" style="flex:none">'+(x.tag !== 'nt' ? (brouillon.modif === x.id ? '<span class="doux petit">en cours de modification</span>' : '<button type="button" class="btn btn-s" data-action="modif-obs" data-id="'+x.id+'" aria-label="Modifier l\'observation : '+esc(x.texte.length > 60 ? x.texte.slice(0, 58)+'...' : x.texte)+'">Modifier</button>') : '')+
+        '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+(confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button></span>')+'</div>';
   }
 
   function criteresProposes(){
@@ -901,7 +903,8 @@ RUXAWEB 2 : audit par observations.
   }
   function formulaireObs(o, e, et){
     var props = criteresProposes();
-    var html = '<form class="carte pile" id="form-obs" novalidate><h2>Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span></h2>';
+    var enModif = brouillon.modif ? o.obs.filter(function(x){ return x.id === brouillon.modif; })[0] : null;
+    var html = '<form class="carte pile'+(enModif ? ' form-modif' : '')+'" id="form-obs" novalidate><h2 id="form-obs-titre">'+(enModif ? 'Modifier l\'observation' : 'Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span>')+'</h2>';
     html += '<div class="champ"><label class="lbl" for="obs-texte">Observation</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea></div>';
     // Résultat : mêmes boutons C, NC, NA qu'à la clôture ; la ligne d'aide dit ce que le choix fait aux critères.
     var AIDE_RES = {
@@ -949,7 +952,7 @@ RUXAWEB 2 : audit par observations.
       }).join('') + '</div></fieldset>';
     }
     html += '<div class="champ"><label class="lbl" for="obs-ajout">Ajouter un critère</label><select id="obs-ajout"><option value="">Choisir dans la liste</option>' + CRITERES.map(function(c){ return '<option value="'+c.id+'">'+esc(refTxt(c))+' · '+esc(c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle)+'</option>'; }).join('') + '</select></div>';
-    html += '<div class="pied-form"><p class="doux petit" id="recap-obs" style="margin:0">'+recapObs(e)+'</p><button type="submit" class="btn btn-p">Enregistrer l\'observation</button></div></form>';
+    html += '<div class="pied-form"><p class="doux petit" id="recap-obs" style="margin:0">'+recapObs(e)+'</p><span class="rangee">'+(enModif ? '<button type="button" class="btn" data-action="annuler-modif">Annuler</button><button type="submit" class="btn btn-p">Enregistrer les modifications</button>' : '<button type="submit" class="btn btn-p">Enregistrer l\'observation</button>')+'</span></div></form>';
     return html;
   }
 
@@ -1158,7 +1161,7 @@ RUXAWEB 2 : audit par observations.
     var ep = f.querySelectorAll('[data-ecran-partage]');
     if(ep.length) brouillon.ecransPartage = Array.prototype.filter.call(ep, function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-ecran-partage'); });
   }
-  function viderBrouillon(){ brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:brouillon.tag, nomPartage:'', ecransPartage:[], vers:'', candidat:null}; }
+  function viderBrouillon(){ brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:brouillon.modif ? 'nc' : brouillon.tag, nomPartage:'', ecransPartage:[], vers:'', candidat:null, modif:null}; }
   function nouvelOnglet(type){
     var n = state.onglets.length + 1, sc = type === 'scenario';
     var o = {id:uid(), nom:(sc ? 'Scénario ' : 'Audit rapide ')+n, type:sc ? 'scenario' : 'rapide', ecrans:['Accueil','Écran avec formulaire','Écran au contenu particulier'].map(function(nom){ return {id:uid(), nom:nom, contenus:{}, etapes:{}}; }), obs:[], valide:false};
@@ -1177,8 +1180,16 @@ RUXAWEB 2 : audit par observations.
       var k = (o.candidats || []).filter(function(y){ return y.id === brouillon.candidat; })[0];
       if(k){ k.etat = 'repris'; x.source = {outil:k.outil, regle:k.regle}; }
     }
-    o.obs.push(x); o.valide = false;
-    var msg = x.criteres.length ? 'Observation enregistrée.' : 'Note enregistrée : aucun critère, aucun statut modifié.';
+    var avant = brouillon.modif ? o.obs.filter(function(y){ return y.id === brouillon.modif; })[0] : null;
+    if(avant){
+      // Même observation : identifiant, ordre, écran, étape et origine gardés (retests et mémoire Jira restent valables).
+      x.id = avant.id; x.n = avant.n; x.ecran = avant.ecran; x.etape = avant.etape; if(avant.source) x.source = avant.source;
+      if(x.partage) x.partage.ecrans = x.partage.ecrans.filter(function(id){ return id !== x.ecran; });
+      if(x.partage && !x.partage.ecrans.length) x.partage = null;
+      o.obs[o.obs.indexOf(avant)] = x;
+    } else o.obs.push(x);
+    o.valide = false;
+    var msg = avant ? 'Observation modifiée.' : (x.criteres.length ? 'Observation enregistrée.' : 'Note enregistrée : aucun critère, aucun statut modifié.');
     if(x.tag === 'nc' && x.criteres.length && !x.attendu) msg += ' Pense à préciser l\'attendu pour le ticket.';
     if(x.partage) msg += ' Elle concerne '+(x.partage.ecrans.length + 1)+' écrans.';
     viderBrouillon(); rendre(); message(msg);
@@ -1224,7 +1235,7 @@ RUXAWEB 2 : audit par observations.
     }
     else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit rapide')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } state.vue = v; rendre(true); }
     else if(a === 'etape'){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); }
-    else if(a === 'ecran'){ state.ecranId = b.getAttribute('data-id'); rendre(true); }
+    else if(a === 'ecran'){ if(brouillon.modif) viderBrouillon(); state.ecranId = b.getAttribute('data-id'); rendre(true); }
     else if(a === 'etape-faite'){
       var e = ecranDe(o, state.ecranId); e.etapes = e.etapes || {}; e.etapes[state.etape] = true;
       var etC = ETAPE[state.etape], nx = ecranSuivant(o, etC.id, e.id);
@@ -1254,9 +1265,19 @@ RUXAWEB 2 : audit par observations.
       if(state.ongletId === oid){ state.ongletId = state.onglets.length ? state.onglets[0].id : null; state.ecranId = null; }
       state.vue = 'accueil'; sauver(); rendre(true); message('Onglet « '+cible.nom+' » supprimé.');
     }
+    else if(a === 'modif-obs'){
+      var xm = o.obs.filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xm) return;
+      brouillon = {texte:xm.texte, attendu:xm.attendu || '', point:xm.point || '', element:'', crits:xm.criteres.slice(), tag:xm.tag, nomPartage:xm.elementNom || '',
+        ecransPartage:xm.partage ? xm.partage.ecrans.slice() : [], vers:xm.vers || '', candidat:null, modif:xm.id};
+      rendre(); var tm = document.getElementById('obs-texte'); if(tm){ tm.focus(); tm.scrollIntoView({block:'center'}); }
+      message('Observation chargée dans le formulaire : modifie-la, puis enregistre.');
+    }
+    else if(a === 'annuler-modif'){
+      viderBrouillon(); rendre(); var ta2 = document.getElementById('obs-texte'); if(ta2) ta2.focus(); message('Modification annulée.');
+    }
     else if(a === 'suppr-obs'){
       var id = b.getAttribute('data-id');
-      if(confirmation === 'obs-'+id){ o.obs = o.obs.filter(function(x){ return x.id !== id; }); confirmation = null; o.valide = false; rendre(); message('Observation supprimée.'); }
+      if(confirmation === 'obs-'+id){ if(brouillon.modif === id) viderBrouillon(); o.obs = o.obs.filter(function(x){ return x.id !== id; }); confirmation = null; o.valide = false; rendre(); message('Observation supprimée.'); }
       else { confirmation = 'obs-'+id; rendre(); var bs = document.querySelector('[data-action="suppr-obs"][data-id="'+id+'"]'); if(bs) bs.focus(); }
     }
     else if(a === 'ajout-ecran'){ o.ecrans.push({id:uid(), nom:'Écran '+(o.ecrans.length + 1), contenus:{}, etapes:{}}); o.valide = false; rendre(); var ins = $main.querySelectorAll('[data-ecran-nom]'); ins[ins.length - 1].focus(); }

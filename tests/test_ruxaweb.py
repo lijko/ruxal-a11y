@@ -407,6 +407,25 @@ def main():
         verifier('Fiche fermée : contenu vidé', page.locator('#dlg-corps').inner_html() == '')
         ligne2 = page.locator('tbody tr', has=page.locator('[data-action="critere"][data-id="%s"]' % cid))
         verifier('Grille : critère conforme sans observation', 'C' in [x.strip() for x in ligne2.locator('td.statut').all_inner_texts()])
+        # Modifier une observation : une note devient non conforme avec un critère.
+        aller_audit(page)
+        page.fill('#obs-texte', 'Un seul facteur pour montrer l\'état actif.')
+        page.click('[data-action="tag"][data-tag="nc"]')
+        page.click('#form-obs button[type=submit]')
+        note = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs.slice(-1)[0]')
+        verifier('Note enregistrée sans critère', note['criteres'] == [])
+        page.click('[data-action="modif-obs"][data-id="%s"]' % note['id'])
+        verifier('Modifier : observation chargée, titre et boutons', page.input_value('#obs-texte').startswith('Un seul facteur') and page.inner_text('#form-obs-titre') == 'Modifier l\'observation' and page.locator('[data-action="annuler-modif"]').count() == 1)
+        page.select_option('#obs-ajout', 'raweb-3-1')
+        page.click('#form-obs button[type=submit]')
+        obs = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
+        modif = [x for x in obs if x['id'] == note['id']]
+        verifier('Modifier : même observation, critère ajouté, pas de doublon', len(modif) == 1 and modif[0]['criteres'] == ['raweb-3-1'] and modif[0]['n'] == note['n'] and len(obs) == len([x for x in obs if x['id'] != note['id']]) + 1)
+        verifier('Modifier : formulaire revenu en saisie', 'Nouvelle observation' in page.inner_text('#form-obs-titre') and page.input_value('#obs-texte') == '')
+        page.click('[data-action="modif-obs"][data-id="%s"]' % note['id'])
+        page.click('[data-action="annuler-modif"]')
+        verifier('Modifier : annuler', 'Nouvelle observation' in page.inner_text('#form-obs-titre'))
+
         # Le panneau Parcours ne bouge pas au début du défilement.
         hauts = []
         for y in (0, 30, 120):
