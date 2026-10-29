@@ -166,6 +166,7 @@ RUXAWEB 2 : audit par observations.
   .choix{display:flex;gap:10px;align-items:center;min-height:36px}
   .choix input{width:18px;height:18px;accent-color:var(--accent);flex:none}
 
+  .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
   .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
   .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
   .grav-critique::before{background:var(--c-nc)} .grav-serieux::before{background:var(--c-nt)}
@@ -420,7 +421,7 @@ RUXAWEB 2 : audit par observations.
   var PRIORITE = {critique:'Highest', serieux:'High', modere:'Medium', mineur:'Low'};
   var RANG_GRAVITE = {critique:0, serieux:1, modere:2, mineur:3};
 
-  // Parcours d'audit : préparer, puis pour chaque écran le tour à vide et les 4 étapes, puis clôture et résumé.
+  // Parcours d'audit : préparer, puis le tour à vide et les 4 étapes, chacune sur tous les écrans, puis clôture et résumé.
   var ETAPES = [
     {id:'vide', nom:'Tour à vide', outil:'sans outil', familles:[],
      faire:"Parcours l'écran comme un utilisateur, sans outil ni lecteur d'écran. Note ce qui gêne ou surprend.",
@@ -453,7 +454,7 @@ RUXAWEB 2 : audit par observations.
       chercher:"Pointillés : conforme ailleurs, à confirmer sur cet écran. Un critère reste NT tant qu'aucune observation ne le tranche."},
     cloture:{faire:"Tranche les critères restés sans statut, un par un : lis la consigne, puis donne le statut de chaque écran. Une non-conformité demande une observation.",
       chercher:"Les critères « à confirmer » viennent d'une observation conforme faite sur un autre écran."},
-    ux:{faire:"Une fois le parcours testé écran par écran, réponds à chaque question pour le parcours entier. Difficile ou échec demande un commentaire.",
+    ux:{faire:"Une fois les étapes faites sur tous les écrans, réponds à chaque question pour le parcours entier. Difficile ou échec demande un commentaire.",
       chercher:"Ce que vit l'utilisateur d'un bout à l'autre : repères, cohérence, retour après action, retour arrière. Ce score est qualitatif et n'entre jamais dans le taux."},
     referentiel:{faire:"Lis les fiches pour apprendre les critères : chacune dit comment vérifier, à quelle étape du parcours, l'impact et la gravité. Le bouton Imprimer produit un PDF.",
       chercher:"La gravité classe les non-conformités et donne la priorité des tickets Jira. Elle n'est pas normative : ni le RAWeb ni WCAG n'en définissent."},
@@ -593,11 +594,11 @@ RUXAWEB 2 : audit par observations.
     }
     html += '<li class="phase">Avant</li>';
     html += pas(icone('prep'), 'Préparer les écrans', 'noms et contenus', state.vue === 'preparer', !!o && o.ecrans.length > 0, true, 'vue', ' data-vue="preparer"');
-    var faits = e ? ETAPES.filter(function(et){ return (e.etapes || {})[et.id]; }).length : 0;
-    html += '<li class="phase"><span>Pour chaque écran</span>' + (e && dansOnglet ? '<b>'+esc(e.nom)+'</b><span class="prog"><span class="barre-prog"><i style="width:'+Math.round(faits / ETAPES.length * 100)+'%"></i></span>'+faits+'/'+ETAPES.length+'</span>' : '') + '</li>';
+    html += '<li class="phase"><span>Étapes, sur tous les écrans</span></li>';
     ETAPES.forEach(function(et, i){
-      var fait = !!(e && (e.etapes || {})[et.id]);
-      html += pas(et.id === 'vide' ? icone('vide') : et.id, et.court || et.nom, et.outil, state.vue === 'audit' && state.etape === et.id, fait, i === ETAPES.length - 1, 'etape', ' data-etape="'+et.id+'"');
+      var fait = !!(o && etapeComplete(o, et.id));
+      var sousE = et.outil + (o && dansOnglet && o.ecrans.length ? ' · '+faitsEtape(o, et.id)+'/'+o.ecrans.length+' écrans' : '');
+      html += pas(et.id === 'vide' ? icone('vide') : et.id, et.court || et.nom, sousE, state.vue === 'audit' && state.etape === et.id, fait, i === ETAPES.length - 1, 'etape', ' data-etape="'+et.id+'"');
     });
     html += '<li class="phase">Pour finir</li>';
     if(o && o.type === 'scenario'){
@@ -612,7 +613,7 @@ RUXAWEB 2 : audit par observations.
     var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
     var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '')+'</p>' : '';
     var points = '<span class="points" aria-hidden="true">'+tous.map(function(t){ return '<i class="'+(t.ici ? 'ici' : t.fait ? 'fait' : '')+'"></i>'; }).join('')+'</span>';
-    var ecr = e && dansOnglet ? '<p class="petit doux">Écran : <b>'+esc(e.nom)+'</b> · '+faits+'/'+ETAPES.length+' étapes faites</p>' : '';
+    var ecr = e && dansOnglet ? '<p class="petit doux">Écran : <b>'+esc(e.nom)+'</b></p>' : '';
     // Navigation sans déplier : étape précédente et suivante, ou reprise à la première étape non faite.
     function aller(t, sens, lib){ return '<button type="button" class="btn btn-s'+(sens === 'suiv' ? ' btn-l' : '')+'" data-action="'+t.action+'"'+t.extra+' aria-label="'+lib+' : '+esc(t.txt)+'">'+(sens === 'prec' ? '&larr; ' : '')+lib+(sens === 'suiv' ? ' &rarr;' : '')+'</button>'; }
     var nav = '';
@@ -718,13 +719,28 @@ RUXAWEB 2 : audit par observations.
   }
 
   // Cadre commun aux vues Saisie et Grille : titre de l'onglet, puis les écrans (colonne qui reste visible) et le contenu.
+  // Ordre « étape d'abord » : une étape se fait sur tous les écrans de l'onglet avant de passer à la suivante.
+  function faitsEtape(o, etId){ return o.ecrans.filter(function(x){ return (x.etapes || {})[etId]; }).length; }
+  function etapeComplete(o, etId){ return o.ecrans.length > 0 && faitsEtape(o, etId) === o.ecrans.length; }
+  // Écran suivant non fait pour l'étape, en partant de l'écran donné (ordre de la liste, en boucle).
+  function ecranSuivant(o, etId, depuis){
+    var i = o.ecrans.map(function(x){ return x.id; }).indexOf(depuis), n = o.ecrans.length;
+    for(var k = 1; k <= n; k++){ var x = o.ecrans[(i + k) % n]; if(x.id !== depuis && !(x.etapes || {})[etId]) return x; }
+    return null;
+  }
+  // Étape suivante pas encore faite partout ; « finie » est l'étape en cours, considérée comme terminée.
+  function etapeSuivante(o, finie){
+    var reste = ETAPES.filter(function(et){ return et.id !== finie.id && !etapeComplete(o, et.id); });
+    return reste.filter(function(et){ return et.i > finie.i; })[0] || reste[0] || null;
+  }
   function cadreOnglet(o, vue, info, contenu){
     var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
     var html = '<div class="rangee entre titre-onglet"><span class="rangee"><h1>'+esc(o.nom)+'</h1>'+bascule(vue)+'</span><span class="rangee">'+info+'</span></div>';
     html += '<div class="audit"><nav class="ecrans" aria-label="Écrans et éléments partagés"><div class="carte"><h2>Écrans</h2>';
     o.ecrans.forEach(function(x, i){
       var nc = RAWEB.filter(function(c){ return statutEcran(o, x, c).s === 'NC'; }).length;
-      html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id ? ' aria-current="true"' : '')+'><span>'+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
+      var faitIci = vue === 'audit' && (x.etapes || {})[state.etape];
+      html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id ? ' aria-current="true"' : '')+'><span>'+(faitIci ? '<span class="coche" aria-hidden="true">&#10003;</span>' : '')+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+(faitIci ? '<span class="sr"> (étape faite)</span>' : '')+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
     });
     html += '<button type="button" data-action="vue" data-vue="preparer" style="color:var(--accent);font-weight:600;margin-top:4px">Gérer les écrans</button></div>';
     var elts = {};
@@ -750,8 +766,10 @@ RUXAWEB 2 : audit par observations.
     liste = liste.filter(function(x){ return !(x.etape === 'cloture' && x.tag !== 'nc'); }).reverse();
     html += '<section class="carte" aria-labelledby="t-obs"><h2 id="t-obs">Observations de cet écran ('+liste.length+')</h2>' + (liste.length ? liste.map(function(x){ return ligneObs(o, x, e); }).join('') : '<p class="doux">Aucune observation pour l\'instant.</p>') +
       (cloture ? '<p class="doux petit" style="margin:8px 0 0">'+cloture+' critère(s) tranché(s) à la clôture, sans observation : voir la <button type="button" class="ref-btn" data-action="vue" data-vue="grille">grille</button>.</p>' : '') + '</section>';
-    var dernier = et.i === ETAPES.length - 1;
-    html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+(dernier ? 'Étape terminée, écran suivant' : 'Étape terminée, passer à : '+esc(ETAPES[et.i+1].nom))+'</button></div>';
+    // L'étape est faite sur cet écran : l'outil passe à l'écran suivant, puis à l'étape suivante quand tous les écrans sont faits.
+    var nxE = ecranSuivant(o, et.id, e.id), nxEt = nxE ? null : etapeSuivante(o, et);
+    var libFin = nxE ? 'Fait sur cet écran, écran suivant : '+esc(nxE.nom) : (nxEt ? 'Fait sur cet écran, étape suivante : '+esc(nxEt.nom) : 'Fait sur cet écran, passer à la clôture');
+    html += '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+libFin+'</button></div>';
     return cadreOnglet(o, 'audit', infoOnglet(o), html);
   }
 
@@ -1164,19 +1182,28 @@ RUXAWEB 2 : audit par observations.
       var deja = state.ongletId === b.getAttribute('data-id') && state.vue !== 'accueil';
       state.ongletId = b.getAttribute('data-id'); o = onglet();
       if(!deja || !ecranDe(o, state.ecranId)) state.ecranId = o.ecrans.length ? o.ecrans[0].id : null;
+      if(!deja){
+        // Reprise : la première étape pas encore faite partout, sur le premier écran qui l'attend.
+        var stp = ETAPES.filter(function(et){ return !etapeComplete(o, et.id); })[0];
+        if(stp){ state.etape = stp.id; var ne = o.ecrans.filter(function(x){ return !(x.etapes || {})[stp.id]; })[0]; if(ne) state.ecranId = ne.id; }
+      }
       state.vue = deja || o.obs.length ? 'audit' : 'preparer'; rendre(true);
     }
     else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit rapide')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } state.vue = v; rendre(true); }
     else if(a === 'etape'){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); }
-    else if(a === 'ecran'){ state.ecranId = b.getAttribute('data-id'); state.etape = 'vide'; var e0 = ecranDe(o, state.ecranId); ETAPES.some(function(et){ if(!(e0.etapes || {})[et.id]){ state.etape = et.id; return true; } }); rendre(true); }
+    else if(a === 'ecran'){ state.ecranId = b.getAttribute('data-id'); rendre(true); }
     else if(a === 'etape-faite'){
       var e = ecranDe(o, state.ecranId); e.etapes = e.etapes || {}; e.etapes[state.etape] = true;
-      var i = ETAPE[state.etape].i;
-      if(i < ETAPES.length - 1){ state.etape = ETAPES[i+1].id; message('Étape suivante : '+ETAPES[i+1].nom+'.'); }
+      var etC = ETAPE[state.etape], nx = ecranSuivant(o, etC.id, e.id);
+      if(nx){ state.ecranId = nx.id; message('Écran suivant : '+nx.nom+', toujours à l\'étape '+etC.nom+'.'); }
       else {
-        var reste = o.ecrans.filter(function(x){ return !ETAPES.every(function(et){ return (x.etapes || {})[et.id]; }); })[0];
-        if(reste){ state.ecranId = reste.id; state.etape = ETAPES.filter(function(et){ return !(reste.etapes || {})[et.id]; })[0].id; message('Écran suivant : '+reste.nom+'.'); }
-        else { state.vue = 'cloture'; message('Tous les écrans sont parcourus : place à la clôture.'); }
+        var suiv = etapeSuivante(o, etC);
+        if(suiv){
+          state.etape = suiv.id;
+          var prem = o.ecrans.filter(function(x){ return !(x.etapes || {})[suiv.id]; })[0]; if(prem) state.ecranId = prem.id;
+          message('Étape '+etC.nom+' faite sur tous les écrans. Étape suivante : '+suiv.nom+', à partir de '+(prem || e).nom+'.');
+        }
+        else { state.vue = 'cloture'; message('Toutes les étapes sont faites sur tous les écrans : place à la clôture.'); }
       }
       rendre(true);
     }

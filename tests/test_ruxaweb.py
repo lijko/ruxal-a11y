@@ -369,6 +369,28 @@ def main():
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 61)
 
+        # Ordre « étape d'abord » : une étape sur tous les écrans, puis l'étape suivante.
+        page.click('[data-action="accueil"]')
+        page.click('[data-action="nouvel-onglet"]')
+        page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
+        def en_cours():
+            return page.locator('#aide .en-cours').inner_text(), page.locator('.ecrans [aria-current="true"]').inner_text()
+        verifier('Étape d\'abord : départ Tour à vide sur le premier écran', 'Tour à vide' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
+        verifier('Étape d\'abord : bouton vers l\'écran suivant', 'écran suivant : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
+        page.click('[data-action="etape-faite"]')
+        verifier('Étape d\'abord : même étape, écran suivant', 'Tour à vide' in en_cours()[0] and 'formulaire' in en_cours()[1], en_cours())
+        verifier('Étape d\'abord : premier écran coché pour l\'étape', page.locator('.ecrans [data-action="ecran"]').first.locator('.coche').count() == 1)
+        page.locator('.ecrans [data-action="ecran"]').first.click()
+        verifier('Étape d\'abord : changer d\'écran garde l\'étape', 'Tour à vide' in en_cours()[0])
+        page.locator('.ecrans [data-action="ecran"]').nth(2).click()
+        verifier('Étape d\'abord : dernier écran, bouton vers l\'étape suivante', 'écran suivant : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
+        page.click('[data-action="etape-faite"]')
+        verifier('Étape d\'abord : bouton vers l\'étape suivante', 'étape suivante : Usage standard' in page.locator('[data-action="etape-faite"]').inner_text())
+        page.click('[data-action="etape-faite"]')
+        verifier('Étape d\'abord : étape suivante sur le premier écran', 'Usage standard' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
+        page.click('[data-action="parcours-bascule"]')
+        verifier('Étape d\'abord : Tour à vide fait (3/3 écrans)', '3/3 écrans' in page.locator('#parcours-liste').inner_text() and '(fait)' in page.locator('#parcours-liste [data-etape="vide"]').inner_text())
+
         page.emulate_media(color_scheme='dark')
         page.click('[data-action="accueil"]')
         verifier('Mode sombre : pas d\'erreur', not erreurs, erreurs)
