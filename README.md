@@ -73,7 +73,8 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Scénario** : champ « Transition vers » pour une observation sur le passage d'un écran à l'autre (notation Écran -> Écran).
 - **Exports** (menu Fichier) : grille Excel, un ticket Jira par observation non conforme (un seul pour une observation qui vaut sur plusieurs écrans), sauvegarde JSON. Les sauvegardes 1.x s'ouvrent dans la 1.7.
 - **Import axe ou Lighthouse** : un rapport JSON (axe-core, ou Lighthouse depuis les outils de développement d'Edge ou de Chrome) s'importe sur l'écran en cours. Ses échecs et points à vérifier arrivent comme pistes, jamais comme statuts : l'auditeur les reprend dans une observation ou les écarte. Critères proposés par `data/axe-raweb.json` (correspondance RUXAL, relue contre la documentation officielle d'axe-core), sinon par les critères WCAG que donne le rapport axe.
-- **Pas encore repris** : couche POUR/UX, PDF du référentiel.
+- **Lecture POUR/UX** (scénarios seulement) : les 8 questions de la 1.7, sur le parcours entier (Succès, Difficile, Échec, N/A, avec un commentaire si difficile ou échec). Score à part, jamais dans le taux ; repris dans le résumé et l'export Excel.
+- **Pas encore repris** : PDF du référentiel. RUXAAM reste sur le modèle 1.x pour le moment.
 
 ## Données et génération / Data and build
 Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
