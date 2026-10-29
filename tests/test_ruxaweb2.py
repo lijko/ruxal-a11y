@@ -115,6 +115,15 @@ def main():
         page.click('[data-action="vue"][data-vue="audit"]')
         verifier('Éléments répétés : liste unique à gauche', 'éléments répétés' in page.locator('nav.ecrans').inner_text().lower() and 'Menu principal' in page.locator('nav.ecrans').inner_text())
 
+        # Noms d'élément : casse, accents et espaces ne créent pas un nouvel élément.
+        ecran(page, 1)
+        observer(page, 'Lien du menu sans nom.', point='nom-absent', element=1, partage=('  menu   PRINCIPAL ', []))
+        derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
+        verifier('Élément : nom ramené à l\'orthographe existante', derniere.get('elementNom') == 'Menu principal', derniere.get('elementNom'))
+        page.click('[data-action="vue"][data-vue="audit"]')
+        verifier('Éléments répétés : pas de doublon', page.locator('nav.ecrans .elt', has_text='Menu principal').count() == 1)
+        ecran(page, 0)
+
         # Note libre : aucun statut.
         avant = page.evaluate('RUXAWEB.state().onglets[0].obs.length')
         observer(page, 'Page chargée lentement.', tag='c')
@@ -136,6 +145,16 @@ def main():
         # Taux : hors sélection (7.1 NC) ne change que le taux élargi.
         oid = page.evaluate('RUXAWEB.state().onglets[0].id')
         page.click('[data-action="vue"][data-vue="cloture"]')
+        verifier('Clôture : un critère à la fois, avec sa consigne', page.locator('#clo-titre').count() == 1 and 'Comment vérifier' in page.locator('main').inner_text())
+        premier = page.locator('#clo-titre').inner_text()
+        page.locator('[data-action="clo-crit"]').first.click()
+        verifier('Clôture : passage à un autre critère', page.locator('#clo-titre').inner_text() != premier)
+        tous = page.locator('[data-action="clo-tous"]')
+        if tous.count():
+            cid = tous.get_attribute('data-crit')
+            tous.click()
+            verifier('Clôture : conforme sur les écrans restants en un clic', all(statut(page, i, cid) in ('C', 'NA') for i in range(3)))
+            page.click('[data-action="vue"][data-vue="cloture"]')
         for _ in range(400):
             b = page.locator('[data-action="clo"][data-tag="c"]')
             if b.count() == 0:
@@ -144,8 +163,8 @@ def main():
         sel = page.evaluate('RUXAWEB.taux("%s")' % oid)
         ela = page.evaluate('RUXAWEB.taux("%s", true)' % oid)
         verifier('Clôture : plus rien à trancher', sel['complet'] and ela['complet'], (sel, ela))
-        verifier('Taux sélection SIP : 4 NC (10.7, 11.1, 11.2, 11.10), sans 7.1', sel['C'] == sel['total'] - 4, sel)
-        verifier('Taux élargi : 7.1 en plus', ela['C'] == ela['total'] - 5, ela)
+        verifier('Taux sélection SIP : 5 NC (6.2, 10.7, 11.1, 11.2, 11.10), sans 7.1', sel['C'] == sel['total'] - 5, sel)
+        verifier('Taux élargi : 7.1 en plus', ela['C'] == ela['total'] - 6, ela)
         page.click('[data-action="valider"]')
         verifier('Validation : résumé', page.locator('h1').inner_text().startswith('Résumé'))
         verifier('Résumé : deux taux', 'Taux sélection SIP' in page.locator('main').inner_text() and 'Taux élargi' in page.locator('main').inner_text())
@@ -159,7 +178,7 @@ def main():
         verifier('Excel : 10.7 NC', any(r[1] == '10.7' and r[6] == 'NC' for r in lignes))
         j = telecharger(page, 'export-jira')
         rows = list(csv.reader(io.StringIO(j.read_text(encoding='utf-8-sig'))))
-        menu = [r for r in rows[1:] if 'Menu principal' in r[0]]
+        menu = [r for r in rows[1:] if 'focus invisible' in r[0]]
         verifier('Jira : un seul ticket pour l\'observation valable sur 3 écrans', len(menu) == 1, [r[0] for r in rows[1:]])
         verifier('Jira : référence RAWeb', 'RAWeb 1.1, Criterion 10.7' in menu[0][1] if menu else False)
         verifier('Jira : observation retestée sur un seul écran toujours exporté (encore NC ailleurs)', len(menu) == 1)
@@ -181,8 +200,24 @@ def main():
         page.wait_for_timeout(300)
         verifier('Import v1 : refusé avec renvoi vers 1.7', '1.7' in page.locator('#statut').inner_text())
 
+        # Scénario : transition entre deux écrans.
+        page.click('[data-action="accueil"]')
+        page.click('[data-action="nouvel-onglet"]')
+        page.check('input[name="onglet-type"][value="scenario"]')
+        page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
+        verifier('Scénario : champ Transition vers', page.locator('#obs-vers').count() == 1)
+        page.fill('#obs-texte', 'Le focus reste sur le bouton Continuer après le passage à l\'étape suivante.')
+        page.select_option('#obs-point', 'ordre-focus')
+        page.select_option('#obs-vers', index=1)
+        page.click('[data-action="tag"][data-tag="nc"]')
+        page.click('#form-obs button[type=submit]')
+        verifier('Scénario : transition affichée Écran -> Écran', ' -> ' in page.locator('#t-obs').locator('xpath=..').inner_text())
+        jira = telecharger(page, 'export-jira')
+        verifier('Scénario : ticket avec la transition', any(' -> ' in r[0] for r in csv.reader(io.StringIO(jira.read_text(encoding='utf-8-sig')))))
+        page.click('[data-action="accueil"]')
+        page.locator('[data-action="ouvrir"]').first.click()
+
         # Import d'un rapport axe-core puis Lighthouse : des résultats à reprendre, jamais un statut.
-        page.click('[data-action="ouvrir"]')
         page.click('[data-action="vue"][data-vue="audit"]')
         ecran(page, 1)
         axe = {'testEngine': {'name': 'axe-core', 'version': '4.13.0'}, 'url': 'https://exemple.lu/',

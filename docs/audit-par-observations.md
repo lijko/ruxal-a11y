@@ -85,7 +85,7 @@ Pour chaque critère et chaque écran :
 
 Deux taux, même formule : le **taux sélection SIP**, sur la même sélection que l'audit simplifié du SIP, et le **taux élargi**, qui ajoute les critères RAWeb hors sélection retenus par RUXAWEB (3.3, 7.1, 7.5, 9.3, 10.4, 13.11).
 
-**Complétude** d'un écran : part des critères du périmètre qui ne sont plus NT. Une **passe de clôture** liste les critères restés NT pour les trancher (`#c`, `#nc`, `#na` justifié ou « à creuser »).
+\1 Dans l'outil, la passe de clôture présente un critère à la fois, avec sa consigne, puis le statut de chaque écran.
 
 ## 5. Import des outils automatiques (web)
 La méthode de contrôle simplifié du SIP s'appuie déjà sur Axe pour une partie des critères ; l'import prolonge cette pratique.
