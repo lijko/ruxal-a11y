@@ -173,6 +173,12 @@ RUXAWEB 2 : audit par observations.
   .tags.tags-resultat{align-self:flex-start}
   .pied-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
   .form-modif{outline:2px solid var(--accent);outline-offset:2px}
+  .ico{width:16px;height:16px;flex:none;margin-right:6px}
+  .btn{display:inline-flex;align-items:center;justify-content:center}
+  .consigne summary{cursor:pointer;font-weight:700;color:var(--accent)}
+  .consigne textarea{width:100%;font-size:12.5px;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .sugg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+  .sugg:empty{display:none}
   .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
   .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
   .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
@@ -298,9 +304,9 @@ RUXAWEB 2 : audit par observations.
       <button type="button" class="tag" data-action="support" data-support="mobile">Mobile</button>
     </div>
     <span class="espace"></span>
-    <button class="btn btn-s" type="button" id="btn-ref" data-action="referentiel">Référentiel</button>
+    <button class="btn btn-s" type="button" id="btn-ref" data-action="referentiel"><span data-ico="livre"></span>Référentiel</button>
     <div class="menu">
-      <button class="btn btn-s" type="button" id="btn-menu" aria-expanded="false" aria-controls="menu-fichier">Fichier</button>
+      <button class="btn btn-s" type="button" id="btn-menu" aria-expanded="false" aria-controls="menu-fichier"><span data-ico="fichier"></span>Fichier</button>
       <div class="menu-liste" id="menu-fichier" hidden>
         <button type="button" data-action="export-xlsx">Grille des critères (Excel)</button>
         <button type="button" data-action="export-jira">Tickets Jira (CSV)</button>
@@ -483,6 +489,9 @@ RUXAWEB 2 : audit par observations.
   function onglet(){ return state.onglets.filter(function(o){ return o.id === state.ongletId; })[0] || null; }
   function ecranDe(o, id){ return o.ecrans.filter(function(e){ return e.id === id; })[0] || null; }
   // Deux noms d'élément qui ne diffèrent que par la casse, les accents ou les espaces désignent le même élément.
+  // Icônes des boutons : décoratives, le libellé du bouton porte le sens.
+  var ICO = {"fichier": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>", "livre": "<path d=\"M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z\"/><path d=\"M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z\"/>", "import": "<path d=\"M12 3v12M7 10l5 5 5-5M4 21h16\"/>", "coller": "<rect x=\"7\" y=\"4\" width=\"10\" height=\"4\" rx=\"1\"/><path d=\"M7 6H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M8 13h8M8 17h5\"/>", "crayon": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M14 6l4 4\"/>", "corbeille": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "imprimer": "<path d=\"M6 9V3h12v6\"/><rect x=\"3\" y=\"9\" width=\"18\" height=\"8\" rx=\"2\"/><path d=\"M7 14h10v7H7z\"/>", "valider": "<path d=\"M5 12l5 5L20 7\"/>", "copier": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>"};
+  function ico(n){ return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+ICO[n]+'</svg>'; }
   function cleNom(n){ return String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
   function nomExistant(o, n){
     var k = cleNom(n); if(!k) return '';
@@ -653,7 +662,7 @@ RUXAWEB 2 : audit par observations.
   }
   function boutonSupprOnglet(o){
     var arme = confirmation === 'onglet-'+o.id;
-    return '<button type="button" class="btn btn-s btn-danger" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+(arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet')+'</button>';
+    return '<button type="button" class="btn btn-s btn-danger" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+ico('corbeille')+(arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet')+'</button>';
   }
   function vueAccueil(){
     var html = '<h1 class="sr">Tableau de bord</h1>';
@@ -719,8 +728,8 @@ RUXAWEB 2 : audit par observations.
       '<span class="texte">'+esc(x.texte)+(x.attendu ? ' <span class="doux">Attendu : '+esc(x.attendu)+'</span>' : '')+'</span>' +
       '<span class="rangee">'+x.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('')+badgePartage(o, x)+
       (origine ? '<span class="doux petit">observé sur '+esc(origine)+'</span>' : '')+(invalide ? '<span class="doux petit">remplacé par un retest</span>' : '')+'</span></div>' +
-      (origine ? '' : '<span class="rangee" style="flex:none">'+(x.tag !== 'nt' ? (brouillon.modif === x.id ? '<span class="doux petit">en cours de modification</span>' : '<button type="button" class="btn btn-s" data-action="modif-obs" data-id="'+x.id+'" aria-label="Modifier l\'observation : '+esc(x.texte.length > 60 ? x.texte.slice(0, 58)+'...' : x.texte)+'">Modifier</button>') : '')+
-        '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+(confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button></span>')+'</div>';
+      (origine ? '' : '<span class="rangee" style="flex:none">'+(x.tag !== 'nt' ? (brouillon.modif === x.id ? '<span class="doux petit">en cours de modification</span>' : '<button type="button" class="btn btn-s" data-action="modif-obs" data-id="'+x.id+'" aria-label="Modifier l\'observation : '+esc(x.texte.length > 60 ? x.texte.slice(0, 58)+'...' : x.texte)+'">'+ico('crayon')+'Modifier</button>') : '')+
+        '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+ico('corbeille')+(confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button></span>')+'</div>';
   }
 
   function criteresProposes(){
@@ -770,7 +779,7 @@ RUXAWEB 2 : audit par observations.
     var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
     var et = ETAPE[state.etape] || ETAPES[0];
     var nte = ntEcran(o, e);
-    var html = '<div class="rangee entre"><span class="rangee"><h2 class="titre-ecran">'+esc(e.nom)+'</h2>'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher sur cet écran</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'</span><button type="button" class="btn btn-s" data-action="import-auto">Importer axe ou Lighthouse</button></div>';
+    var html = '<div class="rangee entre"><span class="rangee"><h2 class="titre-ecran">'+esc(e.nom)+'</h2>'+(nte ? '<span class="pastille s-NT">'+nte+' à trancher sur cet écran</span>' : '<span class="pastille s-C">tous les critères tranchés</span>')+'</span><span class="rangee"><button type="button" class="btn btn-s" data-action="coller-obs">'+ico('coller')+'Coller des observations</button><button type="button" class="btn btn-s" data-action="import-auto">'+ico('import')+'Importer axe ou Lighthouse</button></span></div>';
     html += formulaireObs(o, e, et);
     html += vueCandidats(o, e);
     // Les critères tranchés à la clôture sans observation (C, NA) restent dans la grille ; ici, une seule ligne les résume.
@@ -790,13 +799,120 @@ RUXAWEB 2 : audit par observations.
   function vueCandidats(o, e){
     var l = (o.candidats || []).filter(function(k){ return k.ecran === e.id && k.etat === 'ouvert'; });
     if(!l.length) return '';
-    return '<section class="carte" aria-labelledby="t-auto"><h2 id="t-auto">Résultats automatiques à vérifier ('+l.length+')</h2><p class="doux petit" style="margin:4px 0 0">'+esc(l[0].outil)+'. Un résultat ne vaut rien tant que tu ne l\'as pas repris dans une observation ; une règle réussie ne prouve pas la conformité.</p>' + l.map(function(k){
-      return '<div class="obs"><span class="pastille '+(k.type === 'violation' ? 's-NC' : 's-NT')+'" style="min-width:84px">'+(k.type === 'violation' ? 'échec' : 'à vérifier')+'</span><div class="corps"><span class="texte">'+esc(k.titre)+'</span>' +
-        '<span class="rangee"><span class="etiq etiq-ref">'+esc(k.regle)+'</span>'+k.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('')+'<span class="doux petit">'+k.nb+' élément'+(k.nb > 1 ? 's' : '')+'</span></span>' +
-        (k.exemples.length ? '<code class="petit doux" style="overflow-wrap:anywhere">'+esc(k.exemples.join(' · '))+'</code>' : '') + '</div>' +
+    var sources = []; l.forEach(function(k){ if(sources.indexOf(k.outil) === -1) sources.push(k.outil); });
+    return '<section class="carte" aria-labelledby="t-auto"><h2 id="t-auto">Pistes à vérifier ('+l.length+')</h2><p class="doux petit" style="margin:4px 0 0">'+esc(sources.join(', '))+'. Une piste ne compte pas tant que tu ne l\'as pas reprise dans une observation.</p>' + l.map(function(k){
+      var colle = k.source === 'collage';
+      var pastille = colle ? '<span class="pastille s-'+(k.tag || 'nc').toUpperCase()+'" style="min-width:84px">'+(k.tag || 'nc').toUpperCase()+'</span>'
+        : '<span class="pastille '+(k.type === 'violation' ? 's-NC' : 's-NT')+'" style="min-width:84px">'+(k.type === 'violation' ? 'échec' : 'à vérifier')+'</span>';
+      return '<div class="obs">'+pastille+'<div class="corps"><span class="texte">'+esc(k.titre)+'</span>' +
+        '<span class="rangee">'+(k.element ? '<span class="etiq">'+esc(k.element)+'</span>' : '')+(k.regle ? '<span class="etiq etiq-ref">'+esc(k.regle)+'</span>' : '')+k.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('') +
+        (colle ? (k.propose ? '<span class="doux petit">critères proposés d\'après les mots de l\'observation</span>' : (k.criteres.length ? '' : '<span class="doux petit">aucun critère : à choisir</span>')) : '<span class="doux petit">'+k.nb+' élément'+(k.nb > 1 ? 's' : '')+'</span>')+'</span>' +
+        (k.exemples && k.exemples.length ? '<code class="petit doux" style="overflow-wrap:anywhere">'+esc(k.exemples.join(' · '))+'</code>' : '') + '</div>' +
         '<span class="rangee" style="flex:none"><button type="button" class="btn btn-s btn-l" data-action="reprendre" data-id="'+k.id+'">Reprendre</button><button type="button" class="btn btn-s" data-action="ecarter" data-id="'+k.id+'">Écarter</button></span></div>';
     }).join('') + '</section>';
   }
+
+  // ---------- Suggestions par mots-clés ----------
+  function normTexte(t){ return ' ' + String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`"«»]/g, ' ').replace(/\s+/g, ' ').trim() + ' '; }
+  function scoreMots(t, mots){
+    var sc = 0;
+    (mots || []).forEach(function(m){
+      if(/[\s\-.%]/.test(m)){ if(t.indexOf(m) > -1) sc += 2; }
+      else if(new RegExp('[^a-z0-9]' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)) sc += 1;
+    });
+    return sc;
+  }
+  // Points de contrôle dont les mots-clés apparaissent dans le texte, du plus probable au moins probable.
+  function suggerer(texte){
+    var t = normTexte(texte);
+    return SYMPTOMES.map(function(sy){
+      var el = -1, best = 0;
+      sy.selon.forEach(function(x, i){ var v = scoreMots(t, x.mots); if(v > best){ best = v; el = i; } });
+      return {s:sy, score:scoreMots(t, sy.mots), element:el};
+    }).filter(function(r){ return r.score > 0; }).sort(function(a, b){ return b.score - a.score; });
+  }
+  // Sous le champ Observation : les points de contrôle que suggèrent les mots déjà écrits, à choisir d'un clic.
+  function htmlSuggestions(texte){
+    var l = suggerer(texte).filter(function(r){ return r.s.id !== brouillon.point; }).slice(0, 3);
+    if(!l.length) return '';
+    return '<span class="doux petit">Suggestions :</span>' + l.map(function(r){
+      var cs = criteresSuggestion(r).map(function(id){ return PAR_ID[id].ref || 'BP'; });
+      return '<button type="button" class="btn btn-s sugg-btn" data-action="sugg" data-point="'+r.s.id+'" data-element="'+(r.element > -1 ? r.element : '')+'">'+esc(r.s.controle)+(r.element > -1 ? ' · '+esc(r.s.selon[r.element].element) : '')+(cs.length ? '<span class="doux">&nbsp;('+esc(cs.join(', '))+')</span>' : '')+'</button>';
+    }).join('');
+  }
+  function criteresSuggestion(r){
+    var l = r.s.criteres.slice(); if(r.element > -1) l = l.concat(r.s.selon[r.element].criteres);
+    return l.filter(function(id, i){ return l.indexOf(id) === i; });
+  }
+
+  // ---------- Collage d'observations (écrites à la main ou converties par une IA) ----------
+  // Une ligne par observation : statut | élément | observation | critères. Seule l'observation est obligatoire.
+  // Une ligne « Écran : Nom » fait passer les lignes suivantes sur cet écran.
+  function lireCollage(texte, o, eDefaut){
+    var pistes = [], erreurs = [], e = eDefaut;
+    var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; });
+    String(texte || '').split(/\r?\n/).forEach(function(brut, n){
+      var l = brut.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').replace(/`/g, '').trim();
+      if(!l || /^(statut\s*\|)/i.test(l)) return;
+      var me = /^(?:#+\s*)?(?:écran|ecran|screen)\s*:\s*(.+)$/i.exec(l);
+      if(me){
+        var nom = cleNom(me[1]), trouve = o.ecrans.filter(function(x){ return cleNom(x.nom) === nom; })[0];
+        if(trouve) e = trouve; else erreurs.push('ligne '+(n+1)+' : écran « '+me[1].trim()+' » inconnu');
+        return;
+      }
+      var champs = l.split('|').map(function(x){ return x.trim(); });
+      if(champs[0] === '') champs.shift(); if(champs.length && champs[champs.length - 1] === '') champs.pop();
+      var tag = 'nc', mt = /^#?(c|nc|na|conforme|non conforme|non applicable)$/i.exec(champs[0] || '');
+      if(mt){ var v = mt[1].toLowerCase(); tag = v === 'conforme' ? 'c' : v === 'non conforme' ? 'nc' : v === 'non applicable' ? 'na' : v; champs.shift(); }
+      var crits = [], inconnus = [];
+      if(champs.length > 1 && /^(?:\d{1,2}\.\d{1,2}\s*(?:[,;]\s*|\s+|$))*$/.test(champs[champs.length - 1])){
+        champs.pop().split(/[,;\s]+/).filter(Boolean).forEach(function(r){ if(refs[r]) crits.push(refs[r]); else inconnus.push(r); });
+      }
+      var element = champs.length > 1 ? champs.shift() : '';
+      var obs = champs.join(' | ').trim();
+      if(!obs){ erreurs.push('ligne '+(n+1)+' : observation vide'); return; }
+      if(inconnus.length) erreurs.push('ligne '+(n+1)+' : critère'+(inconnus.length > 1 ? 's' : '')+' inconnu'+(inconnus.length > 1 ? 's' : '')+' '+inconnus.join(', '));
+      var propose = false;
+      if(!crits.length){ var sg = suggerer(obs + ' ' + element)[0]; if(sg){ crits = criteresSuggestion(sg); propose = crits.length > 0; } }
+      pistes.push({id:uid(), ecran:e.id, outil:'Collage', source:'collage', regle:'', type:tag === 'nc' ? 'violation' : 'note', tag:tag, titre:obs, element:element, nb:1, exemples:[], criteres:crits, propose:propose, etat:'ouvert'});
+    });
+    return {pistes:pistes, erreurs:erreurs};
+  }
+  // Consigne à donner à une IA (Copilot ou autre) pour convertir des notes libres au format du collage.
+  function consigneIA(o){
+    var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : 'les écrans de ton audit';
+    return 'Tu aides un auditeur d\'accessibilité web (RAWeb 1.1, Luxembourg). Transforme ses notes en lignes, une par observation, au format exact :\n' +
+      'statut | élément | observation | critères\n\n' +
+      'Règles :\n' +
+      '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
+      '- élément : type et libellé, par exemple button "Payer", ou le nom d\'un élément répété, par exemple Menu principal ; laisse vide si aucun\n' +
+      '- observation : une phrase claire, fidèle aux notes, sans rien inventer\n' +
+      '- critères : numéros RAWeb 1.1 pris dans la liste ci-dessous, séparés par des virgules ; laisse vide si aucun ne convient\n' +
+      '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
+      '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme\n\n' +
+      'Exemple :\nÉcran : Accueil\nNC | Menu principal | On ne voit pas le focus en tabulant dans le menu. | 10.7\nNC | button "Recherche" | Le bouton loupe n\'a pas de nom. | 11.9\n\n' +
+      'Critères RAWeb 1.1 :\n' + RAWEB.map(function(c){ return c.ref + ' ' + c.libelle; }).join('\n') +
+      '\n\nMes notes :\n[colle tes notes ici]';
+  }
+  function blocConsigne(o, id){
+    return '<details class="consigne"><summary>Consigne pour une IA (Copilot ou autre)</summary>' +
+      '<p class="doux petit" style="margin:8px 0">Copie cette consigne dans l\'IA, ajoute tes notes à la fin, puis colle ici les lignes qu\'elle rend. Vérifie toujours les critères proposés.</p>' +
+      '<label class="sr" for="'+id+'">Consigne</label><textarea id="'+id+'" rows="6" readonly>'+esc(consigneIA(o))+'</textarea>' +
+      '<div style="margin-top:8px"><button type="button" class="btn btn-s" data-action="copier-consigne" data-cible="'+id+'">'+ico('copier')+'Copier la consigne</button></div></details>';
+  }
+  function ouvrirCollage(){
+    var o = onglet(), e = ecranDe(o, state.ecranId);
+    var html = '<div class="rangee entre"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
+      '<p style="margin:0">Une ligne par observation : <code>statut | élément | observation | critères</code>. Seule l\'observation est obligatoire ; sans critère, l\'outil en propose d\'après les mots de l\'observation. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
+      '<p class="doux petit" style="margin:0">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | 10.7</code></p>' +
+      '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller</label><textarea id="coller-texte" rows="8" placeholder="NC | button &quot;Payer&quot; | Le bouton n\'a pas de nom. | 11.9"></textarea></div>' +
+      blocConsigne(o, 'consigne-dlg') +
+      '<div class="rangee entre"><span class="doux petit">Les lignes deviennent des pistes à vérifier : rien ne compte avant de les reprendre.</span><button type="button" class="btn btn-p" data-action="coller-ok">'+ico('valider')+'Ajouter aux pistes</button></div>';
+    document.getElementById('dlg-corps').innerHTML = html;
+    var d = document.getElementById('dlg'); if(!d.open) d.showModal();
+    document.getElementById('coller-texte').focus();
+  }
+
 
   // Lecture d'un rapport : axe-core (axe.run ou CLI, un objet ou un tableau) ou Lighthouse (rapport JSON).
   function lireRapport(j){
@@ -883,7 +999,7 @@ RUXAWEB 2 : audit par observations.
     if(!j){ message('Fichier illisible : choisis le rapport JSON ou CSV enregistré par axe, ou le rapport JSON de Lighthouse.', true); return; }
     var r = lireRapport(j);
     if(!r){ message('Ce fichier n\'est ni un rapport axe (axe-core ou extension axe DevTools) ni un rapport Lighthouse (catégorie accessibilité).', true); return; }
-    o.candidats = (o.candidats || []).filter(function(k){ return !(k.ecran === e.id && k.etat === 'ouvert'); });
+    o.candidats = (o.candidats || []).filter(function(k){ return !(k.ecran === e.id && k.etat === 'ouvert' && k.source !== 'collage'); });
     r.resultats.forEach(function(x){
       var noeuds = x.noeuds.filter(Boolean);
       o.candidats.push({id:uid(), ecran:e.id, outil:r.outil, regle:x.regle, type:x.type, titre:x.titre, nb:noeuds.length || 1, exemples:noeuds.slice(0, 3), criteres:criteresRegle(x), etat:'ouvert'});
@@ -901,11 +1017,15 @@ RUXAWEB 2 : audit par observations.
     var n = brouillon.crits.length, p = brouillon.ecransPartage.length;
     return libRes+' · '+(n ? n+' critère'+(n > 1 ? 's' : '') : 'aucun critère : note libre')+' · '+esc(e.nom)+(p ? ' et '+p+' autre'+(p > 1 ? 's' : '')+' écran'+(p > 1 ? 's' : '') : '');
   }
+  // Attendu : le comportement correct, repris tel quel dans le ticket Jira (Expected behavior).
+  function champAttendu(){
+    return '<div class="champ"><label class="lbl" for="obs-attendu">Attendu <span class="doux petit">(facultatif)</span></label><input type="text" id="obs-attendu" value="'+esc(brouillon.attendu)+'" autocomplete="off" placeholder="Ex. Le focus est visible sur chaque lien du menu" aria-describedby="aide-attendu"><p class="doux petit" id="aide-attendu" style="margin:0">Le comportement correct, repris dans le ticket Jira («&nbsp;Expected behavior&nbsp;»). Vide : l\'intitulé du critère.</p></div>';
+  }
   function formulaireObs(o, e, et){
     var props = criteresProposes();
     var enModif = brouillon.modif ? o.obs.filter(function(x){ return x.id === brouillon.modif; })[0] : null;
     var html = '<form class="carte pile'+(enModif ? ' form-modif' : '')+'" id="form-obs" novalidate><h2 id="form-obs-titre">'+(enModif ? 'Modifier l\'observation' : 'Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span>')+'</h2>';
-    html += '<div class="champ"><label class="lbl" for="obs-texte">Observation</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea></div>';
+    html += '<div class="champ"><label class="lbl" for="obs-texte">Observation</label><textarea id="obs-texte" rows="2" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea><div id="obs-sugg" class="sugg">'+htmlSuggestions(brouillon.texte)+'</div></div>';
     // Résultat : mêmes boutons C, NC, NA qu'à la clôture ; la ligne d'aide dit ce que le choix fait aux critères.
     var AIDE_RES = {
       c:'Conforme : les critères retenus passent conformes sur cet écran. Sur les autres écrans cochés, ils restent à confirmer.',
@@ -938,11 +1058,11 @@ RUXAWEB 2 : audit par observations.
     if(s && s.selon.length){
       html += '<div class="champ"><label class="lbl" for="obs-element">Type d\'élément</label><select id="obs-element"><option value="">'+(s.criteres.length ? 'Autre élément' : 'Choisir')+'</option>' + s.selon.map(function(x, i){ return '<option value="'+i+'"'+(String(i) === brouillon.element ? ' selected' : '')+'>'+esc(x.element)+'</option>'; }).join('') + '</select></div>';
     } else {
-      html += '<div class="champ"><label class="lbl" for="obs-attendu">Attendu</label><input type="text" id="obs-attendu" value="'+esc(brouillon.attendu)+'" autocomplete="off"></div>';
+      html += champAttendu();
     }
     html += '</div>';
     if(s) html += '<p class="doux petit" style="margin:0">'+esc(s.symptome)+'</p>';
-    if(s && s.selon.length) html += '<div class="champ"><label class="lbl" for="obs-attendu">Attendu</label><input type="text" id="obs-attendu" value="'+esc(brouillon.attendu)+'" autocomplete="off"></div>';
+    if(s && s.selon.length) html += champAttendu();
     var choisis = brouillon.crits;
     var affiches = props.concat(choisis.filter(function(id){ return props.indexOf(id) === -1; }));
     if(affiches.length){
@@ -952,7 +1072,7 @@ RUXAWEB 2 : audit par observations.
       }).join('') + '</div></fieldset>';
     }
     html += '<div class="champ"><label class="lbl" for="obs-ajout">Ajouter un critère</label><select id="obs-ajout"><option value="">Choisir dans la liste</option>' + CRITERES.map(function(c){ return '<option value="'+c.id+'">'+esc(refTxt(c))+' · '+esc(c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle)+'</option>'; }).join('') + '</select></div>';
-    html += '<div class="pied-form"><p class="doux petit" id="recap-obs" style="margin:0">'+recapObs(e)+'</p><span class="rangee">'+(enModif ? '<button type="button" class="btn" data-action="annuler-modif">Annuler</button><button type="submit" class="btn btn-p">Enregistrer les modifications</button>' : '<button type="submit" class="btn btn-p">Enregistrer l\'observation</button>')+'</span></div></form>';
+    html += '<div class="pied-form"><p class="doux petit" id="recap-obs" style="margin:0">'+recapObs(e)+'</p><span class="rangee">'+(enModif ? '<button type="button" class="btn" data-action="annuler-modif">Annuler</button><button type="submit" class="btn btn-p">'+ico('valider')+'Enregistrer les modifications</button>' : '<button type="submit" class="btn btn-p">'+ico('valider')+'Enregistrer l\'observation</button>')+'</span></div></form>';
     return html;
   }
 
@@ -983,12 +1103,13 @@ RUXAWEB 2 : audit par observations.
   // Référentiel : toutes les fiches, pour apprendre les critères ou les imprimer (PDF par l'impression du navigateur).
   function vueReferentiel(){
     var officiel = state.theming !== 'ruxal';
-    var html = '<div class="rangee entre ref-tete"><h1>Référentiel</h1><button type="button" class="btn btn-s" data-action="imprimer-ref">Imprimer ou enregistrer en PDF</button></div>' +
+    var html = '<div class="rangee entre ref-tete"><h1>Référentiel</h1><button type="button" class="btn btn-s" data-action="imprimer-ref">'+ico('imprimer')+'Imprimer ou enregistrer en PDF</button></div>' +
       '<p class="doux" style="margin:0">'+RAWEB.length+' critères RAWeb 1.1 ('+SELECTION.length+' de la sélection SIP, '+(RAWEB.length - SELECTION.length)+' hors sélection) et '+(CRITERES.length - RAWEB.length)+' bonnes pratiques hors RAWeb. Chaque fiche dit comment vérifier le critère, à quelle étape, son impact et sa gravité.</p>' +
       '<div class="ref-outils">'+boutonsRegroupement()+'</div>' +
       '<section class="carte pile" aria-labelledby="t-noter"><h2 id="t-noter">Noter les éléments</h2>' +
       '<p style="margin:0">Dans une observation, le champ Élément reçoit le type et le libellé de l\'élément, par exemple <code>button "Payer"</code>, avec son état entre parenthèses si besoin : <code>button "Payer" (désactivé)</code>.</p>' +
-      '<p style="margin:0">L\'export Jira ajoute l\'écran devant : <code>Panier[button "Payer"]</code>. Un élément répété sur plusieurs écrans est noté sans écran : <code>[Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>';
+      '<p style="margin:0">L\'export Jira ajoute l\'écran devant : <code>Panier[button "Payer"]</code>. Un élément répété sur plusieurs écrans est noté sans écran : <code>[Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
+      '<section class="carte pile" aria-labelledby="t-ia"><h2 id="t-ia">Convertir des notes avec une IA</h2><p style="margin:0">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la Saisie). L\'outil les ajoute comme pistes à vérifier.</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
     groupesCriteres(officiel).forEach(function(g){
       html += '<section class="ref-groupe" aria-labelledby="g-'+g.cs[0].id+'"><h2 id="g-'+g.cs[0].id+'">'+esc(g.th)+' <span class="doux petit">('+g.cs.length+')</span></h2>' +
         g.cs.map(function(c){ return '<article class="carte pile ref-fiche"><h3 style="margin:0">'+esc(refTxt(c))+' <span class="grav grav-'+c.niveau+'">'+GRAVITE[c.niveau]+'</span></h3>'+infoCritere(c, 'h4', true)+'</article>'; }).join('') + '</section>';
@@ -1327,18 +1448,41 @@ RUXAWEB 2 : audit par observations.
       var bh = document.querySelector('[data-action="heur"][data-h="'+hid+'"][data-v="'+cur.statut+'"]'); if(bh) bh.focus();
     }
     else if(a === 'theming'){ state.theming = b.getAttribute('data-v'); rendre(); var bt = document.querySelector('[data-action="theming"][data-v="'+state.theming+'"]'); if(bt) bt.focus(); }
+    else if(a === 'coller-obs'){ ouvrirCollage(); }
+    else if(a === 'sugg'){
+      lireBrouillon(); brouillon.point = b.getAttribute('data-point'); brouillon.element = b.getAttribute('data-element') || '';
+      var deja = brouillon.crits.slice(); brouillon.crits = criteresProposes(); deja.forEach(function(id){ if(brouillon.crits.indexOf(id) === -1) brouillon.crits.push(id); });
+      rendre(); var op = document.getElementById('obs-point'); if(op) op.focus();
+      message('Point de contrôle choisi : vérifie les critères retenus.');
+    }
+    else if(a === 'coller-ok'){
+      var oc = onglet(), r = lireCollage(document.getElementById('coller-texte').value, oc, ecranDe(oc, state.ecranId));
+      if(!r.pistes.length){ message(r.erreurs.length ? 'Aucune ligne lue : '+r.erreurs.join(' ; ')+'.' : 'Colle au moins une ligne d\'observation.', true); document.getElementById('coller-texte').focus(); return; }
+      oc.candidats = (oc.candidats || []).concat(r.pistes);
+      var parEcran = {}; r.pistes.forEach(function(k){ var nm = ecranDe(oc, k.ecran).nom; parEcran[nm] = (parEcran[nm] || 0) + 1; });
+      document.getElementById('dlg').close(); rendre();
+      message(pluriel(r.pistes.length, 'piste ajoutée', 'pistes ajoutées')+' ('+Object.keys(parEcran).map(function(nm){ return nm+' : '+parEcran[nm]; }).join(', ')+').'+(r.erreurs.length ? ' À revoir : '+r.erreurs.join(' ; ')+'.' : ''), !!r.erreurs.length);
+      var pr = $main.querySelector('[data-action="reprendre"]'); if(pr) pr.focus();
+    }
+    else if(a === 'copier-consigne'){
+      var zone = document.getElementById(b.getAttribute('data-cible'));
+      var ok = function(){ message('Consigne copiée : colle-la dans ton IA, avec tes notes à la fin.'); };
+      var manuel = function(){ zone.focus(); zone.select(); message('Copie automatique impossible ici : la consigne est sélectionnée, copie-la avec Ctrl+C.', true); };
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(zone.value).then(ok, manuel); else manuel();
+    }
     else if(a === 'import-auto'){ document.getElementById('fichier-auto').click(); }
     else if(a === 'reprendre'){
       var k = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!k) return;
       viderBrouillon();
-      brouillon.texte = k.titre + ' (' + k.nb + ' élément' + (k.nb > 1 ? 's' : '') + (k.exemples.length ? ' : ' + k.exemples.join(', ') : '') + ')';
-      brouillon.crits = k.criteres.slice(); brouillon.tag = k.type === 'violation' ? 'nc' : brouillon.tag; brouillon.candidat = k.id;
+      if(k.source === 'collage'){ brouillon.texte = k.titre; brouillon.nomPartage = k.element || ''; brouillon.tag = k.tag || 'nc'; }
+      else { brouillon.texte = k.titre + ' (' + k.nb + ' élément' + (k.nb > 1 ? 's' : '') + (k.exemples.length ? ' : ' + k.exemples.join(', ') : '') + ')'; brouillon.tag = k.type === 'violation' ? 'nc' : brouillon.tag; }
+      brouillon.crits = k.criteres.slice(); brouillon.candidat = k.id;
       rendre(); var ta = document.getElementById('obs-texte'); if(ta){ ta.focus(); ta.scrollIntoView({block:'center'}); }
-      message('Résultat repris dans le formulaire : vérifie l\'observation, les critères et le statut, puis enregistre.');
+      message('Piste reprise dans le formulaire : vérifie l\'observation, les critères et le résultat, puis enregistre.');
     }
     else if(a === 'ecarter'){
       var k2 = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(k2) k2.etat = 'ecarte';
-      rendre(); message('Résultat écarté.'); var nx = $main.querySelector('[data-action="reprendre"]') || document.getElementById('obs-texte'); if(nx) nx.focus();
+      rendre(); message('Piste écartée.'); var nx = $main.querySelector('[data-action="reprendre"]') || document.getElementById('obs-texte'); if(nx) nx.focus();
     }
     else if(a === 'export-xlsx'){ exporterXlsx(); }
     else if(a === 'export-jira'){ exporterJira(false); }
@@ -1355,6 +1499,7 @@ RUXAWEB 2 : audit par observations.
       if(cibleF){ if(cibleF.id === 'dlg-titre') cibleF.setAttribute('tabindex', '-1'); cibleF.focus(); }
     }
   });
+  document.querySelectorAll('[data-ico]').forEach(function(sp){ sp.outerHTML = ico(sp.getAttribute('data-ico')); });
   // Fiche refermée : son contenu est vidé, pour qu'aucun bouton caché ne reste dans la page.
   document.getElementById('dlg').addEventListener('close', function(){ document.getElementById('dlg-corps').innerHTML = ''; });
   document.getElementById('btn-menu').addEventListener('click', function(){
@@ -1364,6 +1509,13 @@ RUXAWEB 2 : audit par observations.
   });
   document.addEventListener('keydown', function(ev){
     if(ev.key === 'Escape'){ var m = document.getElementById('menu-fichier'); if(!m.hidden){ m.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false'); bm.focus(); } }
+  });
+  // Suggestions mises à jour pendant la frappe, sans redessiner le formulaire (le focus reste dans le champ).
+  var minuterieSugg = null;
+  document.addEventListener('input', function(ev){
+    if(ev.target.id !== 'obs-texte') return;
+    clearTimeout(minuterieSugg);
+    minuterieSugg = setTimeout(function(){ var z = document.getElementById('obs-sugg'); if(z){ brouillon.texte = ev.target.value; z.innerHTML = htmlSuggestions(ev.target.value); } }, 250);
   });
   document.addEventListener('submit', function(ev){ if(ev.target.id === 'form-obs'){ ev.preventDefault(); enregistrerObs(); } });
   document.addEventListener('change', function(ev){

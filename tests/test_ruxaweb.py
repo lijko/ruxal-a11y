@@ -404,6 +404,7 @@ def main():
         page.locator('#dlg [data-action="clo"][data-tag="c"]:not([disabled])').first.click()
         verifier('Fiche (grille) : C posé, la fiche reste ouverte et à jour', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg [data-action="clo"][data-tag="c"][aria-pressed="true"]').count() == 1)
         page.click('#dlg [data-action="fermer-dlg"]')
+        page.wait_for_timeout(100)
         verifier('Fiche fermée : contenu vidé', page.locator('#dlg-corps').inner_html() == '')
         ligne2 = page.locator('tbody tr', has=page.locator('[data-action="critere"][data-id="%s"]' % cid))
         verifier('Grille : critère conforme sans observation', 'C' in [x.strip() for x in ligne2.locator('td.statut').all_inner_texts()])
@@ -425,6 +426,37 @@ def main():
         page.click('[data-action="modif-obs"][data-id="%s"]' % note['id'])
         page.click('[data-action="annuler-modif"]')
         verifier('Modifier : annuler', 'Nouvelle observation' in page.inner_text('#form-obs-titre'))
+
+        # Suggestions pendant la frappe.
+        aller_audit(page)
+        page.fill('#obs-texte', 'On ne voit pas le focus quand je tabule dans le menu')
+        page.wait_for_timeout(400)
+        verifier('Suggestions : Visibilité du focus proposée', 'Visibilité du focus' in page.inner_text('#obs-sugg'), page.inner_text('#obs-sugg'))
+        page.locator('#obs-sugg [data-point="focus-invisible"]').click()
+        verifier('Suggestion choisie : point de contrôle et critère 10.7', page.input_value('#obs-point') == 'focus-invisible' and page.locator('[data-crit="raweb-10-7"]:checked').count() == 1 and page.input_value('#obs-texte').startswith('On ne voit pas'))
+        verifier('Attendu : aide sur le ticket Jira', 'Expected behavior' in page.inner_text('#aide-attendu'))
+        page.fill('#obs-texte', '')
+
+        # Coller des observations : format lisible, changement d'écran, critères proposés si absents.
+        page.click('[data-action="coller-obs"]')
+        verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and '10.7 ' in page.input_value('#consigne-dlg'))
+        noms = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].ecrans.map(function(e){return e.nom})')
+        page.fill('#coller-texte', 'NC | Menu principal | Focus invisible dans le menu. | 10.7\n- C | | Les titres sont bien hiérarchisés. |\nÉcran : %s\nLe contraste du texte gris clair est trop faible\nNC | button "Payer" | Bouton sans nom. | 99.9' % noms[1])
+        page.click('[data-action="coller-ok"]')
+        page.wait_for_timeout(100)
+        pistes = [k for k in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats') if k.get('source') == 'collage']
+        verifier('Coller : 4 pistes lues', len(pistes) == 4, [p['titre'] for p in pistes])
+        verifier('Coller : statut, élément, critère lus', pistes[0]['tag'] == 'nc' and pistes[0]['element'] == 'Menu principal' and pistes[0]['criteres'] == ['raweb-10-7'])
+        verifier('Coller : ligne C sans critère', pistes[1]['tag'] == 'c' and pistes[1]['titre'].startswith('Les titres'))
+        verifier('Coller : « Écran : » change d\'écran, critère proposé par mots-clés', pistes[2]['ecran'] != pistes[0]['ecran'] and pistes[2]['propose'] and 'raweb-3-2' in pistes[2]['criteres'], pistes[2])
+        verifier('Coller : critère inconnu signalé', '99.9' in page.inner_text('#statut'))
+        page.locator('[data-action="reprendre"]').first.click()
+        verifier('Reprendre une piste collée : formulaire rempli', page.input_value('#obs-texte') == 'Focus invisible dans le menu.' and page.input_value('#obs-partage-nom') == 'Menu principal' and page.locator('[data-crit="raweb-10-7"]:checked').count() == 1)
+        page.fill('#obs-texte', '')
+        page.click('#btn-ref')
+        verifier('Référentiel : consigne pour une IA', page.locator('#consigne-ref').count() == 1 and 'Convertir des notes' in page.inner_text('main'))
+        verifier('Icônes : décoratives, sur Fichier et Référentiel', page.locator('#btn-menu svg[aria-hidden="true"]').count() == 1 and page.locator('#btn-ref svg[aria-hidden="true"]').count() == 1)
+        page.locator('[data-action="ouvrir"]').first.click()
 
         # Le panneau Parcours ne bouge pas au début du défilement.
         hauts = []
