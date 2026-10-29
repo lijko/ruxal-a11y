@@ -466,7 +466,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
   function rendre(focus){
     var o = onglet();
     if(state.vue !== 'accueil' && !o){ state.vue = 'accueil'; }
-    $nav.innerHTML = o && state.vue !== 'accueil' ? [['audit','Audit'],['grille','Grille']].concat(o.type === 'scenario' ? [['ux','POUR/UX']] : [], [['cloture','Clôture'],['resume','Résumé'],['preparer','Écrans']]).map(function(v){
+    $nav.innerHTML = o && state.vue !== 'accueil' ? [['audit','Audit'],['grille','Grille']].concat(o.type === 'scenario' ? [['ux','POUR/UX']] : [], [['cloture','Clôture'],['resume','Résumé']]).map(function(v){
       return '<button type="button" data-action="vue" data-vue="'+v[0]+'"'+(state.vue === v[0] ? ' aria-current="page"' : '')+'>'+v[1]+'</button>';
     }).join('') : '';
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
@@ -601,7 +601,7 @@ RUXAWEB 2 : audit par observations. Version précédente (saisie critère par cr
       var nc = RAWEB.filter(function(c){ return statutEcran(o, x, c).s === 'NC'; }).length;
       html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id ? ' aria-current="true"' : '')+'><span>'+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
     });
-    html += '</div>';
+    html += '<button type="button" data-action="vue" data-vue="preparer" style="color:var(--accent);font-weight:600;margin-top:4px">Gérer les écrans</button></div>';
     var elts = {};
     // Un élément est répété quand ses observations, une ou plusieurs, touchent au moins deux écrans.
     var libelles = {};
