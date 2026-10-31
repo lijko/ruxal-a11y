@@ -279,6 +279,10 @@ RUXAWEB 2 : audit par observations.
   @media (prefers-reduced-motion: no-preference){ .switch .bouton{transition:left .15s} }
   table.contenus-table th,table.contenus-table td{text-align:center}
   table.contenus-table th:first-child,table.contenus-table tbody th{text-align:left}
+  /* Colonnes d'écrans de même largeur, quelle que soit la longueur de leur nom. */
+  table.contenus-table{table-layout:fixed;width:100%}
+  table.contenus-table thead th:first-child{width:28%}
+  table.contenus-table thead th{white-space:normal;overflow-wrap:break-word;hyphens:auto;vertical-align:bottom}
   .puce{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:99px;padding:4px 12px;min-height:34px;cursor:pointer;font-size:13px;background:var(--surface)}
   .puce[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
 
