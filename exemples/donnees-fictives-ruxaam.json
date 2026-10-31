@@ -1,0 +1,542 @@
+{
+  "outil": "RUXAAM-etat",
+  "version": 1,
+  "outilVersion": "1.27",
+  "genereLe": "2026-10-31T17:55:40.212Z",
+  "state": {
+    "auditNom": "Appli Démo (données fictives)",
+    "plateforme": "android",
+    "ticketsJira": {},
+    "exportesJira": {},
+    "filtreRetest": false,
+    "onglets": [
+      {
+        "id": "ong_m7ir889",
+        "nom": "Audit rapide RAAM",
+        "scenario": "sip-rapide",
+        "approches": [
+          "SIP"
+        ],
+        "ecrans": [
+          {
+            "id": "ec_2krbh3f",
+            "nom": "Accueil",
+            "commentaire": ""
+          },
+          {
+            "id": "ec_958lvng",
+            "nom": "Connexion",
+            "commentaire": ""
+          },
+          {
+            "id": "ec_rusbz9r",
+            "nom": "Profil",
+            "commentaire": ""
+          }
+        ],
+        "presences": {},
+        "vue": "audit",
+        "theming": "ruxal",
+        "vueAudit": "raam",
+        "resultats": {
+          "ec_2krbh3f": {
+            "raam-5-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-7-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-5": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-10-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-10-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-4": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-5": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-7": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-10": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-11": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-12": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-13": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-15": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-2-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-2-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-6": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-7": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-8": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-6-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-6-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-12-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-1": {
+              "statut": "NC",
+              "commentaire": "Le bouton menu est annoncé « bouton » sans nom par TalkBack.",
+              "element": "[Menu principal]"
+            },
+            "raam-2-1": {
+              "statut": "NC",
+              "commentaire": "Les promotions actives ne sont signalées que par la couleur rouge du libellé.",
+              "element": "Accueil[link \"Promotions\"]"
+            }
+          },
+          "ec_958lvng": {
+            "raam-5-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-7-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-5": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-10-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-10-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-4": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-5": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-7": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-10": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-11": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-12": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-13": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-15": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-2-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-2-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-6": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-7": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-8": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-6-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-6-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-12-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-1": {
+              "statut": "NC",
+              "commentaire": ""
+            },
+            "raam-11-9": {
+              "statut": "NC",
+              "commentaire": "L'écran reste bloqué en portrait : en paysage, le formulaire est tronqué.",
+              "element": "Connexion"
+            }
+          },
+          "ec_rusbz9r": {
+            "raam-5-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-7-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-5": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-10-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-10-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-4": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-5": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-7": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-10": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-11": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-12": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-13": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-15": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "bp1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-1-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-2-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-2-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-6": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-8-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-7": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-11-8": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-6-1": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-6-2": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-12-3": {
+              "statut": "C",
+              "commentaire": ""
+            },
+            "raam-5-1": {
+              "statut": "NC",
+              "commentaire": ""
+            },
+            "raam-10-1": {
+              "statut": "NC",
+              "commentaire": "Après enregistrement, le focus revient en haut de l'écran au lieu du message de confirmation.",
+              "element": "Profil[button \"Enregistrer\"]"
+            }
+          }
+        },
+        "heuristiques": {},
+        "commentaireOnglet": "",
+        "valide": false
+      },
+      {
+        "id": "ong_f7fh491",
+        "nom": "Souscription à une offre",
+        "scenario": "flow",
+        "approches": [
+          "SIP",
+          "OSAPS"
+        ],
+        "ecrans": [
+          {
+            "id": "ec_7yajlif",
+            "nom": "Offres",
+            "commentaire": ""
+          },
+          {
+            "id": "ec_u1cxjdd",
+            "nom": "Formulaire",
+            "commentaire": ""
+          },
+          {
+            "id": "ec_6dj5ni9",
+            "nom": "Paiement",
+            "commentaire": ""
+          },
+          {
+            "id": "ec_rkogyyc",
+            "nom": "Confirmation",
+            "commentaire": ""
+          }
+        ],
+        "presences": {},
+        "vue": "audit",
+        "theming": "ruxal",
+        "vueAudit": "pourux",
+        "resultats": {
+          "ec_7yajlif": {},
+          "ec_u1cxjdd": {},
+          "ec_6dj5ni9": {
+            "raam-10-1": {
+              "statut": "NC",
+              "commentaire": "",
+              "element": "Formulaire -> Paiement"
+            }
+          },
+          "ec_rkogyyc": {}
+        },
+        "heuristiques": {
+          "h1": {
+            "statut": "difficile",
+            "commentaire": "Étape Paiement : le retour arrière vide le formulaire, il faut tout ressaisir."
+          },
+          "h2": {
+            "statut": "succes",
+            "commentaire": ""
+          },
+          "h3": {
+            "statut": "succes",
+            "commentaire": ""
+          },
+          "h4": {
+            "statut": "succes",
+            "commentaire": ""
+          },
+          "h5": {
+            "statut": "difficile",
+            "commentaire": "Étape Paiement : le retour arrière vide le formulaire, il faut tout ressaisir."
+          },
+          "h6": {
+            "statut": "succes",
+            "commentaire": ""
+          },
+          "h7": {
+            "statut": "succes",
+            "commentaire": ""
+          },
+          "h8": {
+            "statut": "succes",
+            "commentaire": ""
+          }
+        },
+        "commentaireOnglet": "",
+        "valide": false
+      }
+    ],
+    "activeOngletId": null,
+    "scenarioChoisi": null,
+    "view": "ong_f7fh491",
+    "limiteSession": false
+  }
+}

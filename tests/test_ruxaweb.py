@@ -510,6 +510,26 @@ def main():
             hauts.append(round(page.evaluate("document.getElementById('aide').getBoundingClientRect().top")))
         page.evaluate('window.scrollTo(0, 0)')
         verifier('Parcours fixe au défilement, sans saut', len(set(hauts)) == 1, hauts)
+        # Jusqu'en bas de page, sur chaque vue, le panneau des étapes reste sous l'en-tête.
+        tops = {}
+        for nom, aller in (('saisie', lambda: aller_audit(page)), ('grille', lambda: page.click('[data-action="vue"][data-vue="grille"]')),
+                           ('projet', lambda: page.click('[data-action="accueil"]')), ('referentiel', lambda: page.click('#btn-ref'))):
+            aller()
+            page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+            page.wait_for_timeout(80)
+            tops[nom] = round(page.evaluate("document.getElementById('aide').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
+        verifier('Panneau des étapes collé sous l\'en-tête jusqu\'en bas de page, sur toutes les vues', all(v >= 16 for v in tops.values()), tops)
+        page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
+        page.click('#btn-ref')
+        page.evaluate('window.scrollTo(0, 3000)')
+        page.wait_for_timeout(100)
+        verifier('Haut de page : bouton affiché après défilement, en bas à gauche', page.locator('#btn-haut').is_visible() and page.evaluate("document.getElementById('btn-haut').getBoundingClientRect().left") < 40)
+        page.click('#btn-haut')
+        page.wait_for_function('scrollY < 5', timeout=5000)
+        verifier('Haut de page : retour en haut, focus sur le titre', page.evaluate('scrollY') < 5 and page.evaluate('document.activeElement.tagName') == 'H1')
+        page.locator('[data-action="ouvrir"]').first.click() if page.locator('[data-action="ouvrir"]').count() else page.click('[data-action="accueil"]')
+        page.click('[data-action="accueil"]')
+        page.locator('[data-action="ouvrir"]').first.click()
 
         # Fonctions primaires : configurateur au niveau du projet, testées avant les écrans, observations communes.
         page.click('[data-action="accueil"]')

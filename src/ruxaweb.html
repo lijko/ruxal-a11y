@@ -121,7 +121,7 @@ RUXAWEB 2 : audit par observations.
   .onglet-tab.ajout:hover{color:var(--accent)}
 
   /* ---------- Mise en page ---------- */
-  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere) 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere) 48px;min-height:calc(100vh - var(--barre-h, 130px) - var(--pied-h, 90px));display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
   main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
   main:focus{outline:none}
   footer.pied{max-width:var(--largeur);margin:0 auto;padding:16px var(--gouttiere) 32px;font-size:12.5px;color:var(--ink-soft)}
@@ -209,9 +209,12 @@ RUXAWEB 2 : audit par observations.
   .dlg h2{font-size:19px}
   #statut{position:fixed;right:24px;bottom:24px;background:var(--ink);color:var(--surface);padding:12px 16px;border-radius:var(--radius);max-width:min(440px,calc(100% - 48px));z-index:40;font-weight:600;font-size:14px;box-shadow:var(--shadow-pop)}
   #statut.erreur{background:var(--c-nc);color:var(--surface)}
+  /* Haut de page : en bas à gauche, affiché seulement après défilement (hors de l'ordre de tabulation sinon). */
+  .btn-haut{position:fixed;left:max(16px, env(safe-area-inset-left));bottom:max(16px, env(safe-area-inset-bottom));z-index:30;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--ink);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-pill);padding:9px 14px;box-shadow:var(--shadow-pop);cursor:pointer}
+  .btn-haut:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ---------- Panneau des étapes ---------- */
-  aside.aide{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 48px);overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+  aside.aide{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 24px - 48px - var(--pied-h, 90px));min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
   aside.aide h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
   aside.aide p{font-size:14.5px}
   aside.aide:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -347,7 +350,7 @@ RUXAWEB 2 : audit par observations.
   @media print{
     :root{color-scheme:light}
     body{background:#fff!important}
-    .barre,aside.aide,.lien-evitement,.ref-tete button,.ref-outils,#statut,footer.pied{display:none!important}
+    .barre,aside.aide,.lien-evitement,.ref-tete button,.ref-outils,#statut,.btn-haut,footer.pied{display:none!important}
     .page{display:block;padding:0;max-width:none;zoom:.8}
     .carte{box-shadow:none!important;border:1px solid #888!important;background:#fff!important;break-inside:avoid;display:block!important;margin-bottom:10px}
     .carte > * + *{margin-top:6px!important}
@@ -364,7 +367,7 @@ RUXAWEB 2 : audit par observations.
   }
   /* Écran large : la page défile ; l'en-tête, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
-    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 48px);overflow-y:auto}
+    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 24px - 48px - var(--pied-h, 90px));overflow-y:auto}
     .tableau{overflow:visible}
     .tableau.large{overflow-x:auto}
     thead th{top:var(--barre-h, 130px);z-index:2}
@@ -412,6 +415,7 @@ RUXAWEB 2 : audit par observations.
 <footer class="pied">Critères : RAWeb 1.1, Service information et presse (SIP), Luxembourg, CC BY 3.0 LU, intitulés non modifiés. Sélection de la méthode de contrôle simplifié v1.2.1, plus critères hors sélection. Pré-diagnostic, pas un audit de conformité. Code : EUPL-1.2.</footer>
 <dialog id="dlg" aria-labelledby="dlg-titre"><div class="dlg" id="dlg-corps"></div></dialog>
 <div id="statut" role="status" aria-live="polite" hidden></div>
+<button type="button" class="btn-haut" id="btn-haut" hidden><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Haut de page</button>
 
 <script>
 (function(){
@@ -1955,10 +1959,26 @@ RUXAWEB 2 : audit par observations.
 
   // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : l'aide se cale toujours dessous.
   (function(){
-    var barre = document.querySelector('header.barre');
-    function caler(){ document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px'); focusParcours(); }
+    var barre = document.querySelector('header.barre'), pied = document.querySelector('footer.pied');
+    function caler(){
+      document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px');
+      document.documentElement.style.setProperty('--pied-h', (pied ? pied.offsetHeight : 0) + 'px');
+      focusParcours();
+    }
     caler();
-    if(window.ResizeObserver) new ResizeObserver(caler).observe(barre); else window.addEventListener('resize', caler);
+    if(window.ResizeObserver){ var ro = new ResizeObserver(caler); ro.observe(barre); if(pied) ro.observe(pied); } else window.addEventListener('resize', caler);
+  })();
+
+  // Haut de page : visible après un écran de défilement ; le focus revient sur le titre de la page.
+  (function(){
+    var b = document.getElementById('btn-haut');
+    function maj(){ var cache = window.scrollY < Math.max(600, window.innerHeight); if(b.hidden !== cache) b.hidden = cache; }
+    window.addEventListener('scroll', maj, {passive:true}); window.addEventListener('resize', maj);
+    b.addEventListener('click', function(){
+      var reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({top:0, behavior: reduit ? 'auto' : 'smooth'});
+      var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
+    });
   })();
 
   window.RUXAWEB = {state: function(){ return state; }, taux: function(id, elargi){ var o = state.onglets.filter(function(x){ return x.id === id; })[0]; return taux(o, elargi ? RAWEB : SELECTION); }, version: VERSION};

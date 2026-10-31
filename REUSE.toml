@@ -23,3 +23,9 @@ path = ["docs/comparaison-raam-ruxaam.csv", "docs/selection-audit-rapide-mobile.
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Bertrand Kempf; Service information et presse (SIP), Luxembourg"
 SPDX-License-Identifier = "CC-BY-4.0 AND LicenseRef-CC-BY-3.0-LU"
+
+[[annotations]]
+path = ["exemples/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Bertrand Kempf"
+SPDX-License-Identifier = "CC-BY-4.0"

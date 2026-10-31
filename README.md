@@ -102,7 +102,8 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 - `src/` : outils (code)
 - `data/` : critères, thèmes, couche POUR/heuristiques (données)
 - `docs/` : documentation
-- `scripts/` : génération des outils à partir de `data/`
+- `scripts/` : génération des outils à partir de `data/` ; `demo_ruxaam.py` et `demo_ruxaweb.py` régénèrent les données fictives en saisissant un audit dans l'outil (Playwright)
+- `exemples/` : données fictives à ouvrir dans l'outil pour l'essayer (`donnees-fictives-ruxaam.json` : bouton « Importer » de RUXAAM ; `donnees-fictives-ruxaweb.json` : Fichier, « Ouvrir une sauvegarde » de RUXAWEB)
 - `tests/` : tests de bout en bout de l'outil (Playwright)
 
 ## Tests

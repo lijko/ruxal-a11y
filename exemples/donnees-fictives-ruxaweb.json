@@ -1,0 +1,548 @@
+{
+ "v": 2,
+ "auditNom": "Boutique Démo (données fictives)",
+ "support": "desktop",
+ "onglets": [
+  {
+   "id": "mvwpiyjho1st0",
+   "nom": "Audit des pages clés",
+   "type": "rapide",
+   "ecrans": [
+    {
+     "id": "mvwpiyjhgu67j",
+     "nom": "Accueil",
+     "contenus": {},
+     "etapes": {}
+    },
+    {
+     "id": "mvwpiyjhhl78n",
+     "nom": "Connexion",
+     "contenus": {
+      "formulaire": true
+     },
+     "etapes": {}
+    },
+    {
+     "id": "mvwpiyjhp27tm",
+     "nom": "Fiche produit",
+     "contenus": {
+      "image-complexe": true
+     },
+     "etapes": {}
+    }
+   ],
+   "obs": [
+    {
+     "id": "mvwpizvk9w3s1",
+     "n": 6,
+     "ecran": "mvwpiyjhgu67j",
+     "etape": "vide",
+     "texte": "Le carrousel de promotions défile seul, sans bouton pause.",
+     "attendu": "",
+     "point": "mouvement",
+     "criteres": [
+      "raweb-13-8"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": "Carrousel promotions"
+    },
+    {
+     "id": "mvwpj0087kuog",
+     "n": 7,
+     "ecran": "mvwpiyjhgu67j",
+     "etape": "vide",
+     "texte": "Texte gris clair sur fond blanc dans le bandeau « Livraison offerte », presque illisible.",
+     "attendu": "Un contraste d'au moins 4,5:1.",
+     "point": "contraste",
+     "criteres": [
+      "raweb-3-2"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": "Bandeau livraison"
+    },
+    {
+     "id": "mvwpj03xcwqmj",
+     "n": 8,
+     "ecran": "mvwpiyjhgu67j",
+     "etape": "vide",
+     "texte": "Le titre de la page est « Accueil » sans le nom du site.",
+     "attendu": "",
+     "point": "titre-ecran",
+     "criteres": [
+      "raweb-8-5",
+      "raweb-8-6"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": ""
+    },
+    {
+     "id": "mvwpj0au9s40s",
+     "n": 9,
+     "ecran": "mvwpiyjhhl78n",
+     "etape": "vide",
+     "texte": "Le champ e-mail n'a pas d'étiquette, seulement un texte indicatif qui disparaît à la saisie.",
+     "attendu": "Une étiquette visible « Adresse e-mail », liée au champ.",
+     "point": "etiquette",
+     "criteres": [
+      "raweb-11-1",
+      "raweb-11-2"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": "input \"E-mail\""
+    },
+    {
+     "id": "mvwpj0ekbtbo5",
+     "n": 10,
+     "ecran": "mvwpiyjhhl78n",
+     "etape": "vide",
+     "texte": "Le message « mot de passe incorrect » s'affiche mais n'est pas restitué par le lecteur d'écran.",
+     "attendu": "",
+     "point": "message-non-restitue",
+     "criteres": [
+      "raweb-7-5",
+      "raweb-11-10"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": ""
+    },
+    {
+     "id": "mvwpj0lkksuc1",
+     "n": 11,
+     "ecran": "mvwpiyjhp27tm",
+     "etape": "vide",
+     "texte": "Le graphique des avis clients n'a pas de description détaillée.",
+     "attendu": "",
+     "point": "image-complexe",
+     "criteres": [
+      "raweb-1-6",
+      "raweb-1-7"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": "Graphique des avis"
+    },
+    {
+     "id": "mvwpj0p83bo98",
+     "n": 12,
+     "ecran": "mvwpiyjhp27tm",
+     "etape": "vide",
+     "texte": "Pas de tableau de données sur cet écran.",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-5-6"
+     ],
+     "tag": "na",
+     "partage": null,
+     "elementNom": ""
+    },
+    {
+     "id": "mvwpj0sift5fd",
+     "n": 13,
+     "ecran": "mvwpiyjhp27tm",
+     "etape": "vide",
+     "texte": "Note : vérifier avec l'équipe si la zone « Vous aimerez aussi » est chargée après coup.",
+     "attendu": "",
+     "point": "",
+     "criteres": [],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": ""
+    },
+    {
+     "id": "mvwpj0z1ux5c1",
+     "n": 14,
+     "ecran": "mvwpiyjhgu67j",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-8-3"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj0z1j68gw",
+     "n": 15,
+     "ecran": "mvwpiyjhhl78n",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-8-3"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj0z1cdn5y",
+     "n": 16,
+     "ecran": "mvwpiyjhp27tm",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-8-3"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj146hnveo",
+     "n": 17,
+     "ecran": "mvwpiyjhhl78n",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-8-5"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj146hbw4q",
+     "n": 18,
+     "ecran": "mvwpiyjhp27tm",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-8-5"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj19bz4gf0",
+     "n": 19,
+     "ecran": "mvwpiyjhgu67j",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-9-2"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj19bjy5ct",
+     "n": 20,
+     "ecran": "mvwpiyjhhl78n",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-9-2"
+     ],
+     "tag": "c",
+     "partage": null
+    },
+    {
+     "id": "mvwpj19b5uvdd",
+     "n": 21,
+     "ecran": "mvwpiyjhp27tm",
+     "etape": "cloture",
+     "texte": "Vérifié à la clôture",
+     "attendu": "",
+     "point": "",
+     "criteres": [
+      "raweb-9-2"
+     ],
+     "tag": "c",
+     "partage": null
+    }
+   ],
+   "valide": false,
+   "fonctionsEcrans": {
+    "nav": [
+     "mvwpiyjhgu67j",
+     "mvwpiyjhhl78n",
+     "mvwpiyjhp27tm"
+    ],
+    "recherche": [
+     "mvwpiyjhgu67j",
+     "mvwpiyjhhl78n",
+     "mvwpiyjhp27tm"
+    ],
+    "modale": [
+     "mvwpiyjhgu67j",
+     "mvwpiyjhhl78n"
+    ],
+    "pied": [
+     "mvwpiyjhgu67j",
+     "mvwpiyjhhl78n",
+     "mvwpiyjhp27tm"
+    ]
+   }
+  },
+  {
+   "id": "mvwpj1dt2x1wu",
+   "nom": "Achat d'un produit",
+   "type": "scenario",
+   "ecrans": [
+    {
+     "id": "mvwpj1dt55rhu",
+     "nom": "Panier",
+     "contenus": {},
+     "etapes": {}
+    },
+    {
+     "id": "mvwpj1dtju4w9",
+     "nom": "Livraison",
+     "contenus": {
+      "formulaire": true
+     },
+     "etapes": {}
+    },
+    {
+     "id": "mvwpj1dtywu0w",
+     "nom": "Paiement",
+     "contenus": {
+      "formulaire": true
+     },
+     "etapes": {}
+    },
+    {
+     "id": "mvwpj1g4s2vpn",
+     "nom": "Confirmation",
+     "contenus": {},
+     "etapes": {}
+    }
+   ],
+   "obs": [
+    {
+     "id": "mvwpj1uihgq1g",
+     "n": 22,
+     "ecran": "mvwpj1dtju4w9",
+     "etape": "vide",
+     "texte": "Après « Continuer », le focus reste sur le bouton au lieu de passer au titre de l'étape Paiement.",
+     "attendu": "",
+     "point": "ordre-focus",
+     "criteres": [
+      "raweb-12-8",
+      "bp3"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": "",
+     "vers": "mvwpj1dtywu0w"
+    },
+    {
+     "id": "mvwpj21vp09fz",
+     "n": 23,
+     "ecran": "mvwpj1dtywu0w",
+     "etape": "vide",
+     "texte": "La session expire au bout de 5 minutes sans avertissement, le panier est vidé.",
+     "attendu": "Un avertissement avant expiration, avec la possibilité de prolonger.",
+     "point": "limite-temps",
+     "criteres": [
+      "raweb-13-1"
+     ],
+     "tag": "nc",
+     "partage": null,
+     "elementNom": ""
+    }
+   ],
+   "valide": false,
+   "fonctionsEcrans": {
+    "nav": [
+     "mvwpj1dt55rhu",
+     "mvwpj1dtju4w9",
+     "mvwpj1dtywu0w"
+    ],
+    "recherche": [
+     "mvwpj1dt55rhu",
+     "mvwpj1dtju4w9",
+     "mvwpj1dtywu0w"
+    ],
+    "modale": [
+     "mvwpj1dt55rhu",
+     "mvwpj1dtju4w9",
+     "mvwpj1dtywu0w"
+    ],
+    "pied": [
+     "mvwpj1dt55rhu",
+     "mvwpj1dtju4w9",
+     "mvwpj1dtywu0w"
+    ]
+   },
+   "heuristiques": {
+    "h1": {
+     "statut": "succes"
+    },
+    "h2": {
+     "statut": "succes"
+    },
+    "h3": {
+     "statut": "difficile"
+    },
+    "h4": {
+     "statut": "succes"
+    },
+    "h5": {
+     "statut": "succes"
+    },
+    "h6": {
+     "statut": "difficile"
+    },
+    "h7": {
+     "statut": "succes"
+    },
+    "h8": {
+     "statut": "succes"
+    }
+   }
+  }
+ ],
+ "vue": "ux",
+ "ongletId": "mvwpj1dt2x1wu",
+ "ecranId": "mvwpj1dtywu0w",
+ "etape": "vide",
+ "compteur": 23,
+ "exportesJira": [],
+ "fonctions": [
+  {
+   "id": "nav",
+   "nom": "Navigation principale",
+   "presente": true,
+   "etapes": {}
+  },
+  {
+   "id": "menu",
+   "nom": "Menu ou menu burger",
+   "presente": false,
+   "etapes": {}
+  },
+  {
+   "id": "recherche",
+   "nom": "Recherche",
+   "presente": true,
+   "etapes": {}
+  },
+  {
+   "id": "form",
+   "nom": "Formulaire type",
+   "presente": false,
+   "etapes": {}
+  },
+  {
+   "id": "modale",
+   "nom": "Fenêtre modale",
+   "presente": true,
+   "etapes": {}
+  },
+  {
+   "id": "retour",
+   "nom": "Retour ou fil d'Ariane",
+   "presente": false,
+   "etapes": {}
+  },
+  {
+   "id": "notif",
+   "nom": "Notifications et messages",
+   "presente": false,
+   "etapes": {}
+  },
+  {
+   "id": "pied",
+   "nom": "Pied de page",
+   "presente": true,
+   "etapes": {}
+  }
+ ],
+ "obsF": [
+  {
+   "id": "mvwpiz07bgsxg",
+   "n": 1,
+   "fonction": "nav",
+   "etape": "vide",
+   "texte": "On ne voit pas où se trouve le focus en tabulant dans le menu principal.",
+   "attendu": "Un indicateur de focus visible, contrasté, sur chaque lien du menu.",
+   "point": "focus-invisible",
+   "criteres": [
+    "raweb-10-7"
+   ],
+   "tag": "nc",
+   "elementNom": "Navigation principale",
+   "partage": null
+  },
+  {
+   "id": "mvwpiz4cqsgw5",
+   "n": 2,
+   "fonction": "nav",
+   "etape": "vide",
+   "texte": "L'état « page en cours » du menu n'est signalé que par la couleur.",
+   "attendu": "",
+   "point": "couleur-seule",
+   "criteres": [
+    "raweb-3-1"
+   ],
+   "tag": "nc",
+   "elementNom": "Navigation principale",
+   "partage": null
+  },
+  {
+   "id": "mvwpizbpp5rkb",
+   "n": 3,
+   "fonction": "recherche",
+   "etape": "vide",
+   "texte": "Le bouton loupe est annoncé « bouton » sans nom par le lecteur d'écran.",
+   "attendu": "Le bouton est annoncé « Rechercher ».",
+   "point": "nom-absent",
+   "criteres": [
+    "raweb-7-1"
+   ],
+   "tag": "nc",
+   "elementNom": "Recherche",
+   "partage": null
+  },
+  {
+   "id": "mvwpizipunlei",
+   "n": 4,
+   "fonction": "pied",
+   "etape": "vide",
+   "texte": "Les liens du pied de page sont explicites et le contraste est suffisant.",
+   "attendu": "",
+   "point": "nom-non-pertinent",
+   "criteres": [
+    "raweb-6-1"
+   ],
+   "tag": "c",
+   "elementNom": "Pied de page",
+   "partage": null
+  },
+  {
+   "id": "mvwpizp4ve28i",
+   "n": 5,
+   "fonction": "modale",
+   "etape": "vide",
+   "texte": "Impossible de sortir de la fenêtre de connexion au clavier.",
+   "attendu": "Échap ferme la fenêtre et le focus revient sur le bouton « Se connecter ».",
+   "point": "piege",
+   "criteres": [
+    "raweb-12-9",
+    "bp2"
+   ],
+   "tag": "nc",
+   "elementNom": "Fenêtre modale",
+   "partage": null
+  }
+ ],
+ "fonctionId": null,
+ "parcoursOuvert": true
+}
