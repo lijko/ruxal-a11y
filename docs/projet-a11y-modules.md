@@ -20,7 +20,9 @@ Dans les deux modules, le testeur travaille sur trois volets qui aboutissent tou
 
 L'import et les observations restent dans la vue **Saisie** : une piste n'a de sens qu'à côté du formulaire qui la reprend. La grille reste une vue à part.
 
-## 1. En-tête du projet
+## 1. En-tête et page Projet
+Le tableau de bord devient la **page Projet** (premier onglet de la barre, « Projet ») : onglets avec leur état et leur suppression, création d'un onglet par module (« + Nouvel onglet » y mène), et activation des fonctions primaires. La page des écrans de chaque onglet ne garde que les cases « sur quels écrans » de chaque fonction active.
+
 - Le champ « Nom de l'audit » devient **« Nom du projet »**. Le titre affiché est « Projet A11Y - » suivi du nom.
 - Les fichiers exportés (grille Excel, tickets Jira, sauvegarde) reprennent le nom du projet.
 - Support (Ordinateur ou Mobile), Référentiel et Fichier sont inchangés.

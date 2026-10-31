@@ -10,296 +10,365 @@ SPDX-License-Identifier: EUPL-1.2 AND LicenseRef-CC-BY-3.0-LU
 RUXAWEB 2 : audit par observations.
 -->
 <style>
-  /* Jetons de design (couleurs des deux thèmes, rayons, ombres). */
+  /* =========================================================================
+     RUXAWEB : feuille de style. Ordre : jetons, base, en-tête, onglets,
+     mise en page, composants, panneau des étapes, vues, impression, écrans.
+     ========================================================================= */
+
+  /* ---------- Jetons ---------- */
   :root{
     --ink:#1c2630; --ink-soft:#4a5864; --ink-faint:#5c6a76;
-    --surface:#ffffff; --surface-alt:#f1f4f6; --surface-raised:#ffffff;
+    --surface:#ffffff; --surface-alt:#f1f4f6; --surface-raised:#ffffff; --surface-sunk:#e9eef1;
     --border:#cdd6dc; --border-soft:#e3e8ec;
     --accent:#2f6a7d; --accent-soft:#e0eef2; --accent-ink:#ffffff;
+    --accent-fill:#2f6a7d; --accent-fill-ink:#ffffff;
     --c-conforme:#1f7a4d; --c-conforme-soft:#e0f3e8;
     --c-nc:#b83a30; --c-nc-soft:#fbe5e2;
     --c-nt:#7a5c00; --c-nt-soft:#fbf1d3; --c-nt-ink:#3d2e00;
     --c-na:#4d5f6c; --c-na-soft:#e6ecf0;
-    /* Badges d'approche (RAWeb / POUR·UX) : hors de la famille bleue pour ne pas se fondre dans l'onglet actif. */
     --c-ref:#6b4fd1; --c-ref-ink:#ffffff;
     --c-pourux:#a82f93; --c-pourux-ink:#ffffff;
-    --radius:10px; --radius-lg:14px;
-    --shadow:0 1px 2px rgba(20,30,40,.08), 0 4px 14px rgba(20,30,40,.08);
-    --shadow-pop:0 6px 20px rgba(20,30,40,.16);
+    --radius:10px; --radius-lg:14px; --radius-pill:999px;
+    --shadow:0 1px 2px rgba(20,30,40,.06), 0 2px 10px rgba(20,30,40,.06);
+    --shadow-pop:0 8px 28px rgba(20,30,40,.18);
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --largeur:1320px; --gouttiere:24px;
     color-scheme:light;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --ink:#e7edf2; --ink-soft:#aebac3; --ink-faint:#748089;
-      --surface:#141a1f; --surface-alt:#1b232a; --surface-raised:#1c252c;
-      --border:#2c363f; --border-soft:#242e36;
-      --accent:#84a7b1; --accent-soft:#20343c; --accent-ink:#0d1418;
+      --ink:#e7edf2; --ink-soft:#aebac3; --ink-faint:#8693a0;
+      --surface:#141a1f; --surface-alt:#1b232a; --surface-raised:#1f2830; --surface-sunk:#11161a;
+      --border:#33404a; --border-soft:#28323b;
+      --accent:#8fb6c1; --accent-soft:#1f3640; --accent-ink:#0d1418;
+      --accent-fill:#357a8f; --accent-fill-ink:#ffffff;
       --c-conforme:#57b585; --c-conforme-soft:#17301f;
       --c-nc:#e2776e; --c-nc-soft:#3a201d;
       --c-nt:#d8b969; --c-nt-soft:#332a15; --c-nt-ink:#241d08;
       --c-na:#93a7b6; --c-na-soft:#1e2932;
       --c-ref:#a58ff0; --c-ref-ink:#1c1533;
       --c-pourux:#e08fce; --c-pourux-ink:#2e1526;
-      --radius:10px; --radius-lg:14px;
-      --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.22);
-      --shadow-pop:0 6px 20px rgba(0,0,0,.35);
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+      --shadow-pop:0 8px 28px rgba(0,0,0,.5);
       color-scheme:dark;
     }
   }
   :root[data-theme="dark"]{
-    --ink:#e7edf2; --ink-soft:#aebac3; --ink-faint:#748089;
-    --surface:#141a1f; --surface-alt:#1b232a; --surface-raised:#1c252c;
-    --border:#2c363f; --border-soft:#242e36;
-    --accent:#84a7b1; --accent-soft:#20343c; --accent-ink:#0d1418;
+    --ink:#e7edf2; --ink-soft:#aebac3; --ink-faint:#8693a0;
+    --surface:#141a1f; --surface-alt:#1b232a; --surface-raised:#1f2830; --surface-sunk:#11161a;
+    --border:#33404a; --border-soft:#28323b;
+    --accent:#8fb6c1; --accent-soft:#1f3640; --accent-ink:#0d1418;
+    --accent-fill:#357a8f; --accent-fill-ink:#ffffff;
     --c-conforme:#57b585; --c-conforme-soft:#17301f;
     --c-nc:#e2776e; --c-nc-soft:#3a201d;
     --c-nt:#d8b969; --c-nt-soft:#332a15; --c-nt-ink:#241d08;
     --c-na:#93a7b6; --c-na-soft:#1e2932;
     --c-ref:#a58ff0; --c-ref-ink:#1c1533;
     --c-pourux:#e08fce; --c-pourux-ink:#2e1526;
-    --radius:10px; --radius-lg:14px;
-    --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.22);
-    --shadow-pop:0 6px 20px rgba(0,0,0,.35);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+    --shadow-pop:0 8px 28px rgba(0,0,0,.5);
     color-scheme:dark;
   }
+
+  /* ---------- Base ---------- */
   *{box-sizing:border-box}
   [hidden]{display:none!important}
-  body{margin:0;background:var(--surface-alt);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  a{color:var(--accent)}
+  html{scroll-padding-top:calc(var(--barre-h, 130px) + 72px)} /* le focus ne passe pas sous l'en-tête ni sous l'en-tête collant de la grille */
+  body{margin:0;background:var(--surface-alt);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-underline-offset:3px}
   button,input,select,textarea{font:inherit;color:inherit}
   :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  h1,h2,h3,h4{margin:0;text-wrap:balance;line-height:1.25}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.01em}
+  h2{font-size:17px;font-weight:800}
+  h3{font-size:15px;font-weight:700}
+  p{margin:0}
+  code{font-family:var(--mono);font-size:.9em;background:var(--surface-alt);border:1px solid var(--border-soft);border-radius:6px;padding:1px 5px}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .lien-evitement{position:absolute;left:8px;top:-60px;background:var(--surface);padding:8px 12px;border-radius:8px;z-index:30}
   .lien-evitement:focus{top:8px}
-
-  header.barre{position:sticky;top:0;z-index:10;background:var(--surface-raised);border-bottom:1px solid var(--border)}
-  .barre-in{max-width:1440px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
-  .marque{font-weight:800;font-size:18px;background:none;border:0;padding:4px 0;cursor:pointer}
-  .marque small{font-weight:600;color:var(--ink-soft);font-size:13px;margin-left:6px}
-  .barre input.nom-audit{flex:1 1 220px;width:auto;max-width:380px;min-height:40px;font-weight:600;border:1px solid transparent;background:transparent;color:var(--ink)}
-  .barre input.nom-audit:hover,.barre input.nom-audit:focus{border-color:var(--border);background:var(--surface)}
-  .barre .tags .tag{min-height:34px;font-weight:700}
-  .vide{display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;padding:56px 16px}
-  .vide p{margin:0;color:var(--ink-soft);max-width:46ch}
-  .vide-choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;width:100%;max-width:620px}
-  .vide-choix .tuile{min-height:120px;justify-content:center}
-  .vide-choix .tuile b{color:var(--accent)}
-  nav.onglets{max-width:1440px;margin:0 auto;padding:0 24px 10px;display:flex;gap:6px;overflow-x:auto}
-  .onglet-tab{flex:0 0 auto;display:flex;flex-direction:column;gap:1px;text-align:left;padding:7px 14px;border-radius:9px;border:1px solid var(--border);background:var(--surface);cursor:pointer;min-width:130px}
-  .onglet-tab b{font-size:13px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .onglet-tab span{font-size:11.5px;color:var(--ink-soft)}
-  .onglet-tab[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-  .onglet-tab[aria-current="page"] span{color:var(--accent-ink);opacity:.85}
-  .onglet-tab.ajout{border-style:dashed;color:var(--ink-soft);font-weight:700;justify-content:center;min-width:0}
-  .onglet-tab.ajout:hover{border-color:var(--accent);color:var(--accent)}
-  nav.onglet-nav{display:flex;gap:4px;flex-wrap:wrap}
-  nav.onglet-nav button{background:none;border:1px solid transparent;border-radius:8px;padding:6px 12px;min-height:40px;cursor:pointer;color:var(--ink-soft);font-weight:600}
-  nav.onglet-nav button[aria-current="page"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft)}
+  .doux{color:var(--ink-soft)}
+  .petit{font-size:13px}
+  .pile{display:flex;flex-direction:column;gap:12px}
+  .rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .entre{justify-content:space-between}
   .espace{flex:1}
+
+  /* ---------- En-tête ---------- */
+  header.barre{position:sticky;top:0;z-index:10;background:var(--surface-raised);border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border-soft)}
+  .barre-in{max-width:var(--largeur);margin:0 auto;padding:12px var(--gouttiere) 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+  .marque{display:flex;flex-direction:column;align-items:flex-start;background:none;border:0;padding:2px 0;cursor:pointer;text-align:left;line-height:1.15}
+  .marque-nom{font-weight:800;font-size:19px;letter-spacing:.01em}
+  .marque small{font-weight:600;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-top:2px}
+  .projet-champ{display:flex;align-items:baseline;gap:6px;flex:1 1 320px;min-width:0;padding-left:20px;border-left:1px solid var(--border)}
+  .prefixe-projet{font-weight:800;font-size:17px;white-space:nowrap}
+  .barre input.nom-audit{flex:1 1 auto;min-width:120px;max-width:420px;min-height:36px;padding:4px 6px;font-size:17px;font-weight:700;border:0;border-bottom:1px dashed var(--ink-faint);border-radius:0;background:transparent}
+  .barre input.nom-audit::placeholder{font-weight:500;color:var(--ink-faint)}
+  .barre input.nom-audit:hover{border-bottom-color:var(--accent)}
+  .barre input.nom-audit:focus{border-bottom:1px solid var(--accent);background:var(--surface-alt)}
+  .barre .tags .tag{min-height:34px;font-weight:700;padding:0 14px}
+
+  /* ---------- Onglets ---------- */
+  nav.onglets{max-width:var(--largeur);margin:0 auto;padding:0 var(--gouttiere) 12px;display:flex;gap:8px;overflow-x:auto;align-items:stretch}
+  .onglet-tab{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:1px;text-align:left;padding:7px 14px;min-height:52px;min-width:120px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer}
+  .onglet-tab:hover{border-color:var(--accent)}
+  .onglet-tab b{font-size:13.5px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .onglet-tab span{font-size:11.5px;color:var(--ink-soft);white-space:nowrap}
+  .onglet-tab[aria-current="page"]{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-fill-ink)}
+  .onglet-tab[aria-current="page"] span{color:var(--accent-fill-ink)}
+  .onglet-tab.ajout{border-style:dashed;color:var(--ink-soft);font-weight:700;align-items:center;min-width:0}
+  .onglet-tab.ajout:hover{color:var(--accent)}
+
+  /* ---------- Mise en page ---------- */
+  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere) 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+  main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  main:focus{outline:none}
+  footer.pied{max-width:var(--largeur);margin:0 auto;padding:16px var(--gouttiere) 32px;font-size:12.5px;color:var(--ink-soft)}
+  .tete-page{display:flex;flex-direction:column;gap:4px}
+
+  /* ---------- Cartes ---------- */
+  .carte{background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+  .carte > h2:first-child,.carte > .rangee:first-child h2{margin:0}
+  .grille2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 16px}
+
+  /* ---------- Boutons ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-weight:600;white-space:nowrap}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-p{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-fill-ink);font-weight:700}
+  .btn-p:hover{color:var(--accent-fill-ink);filter:brightness(1.08)}
+  .btn-l{border-color:var(--accent);color:var(--accent)}
+  .btn-d{border-style:dashed}
+  .btn-s{min-height:34px;padding:0 12px;font-size:13px}
+  .btn-danger{border-color:var(--c-nc);color:var(--c-nc)}
+  .btn-danger:hover{background:var(--c-nc-soft);color:var(--c-nc);border-color:var(--c-nc)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  .ico{width:16px;height:16px;flex:none}
+  .ref-btn{background:none;border:0;padding:0;cursor:pointer;color:var(--accent);font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+  .lien-parcours{align-self:flex-start;background:none;border:0;padding:4px 0;color:var(--accent);font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .lien-parcours:hover{text-decoration-thickness:2px}
+
+  /* ---------- Champs ---------- */
+  label.lbl,.lbl{font-weight:700;font-size:13px;color:var(--ink-soft)}
+  input[type=text],select,textarea{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:9px 12px;min-height:42px;width:100%}
+  input[type=text]:hover,select:hover,textarea:hover{border-color:var(--ink-faint)}
+  textarea{resize:vertical;min-height:76px;line-height:1.45}
+  .champ{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .choix{display:flex;gap:10px;align-items:center;min-height:34px}
+  .choix input{width:18px;height:18px;accent-color:var(--accent-fill);flex:none}
+  fieldset{border:0;margin:0;padding:0;min-width:0}
+  .oblig{color:var(--c-nc);font-weight:800;margin-left:3px}
+  [aria-invalid="true"]{border-color:var(--c-nc)!important;box-shadow:0 0 0 1px var(--c-nc)}
+
+  /* ---------- Sélecteurs segmentés (C / NC / NA, vues, support) ---------- */
+  .tags{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex:none;align-self:center;background:var(--surface)}
+  .tag{min-width:48px;min-height:36px;padding:0 12px;border:0;border-right:1px solid var(--border);background:transparent;color:var(--ink-soft);cursor:pointer;font-weight:800;font-size:13px}
+  .tag:last-child{border-right:0}
+  .tag:hover{background:var(--surface-alt);color:var(--ink)}
+  .tag[disabled]{cursor:not-allowed;opacity:.6}
+  .tag[aria-pressed="true"]{background:var(--accent-fill);color:var(--accent-fill-ink)}
+  .tag-c[aria-pressed="true"]{background:var(--c-conforme);color:var(--surface)}
+  .tag-nc[aria-pressed="true"]{background:var(--c-nc);color:var(--surface)}
+  .tag-na[aria-pressed="true"]{background:var(--c-na);color:var(--surface)}
+  .tag:focus-visible{outline-offset:-3px}
+
+  /* ---------- Interrupteurs ---------- */
+  .switch{position:relative;width:42px;height:24px;border-radius:var(--radius-pill);border:2px solid var(--ink-faint);background:var(--surface-alt);cursor:pointer;padding:0;vertical-align:middle;flex:none}
+  .switch .bouton{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--ink-faint)}
+  .switch[aria-checked="true"]{background:var(--accent-fill);border-color:var(--accent-fill)}
+  .switch[aria-checked="true"] .bouton{top:1px;left:19px;width:18px;height:18px;background:var(--accent-fill-ink)}
+  @media (prefers-reduced-motion: no-preference){ .switch .bouton{transition:left .15s,width .15s,height .15s,top .15s} }
+
+  /* ---------- Pastilles et étiquettes ---------- */
+  .pastille{display:inline-flex;align-items:center;justify-content:center;min-width:40px;padding:2px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:800;line-height:1.5;flex:none;white-space:nowrap}
+  .pastille-btn{border:1px solid currentColor;cursor:pointer;font:inherit;font-size:12px;font-weight:700}
+  .pastille-btn:hover{text-decoration:underline}
+  .s-C{background:var(--c-conforme-soft);color:var(--c-conforme)}
+  .s-NC{background:var(--c-nc-soft);color:var(--c-nc)}
+  .s-NT{background:var(--c-nt-soft);color:var(--c-nt)}
+  .s-NA{background:var(--c-na-soft);color:var(--c-na)}
+  .s-AC{background:var(--c-nt-soft);color:var(--c-nt);outline:1px dashed var(--c-nt);outline-offset:-1px}
+  .s-NOTE{background:var(--surface-alt);color:var(--ink-soft);border:1px solid var(--border)}
+  .etiq{display:inline-flex;align-items:center;padding:1px 8px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:700;background:var(--c-ref);color:var(--c-ref-ink);white-space:nowrap}
+  .etiq-ref{background:var(--surface-alt);color:var(--ink-soft);border:1px solid var(--border);font-family:var(--mono);font-weight:600}
+  .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
+  .grav{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--ink-soft)}
+  .grav::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex:none}
+  .grav-critique::before{background:var(--c-nc)}
+  .grav-serieux::before{background:var(--c-nt)}
+  h3 .grav{margin-left:8px;vertical-align:middle}
+
+  /* ---------- Menu, fenêtre, message ---------- */
   .menu{position:relative}
-  .menu-liste{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px;min-width:260px;display:flex;flex-direction:column;z-index:20;box-shadow:var(--shadow-pop)}
+  .menu-liste{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius);padding:6px;min-width:270px;display:flex;flex-direction:column;z-index:20;box-shadow:var(--shadow-pop)}
   .menu-liste button{text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer}
   .menu-liste button:hover{background:var(--accent-soft)}
+  dialog{border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;max-width:760px;width:calc(100% - 32px);background:var(--surface-raised);color:var(--ink);box-shadow:var(--shadow-pop)}
+  dialog::backdrop{background:rgba(10,15,20,.55)}
+  .dlg{padding:24px;display:flex;flex-direction:column;gap:14px;max-height:82vh;overflow:auto}
+  .dlg h2{font-size:19px}
+  #statut{position:fixed;right:24px;bottom:24px;background:var(--ink);color:var(--surface);padding:12px 16px;border-radius:var(--radius);max-width:min(440px,calc(100% - 48px));z-index:40;font-weight:600;font-size:14px;box-shadow:var(--shadow-pop)}
+  #statut.erreur{background:var(--c-nc);color:var(--surface)}
 
-  .page{max-width:1440px;margin:0 auto;padding:20px 24px 48px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
-  main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
-  aside.aide{flex:1 1 280px;max-width:340px;position:sticky;top:calc(var(--barre-h, 130px) + 20px);max-height:calc(100vh - var(--barre-h, 130px) - 40px);overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
-  html{scroll-padding-top:calc(var(--barre-h, 130px) + 16px)}
-  aside.aide h2{margin:0;font-size:16px}
-  aside.aide h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
-  aside.aide p{margin:0}
+  /* ---------- Panneau des étapes ---------- */
+  aside.aide{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 48px);overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+  aside.aide h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
+  aside.aide p{font-size:14.5px}
   aside.aide:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  .parcours-court{display:flex;flex-direction:column;gap:6px}
+  .parcours-court{display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border-soft)}
   .parcours-court .points{display:flex;gap:5px;flex-wrap:wrap}
-  .parcours-court .points i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink-faint);background:var(--surface)}
+  .parcours-court .points i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink-faint);background:transparent}
   .parcours-court .points i.fait{background:var(--c-conforme);border-color:var(--c-conforme)}
-  .parcours-court .points i.ici{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
-  .parcours-court .en-cours{font-weight:700}
-  .nav-parcours{gap:8px;flex-wrap:wrap}
-  .lien-parcours{align-self:flex-start;background:none;border:0;padding:4px 0;color:var(--accent);font:inherit;font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-  .lien-parcours:hover{text-decoration-thickness:2px}
+  .parcours-court .points i.ici{background:var(--accent-fill);border-color:var(--accent-fill);box-shadow:0 0 0 2px var(--accent-soft)}
+  .parcours-court .en-cours{font-weight:700;line-height:1.35}
+  .nav-parcours{gap:8px}
   .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-  .parcours .phase{display:flex;flex-direction:column;gap:6px;padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
+  .parcours .phase{padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
   .parcours .phase:first-child{padding-top:0}
-  .parcours .phase b{text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink)}
-  .prog{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-weight:600;font-size:12px}
-  .prog span.barre-prog{flex:1;height:6px;border-radius:99px;background:var(--border-soft);overflow:hidden}
-  .prog span.barre-prog i{display:block;height:100%;background:var(--c-conforme);border-radius:99px}
   .parcours .pas-li{position:relative}
   .parcours .pas-li:not(.fin)::after{content:"";position:absolute;left:21px;top:40px;bottom:-6px;width:2px;background:var(--border);border-radius:2px}
   .parcours .pas-li.ok:not(.fin)::after{background:var(--c-conforme)}
-  .parcours button,.parcours span.pas{position:relative;z-index:1;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:none;border:0;border-radius:12px;padding:6px 8px;min-height:46px}
+  .parcours button,.parcours span.pas{position:relative;z-index:1;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:none;border:0;border-radius:10px;padding:6px 8px;min-height:46px}
   .parcours button{cursor:pointer}
   .parcours button:hover{background:var(--surface-alt)}
   .parcours .lib{display:flex;flex-direction:column;line-height:1.25}
   .parcours .lib small{font-size:12px;color:var(--ink-soft);font-weight:500}
-  .parcours .rond{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--ink-soft)}
+  .parcours .rond{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface-raised);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--ink-soft)}
   .parcours .rond svg{width:15px;height:15px}
   .parcours .fait .rond{background:var(--c-conforme);border-color:var(--c-conforme);color:var(--surface)}
   .parcours .ici{background:var(--accent-soft)}
   .parcours .ici .lib{font-weight:800;color:var(--accent)}
-  .parcours .ici .rond{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 4px var(--accent-soft),0 0 0 6px var(--accent)}
+  .parcours .ici .rond{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-fill-ink);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 5px var(--accent-fill)}
   @media (prefers-reduced-motion: no-preference){ .parcours .ici .rond{transition:box-shadow .2s} }
 
-  h1{margin:0;font-size:24px;text-wrap:balance}
-  h2{font-size:16px;font-weight:800;margin:0}
-  .carte{background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
-  .pile{display:flex;flex-direction:column;gap:12px}
-  .rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .entre{justify-content:space-between}
-  .doux{color:var(--ink-soft)}
-  .petit{font-size:13px}
-  .btn{min-height:44px;padding:0 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-weight:600}
-  .btn:hover{border-color:var(--accent)}
-  .btn-p{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
-  .btn-p:hover{filter:brightness(1.06)}
-  .btn-l{border-color:var(--accent);color:var(--accent)}
-  .btn-d{border-style:dashed}
-  .btn-s{min-height:36px;padding:0 10px;font-size:13px}
-  .btn-danger{border-color:var(--c-nc);color:var(--c-nc)}
-  .btn[disabled]{opacity:.5;cursor:not-allowed}
-  label.lbl,.lbl{font-weight:700;font-size:13px;color:var(--ink-soft)}
-  input[type=text],select,textarea{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:9px 12px;min-height:44px;width:100%}
-  textarea{resize:vertical;min-height:72px}
-  .champ{display:flex;flex-direction:column;gap:4px;min-width:0}
-  .grille2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-  .choix{display:flex;gap:10px;align-items:center;min-height:36px}
-  .choix input{width:18px;height:18px;accent-color:var(--accent);flex:none}
-
-  .tuile-bloc{display:flex;flex-direction:column;gap:8px}
-  .tuile-bloc .tuile{flex:1}
-  .tuile-bloc .btn-danger{align-self:flex-start}
-  .sous-titre-form{margin:6px 0 -4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border-top:1px solid var(--border);padding-top:12px}
-  .tags.tags-resultat{align-self:flex-start}
-  .pied-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
-  .form-modif{outline:2px solid var(--accent);outline-offset:2px}
-  .ico{width:16px;height:16px;flex:none;margin-right:6px}
-  .btn{display:inline-flex;align-items:center;justify-content:center}
-  .consigne summary{cursor:pointer;font-weight:700;color:var(--accent)}
-  .consigne textarea{width:100%;font-size:12.5px;font-family:ui-monospace,Menlo,Consolas,monospace}
-  .sugg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
-  .sugg:empty{display:none}
-  .pastille-btn{border:0;cursor:pointer;font:inherit;font-size:11.5px;font-weight:800;text-decoration:underline;text-underline-offset:2px}
-  .oblig{color:var(--c-nc);font-weight:800;margin-left:3px}
-  [aria-invalid="true"]{border-color:var(--c-nc) !important;box-shadow:0 0 0 1px var(--c-nc)}
-  .prefixe-projet{font-weight:800;white-space:nowrap}
-  .tuile-avenir{opacity:1;border-style:dashed;cursor:default;box-shadow:none}
-  .fonction-ligne{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 0;border-top:1px solid var(--border)}
-  .fonction-nom{flex:1 1 240px}
-  .fonction-ecrans{border:0;margin:0;padding:0 0 0 48px;display:flex;flex-wrap:wrap;gap:4px 18px;flex-basis:100%}
-  .coche{color:var(--c-conforme);font-weight:800;margin-right:6px}
-  .grav{display:inline-block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
-  .grav::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--ink-faint);vertical-align:1px}
-  .grav-critique::before{background:var(--c-nc)} .grav-serieux::before{background:var(--c-nt)}
-  h3 .grav{vertical-align:middle;margin:0 0 0 8px}
-  .ref-groupe{display:flex;flex-direction:column;gap:10px}
-  .ref-groupe h2{margin:8px 0 0;font-size:18px}
-  .ref-fiche{gap:6px}
-  @media print{
-    :root{color-scheme:light}
-    body{background:#fff !important}
-    .barre,aside.aide,.lien-evitement,.ref-tete button,.ref-outils,#statut{display:none !important}
-    .page{display:block;padding:0;max-width:none;zoom:.8}
-    .carte{box-shadow:none !important;border:1px solid #888 !important;background:#fff !important;break-inside:avoid;display:block !important;margin-bottom:10px}
-    .carte > * + *{margin-top:6px !important}
-    main,.ref-groupe{display:block !important}
-    .ref-groupe h2{break-after:avoid;margin:14px 0 8px !important}
-    main,main *{color:#000 !important}
-    a{text-decoration:underline}
-  }
-  .pastille{display:inline-flex;align-items:center;justify-content:center;min-width:40px;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:800;flex:none}
-  .s-C{background:var(--c-conforme-soft);color:var(--c-conforme)} .s-NC{background:var(--c-nc-soft);color:var(--c-nc)}
-  .s-NT{background:var(--c-nt-soft);color:var(--c-nt)} .s-NA{background:var(--c-na-soft);color:var(--c-na)}
-  .s-AC{background:var(--c-nt-soft);color:var(--c-nt);outline:1px dashed var(--c-nt);outline-offset:-1px}
-  .s-NOTE{background:var(--surface-alt);color:var(--ink-soft);border:1px solid var(--border)}
-  .etiq{display:inline-flex;padding:2px 8px;border-radius:99px;font-size:11.5px;font-weight:800;background:var(--c-ref);color:var(--c-ref-ink)}
-  .etiq-ref{background:var(--surface-alt);color:var(--ink-soft);border:1px solid var(--border);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-
-  /* Interrupteur à trois positions : une seule position allumée, les autres éteintes. */
-  .tags{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex:none;align-self:center}
-  .tag{min-width:48px;min-height:36px;padding:0 12px;border:0;border-right:1px solid var(--border);background:var(--surface);color:var(--ink-soft);cursor:pointer;font-weight:800;font-size:13px}
-  .tag:last-child{border-right:0}
-  .tag:hover{background:var(--surface-alt);color:var(--ink)}
-  .tag[disabled]{cursor:not-allowed}
-  .tag:not(.tag-c):not(.tag-nc):not(.tag-na)[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-  .tag-c[aria-pressed="true"]{background:var(--c-conforme);color:var(--accent-ink)}
-  .tag-nc[aria-pressed="true"]{background:var(--c-nc);color:var(--accent-ink)}
-  .tag-na[aria-pressed="true"]{background:var(--c-na);color:var(--accent-ink)}
-  .tag:focus-visible{outline-offset:-3px}
-
+  /* ---------- Onglet : cadre Saisie / Grille ---------- */
+  .titre-onglet{gap:12px}
+  .titre-onglet h1{margin-right:4px}
   .audit{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
-  .ecrans{flex:1 1 200px;max-width:250px;display:flex;flex-direction:column;gap:12px}
-  .ecrans .carte{padding:8px;display:flex;flex-direction:column;gap:2px}
-  .ecrans h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);padding:4px 8px}
-  .ecrans button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;background:none;border:0;border-radius:8px;padding:8px;min-height:40px;cursor:pointer}
-  .ecrans button:hover{background:var(--surface-alt)}
-  .ecrans button[aria-current="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
-  .ecrans .elt{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;font-size:14px}
   .centre{flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px}
-  .titre-onglet{margin-bottom:-4px}
-  h2.titre-ecran{font-size:22px}
-  th.col-ici{color:var(--accent)}
-  td.col-ici{background:var(--accent-soft)}
+  .ecrans{flex:1 1 200px;max-width:240px;display:flex;flex-direction:column;gap:12px}
+  .ecrans .carte{padding:8px;display:flex;flex-direction:column;gap:2px}
+  .ecrans h2{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);padding:6px 8px 4px}
+  .ecrans button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;background:none;border:0;border-radius:8px;padding:8px 10px;min-height:40px;cursor:pointer;line-height:1.3}
+  .ecrans button .petit{flex:none;white-space:nowrap;font-weight:700;font-size:12px}
+  .ecrans button:hover{background:var(--surface-alt)}
+  .ecrans button[aria-current="true"]{background:var(--accent-fill);color:var(--accent-fill-ink);font-weight:700}
+  .ecrans .carte > p{padding:4px 8px 8px;font-size:13px;color:var(--ink-soft)}
+  .elt{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 8px;font-size:14px}
+  h2.titre-ecran{font-size:21px}
+
+  /* ---------- Formulaire d'observation ---------- */
+  #form-obs{gap:14px}
+  .sous-titre-form{margin:4px 0 -4px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);border-top:1px solid var(--border-soft);padding-top:14px}
+  .form-modif{outline:2px solid var(--accent-fill);outline-offset:2px}
+  .pied-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border-soft);padding-top:14px}
+  .sugg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .sugg:empty{display:none}
+  .sugg-btn{min-height:30px;border-radius:var(--radius-pill);font-weight:600;white-space:normal;text-align:left}
+  .crit-choix{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto;border:1px solid var(--border-soft);border-radius:var(--radius);padding:6px 10px;background:var(--surface)}
+  .consigne summary{cursor:pointer;font-weight:700;color:var(--accent)}
+  .consigne textarea{font-size:12.5px;font-family:var(--mono)}
+
+  /* ---------- Observations ---------- */
   .obs{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border-soft)}
-  .obs:last-child{border-bottom:0}
-  .obs .corps{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .obs:last-child{border-bottom:0;padding-bottom:0}
+  .obs .pastille{min-width:52px;margin-top:1px}
+  .obs .corps{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
   .obs .texte{overflow-wrap:anywhere}
   .obs.invalide .texte{text-decoration:line-through;color:var(--ink-soft)}
-  .crit-choix{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto;border:1px solid var(--border-soft);border-radius:var(--radius);padding:6px 10px}
-  .ailleurs{border:1px dashed var(--c-ref);border-radius:var(--radius);padding:12px}
+  .obs > .rangee,.obs > .btn{flex:none}
 
+  /* ---------- Tableaux ---------- */
   .tableau{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface-raised);box-shadow:var(--shadow)}
   table{border-collapse:collapse;width:100%;font-size:14px}
   th,td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:left;vertical-align:top}
-  thead th{position:sticky;top:0;background:var(--surface-alt);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap}
+  thead th{position:sticky;top:0;background:var(--surface-alt);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap;vertical-align:bottom}
   tbody th{font-weight:400}
+  tbody tr:hover td,tbody tr:hover th{background:color-mix(in srgb, var(--surface-alt) 60%, transparent)}
   tr.theme th{background:var(--surface-alt);font-weight:800;font-size:13px}
-  .ref-btn{background:none;border:0;padding:0;cursor:pointer;color:var(--accent);font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-  td.statut{text-align:center;white-space:nowrap}
-  thead th.col-ecran{white-space:normal;text-align:center;min-width:72px;max-width:120px}
-  td.intitule{min-width:260px}
+  td.statut{text-align:center;white-space:nowrap;vertical-align:middle}
+  thead th.col-ecran{white-space:normal;text-align:center;min-width:64px;max-width:120px;text-transform:none;letter-spacing:0;font-size:12px;font-weight:700;overflow-wrap:break-word}
+  tbody th .ref-btn{white-space:normal}
+  td.statut .pastille{min-width:34px;padding:2px 8px}
+  th.col-ici{color:var(--accent)}
+  td.col-ici{background:var(--accent-soft)}
+  td.intitule{min-width:220px}
+  table.contenus-table{table-layout:fixed}
+  table.contenus-table th,table.contenus-table td{text-align:center;vertical-align:middle}
+  table.contenus-table th:first-child,table.contenus-table tbody th{text-align:left}
+  table.contenus-table thead th:first-child{width:28%}
+  table.contenus-table thead th{white-space:normal;overflow-wrap:break-word;hyphens:auto}
+  table.contenus-table thead th:not(:first-child){text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:700}
+  .carte .tableau{box-shadow:none}
 
-  .taux{display:flex;flex-wrap:wrap;gap:16px 48px;align-items:flex-end}
-  .taux .val{font-size:44px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
-  .taux .val.second{color:var(--ink-soft);font-size:32px}
-  .cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
-  .tuile{text-align:left;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:4px;cursor:pointer;min-height:140px}
+  /* ---------- Page Projet ---------- */
+  .modules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .tuile{text-align:left;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-height:130px}
   .tuile:hover{border-color:var(--accent)}
-  .tuile b{font-size:17px}
-  .tuile .val{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
-  .tuile.nouveau{border-style:dashed;border-color:var(--accent);color:var(--accent);font-weight:700;align-items:center;justify-content:center}
-  .ecran-ligne{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-soft)}
+  .tuile b{font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .modules .tuile b{color:var(--accent)}
+  .tuile .val{font-size:28px;font-weight:800;font-family:var(--mono);line-height:1.1}
+  .tuile-info{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:auto;padding-top:6px}
+  .tuile-avenir{border-style:dashed;cursor:default;box-shadow:none;background:transparent}
+  .tuile-avenir:hover{border-color:var(--border)}
+  .modules .tuile-avenir b{color:var(--ink-soft)}
+  .tuile-bloc{display:flex;flex-direction:column;gap:8px}
+  .tuile-bloc .tuile{flex:1}
+  .tuile-bloc .btn-danger{align-self:flex-start}
+  .liste-fonctions{display:flex;flex-direction:column}
+  .fonction-ligne{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--border-soft)}
+  .fonction-nom{font-weight:600}
+  .ajout-fonction input{flex:1 1 240px;width:auto}
+
+  /* ---------- Page de l'onglet (écrans) ---------- */
+  .ecran-ligne{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-soft)}
   .ecran-ligne:last-child{border-bottom:0}
   .ecran-ligne input[type=text]{flex:1 1 200px;width:auto}
-  .contenus{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}
-  .switch{position:relative;width:40px;height:24px;border-radius:99px;border:1px solid var(--ink-soft);background:var(--surface-alt);cursor:pointer;padding:0;vertical-align:middle;flex:none}
-  .switch .bouton{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--ink-soft);box-shadow:0 1px 2px rgba(0,0,0,.35)}
-  .switch[aria-checked="true"]{background:var(--accent);border-color:var(--accent)}
-  .switch[aria-checked="true"] .bouton{left:18px;background:var(--accent-ink)}
-  @media (prefers-reduced-motion: no-preference){ .switch .bouton{transition:left .15s} }
-  table.contenus-table th,table.contenus-table td{text-align:center}
-  table.contenus-table th:first-child,table.contenus-table tbody th{text-align:left}
-  /* Colonnes d'écrans de même largeur, quelle que soit la longueur de leur nom. */
-  table.contenus-table{table-layout:fixed;width:100%}
-  table.contenus-table thead th:first-child{width:28%}
-  table.contenus-table thead th{white-space:normal;overflow-wrap:break-word;hyphens:auto;vertical-align:bottom}
-  .puce{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:99px;padding:4px 12px;min-height:34px;cursor:pointer;font-size:13px;background:var(--surface)}
-  .puce[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+  .ecran-ligne .btn-danger{border-color:var(--border)}
+  .fonction-ecrans{padding:10px 0;border-top:1px solid var(--border-soft)}
+  .fonction-ecrans legend{float:left;width:100%;padding:0;margin-bottom:4px}
+  .fonction-ecrans legend + *{clear:both}
+  .fonction-ecrans .rangee{column-gap:20px}
 
-  dialog{border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;max-width:720px;width:calc(100% - 32px);background:var(--surface-raised);color:var(--ink);box-shadow:var(--shadow-pop)}
-  dialog::backdrop{background:rgba(10,15,20,.5)}
-  .dlg{padding:20px;display:flex;flex-direction:column;gap:14px;max-height:80vh;overflow:auto}
-  .dlg h2{font-size:19px}
-  #statut{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--surface-alt);padding:10px 16px;border-radius:var(--radius);max-width:min(560px,calc(100% - 32px));z-index:40;font-weight:600}
-  #statut.erreur{background:var(--c-nc);color:var(--surface)}
-  footer.pied{max-width:1440px;margin:0 auto;padding:0 24px 32px;font-size:12.5px;color:var(--ink-soft)}
-  @media (max-width:900px){ aside.aide{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1} }
-  /* Écran large : la page défile normalement ; l'en-tête, la colonne des écrans, l'aide et l'en-tête de la grille restent visibles. */
+  /* ---------- Résumé ---------- */
+  .taux{display:flex;flex-wrap:wrap;gap:20px 56px;align-items:flex-start}
+  .taux > div{display:flex;flex-direction:column;gap:4px;min-width:180px}
+  .taux .val{font-size:40px;font-weight:800;line-height:1.1;font-family:var(--mono);min-height:48px;display:flex;align-items:center}
+  .taux .val .pastille{font-family:var(--sans);font-size:15px}
+  .taux .val.second{color:var(--ink-soft);font-size:30px}
+
+  /* ---------- Référentiel ---------- */
+  .ref-groupe{display:flex;flex-direction:column;gap:12px}
+  .ref-groupe h2{margin:12px 0 0;font-size:19px}
+  .ref-fiche{gap:8px}
+
+  /* ---------- Impression (référentiel en PDF) ---------- */
+  @media print{
+    :root{color-scheme:light}
+    body{background:#fff!important}
+    .barre,aside.aide,.lien-evitement,.ref-tete button,.ref-outils,#statut,footer.pied{display:none!important}
+    .page{display:block;padding:0;max-width:none;zoom:.8}
+    .carte{box-shadow:none!important;border:1px solid #888!important;background:#fff!important;break-inside:avoid;display:block!important;margin-bottom:10px}
+    .carte > * + *{margin-top:6px!important}
+    main,.ref-groupe{display:block!important}
+    .ref-groupe h2{break-after:avoid;margin:14px 0 8px!important}
+    main,main *{color:#000!important}
+    a{text-decoration:underline}
+  }
+
+  /* ---------- Largeurs d'écran ---------- */
+  @media (max-width:900px){
+    aside.aide{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1}
+    .projet-champ{border-left:0;padding-left:0;flex-basis:100%}
+  }
+  /* Écran large : la page défile ; l'en-tête, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
-    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 20px);max-height:calc(100vh - var(--barre-h, 130px) - 40px);overflow-y:auto}
+    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 48px);overflow-y:auto}
     .tableau{overflow:visible}
     .tableau.large{overflow-x:auto}
     thead th{top:var(--barre-h, 130px);z-index:2}
+    .contenus-table thead th{position:static}
   }
   @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto!important} }
 </style>
@@ -308,10 +377,12 @@ RUXAWEB 2 : audit par observations.
 <a class="lien-evitement" href="#main">Aller au contenu</a>
 <header class="barre">
   <div class="barre-in">
-    <button class="marque" type="button" data-action="accueil">Atelier RUXAWEB<small>2.0</small></button>
-    <span class="prefixe-projet" aria-hidden="true">Projet A11Y -</span>
-    <label class="sr" for="audit-nom">Nom du projet (Projet A11Y)</label>
-    <input type="text" id="audit-nom" class="nom-audit" placeholder="Nom du projet (ex. Boutique en ligne)" autocomplete="off">
+    <button class="marque" type="button" data-action="accueil"><span class="marque-nom">RUXAWEB</span><small>Atelier d'audit · RAWeb 1.1 · 2.0</small></button>
+    <div class="projet-champ">
+      <span class="prefixe-projet" aria-hidden="true">Projet A11Y -</span>
+      <label class="sr" for="audit-nom">Nom du projet (Projet A11Y)</label>
+      <input type="text" id="audit-nom" class="nom-audit" placeholder="Nom du projet" autocomplete="off">
+    </div>
     <div class="tags" id="audit-support" role="group" aria-label="Support">
       <button type="button" class="tag" data-action="support" data-support="desktop">Ordinateur</button>
       <button type="button" class="tag" data-action="support" data-support="mobile">Mobile</button>
@@ -472,9 +543,9 @@ RUXAWEB 2 : audit par observations.
   var ETAPE = {}; ETAPES.forEach(function(e, i){ e.i = i; ETAPE[e.id] = e; });
 
   var AIDE = {
-    accueil:{faire:"Crée un onglet par objet audité : un audit simple sur 3 à 5 écrans (accueil, écran avec formulaire, écran au contenu particulier), ou un scénario qui suit un enchaînement d'écrans.",
+    accueil:{faire:"Nomme le projet, active ses fonctions primaires, puis crée un onglet par objet audité : un audit simple sur 3 à 5 écrans, ou un scénario qui suit un enchaînement d'écrans.",
       chercher:"Chaque onglet a son propre taux. Le taux sélection SIP se lit à côté d'un audit simplifié du SIP ; le taux élargi ajoute 6 critères hors sélection."},
-    preparer:{faire:"Nomme les écrans et indique ce que chacun contient. Les critères liés à un contenu absent passent non applicables (NA).",
+    preparer:{faire:"Nomme les écrans, coche ceux où apparaît chaque fonction primaire et indique ce que chacun contient. Les critères liés à un contenu absent passent non applicables (NA).",
       chercher:"Le reste des critères forme le périmètre : chacun devra recevoir un statut, rien n'est conforme par défaut."},
     grille:{faire:"Les statuts viennent des observations. Ouvre un critère pour lire comment le vérifier, le poser C ou NA sans observation, voir ses observations ou le retester.",
       chercher:"Pointillés : conforme ailleurs, à confirmer sur cet écran. Un critère reste NT tant qu'aucune observation ni aucun choix C, NC ou NA ne le définit."},
@@ -601,13 +672,13 @@ RUXAWEB 2 : audit par observations.
     var o = onglet();
     if(state.vue !== 'accueil' && state.vue !== 'referentiel' && !o){ state.vue = 'accueil'; }
     // Ligne des onglets : un bouton par onglet de l'audit, avec son état, plus le tableau de bord et l'ajout.
-    $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="accueil"'+(state.vue === 'accueil' ? ' aria-current="page"' : '')+' style="justify-content:center"><b>Tableau de bord</b></button>' +
+    $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="accueil"'+(state.vue === 'accueil' ? ' aria-current="page"' : '')+'><b>Projet</b><span>'+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</span></button>' +
       state.onglets.map(function(x){
         var t = taux(x, SELECTION), te = taux(x, RAWEB);
         var etat = t.complet ? t.pct+' % sélection SIP' : criteresATrancher(x).length+' à définir';
         var ici = state.vue !== 'accueil' && state.vue !== 'referentiel' && x.id === state.ongletId;
         return '<button type="button" class="onglet-tab" data-action="ouvrir" data-id="'+x.id+'"'+(ici ? ' aria-current="page"' : '')+'><b>'+esc(x.nom)+'</b><span>'+(x.type === 'scenario' ? 'Scénario' : 'Audit simple')+' · '+esc(etat)+'</span></button>';
-      }).join('') + '<button type="button" class="onglet-tab ajout" data-action="nouvel-onglet">+ Nouvel onglet</button>';
+      }).join('') + '<button type="button" class="onglet-tab ajout" data-action="projet-nouveau">+ Nouvel onglet</button>';
     var nomAudit = document.getElementById('audit-nom'); if(nomAudit && document.activeElement !== nomAudit) nomAudit.value = state.auditNom || '';
     var bRef = document.getElementById('btn-ref'); if(state.vue === 'referentiel') bRef.setAttribute('aria-current', 'page'); else bRef.removeAttribute('aria-current');
     document.querySelectorAll('#audit-support .tag').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-support') === state.support)); });
@@ -708,24 +779,33 @@ RUXAWEB 2 : audit par observations.
     var arme = confirmation === 'onglet-'+o.id;
     return '<button type="button" class="btn btn-s btn-danger" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+ico('corbeille')+(arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet')+'</button>';
   }
+  // Page Projet : ce qui concerne le projet entier (onglets, nouvel onglet, fonctions primaires).
+  function tuilesModules(){
+    return '<div class="modules">' +
+      '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="rapide"><b>Audit simple</b><span class="doux">3 à 5 écrans : accueil, formulaire, contenu particulier. Taux sélection SIP et taux élargi.</span></button>' +
+      '<div class="tuile tuile-avenir"><b>Audit complet <span class="pastille s-NT">à venir</span></b><span class="doux">Les 136 critères du RAWeb 1.1, en vue d\'une déclaration d\'accessibilité.</span></div>' +
+      '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="scenario"><b>Scénario</b><span class="doux">Un enchaînement d\'écrans (achat, souscription), avec la lecture UX/POUR. Taux sélection SIP.</span></button></div>';
+  }
   function vueAccueil(){
-    var html = '<h1 class="sr">Tableau de bord</h1>';
-    if(!state.onglets.length){
-      return html + '<div class="vide"><p>Commence par choisir ce que tu audites. Tu pourras ajouter d\'autres onglets ensuite.</p><div class="vide-choix">' +
-        '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="rapide"><b>Audit simple</b><span class="doux">3 à 5 écrans : accueil, formulaire, contenu particulier. Taux sélection SIP et taux élargi.</span></button>' +
-        '<div class="tuile tuile-avenir"><b>Audit complet <span class="pastille s-NT">à venir</span></b><span class="doux">Les 136 critères du RAWeb 1.1, en vue d\'une déclaration d\'accessibilité.</span></div>' +
-        '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="scenario"><b>Scénario</b><span class="doux">Un enchaînement d\'écrans (achat, souscription), avec la lecture UX/POUR. Taux sélection SIP.</span></button>' +
-        '</div></div>';
+    var html = '<div class="tete-page"><h1>Projet A11Y - '+esc(state.auditNom || 'sans nom')+'</h1><p class="doux">'+(state.support === 'mobile' ? 'Web mobile' : 'Ordinateur')+' · '+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</p></div>';
+    if(state.onglets.length){
+      html += '<section class="pile" aria-labelledby="t-onglets"><h2 id="t-onglets">Onglets</h2><div class="cartes">';
+      state.onglets.forEach(function(o){
+        var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresATrancher(o).length;
+        var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %')+'</span>'
+          : '<span class="pastille s-NT">'+n+' critère'+(n > 1 ? 's' : '')+' à définir</span>';
+        if(o.type === 'scenario'){ var u = scoreUx(o); if(u.pct != null) info += '<span class="doux petit">POUR/UX '+u.pct+' %</span>'; }
+        html += '<div class="tuile-bloc"><button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux petit">'+(o.type === 'scenario' ? 'Scénario' : 'Audit simple')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span><span class="tuile-info">'+info+'</span></button>'+boutonSupprOnglet(o)+'</div>';
+      });
+      html += '</div></section>';
     }
-    html += '<div class="cartes">';
-    state.onglets.forEach(function(o){
-      var t = taux(o, SELECTION), te = taux(o, RAWEB);
-      var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %')+'</span>'
-        : '<span class="pastille s-NT" style="align-self:flex-start;margin-top:6px">'+criteresATrancher(o).length+' critère'+(criteresATrancher(o).length > 1 ? 's' : '')+' à définir</span>';
-      if(o.type === 'scenario'){ var u = scoreUx(o); if(u.pct != null) info += '<span class="doux petit">POUR/UX '+u.pct+' %</span>'; }
-      html += '<div class="tuile-bloc"><button type="button" class="tuile" data-action="ouvrir" data-id="'+o.id+'"><b>'+esc(o.nom)+'</b><span class="doux">'+(o.type === 'scenario' ? 'Scénario' : 'Audit simple')+' · '+o.ecrans.length+' écran'+(o.ecrans.length > 1 ? 's' : '')+(o.valide ? ' · validé' : '')+'</span>'+info+'</button>'+boutonSupprOnglet(o)+'</div>';
-    });
-    html += '</div>';
+    html += '<section class="pile" aria-labelledby="t-nouveau"><h2 id="t-nouveau" tabindex="-1">'+(state.onglets.length ? 'Nouvel onglet' : 'Commence par choisir ce que tu audites')+'</h2>'+tuilesModules()+'</section>';
+    html += '<section class="carte pile" aria-labelledby="t-fonctions"><div><h2 id="t-fonctions">Fonctions primaires</h2><p class="doux petit">Active celles que le site propose. Une fonction se teste une fois pour tout le projet, à chaque étape avant les écrans ; dans chaque onglet, « Gérer les écrans » dit sur quels écrans elle apparaît.</p></div>' +
+      '<div class="liste-fonctions">' + fonctions().map(function(f){
+        return '<div class="fonction-ligne"><button type="button" role="switch" class="switch" aria-checked="'+f.presente+'" data-action="fonction-presente" data-id="'+f.id+'" aria-label="'+esc(f.nom)+'"><span class="bouton" aria-hidden="true"></span></button>' +
+          '<span class="fonction-nom">'+esc(f.nom)+'</span><span class="fonction-etat doux petit">'+esc(etatFonction(f))+'</span></div>';
+      }).join('') + '</div>' +
+      '<div class="rangee ajout-fonction"><label class="sr" for="fonction-nouvelle">Autre fonction primaire</label><input type="text" id="fonction-nouvelle" placeholder="Autre fonction (ex. Bandeau cookies)" autocomplete="off"><button type="button" class="btn btn-s" data-action="fonction-ajout">+ Ajouter</button></div></section>';
     return html;
   }
 
@@ -743,15 +823,13 @@ RUXAWEB 2 : audit par observations.
         (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') + '</div>';
     });
     html += '</div><div class="rangee entre">'+(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT ? '<span class="doux petit">5 écrans au plus pour un audit simple.</span>' : '<button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button>')+'<span class="doux petit">'+(o.type === 'scenario' ? mini+' écrans au moins.' : mini+' à '+MAX_AUDIT+' écrans.')+'</span></div></section>';
-    // Configurateur des fonctions primaires : au niveau du projet ; ici, les écrans de cet onglet où chacune apparaît.
-    html += '<section class="carte pile" aria-labelledby="t-fonctions"><h2 id="t-fonctions">Fonctions primaires du projet</h2><p class="doux petit" style="margin:0">Active celles que le site propose, puis coche les écrans de cet onglet où elles apparaissent. Une fonction se teste une fois pour tout le projet, à chaque étape avant les écrans.</p>' +
-      fonctions().map(function(f){
+    // Fonctions primaires : activées sur la page Projet ; ici, les écrans de cet onglet où chacune apparaît.
+    var actives = fonctions().filter(function(f){ return f.presente; });
+    html += '<section class="carte pile" aria-labelledby="t-fonctions-onglet"><div class="rangee entre"><h2 id="t-fonctions-onglet">Fonctions primaires sur ces écrans</h2><button type="button" class="btn btn-s" data-action="accueil-fonctions">Gérer les fonctions du projet</button></div>' +
+      (actives.length ? actives.map(function(f){
         var ecrs = ecransFonction(o, f.id);
-        return '<div class="fonction-ligne"><button type="button" role="switch" class="switch" aria-checked="'+f.presente+'" data-action="fonction-presente" data-id="'+f.id+'" aria-label="'+esc(f.nom)+'"><span class="bouton" aria-hidden="true"></span></button>' +
-          '<span class="fonction-nom"><b>'+esc(f.nom)+'</b> <span class="doux petit">'+esc(etatFonction(f))+'</span></span>' +
-          (f.presente ? '<fieldset class="fonction-ecrans"><legend class="sr">Écrans de cet onglet avec '+esc(f.nom)+'</legend>' + o.ecrans.map(function(e){ return '<label class="choix"><input type="checkbox" data-fonction-ecran="'+f.id+'" value="'+e.id+'"'+(ecrs.indexOf(e.id) > -1 ? ' checked' : '')+'> '+esc(e.nom)+'</label>'; }).join('') + '</fieldset>' : '') + '</div>';
-      }).join('') +
-      '<div class="rangee"><label class="sr" for="fonction-nouvelle">Autre fonction primaire</label><input type="text" id="fonction-nouvelle" placeholder="Autre fonction (ex. Bandeau cookies)" autocomplete="off" style="flex:1 1 220px;width:auto"><button type="button" class="btn btn-s" data-action="fonction-ajout">+ Ajouter</button></div></section>';
+        return '<fieldset class="fonction-ecrans"><legend><b>'+esc(f.nom)+'</b> <span class="doux petit">'+esc(etatFonction(f))+'</span></legend><div class="rangee">' + o.ecrans.map(function(e){ return '<label class="choix"><input type="checkbox" data-fonction-ecran="'+f.id+'" value="'+e.id+'"'+(ecrs.indexOf(e.id) > -1 ? ' checked' : '')+'> '+esc(e.nom)+'</label>'; }).join('') + '</div></fieldset>';
+      }).join('') : '<p class="doux">Aucune fonction primaire active. Active-les sur la page Projet : navigation principale, recherche, pied de page...</p>') + '</section>';
     // Contenu des écrans : un interrupteur par contenu et par écran. Activé : l'écran contient ce contenu.
     html += '<section class="carte pile" aria-labelledby="t-contenus"><h2 id="t-contenus">Contenu des écrans</h2><div class="tableau" style="border:0"><table class="contenus-table"><thead><tr><th scope="col">L\'écran contient</th>' +
       o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>' + DECLENCHEURS.map(function(d){
@@ -1423,6 +1501,7 @@ RUXAWEB 2 : audit par observations.
   function nouvelOnglet(type){
     var n = state.onglets.length + 1, sc = type === 'scenario';
     var o = {id:uid(), nom:(sc ? 'Scénario ' : 'Audit ')+n, type:sc ? 'scenario' : 'rapide', ecrans:['Accueil','Écran avec formulaire','Écran au contenu particulier'].map(function(nom){ return {id:uid(), nom:nom, contenus:{}, etapes:{}}; }), obs:[], valide:false};
+    o.fonctionsEcrans = {}; fonctions().forEach(function(f){ if(f.presente) o.fonctionsEcrans[f.id] = o.ecrans.map(function(x){ return x.id; }); });
     state.onglets.push(o); state.ongletId = o.id; state.ecranId = o.ecrans[0].id; state.etape = 'vide'; state.vue = 'preparer';
   }
   function enregistrerObs(){
@@ -1486,6 +1565,11 @@ RUXAWEB 2 : audit par observations.
       return;
     }
     if(a === 'accueil'){ state.vue = 'accueil'; rendre(true); }
+    else if(a === 'projet-nouveau' || a === 'accueil-fonctions'){
+      state.vue = 'accueil'; rendre();
+      var cible = document.getElementById(a === 'projet-nouveau' ? 't-nouveau' : 't-fonctions');
+      if(cible){ cible.setAttribute('tabindex', '-1'); cible.focus(); cible.scrollIntoView({block:'start'}); }
+    }
     else if(a === 'referentiel'){ state.vue = 'referentiel'; rendre(true); }
     else if(a === 'imprimer-ref'){ window.print(); }
     else if(a === 'nouvel-onglet'){ nouvelOnglet(b.getAttribute('data-type')); rendre(true); }
@@ -1572,8 +1656,8 @@ RUXAWEB 2 : audit par observations.
     }
     else if(a === 'fonction-presente'){
       var fp = fonctionDe(b.getAttribute('data-id')); fp.presente = !fp.presente;
-      o.fonctionsEcrans = o.fonctionsEcrans || {};
-      if(fp.presente && !ecransFonction(o, fp.id).length) o.fonctionsEcrans[fp.id] = o.ecrans.map(function(x){ return x.id; });
+      // Activée : par défaut sur tous les écrans de chaque onglet (à décocher dans « Gérer les écrans »).
+      if(fp.presente) state.onglets.forEach(function(x){ x.fonctionsEcrans = x.fonctionsEcrans || {}; if(!ecransFonction(x, fp.id).length) x.fonctionsEcrans[fp.id] = x.ecrans.map(function(y){ return y.id; }); });
       state.onglets.forEach(function(x){ x.valide = false; });
       rendre(); var bf = document.querySelector('[data-action="fonction-presente"][data-id="'+fp.id+'"]'); if(bf) bf.focus();
     }
@@ -1582,8 +1666,8 @@ RUXAWEB 2 : audit par observations.
       if(!nomF){ message('Écris le nom de la fonction à ajouter.', true); inF.focus(); return; }
       if(fonctions().some(function(x){ return cleNom(x.nom) === cleNom(nomF); })){ message('Cette fonction existe déjà.', true); inF.focus(); return; }
       var nf = {id:'f'+uid(), nom:nomF, presente:true, etapes:{}}; fonctions().push(nf);
-      o.fonctionsEcrans = o.fonctionsEcrans || {}; o.fonctionsEcrans[nf.id] = o.ecrans.map(function(x){ return x.id; });
-      rendre(); message('Fonction « '+nomF+' » ajoutée, sur tous les écrans de cet onglet.');
+      state.onglets.forEach(function(x){ x.fonctionsEcrans = x.fonctionsEcrans || {}; x.fonctionsEcrans[nf.id] = x.ecrans.map(function(y){ return y.id; }); });
+      rendre(); message('Fonction « '+nomF+' » ajoutée et active, sur tous les écrans de chaque onglet.');
       var bn = document.querySelector('[data-action="fonction-presente"][data-id="'+nf.id+'"]'); if(bn) bn.focus();
     }
     else if(a === 'contenu'){ var ec = ecranDe(o, b.getAttribute('data-ecran')); ec.contenus = ec.contenus || {}; var d = b.getAttribute('data-d'); ec.contenus[d] = !ec.contenus[d]; o.valide = false; rendre(); var bc = document.querySelector('[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus(); }
