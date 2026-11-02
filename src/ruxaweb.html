@@ -551,7 +551,7 @@ RUXAWEB 2 : audit par observations.
   var PRIORITE = {critique:'Highest', serieux:'High', modere:'Medium', mineur:'Low'};
   var RANG_GRAVITE = {critique:0, serieux:1, modere:2, mineur:3};
 
-  // Parcours d'audit : préparer, puis le tour à vide et les 4 étapes, chacune sur tous les écrans, puis clôture et résumé.
+  // Étapes de test : préparer, puis le tour à vide et les 4 étapes, chacune sur tous les écrans, puis clôture et résumé.
   var ETAPES = [
     {id:'vide', nom:'Tour à vide', outil:'sans outil', familles:[],
      faire:"Parcours l'écran comme un utilisateur, sans outil ni lecteur d'écran. Note ce qui gêne ou surprend. Lance aussi l'import axe ou Lighthouse : ses pistes restent rangées et apparaîtront à l'étape où chaque critère se vérifie.",
@@ -605,7 +605,6 @@ RUXAWEB 2 : audit par observations.
   function esc(v){ return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function onglet(){ return state.onglets.filter(function(o){ return o.id === state.ongletId; })[0] || null; }
   function ecranDe(o, id){ return o.ecrans.filter(function(e){ return e.id === id; })[0] || null; }
-  // Deux noms d'élément qui ne diffèrent que par la casse, les accents ou les espaces désignent le même élément.
   // Icônes (boutons et panneau des étapes) : décoratives, le libellé porte le sens.
   var ICO = {
     "fichier": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>",
@@ -624,6 +623,7 @@ RUXAWEB 2 : audit par observations.
     "etape-ux": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6\"/>"
   };
   function ico(n){ return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+ICO[n]+'</svg>'; }
+  // Deux noms d'élément qui ne diffèrent que par la casse, les accents ou les espaces désignent le même élément.
   function cleNom(n){ return String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
   function nomExistant(o, n){
     var k = cleNom(n); if(!k) return '';
@@ -711,6 +711,220 @@ RUXAWEB 2 : audit par observations.
     return CRITERES.filter(function(c){ var s = statutEcran(o, e, c).s; return s === 'NT' || s === 'AC'; }).length;
   }
 
+  // ---------- Suggestions par mots-clés ----------
+  function normTexte(t){ return ' ' + String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`"«»]/g, ' ').replace(/\s+/g, ' ').trim() + ' '; }
+  function scoreMots(t, mots){
+    var sc = 0;
+    (mots || []).forEach(function(m){
+      if(/[\s\-.%]/.test(m)){ if(t.indexOf(m) > -1) sc += 2; }
+      else if(new RegExp('[^a-z0-9]' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)) sc += 1;
+    });
+    return sc;
+  }
+  // Points de contrôle dont les mots-clés apparaissent dans le texte, du plus probable au moins probable.
+  function suggerer(texte){
+    var t = normTexte(texte);
+    return SYMPTOMES.map(function(sy){
+      var el = -1, best = 0;
+      sy.selon.forEach(function(x, i){ var v = scoreMots(t, x.mots); if(v > best){ best = v; el = i; } });
+      return {s:sy, score:scoreMots(t, sy.mots), element:el};
+    }).filter(function(r){ return r.score > 0; }).sort(function(a, b){ return b.score - a.score; });
+  }
+  // Sous le champ Observation : les points de contrôle que suggèrent les mots déjà écrits, à choisir d'un clic.
+  function htmlSuggestions(texte){
+    var l = suggerer(texte).filter(function(r){ return r.s.id !== brouillon.point; }).slice(0, 3);
+    if(!l.length) return '';
+    return '<span class="doux petit">Suggestions :</span>' + l.map(function(r){
+      var cs = criteresSuggestion(r).map(function(id){ return PAR_ID[id].ref || 'BP'; });
+      return '<button type="button" class="btn btn-s sugg-btn" data-action="sugg" data-point="'+r.s.id+'" data-element="'+(r.element > -1 ? r.element : '')+'">'+esc(r.s.controle)+(r.element > -1 ? ' · '+esc(r.s.selon[r.element].element) : '')+(cs.length ? '<span class="doux">&nbsp;('+esc(cs.join(', '))+')</span>' : '')+'</button>';
+    }).join('');
+  }
+  function criteresSuggestion(r){
+    var l = r.s.criteres.slice(); if(r.element > -1) l = l.concat(r.s.selon[r.element].criteres);
+    return l.filter(function(id, i){ return l.indexOf(id) === i; });
+  }
+
+  // ---------- Collage d'observations (écrites à la main ou converties par une IA) ----------
+  // Une ligne par observation : statut | élément | observation | point de contrôle. Seule l'observation est obligatoire.
+  // Une ligne « Écran : Nom » fait passer les lignes suivantes sur cet écran.
+  function trouverPoint(txt){
+    var m = /^(.*?)\s*(?:\((.*)\))?\s*$/.exec(String(txt || '').trim()); if(!m) return null;
+    var nom = cleNom(m[1]).replace(/[’']/g, ' ');
+    var sy = SYMPTOMES.filter(function(x){ return cleNom(x.controle).replace(/[’']/g, ' ') === nom || x.id === m[1].trim(); })[0];
+    if(!sy) return null;
+    var idx = -1;
+    if(m[2]){ var ty = cleNom(m[2]); sy.selon.forEach(function(x, i){ var el = cleNom(x.element); if(idx === -1 && (el.indexOf(ty) > -1 || ty.indexOf(el) > -1)) idx = i; }); }
+    return {s:sy, element:idx};
+  }
+  function lireCollage(texte, o, eDefaut){
+    var pistes = [], erreurs = [], e = eDefaut;
+    var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; });
+    String(texte || '').split(/\r?\n/).forEach(function(brut, n){
+      var l = brut.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').replace(/`/g, '').trim();
+      if(!l || /^(statut\s*\|)/i.test(l)) return;
+      var me = /^(?:#+\s*)?(?:écran|ecran|screen)\s*:\s*(.+)$/i.exec(l);
+      if(me){
+        var nom = cleNom(me[1]), trouve = o.ecrans.filter(function(x){ return cleNom(x.nom) === nom; })[0];
+        if(trouve) e = trouve; else erreurs.push('ligne '+(n+1)+' : écran « '+me[1].trim()+' » inconnu');
+        return;
+      }
+      var champs = l.split('|').map(function(x){ return x.trim(); });
+      if(champs[0] === '') champs.shift(); if(champs.length && champs[champs.length - 1] === '') champs.pop();
+      var tag = 'nc', mt = /^#?(c|nc|na|conforme|non conforme|non applicable)$/i.exec(champs[0] || '');
+      if(mt){ var v = mt[1].toLowerCase(); tag = v === 'conforme' ? 'c' : v === 'non conforme' ? 'nc' : v === 'non applicable' ? 'na' : v; champs.shift(); }
+      var crits = [], inconnus = [];
+      if(champs.length > 1 && /^(?:\d{1,2}\.\d{1,2}\s*(?:[,;]\s*|\s+|$))*$/.test(champs[champs.length - 1])){
+        champs.pop().split(/[,;\s]+/).filter(Boolean).forEach(function(r){ if(refs[r]) crits.push(refs[r]); else inconnus.push(r); });
+      }
+      var point = null;
+      if(!crits.length && champs.length > 1){ point = trouverPoint(champs[champs.length - 1]); if(point){ champs.pop(); crits = criteresSuggestion(point); } }
+      var element = champs.length > 1 ? champs.shift() : '';
+      var obs = champs.join(' | ').trim();
+      if(!obs){ erreurs.push('ligne '+(n+1)+' : observation vide'); return; }
+      if(inconnus.length) erreurs.push('ligne '+(n+1)+' : critère'+(inconnus.length > 1 ? 's' : '')+' inconnu'+(inconnus.length > 1 ? 's' : '')+' '+inconnus.join(', '));
+      var propose = false;
+      if(!crits.length && !point){ var sg = suggerer(obs + ' ' + element)[0]; if(sg){ point = sg; crits = criteresSuggestion(sg); propose = true; } }
+      pistes.push({id:uid(), ecran:e.id, outil:'Collage', source:'collage', regle:'', type:tag === 'nc' ? 'violation' : 'note', tag:tag, titre:obs, element:element, nb:1, exemples:[], criteres:crits, propose:propose,
+        point:point ? point.s.id : '', typeElement:point && point.element > -1 ? String(point.element) : '', etat:'ouvert'});
+    });
+    return {pistes:pistes, erreurs:erreurs};
+  }
+  // Consigne à donner à une IA (Copilot ou autre) pour convertir des notes libres au format du collage.
+  function consigneIA(o){
+    var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : 'les écrans de ton audit';
+    return 'Tu aides un auditeur d\'accessibilité web (RAWeb 1.1, Luxembourg). Transforme ses notes en lignes, une par observation, au format exact :\n' +
+      'statut | élément | observation | point de contrôle\n\n' +
+      'Règles :\n' +
+      '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
+      '- élément : type et libellé, par exemple button "Payer", ou le nom d\'un élément répété, par exemple Menu principal ; laisse vide si aucun\n' +
+      '- observation : une phrase claire, fidèle aux notes, sans rien inventer\n' +
+      '- point de contrôle : recopie exactement un nom de la liste ci-dessous ; s\'il indique des types, ajoute le type entre parenthèses, par exemple Présence d\'un nom (lien) ; laisse vide si aucun ne convient\n' +
+      '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
+      '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme\n\n' +
+      'Exemple :\nÉcran : Accueil\nNC | Menu principal | On ne voit pas le focus en tabulant dans le menu. | Visibilité du focus\nNC | link "En savoir plus" | Les liens « En savoir plus » sont identiques hors contexte. | Pertinence du nom (lien)\n\n' +
+      'Points de contrôle :\n' + SYMPTOMES.map(function(x){ return '- ' + x.controle + ' : ' + x.symptome + (x.selon.length ? ' ; types : ' + x.selon.map(function(y){ return y.element; }).join(', ') : ''); }).join('\n') +
+      '\n\nMes notes :\n[colle tes notes ici]';
+  }
+
+  function blocConsigne(o, id){
+    return '<details class="consigne"><summary>Consigne pour une IA (Copilot ou autre)</summary>' +
+      '<p class="marge-v-8 doux petit">Copie cette consigne dans l\'IA, ajoute tes notes à la fin, puis colle ici les lignes qu\'elle rend. Vérifie toujours les critères proposés.</p>' +
+      '<label class="sr" for="'+id+'">Consigne</label><textarea id="'+id+'" rows="6" readonly>'+esc(consigneIA(o))+'</textarea>' +
+      '<div class="ecart-haut-8"><button type="button" class="btn btn-s" data-action="copier-consigne" data-cible="'+id+'">'+ico('copier')+'Copier la consigne</button></div></details>';
+  }
+  function ouvrirCollage(){
+    var o = onglet(), e = ecranDe(o, state.ecranId);
+    var html = '<div class="rangee entre"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
+      '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | point de contrôle</code>. Le dernier champ accepte aussi des numéros de critères (<code>10.7, 11.9</code>). Seule l\'observation est obligatoire ; sinon, l\'outil propose un point de contrôle d\'après les mots. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
+      '<p class="sans-marge doux petit">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | Visibilité du focus</code></p>' +
+      '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller<span class="oblig" aria-hidden="true">*</span></label><textarea id="coller-texte" rows="8" aria-required="true" placeholder="NC | button &quot;Payer&quot; | Le bouton n\'a pas de nom. | Présence d\'un nom (bouton de formulaire)"></textarea></div>' +
+      blocConsigne(o, 'consigne-dlg') +
+      '<div class="rangee entre"><span class="doux petit">Les lignes deviennent des pistes à vérifier : rien ne compte avant de les reprendre.</span><button type="button" class="btn btn-p" data-action="coller-ok">'+ico('valider')+'Ajouter aux pistes</button></div>';
+    document.getElementById('dlg-corps').innerHTML = html;
+    var d = document.getElementById('dlg'); if(!d.open) d.showModal();
+    document.getElementById('coller-texte').focus();
+  }
+
+
+
+  // ---------- Import axe ou Lighthouse ----------
+  // Lecture d'un rapport : axe-core (axe.run ou CLI, un objet ou un tableau) ou Lighthouse (rapport JSON).
+  function lireRapport(j){
+    var res = [], outil = '';
+    function sc(tags){ return (tags || []).map(function(t){ var m = /^wcag(\d)(\d)(\d+)$/.exec(t); return m ? m[1]+'.'+m[2]+'.'+m[3] : null; }).filter(Boolean); }
+    function axe(r){
+      outil = 'axe-core ' + ((r.testEngine || {}).version || '');
+      [['violations','violation'],['incomplete','incomplet']].forEach(function(p){
+        (r[p[0]] || []).forEach(function(v){
+          res.push({regle:v.id, type:p[1], titre:v.help || v.description || v.id, wcag:sc(v.tags), noeuds:(v.nodes || []).map(function(n){ return [].concat(n.target || []).join(' '); })});
+        });
+      });
+    }
+    // Export de l'extension axe DevTools (Chrome) : une liste d'anomalies à plat, une ligne par élément.
+    function extension(liste, version){
+      outil = 'axe DevTools' + (version ? ' (axe-core ' + version + ')' : '');
+      var parRegle = {};
+      liste.forEach(function(i){
+        var regle = i.ruleId || i.rule || i.ruleID || i.id;
+        if(!regle || i.isIgnored === true) return;
+        var statut = String(i.status || i.result || '').toLowerCase();
+        if(/pass|réussi|inapplicable/.test(statut)) return;
+        var type = (i.needsReview === true || i.isManual === true || /review|manual|incomplet|vérifier/.test(statut)) ? 'incomplet' : 'violation';
+        var k = type + '|' + regle;
+        if(!parRegle[k]){ parRegle[k] = {regle:regle, type:type, titre:i.help || i.description || i.summary || regle, wcag:sc(i.tags), noeuds:[]}; res.push(parRegle[k]); }
+        var cible = i.selector || i.target || i.selectors || i.element || '';
+        parRegle[k].noeuds.push([].concat(cible).join(' '));
+      });
+    }
+    function listeExtension(o, prof){
+      if(!o || typeof o !== 'object' || prof > 4) return null;
+      if(Array.isArray(o)) return (o.length && o.every(function(x){ return x && typeof x === 'object' && (x.ruleId || x.ruleID || x.rule); })) ? o : null;
+      for(var c in o){ var t = listeExtension(o[c], prof + 1); if(t) return t; }
+      return null;
+    }
+    var plate;
+    if(Array.isArray(j) && j.some(function(r){ return r && r.violations; })) j.forEach(function(r){ if(r && r.violations) axe(r); });
+    else if(j && j.violations) axe(j);
+    else if((plate = (j && Array.isArray(j.allIssues)) ? j.allIssues : listeExtension(j, 0))) extension(plate, j.axeVersion || j.engineVersion || (j.testEngine || {}).version);
+    else if(j && j.audits && j.categories && j.categories.accessibility){
+      outil = 'Lighthouse ' + (j.lighthouseVersion || '');
+      j.categories.accessibility.auditRefs.forEach(function(ref){
+        var a = j.audits[ref.id];
+        if(!a || a.scoreDisplayMode !== 'binary' || a.score !== 0) return;
+        var items = (a.details && a.details.items) || [];
+        res.push({regle:a.id, type:'violation', titre:a.title || a.id, wcag:[], noeuds:items.map(function(it){ return (it.node && (it.node.selector || it.node.nodeLabel)) || ''; })});
+      });
+    }
+    else return null;
+    return {outil:outil.trim(), resultats:res};
+  }
+  function criteresRegle(r){
+    if(AXE_RAWEB[r.regle]) return AXE_RAWEB[r.regle].slice();
+    return RAWEB.filter(function(c){ return (c.wcag || []).some(function(w){ return r.wcag.indexOf(w.split(' ')[0]) > -1; }); }).map(function(c){ return c.id; });
+  }
+  // Export CSV de l'extension axe : une colonne de règle, et si possible sélecteur, description, revue manuelle.
+  function csvVersListe(texte){
+    texte = String(texte).replace(/^\ufeff/, '');
+    var prem = texte.split(/\r?\n/)[0] || '', sep = (prem.split(';').length > prem.split(',').length) ? ';' : ',';
+    var lignes = [], ligne = [], champ = '', guil = false;
+    for(var i = 0; i < texte.length; i++){
+      var ch = texte[i];
+      if(guil){ if(ch === '"'){ if(texte[i+1] === '"'){ champ += '"'; i++; } else guil = false; } else champ += ch; }
+      else if(ch === '"') guil = true;
+      else if(ch === sep){ ligne.push(champ); champ = ''; }
+      else if(ch === '\n' || ch === '\r'){ if(ch === '\r' && texte[i+1] === '\n') i++; ligne.push(champ); lignes.push(ligne); ligne = []; champ = ''; }
+      else champ += ch;
+    }
+    if(champ || ligne.length){ ligne.push(champ); lignes.push(ligne); }
+    if(lignes.length < 2) return null;
+    var tete = lignes[0].map(function(h){ return h.trim().toLowerCase(); });
+    function colonne(re){ for(var k = 0; k < tete.length; k++) if(re.test(tete[k])) return k; return -1; }
+    var cR = colonne(/rule|règle|regle/), cS = colonne(/selector|sélecteur|target|élément|element/), cD = colonne(/^help$|description|summary|issue|titre/), cV = colonne(/review|manual|revue|statut|status/), cT = colonne(/tags|wcag/);
+    if(cR < 0) return null;
+    return {issues: lignes.slice(1).filter(function(l){ return (l[cR] || '').trim(); }).map(function(l){
+      var v = cV > -1 ? (l[cV] || '').trim().toLowerCase() : '';
+      return {ruleId:l[cR].trim(), selector:cS > -1 ? l[cS] : '', help:cD > -1 ? l[cD] : '', tags:cT > -1 ? (l[cT] || '').split(/[\s,;|]+/) : [],
+        needsReview: /^(true|yes|oui|1)$/.test(v) || /review|manual|vérifier/.test(v), status: /pass/.test(v) ? 'pass' : ''};
+    })};
+  }
+  function importerRapport(texte){
+    var o = onglet(), e = ecranDe(o, state.ecranId), j;
+    try{ j = JSON.parse(texte); }catch(err){ j = csvVersListe(texte); }
+    if(!j){ message('Fichier illisible : choisis le rapport JSON ou CSV enregistré par axe, ou le rapport JSON de Lighthouse.', true); return; }
+    var r = lireRapport(j);
+    if(!r){ message('Ce fichier n\'est ni un rapport axe (axe-core ou extension axe DevTools) ni un rapport Lighthouse (catégorie accessibilité).', true); return; }
+    o.candidats = (o.candidats || []).filter(function(k){ return !(k.ecran === e.id && k.etat === 'ouvert' && k.source !== 'collage'); });
+    r.resultats.forEach(function(x){
+      var noeuds = x.noeuds.filter(Boolean);
+      o.candidats.push({id:uid(), ecran:e.id, outil:r.outil, regle:x.regle, type:x.type, titre:x.titre, nb:noeuds.length || 1, exemples:noeuds.slice(0, 3), criteres:criteresRegle(x), etat:'ouvert'});
+    });
+    var nv = r.resultats.filter(function(x){ return x.type === 'violation'; }).length, ni = r.resultats.length - nv;
+    rendre();
+    function nb(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
+    var parts = []; if(nv) parts.push(nb(nv, 'échec', 'échecs')); if(ni) parts.push(nb(ni, 'point à vérifier', 'points à vérifier'));
+    message(r.resultats.length ? r.outil+' : '+parts.join(' et ')+' sur '+e.nom+'. Les pistes apparaîtront à l\'étape où chaque critère se vérifie ; rien n\'est compté tant que tu ne les as pas reprises.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
+  }
+
   // ---------- Rendu ----------
   var $main = document.getElementById('main'), $etapes = document.getElementById('panneau-etapes'), $nav = document.getElementById('onglet-nav');
   var brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:'nc', nomPartage:'', ecransPartage:[], vers:'', candidat:null};
@@ -719,7 +933,7 @@ RUXAWEB 2 : audit par observations.
   function rendre(focus){
     var o = onglet();
     if(state.vue !== 'projet' && state.vue !== 'referentiel' && !o){ state.vue = 'projet'; }
-    // Ligne des onglets : un bouton par onglet de l'audit, avec son état, plus le tableau de bord et l'ajout.
+    // Ligne des onglets : la page Projet, puis un bouton par onglet avec son état, puis l'ajout d'un onglet.
     $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="projet"'+(state.vue === 'projet' ? ' aria-current="page"' : '')+'><b>Projet</b><span>'+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</span></button>' +
       state.onglets.map(function(x){
         var t = taux(x, SELECTION), te = taux(x, RAWEB);
@@ -742,8 +956,8 @@ RUXAWEB 2 : audit par observations.
     if(focus){ var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
   }
 
-  // Le panneau Parcours occupe toujours la même place et garde la même structure : le parcours, puis « À faire » et « À chercher ».
-  // Quand le panneau Parcours défile, il doit être atteignable au clavier pour faire défiler son contenu.
+  // Le panneau des étapes occupe toujours la même place et garde la même structure : les étapes, puis « À faire » et « À chercher ».
+  // Quand le panneau des étapes défile, il doit être atteignable au clavier pour faire défiler son contenu.
   function focusPanneauEtapes(){
     if($etapes.scrollHeight > $etapes.clientHeight + 1) $etapes.setAttribute('tabindex', '0');
     else $etapes.removeAttribute('tabindex');
@@ -778,7 +992,7 @@ RUXAWEB 2 : audit par observations.
     html += pas(ico('etape-cloture'), 'Clôture', 'définir les NT', state.vue === 'cloture', !!(o && o.valide), false, 'vue', ' data-vue="cloture"');
     html += pas(ico('etape-resume'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
     html += '</ol>';
-    // Parcours replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
+    // Panneau replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
     var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? (state.vue === 'projet' || state.vue === 'referentiel') : !!state.parcoursOuvert;
     var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
     var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '')+'</p>' : '';
@@ -819,6 +1033,7 @@ RUXAWEB 2 : audit par observations.
     var arme = confirmation === 'onglet-'+o.id;
     return '<button type="button" class="btn btn-s btn-danger" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+ico('corbeille')+(arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet')+'</button>';
   }
+  // ---------- Rendu : page Projet et page de l'onglet ----------
   // Page Projet : ce qui concerne le projet entier (onglets, nouvel onglet, fonctions primaires).
   function tuilesModules(){
     return '<div class="modules">' +
@@ -913,6 +1128,7 @@ RUXAWEB 2 : audit par observations.
     return l.filter(function(id, i){ return l.indexOf(id) === i; });
   }
 
+  // ---------- Rendu : étapes de test (vue Saisie) ----------
   // Cadre commun aux vues Saisie et Grille : titre de l'onglet, puis les écrans (colonne qui reste visible) et le contenu.
   // Ordre « étape d'abord » : une étape se fait sur tous les écrans de l'onglet avant de passer à la suivante.
   // À chaque étape, les fonctions primaires passent en premier, puis les écrans : ce sont les « cibles » de l'étape.
@@ -1012,7 +1228,6 @@ RUXAWEB 2 : audit par observations.
     liste = liste.filter(function(x){ return !(x.etape === 'cloture' && x.tag !== 'nc'); }).reverse();
     html += '<section class="carte" aria-labelledby="t-obs"><h2 id="t-obs">Observations de cet écran ('+liste.length+')</h2>' + (liste.length ? liste.map(function(x){ return ligneObs(o, x, e); }).join('') : '<p class="doux">Aucune observation pour l\'instant.</p>') +
       (cloture ? '<p class="marge-haut-8 doux petit">'+cloture+' statut(s) défini(s) sans observation (grille ou clôture) : voir la <button type="button" class="ref-btn" data-action="vue" data-vue="grille">grille</button>.</p>' : '') + '</section>';
-    // L'étape est faite sur cet écran : l'outil passe à l'écran suivant, puis à l'étape suivante quand tous les écrans sont faits.
     // Observations des fonctions primaires présentes sur cet écran : rappel, elles se modifient depuis la fonction.
     var lf = obsF().filter(function(x){ var f = fonctionDe(x.fonction); return f && f.presente && x.tag !== 'nt' && !obsFRemplacee(x) && ecransFonction(o, x.fonction).indexOf(e.id) > -1; });
     if(lf.length) html += '<section class="carte" aria-labelledby="t-obs-f"><h2 id="t-obs-f">Fonctions primaires sur cet écran ('+lf.length+')</h2>' + lf.map(function(x){
@@ -1049,218 +1264,7 @@ RUXAWEB 2 : audit par observations.
     }).join('') + '</section>';
   }
 
-  // ---------- Suggestions par mots-clés ----------
-  function normTexte(t){ return ' ' + String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`"«»]/g, ' ').replace(/\s+/g, ' ').trim() + ' '; }
-  function scoreMots(t, mots){
-    var sc = 0;
-    (mots || []).forEach(function(m){
-      if(/[\s\-.%]/.test(m)){ if(t.indexOf(m) > -1) sc += 2; }
-      else if(new RegExp('[^a-z0-9]' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)) sc += 1;
-    });
-    return sc;
-  }
-  // Points de contrôle dont les mots-clés apparaissent dans le texte, du plus probable au moins probable.
-  function suggerer(texte){
-    var t = normTexte(texte);
-    return SYMPTOMES.map(function(sy){
-      var el = -1, best = 0;
-      sy.selon.forEach(function(x, i){ var v = scoreMots(t, x.mots); if(v > best){ best = v; el = i; } });
-      return {s:sy, score:scoreMots(t, sy.mots), element:el};
-    }).filter(function(r){ return r.score > 0; }).sort(function(a, b){ return b.score - a.score; });
-  }
-  // Sous le champ Observation : les points de contrôle que suggèrent les mots déjà écrits, à choisir d'un clic.
-  function htmlSuggestions(texte){
-    var l = suggerer(texte).filter(function(r){ return r.s.id !== brouillon.point; }).slice(0, 3);
-    if(!l.length) return '';
-    return '<span class="doux petit">Suggestions :</span>' + l.map(function(r){
-      var cs = criteresSuggestion(r).map(function(id){ return PAR_ID[id].ref || 'BP'; });
-      return '<button type="button" class="btn btn-s sugg-btn" data-action="sugg" data-point="'+r.s.id+'" data-element="'+(r.element > -1 ? r.element : '')+'">'+esc(r.s.controle)+(r.element > -1 ? ' · '+esc(r.s.selon[r.element].element) : '')+(cs.length ? '<span class="doux">&nbsp;('+esc(cs.join(', '))+')</span>' : '')+'</button>';
-    }).join('');
-  }
-  function criteresSuggestion(r){
-    var l = r.s.criteres.slice(); if(r.element > -1) l = l.concat(r.s.selon[r.element].criteres);
-    return l.filter(function(id, i){ return l.indexOf(id) === i; });
-  }
-
-  // ---------- Collage d'observations (écrites à la main ou converties par une IA) ----------
-  // Une ligne par observation : statut | élément | observation | critères. Seule l'observation est obligatoire.
-  // Une ligne « Écran : Nom » fait passer les lignes suivantes sur cet écran.
-  function trouverPoint(txt){
-    var m = /^(.*?)\s*(?:\((.*)\))?\s*$/.exec(String(txt || '').trim()); if(!m) return null;
-    var nom = cleNom(m[1]).replace(/[’']/g, ' ');
-    var sy = SYMPTOMES.filter(function(x){ return cleNom(x.controle).replace(/[’']/g, ' ') === nom || x.id === m[1].trim(); })[0];
-    if(!sy) return null;
-    var idx = -1;
-    if(m[2]){ var ty = cleNom(m[2]); sy.selon.forEach(function(x, i){ var el = cleNom(x.element); if(idx === -1 && (el.indexOf(ty) > -1 || ty.indexOf(el) > -1)) idx = i; }); }
-    return {s:sy, element:idx};
-  }
-  function lireCollage(texte, o, eDefaut){
-    var pistes = [], erreurs = [], e = eDefaut;
-    var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; });
-    String(texte || '').split(/\r?\n/).forEach(function(brut, n){
-      var l = brut.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').replace(/`/g, '').trim();
-      if(!l || /^(statut\s*\|)/i.test(l)) return;
-      var me = /^(?:#+\s*)?(?:écran|ecran|screen)\s*:\s*(.+)$/i.exec(l);
-      if(me){
-        var nom = cleNom(me[1]), trouve = o.ecrans.filter(function(x){ return cleNom(x.nom) === nom; })[0];
-        if(trouve) e = trouve; else erreurs.push('ligne '+(n+1)+' : écran « '+me[1].trim()+' » inconnu');
-        return;
-      }
-      var champs = l.split('|').map(function(x){ return x.trim(); });
-      if(champs[0] === '') champs.shift(); if(champs.length && champs[champs.length - 1] === '') champs.pop();
-      var tag = 'nc', mt = /^#?(c|nc|na|conforme|non conforme|non applicable)$/i.exec(champs[0] || '');
-      if(mt){ var v = mt[1].toLowerCase(); tag = v === 'conforme' ? 'c' : v === 'non conforme' ? 'nc' : v === 'non applicable' ? 'na' : v; champs.shift(); }
-      var crits = [], inconnus = [];
-      if(champs.length > 1 && /^(?:\d{1,2}\.\d{1,2}\s*(?:[,;]\s*|\s+|$))*$/.test(champs[champs.length - 1])){
-        champs.pop().split(/[,;\s]+/).filter(Boolean).forEach(function(r){ if(refs[r]) crits.push(refs[r]); else inconnus.push(r); });
-      }
-      var point = null;
-      if(!crits.length && champs.length > 1){ point = trouverPoint(champs[champs.length - 1]); if(point){ champs.pop(); crits = criteresSuggestion(point); } }
-      var element = champs.length > 1 ? champs.shift() : '';
-      var obs = champs.join(' | ').trim();
-      if(!obs){ erreurs.push('ligne '+(n+1)+' : observation vide'); return; }
-      if(inconnus.length) erreurs.push('ligne '+(n+1)+' : critère'+(inconnus.length > 1 ? 's' : '')+' inconnu'+(inconnus.length > 1 ? 's' : '')+' '+inconnus.join(', '));
-      var propose = false;
-      if(!crits.length && !point){ var sg = suggerer(obs + ' ' + element)[0]; if(sg){ point = sg; crits = criteresSuggestion(sg); propose = true; } }
-      pistes.push({id:uid(), ecran:e.id, outil:'Collage', source:'collage', regle:'', type:tag === 'nc' ? 'violation' : 'note', tag:tag, titre:obs, element:element, nb:1, exemples:[], criteres:crits, propose:propose,
-        point:point ? point.s.id : '', typeElement:point && point.element > -1 ? String(point.element) : '', etat:'ouvert'});
-    });
-    return {pistes:pistes, erreurs:erreurs};
-  }
-  // Consigne à donner à une IA (Copilot ou autre) pour convertir des notes libres au format du collage.
-  function consigneIA(o){
-    var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : 'les écrans de ton audit';
-    return 'Tu aides un auditeur d\'accessibilité web (RAWeb 1.1, Luxembourg). Transforme ses notes en lignes, une par observation, au format exact :\n' +
-      'statut | élément | observation | point de contrôle\n\n' +
-      'Règles :\n' +
-      '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
-      '- élément : type et libellé, par exemple button "Payer", ou le nom d\'un élément répété, par exemple Menu principal ; laisse vide si aucun\n' +
-      '- observation : une phrase claire, fidèle aux notes, sans rien inventer\n' +
-      '- point de contrôle : recopie exactement un nom de la liste ci-dessous ; s\'il indique des types, ajoute le type entre parenthèses, par exemple Présence d\'un nom (lien) ; laisse vide si aucun ne convient\n' +
-      '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
-      '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme\n\n' +
-      'Exemple :\nÉcran : Accueil\nNC | Menu principal | On ne voit pas le focus en tabulant dans le menu. | Visibilité du focus\nNC | link "En savoir plus" | Les liens « En savoir plus » sont identiques hors contexte. | Pertinence du nom (lien)\n\n' +
-      'Points de contrôle :\n' + SYMPTOMES.map(function(x){ return '- ' + x.controle + ' : ' + x.symptome + (x.selon.length ? ' ; types : ' + x.selon.map(function(y){ return y.element; }).join(', ') : ''); }).join('\n') +
-      '\n\nMes notes :\n[colle tes notes ici]';
-  }
-
-  function blocConsigne(o, id){
-    return '<details class="consigne"><summary>Consigne pour une IA (Copilot ou autre)</summary>' +
-      '<p class="marge-v-8 doux petit">Copie cette consigne dans l\'IA, ajoute tes notes à la fin, puis colle ici les lignes qu\'elle rend. Vérifie toujours les critères proposés.</p>' +
-      '<label class="sr" for="'+id+'">Consigne</label><textarea id="'+id+'" rows="6" readonly>'+esc(consigneIA(o))+'</textarea>' +
-      '<div class="ecart-haut-8"><button type="button" class="btn btn-s" data-action="copier-consigne" data-cible="'+id+'">'+ico('copier')+'Copier la consigne</button></div></details>';
-  }
-  function ouvrirCollage(){
-    var o = onglet(), e = ecranDe(o, state.ecranId);
-    var html = '<div class="rangee entre"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
-      '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | point de contrôle</code>. Le dernier champ accepte aussi des numéros de critères (<code>10.7, 11.9</code>). Seule l\'observation est obligatoire ; sinon, l\'outil propose un point de contrôle d\'après les mots. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
-      '<p class="sans-marge doux petit">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | Visibilité du focus</code></p>' +
-      '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller<span class="oblig" aria-hidden="true">*</span></label><textarea id="coller-texte" rows="8" aria-required="true" placeholder="NC | button &quot;Payer&quot; | Le bouton n\'a pas de nom. | Présence d\'un nom (bouton de formulaire)"></textarea></div>' +
-      blocConsigne(o, 'consigne-dlg') +
-      '<div class="rangee entre"><span class="doux petit">Les lignes deviennent des pistes à vérifier : rien ne compte avant de les reprendre.</span><button type="button" class="btn btn-p" data-action="coller-ok">'+ico('valider')+'Ajouter aux pistes</button></div>';
-    document.getElementById('dlg-corps').innerHTML = html;
-    var d = document.getElementById('dlg'); if(!d.open) d.showModal();
-    document.getElementById('coller-texte').focus();
-  }
-
-
-  // Lecture d'un rapport : axe-core (axe.run ou CLI, un objet ou un tableau) ou Lighthouse (rapport JSON).
-  function lireRapport(j){
-    var res = [], outil = '';
-    function sc(tags){ return (tags || []).map(function(t){ var m = /^wcag(\d)(\d)(\d+)$/.exec(t); return m ? m[1]+'.'+m[2]+'.'+m[3] : null; }).filter(Boolean); }
-    function axe(r){
-      outil = 'axe-core ' + ((r.testEngine || {}).version || '');
-      [['violations','violation'],['incomplete','incomplet']].forEach(function(p){
-        (r[p[0]] || []).forEach(function(v){
-          res.push({regle:v.id, type:p[1], titre:v.help || v.description || v.id, wcag:sc(v.tags), noeuds:(v.nodes || []).map(function(n){ return [].concat(n.target || []).join(' '); })});
-        });
-      });
-    }
-    // Export de l'extension axe DevTools (Chrome) : une liste d'anomalies à plat, une ligne par élément.
-    function extension(liste, version){
-      outil = 'axe DevTools' + (version ? ' (axe-core ' + version + ')' : '');
-      var parRegle = {};
-      liste.forEach(function(i){
-        var regle = i.ruleId || i.rule || i.ruleID || i.id;
-        if(!regle || i.isIgnored === true) return;
-        var statut = String(i.status || i.result || '').toLowerCase();
-        if(/pass|réussi|inapplicable/.test(statut)) return;
-        var type = (i.needsReview === true || i.isManual === true || /review|manual|incomplet|vérifier/.test(statut)) ? 'incomplet' : 'violation';
-        var k = type + '|' + regle;
-        if(!parRegle[k]){ parRegle[k] = {regle:regle, type:type, titre:i.help || i.description || i.summary || regle, wcag:sc(i.tags), noeuds:[]}; res.push(parRegle[k]); }
-        var cible = i.selector || i.target || i.selectors || i.element || '';
-        parRegle[k].noeuds.push([].concat(cible).join(' '));
-      });
-    }
-    function listeExtension(o, prof){
-      if(!o || typeof o !== 'object' || prof > 4) return null;
-      if(Array.isArray(o)) return (o.length && o.every(function(x){ return x && typeof x === 'object' && (x.ruleId || x.ruleID || x.rule); })) ? o : null;
-      for(var c in o){ var t = listeExtension(o[c], prof + 1); if(t) return t; }
-      return null;
-    }
-    var plate;
-    if(Array.isArray(j) && j.some(function(r){ return r && r.violations; })) j.forEach(function(r){ if(r && r.violations) axe(r); });
-    else if(j && j.violations) axe(j);
-    else if((plate = (j && Array.isArray(j.allIssues)) ? j.allIssues : listeExtension(j, 0))) extension(plate, j.axeVersion || j.engineVersion || (j.testEngine || {}).version);
-    else if(j && j.audits && j.categories && j.categories.accessibility){
-      outil = 'Lighthouse ' + (j.lighthouseVersion || '');
-      j.categories.accessibility.auditRefs.forEach(function(ref){
-        var a = j.audits[ref.id];
-        if(!a || a.scoreDisplayMode !== 'binary' || a.score !== 0) return;
-        var items = (a.details && a.details.items) || [];
-        res.push({regle:a.id, type:'violation', titre:a.title || a.id, wcag:[], noeuds:items.map(function(it){ return (it.node && (it.node.selector || it.node.nodeLabel)) || ''; })});
-      });
-    }
-    else return null;
-    return {outil:outil.trim(), resultats:res};
-  }
-  function criteresRegle(r){
-    if(AXE_RAWEB[r.regle]) return AXE_RAWEB[r.regle].slice();
-    return RAWEB.filter(function(c){ return (c.wcag || []).some(function(w){ return r.wcag.indexOf(w.split(' ')[0]) > -1; }); }).map(function(c){ return c.id; });
-  }
-  // Export CSV de l'extension axe : une colonne de règle, et si possible sélecteur, description, revue manuelle.
-  function csvVersListe(texte){
-    texte = String(texte).replace(/^\ufeff/, '');
-    var prem = texte.split(/\r?\n/)[0] || '', sep = (prem.split(';').length > prem.split(',').length) ? ';' : ',';
-    var lignes = [], ligne = [], champ = '', guil = false;
-    for(var i = 0; i < texte.length; i++){
-      var ch = texte[i];
-      if(guil){ if(ch === '"'){ if(texte[i+1] === '"'){ champ += '"'; i++; } else guil = false; } else champ += ch; }
-      else if(ch === '"') guil = true;
-      else if(ch === sep){ ligne.push(champ); champ = ''; }
-      else if(ch === '\n' || ch === '\r'){ if(ch === '\r' && texte[i+1] === '\n') i++; ligne.push(champ); lignes.push(ligne); ligne = []; champ = ''; }
-      else champ += ch;
-    }
-    if(champ || ligne.length){ ligne.push(champ); lignes.push(ligne); }
-    if(lignes.length < 2) return null;
-    var tete = lignes[0].map(function(h){ return h.trim().toLowerCase(); });
-    function colonne(re){ for(var k = 0; k < tete.length; k++) if(re.test(tete[k])) return k; return -1; }
-    var cR = colonne(/rule|règle|regle/), cS = colonne(/selector|sélecteur|target|élément|element/), cD = colonne(/^help$|description|summary|issue|titre/), cV = colonne(/review|manual|revue|statut|status/), cT = colonne(/tags|wcag/);
-    if(cR < 0) return null;
-    return {issues: lignes.slice(1).filter(function(l){ return (l[cR] || '').trim(); }).map(function(l){
-      var v = cV > -1 ? (l[cV] || '').trim().toLowerCase() : '';
-      return {ruleId:l[cR].trim(), selector:cS > -1 ? l[cS] : '', help:cD > -1 ? l[cD] : '', tags:cT > -1 ? (l[cT] || '').split(/[\s,;|]+/) : [],
-        needsReview: /^(true|yes|oui|1)$/.test(v) || /review|manual|vérifier/.test(v), status: /pass/.test(v) ? 'pass' : ''};
-    })};
-  }
-  function importerRapport(texte){
-    var o = onglet(), e = ecranDe(o, state.ecranId), j;
-    try{ j = JSON.parse(texte); }catch(err){ j = csvVersListe(texte); }
-    if(!j){ message('Fichier illisible : choisis le rapport JSON ou CSV enregistré par axe, ou le rapport JSON de Lighthouse.', true); return; }
-    var r = lireRapport(j);
-    if(!r){ message('Ce fichier n\'est ni un rapport axe (axe-core ou extension axe DevTools) ni un rapport Lighthouse (catégorie accessibilité).', true); return; }
-    o.candidats = (o.candidats || []).filter(function(k){ return !(k.ecran === e.id && k.etat === 'ouvert' && k.source !== 'collage'); });
-    r.resultats.forEach(function(x){
-      var noeuds = x.noeuds.filter(Boolean);
-      o.candidats.push({id:uid(), ecran:e.id, outil:r.outil, regle:x.regle, type:x.type, titre:x.titre, nb:noeuds.length || 1, exemples:noeuds.slice(0, 3), criteres:criteresRegle(x), etat:'ouvert'});
-    });
-    var nv = r.resultats.filter(function(x){ return x.type === 'violation'; }).length, ni = r.resultats.length - nv;
-    rendre();
-    function nb(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
-    var parts = []; if(nv) parts.push(nb(nv, 'échec', 'échecs')); if(ni) parts.push(nb(ni, 'point à vérifier', 'points à vérifier'));
-    message(r.resultats.length ? r.outil+' : '+parts.join(' et ')+' sur '+e.nom+'. Les pistes apparaîtront à l\'étape où chaque critère se vérifie ; rien n\'est compté tant que tu ne les as pas reprises.' : r.outil+' : aucun échec détecté sur '+e.nom+'. Cela ne prouve aucune conformité.');
-  }
-
+  // ---------- Rendu : formulaire d'observation ----------
   // Récapitulatif au pied du formulaire : ce qui sera enregistré.
   function recapObs(e, f){
     var libRes = {nc:'Non conforme', c:'Conforme', na:'Non applicable'}[brouillon.tag] || '';
@@ -1334,6 +1338,7 @@ RUXAWEB 2 : audit par observations.
     return '<span class="pastille s-'+s+'"'+(titre ? ' title="'+titre+'"' : '')+'>'+lib+(conflit ? ' !' : '')+'</span>'+(s === 'AC' ? '<span class="sr"> (à confirmer)</span>' : '')+(conflit ? '<span class="sr"> (observations contradictoires)</span>' : '');
   }
 
+  // ---------- Rendu : grille et référentiel ----------
   // Regroupement des critères : thématiques officielles du RAWeb (triées par numéro) ou thèmes RUXAL.
   function groupesCriteres(officiel){
     var noms = [];
@@ -1397,6 +1402,7 @@ RUXAWEB 2 : audit par observations.
     o.ecrans.forEach(function(e){ CRITERES.forEach(function(c){ var s = statutEcran(o, e, c).s; if(s === 'NT' || s === 'AC') l.push({e:e, c:c, s:s}); }); });
     return l;
   }
+  // ---------- Rendu : clôture, résumé et fiche d'un critère ----------
   // Clôture critère par critère : un critère à la fois, avec sa consigne, pour définir le statut en connaissance de cause
   // plutôt que de valider une longue liste en série. « Conforme sur les écrans restants » reste un choix explicite.
   var clotureNc = null;
@@ -1495,8 +1501,7 @@ RUXAWEB 2 : audit par observations.
     return html;
   }
 
-  // Détail d'un critère : le seul endroit où figurent l'impact et la consigne de vérification.
-  // Fiche d'un critère, la même dans la grille (fenêtre) et à la clôture.
+  // Fiche d'un critère, la même dans la grille (fenêtre) et à la clôture : le seul endroit où figurent l'impact et la consigne de vérification.
   function infoCritere(c, niv, sansGravite){
     return '<p class="sans-marge"><b>'+esc(c.libelle)+'</b></p><p class="sans-marge doux petit">'+(c.horsRef ? 'Bonne pratique hors RAWeb, hors taux' : 'Niveau '+esc(c.niveau_wcag)+' · '+(c.horsSelection ? 'hors sélection SIP (taux élargi)' : 'sélection SIP'))+(sansGravite ? '' : ' · gravité '+GRAVITE[c.niveau])+(ETAPE[c.etape] ? ' · étape '+(c.etape === 'vide' ? '' : c.etape+' ')+ETAPE[c.etape].nom : '')+(c.siPresent ? ' · si présent : '+esc((DECLENCHEURS.filter(function(d){ return d.id === c.declencheur; })[0] || {}).libelle) : '')+'</p>' +
       '<'+niv+' class="marge-haut-4 lbl">Comment vérifier</'+niv+'><p class="sans-marge">'+esc(c.explication)+'</p>' +
@@ -1518,7 +1523,7 @@ RUXAWEB 2 : audit par observations.
     var d = document.getElementById('dlg'); if(!d.open) d.showModal();
   }
 
-  // ---------- Actions ----------
+  // ---------- Messages, focus et enregistrement des observations ----------
   function focusCloture(){ var h = document.getElementById('clo-titre') || $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus(); } }
   function message(txt, erreur){
     var s = document.getElementById('statut'); s.textContent = txt; s.className = erreur ? 'erreur' : ''; s.hidden = false;
@@ -1901,10 +1906,7 @@ RUXAWEB 2 : audit par observations.
     telecharger(nomFichier('grille','xlsx'), x); message('Grille des critères téléchargée (Excel).');
   }
   function csv(v){ var t = String(v == null ? '' : v); return /[,"\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; }
-  // Un ticket par observation non conforme encore valide (pas remplacé par un retest). Une observation qui vaut sur
-  // plusieurs écrans donne un seul ticket, qui les liste tous.
   function pluriel(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
-  // Mémoire des exports : un ticket déjà exporté ne repart pas, sauf demande « tout réexporter ».
   // Une ligne de ticket Jira (CSV) pour une observation non conforme ; objet et zone disent où elle se trouve.
   function ticketJira(x, objet, zone){
         var cs = x.criteres.map(function(id){ return PAR_ID[id]; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
@@ -1917,13 +1919,16 @@ RUXAWEB 2 : audit par observations.
         var labels = ['accessibilite', state.support === 'mobile' ? 'mobile-web' : 'desktop', cs[0].horsRef ? 'hors-raweb' : 'RAWeb-'+cs[0].ref, cs[0].theme_ruxal.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')];
         return [summary, desc, 'Task', PRIORITE[cs[0].niveau] || 'Medium'].concat(labels).map(csv).join(',');
   }
+  // Un ticket par observation non conforme encore valide (pas remplacée par un retest). Une observation qui vaut sur
+  // plusieurs écrans donne un seul ticket, qui les liste tous.
+  // Mémoire des exports : un ticket déjà exporté ne repart pas, sauf demande « tout réexporter ».
   function exporterJira(tout){
     var deja = state.exportesJira || [], nouveaux = [], ignores = 0;
     var lignes = [['Summary','Description','Issue Type','Priority','Labels','Labels','Labels','Labels'].map(csv).join(',')], n = 0;
     state.onglets.forEach(function(o){
       o.obs.forEach(function(x){
         if(x.tag !== 'nc' || !x.criteres.length) return;
-        // Une observation sort de l'export seulement s'il a été retesté sur tous les écrans qu'il touche.
+        // Une observation sort de l'export seulement si elle a été retestée sur tous les écrans qu'elle touche.
         var touches = [x.ecran].concat(x.partage ? x.partage.ecrans : []);
         var invalide = touches.every(function(eid){ return x.criteres.every(function(id){ return o.obs.some(function(y){ return y.tag === 'nt' && y.n > x.n && y.ecran === eid && y.criteres.indexOf(id) > -1; }); }); });
         if(invalide) return;
@@ -2003,7 +2008,8 @@ RUXAWEB 2 : audit par observations.
     ]);
   }
 
-  // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : l'aide se cale toujours dessous.
+  // ---------- Démarrage ----------
+  // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : le panneau des étapes, la colonne des écrans et l'en-tête de la grille se calent toujours dessous.
   (function(){
     var barre = document.querySelector('header.barre'), pied = document.querySelector('footer.pied');
     function caler(){
