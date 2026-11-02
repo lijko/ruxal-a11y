@@ -20,8 +20,8 @@ Les quatre niveaux reprennent ceux d'axe-core (*critical*, *serious*, *moderate*
 
 | Niveau | Repère | Priorité Jira |
 |---|---|---|
-| **Critique** | Empêche, pour au moins un groupe d'utilisateurs, d'accéder à une fonction ou à un contenu essentiel, sans contournement ; ou met la personne en danger (effets de flash). | Blocker |
-| **Sérieux** | Barrière forte : rend la tâche très difficile, et peut la bloquer selon le contexte. | Highest |
+| **Critique** | Empêche, pour au moins un groupe d'utilisateurs, d'accéder à une fonction ou à un contenu essentiel, sans contournement ; ou met la personne en danger (effets de flash). | Critical |
+| **Sérieux** | Barrière forte : rend la tâche très difficile, et peut la bloquer selon le contexte. | Major |
 | **Modéré** | Difficulté réelle, mais un contournement existe et l'essentiel reste accessible. | Medium |
 | **Mineur** | Gêne ou ralentissement, sans empêcher la tâche. | Minor |
 
