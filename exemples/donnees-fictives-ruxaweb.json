@@ -4,18 +4,18 @@
  "support": "desktop",
  "onglets": [
   {
-   "id": "mvwpiyjho1st0",
+   "id": "mvz3458ngbwl3",
    "nom": "Audit des pages clés",
    "type": "rapide",
    "ecrans": [
     {
-     "id": "mvwpiyjhgu67j",
+     "id": "mvz3458nwn2qr",
      "nom": "Accueil",
      "contenus": {},
      "etapes": {}
     },
     {
-     "id": "mvwpiyjhhl78n",
+     "id": "mvz3458n6w0d4",
      "nom": "Connexion",
      "contenus": {
       "formulaire": true
@@ -23,7 +23,7 @@
      "etapes": {}
     },
     {
-     "id": "mvwpiyjhp27tm",
+     "id": "mvz3458nxdeji",
      "nom": "Fiche produit",
      "contenus": {
       "image-complexe": true
@@ -33,9 +33,9 @@
    ],
    "obs": [
     {
-     "id": "mvwpizvk9w3s1",
+     "id": "mvz346i2cmm59",
      "n": 6,
-     "ecran": "mvwpiyjhgu67j",
+     "ecran": "mvz3458nwn2qr",
      "etape": "vide",
      "texte": "Le carrousel de promotions défile seul, sans bouton pause.",
      "attendu": "",
@@ -48,9 +48,9 @@
      "elementNom": "Carrousel promotions"
     },
     {
-     "id": "mvwpj0087kuog",
+     "id": "mvz346nljehhm",
      "n": 7,
-     "ecran": "mvwpiyjhgu67j",
+     "ecran": "mvz3458nwn2qr",
      "etape": "vide",
      "texte": "Texte gris clair sur fond blanc dans le bandeau « Livraison offerte », presque illisible.",
      "attendu": "Un contraste d'au moins 4,5:1.",
@@ -63,9 +63,9 @@
      "elementNom": "Bandeau livraison"
     },
     {
-     "id": "mvwpj03xcwqmj",
+     "id": "mvz346r9duz3o",
      "n": 8,
-     "ecran": "mvwpiyjhgu67j",
+     "ecran": "mvz3458nwn2qr",
      "etape": "vide",
      "texte": "Le titre de la page est « Accueil » sans le nom du site.",
      "attendu": "",
@@ -79,9 +79,9 @@
      "elementNom": ""
     },
     {
-     "id": "mvwpj0au9s40s",
+     "id": "mvz346yq0itrt",
      "n": 9,
-     "ecran": "mvwpiyjhhl78n",
+     "ecran": "mvz3458n6w0d4",
      "etape": "vide",
      "texte": "Le champ e-mail n'a pas d'étiquette, seulement un texte indicatif qui disparaît à la saisie.",
      "attendu": "Une étiquette visible « Adresse e-mail », liée au champ.",
@@ -95,9 +95,9 @@
      "elementNom": "input \"E-mail\""
     },
     {
-     "id": "mvwpj0ekbtbo5",
+     "id": "mvz3473b4u398",
      "n": 10,
-     "ecran": "mvwpiyjhhl78n",
+     "ecran": "mvz3458n6w0d4",
      "etape": "vide",
      "texte": "Le message « mot de passe incorrect » s'affiche mais n'est pas restitué par le lecteur d'écran.",
      "attendu": "",
@@ -111,9 +111,9 @@
      "elementNom": ""
     },
     {
-     "id": "mvwpj0lkksuc1",
+     "id": "mvz347a9l795e",
      "n": 11,
-     "ecran": "mvwpiyjhp27tm",
+     "ecran": "mvz3458nxdeji",
      "etape": "vide",
      "texte": "Le graphique des avis clients n'a pas de description détaillée.",
      "attendu": "",
@@ -127,9 +127,9 @@
      "elementNom": "Graphique des avis"
     },
     {
-     "id": "mvwpj0p83bo98",
+     "id": "mvz347dir5lkc",
      "n": 12,
-     "ecran": "mvwpiyjhp27tm",
+     "ecran": "mvz3458nxdeji",
      "etape": "vide",
      "texte": "Pas de tableau de données sur cet écran.",
      "attendu": "",
@@ -142,9 +142,9 @@
      "elementNom": ""
     },
     {
-     "id": "mvwpj0sift5fd",
+     "id": "mvz347gq00wbc",
      "n": 13,
-     "ecran": "mvwpiyjhp27tm",
+     "ecran": "mvz3458nxdeji",
      "etape": "vide",
      "texte": "Note : vérifier avec l'équipe si la zone « Vous aimerez aussi » est chargée après coup.",
      "attendu": "",
@@ -155,11 +155,11 @@
      "elementNom": ""
     },
     {
-     "id": "mvwpj0z1ux5c1",
+     "id": "mvz347nvh6j8r",
      "n": 14,
-     "ecran": "mvwpiyjhgu67j",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458nwn2qr",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -169,11 +169,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj0z1j68gw",
+     "id": "mvz347nvd9d0z",
      "n": 15,
-     "ecran": "mvwpiyjhhl78n",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458n6w0d4",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -183,11 +183,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj0z1cdn5y",
+     "id": "mvz347nvxibau",
      "n": 16,
-     "ecran": "mvwpiyjhp27tm",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458nxdeji",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -197,11 +197,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj146hnveo",
+     "id": "mvz347tbmonvs",
      "n": 17,
-     "ecran": "mvwpiyjhhl78n",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458n6w0d4",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -211,11 +211,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj146hbw4q",
+     "id": "mvz347tbxvssa",
      "n": 18,
-     "ecran": "mvwpiyjhp27tm",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458nxdeji",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -225,11 +225,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj19bz4gf0",
+     "id": "mvz347y0gvnzl",
      "n": 19,
-     "ecran": "mvwpiyjhgu67j",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458nwn2qr",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -239,11 +239,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj19bjy5ct",
+     "id": "mvz347y06wrid",
      "n": 20,
-     "ecran": "mvwpiyjhhl78n",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458n6w0d4",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -253,11 +253,11 @@
      "partage": null
     },
     {
-     "id": "mvwpj19b5uvdd",
+     "id": "mvz347y0mtdtt",
      "n": 21,
-     "ecran": "mvwpiyjhp27tm",
-     "etape": "cloture",
-     "texte": "Vérifié à la clôture",
+     "ecran": "mvz3458nxdeji",
+     "etape": "grille",
+     "texte": "",
      "attendu": "",
      "point": "",
      "criteres": [
@@ -270,39 +270,39 @@
    "valide": false,
    "fonctionsEcrans": {
     "nav": [
-     "mvwpiyjhgu67j",
-     "mvwpiyjhhl78n",
-     "mvwpiyjhp27tm"
+     "mvz3458nwn2qr",
+     "mvz3458n6w0d4",
+     "mvz3458nxdeji"
     ],
     "recherche": [
-     "mvwpiyjhgu67j",
-     "mvwpiyjhhl78n",
-     "mvwpiyjhp27tm"
+     "mvz3458nwn2qr",
+     "mvz3458n6w0d4",
+     "mvz3458nxdeji"
     ],
     "modale": [
-     "mvwpiyjhgu67j",
-     "mvwpiyjhhl78n"
+     "mvz3458nwn2qr",
+     "mvz3458n6w0d4"
     ],
     "pied": [
-     "mvwpiyjhgu67j",
-     "mvwpiyjhhl78n",
-     "mvwpiyjhp27tm"
+     "mvz3458nwn2qr",
+     "mvz3458n6w0d4",
+     "mvz3458nxdeji"
     ]
    }
   },
   {
-   "id": "mvwpj1dt2x1wu",
+   "id": "mvz3482hhluoe",
    "nom": "Achat d'un produit",
    "type": "scenario",
    "ecrans": [
     {
-     "id": "mvwpj1dt55rhu",
+     "id": "mvz3482h07mlj",
      "nom": "Panier",
      "contenus": {},
      "etapes": {}
     },
     {
-     "id": "mvwpj1dtju4w9",
+     "id": "mvz3482h1m4ym",
      "nom": "Livraison",
      "contenus": {
       "formulaire": true
@@ -310,7 +310,7 @@
      "etapes": {}
     },
     {
-     "id": "mvwpj1dtywu0w",
+     "id": "mvz3482h0lnk8",
      "nom": "Paiement",
      "contenus": {
       "formulaire": true
@@ -318,7 +318,7 @@
      "etapes": {}
     },
     {
-     "id": "mvwpj1g4s2vpn",
+     "id": "mvz3484coq7w6",
      "nom": "Confirmation",
      "contenus": {},
      "etapes": {}
@@ -326,9 +326,9 @@
    ],
    "obs": [
     {
-     "id": "mvwpj1uihgq1g",
+     "id": "mvz348fgo01m9",
      "n": 22,
-     "ecran": "mvwpj1dtju4w9",
+     "ecran": "mvz3482h1m4ym",
      "etape": "vide",
      "texte": "Après « Continuer », le focus reste sur le bouton au lieu de passer au titre de l'étape Paiement.",
      "attendu": "",
@@ -340,12 +340,12 @@
      "tag": "nc",
      "partage": null,
      "elementNom": "",
-     "vers": "mvwpj1dtywu0w"
+     "vers": "mvz3482h0lnk8"
     },
     {
-     "id": "mvwpj21vp09fz",
+     "id": "mvz348lykkfr6",
      "n": 23,
-     "ecran": "mvwpj1dtywu0w",
+     "ecran": "mvz3482h0lnk8",
      "etape": "vide",
      "texte": "La session expire au bout de 5 minutes sans avertissement, le panier est vidé.",
      "attendu": "Un avertissement avant expiration, avec la possibilité de prolonger.",
@@ -361,24 +361,24 @@
    "valide": false,
    "fonctionsEcrans": {
     "nav": [
-     "mvwpj1dt55rhu",
-     "mvwpj1dtju4w9",
-     "mvwpj1dtywu0w"
+     "mvz3482h07mlj",
+     "mvz3482h1m4ym",
+     "mvz3482h0lnk8"
     ],
     "recherche": [
-     "mvwpj1dt55rhu",
-     "mvwpj1dtju4w9",
-     "mvwpj1dtywu0w"
+     "mvz3482h07mlj",
+     "mvz3482h1m4ym",
+     "mvz3482h0lnk8"
     ],
     "modale": [
-     "mvwpj1dt55rhu",
-     "mvwpj1dtju4w9",
-     "mvwpj1dtywu0w"
+     "mvz3482h07mlj",
+     "mvz3482h1m4ym",
+     "mvz3482h0lnk8"
     ],
     "pied": [
-     "mvwpj1dt55rhu",
-     "mvwpj1dtju4w9",
-     "mvwpj1dtywu0w"
+     "mvz3482h07mlj",
+     "mvz3482h1m4ym",
+     "mvz3482h0lnk8"
     ]
    },
    "heuristiques": {
@@ -410,8 +410,8 @@
   }
  ],
  "vue": "ux",
- "ongletId": "mvwpj1dt2x1wu",
- "ecranId": "mvwpj1dtywu0w",
+ "ongletId": "mvz3482hhluoe",
+ "ecranId": "mvz3482h0lnk8",
  "etape": "vide",
  "compteur": 23,
  "exportesJira": [],
@@ -467,7 +467,7 @@
  ],
  "obsF": [
   {
-   "id": "mvwpiz07bgsxg",
+   "id": "mvz345mjqbpi9",
    "n": 1,
    "fonction": "nav",
    "etape": "vide",
@@ -482,7 +482,7 @@
    "partage": null
   },
   {
-   "id": "mvwpiz4cqsgw5",
+   "id": "mvz345qa13z98",
    "n": 2,
    "fonction": "nav",
    "etape": "vide",
@@ -497,7 +497,7 @@
    "partage": null
   },
   {
-   "id": "mvwpizbpp5rkb",
+   "id": "mvz345xnj099d",
    "n": 3,
    "fonction": "recherche",
    "etape": "vide",
@@ -512,7 +512,7 @@
    "partage": null
   },
   {
-   "id": "mvwpizipunlei",
+   "id": "mvz3464ki9t5l",
    "n": 4,
    "fonction": "pied",
    "etape": "vide",
@@ -527,7 +527,7 @@
    "partage": null
   },
   {
-   "id": "mvwpizp4ve28i",
+   "id": "mvz346bi3pkwh",
    "n": 5,
    "fonction": "modale",
    "etape": "vide",

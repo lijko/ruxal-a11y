@@ -315,6 +315,19 @@ def main():
         page.keyboard.press('Escape')
         page.wait_for_timeout(100)
         verifier('Clavier : retour sur la case à la fermeture', page.evaluate('document.activeElement.classList.contains("cel-btn")'))
+        verifier('État d\'interface jamais enregistré', page.evaluate('["ficheEcran","grilleFiltre","confirmation"].every(function(k){ return !(k in RUXAWEB.state()); })'))
+        # Sauvegarde 2.0 ou 2.1 : statuts de clôture et nom de partage normalisés à l'ouverture.
+        v20 = pathlib.Path(tempfile.mkdtemp()) / 'v20.json'
+        v20.write_text(json.dumps({'v': 2, 'auditNom': 'v20', 'support': 'desktop', 'vue': 'cloture', 'compteur': 2, 'exportesJira': [], 'grilleFiltre': 'definir',
+            'onglets': [{'id': 'oa', 'nom': 'A', 'type': 'rapide', 'valide': False, 'ecrans': [{'id': 'ea', 'nom': 'A', 'contenus': {}, 'etapes': {}}, {'id': 'eb', 'nom': 'B', 'contenus': {}, 'etapes': {}}],
+                'obs': [{'id': 'x1', 'n': 1, 'ecran': 'ea', 'etape': 'cloture', 'texte': 'Vérifié à la clôture', 'attendu': '', 'point': '', 'criteres': ['raweb-1-1'], 'tag': 'c', 'partage': None},
+                        {'id': 'x2', 'n': 2, 'ecran': 'ea', 'etape': '1', 'texte': 'Défaut', 'attendu': '', 'point': '', 'criteres': ['raweb-3-1'], 'tag': 'nc', 'partage': {'nom': 'Menu', 'ecrans': ['eb']}}]}]}), encoding='utf-8')
+        page.set_input_files('#fichier-import', str(v20))
+        page.wait_for_timeout(300)
+        ob = page.evaluate('RUXAWEB.state().onglets[0].obs')
+        verifier('Sauvegarde 2.0 : statut de clôture devenu statut de grille, sans texte figé', ob[0]['etape'] == 'grille' and ob[0]['texte'] == '')
+        verifier('Sauvegarde 2.0 : partage sans nom en double', ob[1]['partage'] == {'ecrans': ['eb']})
+        verifier('Sauvegarde 2.0 : état d\'interface retiré', 'grilleFiltre' not in page.evaluate('RUXAWEB.state()') and page.evaluate('RUXAWEB.state().vue') == 'projet')
         page.set_input_files('#fichier-import', str(s))  # retour au projet de test
         page.wait_for_timeout(300)
 

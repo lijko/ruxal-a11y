@@ -80,6 +80,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 | `data/criteres-raam.json` | 52 critères officiels du RAAM 1.1 (intitulés du SIP, non modifiés) ; 20 « si présent », chacun rattaché à un déclencheur ; étape de test de chaque critère | CC BY 3.0 LU |
 | `data/bonnes-pratiques.json` | 3 bonnes pratiques hors RAAM (hors taux), avec leur étape de test | CC BY 4.0 |
 | `data/themes-ruxal.json` | ordre, noms, descriptions (FR, EN) et critères RAAM et RAWeb des 7 thèmes RUXAL | CC BY 4.0 |
+| `docs/modele-donnees-ruxaweb.md` | modèle de données de RUXAWEB (projet, onglet, écran, observation) et ses règles | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
 | `data/criteres-raweb.json` | RUXAWEB : 52 critères officiels du RAWeb 1.1 (audit simplifié du SIP), plus 6 critères hors sélection (3.3, 7.1, 7.5, 9.3, 10.4, 13.11), comptés dans le taux élargi seulement (intitulés non modifiés) ; 24 « si présent » ; étape de test | CC BY 3.0 LU |
 | `data/bonnes-pratiques-web.json` | RUXAWEB : 3 bonnes pratiques hors RAWeb (hors taux) | CC BY 4.0 |
