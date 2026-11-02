@@ -92,6 +92,9 @@ RUXAWEB 2 : audit par observations.
   .petit{font-size:13px}
   .pile{display:flex;flex-direction:column;gap:12px}
   .rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .outils-grille{display:grid;grid-template-columns:max-content max-content 1fr;gap:10px 12px;align-items:center}
+  .outils-grille > .btn{justify-self:end;min-height:38px}
+  @media (max-width:640px){ .outils-grille{grid-template-columns:1fr} .outils-grille > span:empty{display:none} .outils-grille > .btn{justify-self:start} }
   .entre{justify-content:space-between}
   .espace{flex:1}
 
@@ -289,15 +292,17 @@ RUXAWEB 2 : audit par observations.
   tbody th{font-weight:400}
   tbody tr:hover td,tbody tr:hover th{background:color-mix(in srgb, var(--surface-alt) 60%, transparent)}
   tr.theme th{background:var(--surface-alt);font-weight:800;font-size:13px}
-  td.statut{text-align:center;white-space:nowrap;vertical-align:middle}
+  /* Toutes les cellules d'une ligne s'alignent sur la première ligne de texte : statuts en haut, comme le critère et l'intitulé. */
+  td.statut{text-align:center;white-space:nowrap;vertical-align:top;padding-top:6px}
+  td.statut > .pastille{margin-top:2px}
   thead th.col-ecran{white-space:normal;text-align:center;min-width:64px;max-width:120px;text-transform:none;letter-spacing:0;font-size:12px;font-weight:700;overflow-wrap:break-word}
-  tbody th .ref-btn{white-space:normal}
+  tbody th .ref-btn{white-space:nowrap}
   td.statut .pastille{min-width:34px;padding:2px 8px}
   th.col-ici{color:var(--accent)}
   td.col-ici{background:var(--accent-soft)}
   .col-resultat{border-left:2px solid var(--border)}
   thead th.col-resultat{font-weight:800}
-  .cel-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:1px solid transparent;border-radius:var(--radius-pill);padding:3px;cursor:pointer;font:inherit;color:inherit}
+  .cel-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:1px solid transparent;border-radius:var(--radius-pill);padding:1px 3px;cursor:pointer;font:inherit;color:inherit}
   .cel-btn:hover,.cel-btn:focus-visible{border-color:var(--accent)}
   .nb-obs{font-size:11px;font-weight:700;opacity:.8}
   .obs.cible-fiche{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
@@ -1428,10 +1433,10 @@ RUXAWEB 2 : audit par observations.
       return {th:th, cs:cs};
     }).filter(function(g){ return g.cs.length; });
   }
-  function boutonsRegroupement(){
+  function boutonsRegroupement(nu){
     var officiel = state.theming !== 'ruxal';
-    return '<div class="rangee"><span class="lbl" id="lbl-regroup">Regrouper par</span><div class="tags" role="group" aria-labelledby="lbl-regroup">' +
-      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="tag" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div></div>';
+    return (nu ? '' : '<div class="rangee">') + '<span class="lbl" id="lbl-regroup">Regrouper par</span><div class="tags" role="group" aria-labelledby="lbl-regroup">' +
+      [['officiel','Thématiques RAWeb'],['ruxal','Thèmes RUXAL']].map(function(v){ var on = (v[0] === 'officiel') === officiel; return '<button type="button" class="tag" data-action="theming" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') + '</div>' + (nu ? '' : '</div>');
   }
   // Référentiel : toutes les fiches, pour apprendre les critères ou les imprimer (PDF par l'impression du navigateur).
   function vueReferentiel(){
@@ -1460,10 +1465,11 @@ RUXAWEB 2 : audit par observations.
     var html = '<h2 class="sr">Grille des critères</h2>';
     var officiel = state.theming !== 'ruxal', filtre = state.grilleFiltre === 'definir';
     var nDef = criteresADefinir(o).length;
-    html += '<div class="rangee entre">' + boutonsRegroupement() +
-      '<div class="rangee"><span class="lbl" id="lbl-filtre">Afficher</span><div class="tags" role="group" aria-labelledby="lbl-filtre">' +
+    // Barre d'outils en grille : libellés dans une colonne, groupes de boutons alignés, Valider à droite.
+    html += '<div class="outils-grille">' + boutonsRegroupement(true) + '<span></span>' +
+      '<span class="lbl" id="lbl-filtre">Afficher</span><div class="tags" role="group" aria-labelledby="lbl-filtre">' +
         [['tous','Tous les critères'],['definir','À définir ('+nDef+')']].map(function(v){ var on = (v[0] === 'definir') === filtre; return '<button type="button" class="tag" data-action="grille-filtre" data-v="'+v[0]+'" aria-pressed="'+on+'">'+v[1]+'</button>'; }).join('') +
-      '</div><button type="button" class="btn btn-p" data-action="valider">'+(o.valide ? 'Onglet validé, voir le résumé' : 'Valider l\'onglet')+'</button></div></div>';
+      '</div><button type="button" class="btn btn-p" data-action="valider">'+(o.valide ? 'Onglet validé, voir le résumé' : 'Valider l\'onglet')+'</button></div>';
     html += '<p class="sans-marge doux petit">Clique sur une case pour définir son statut. Le chiffre compte les observations ; Résultat : le statut retenu pour l\'onglet.</p>';
     var groupes = groupesCriteres(officiel).map(function(g){
       return {th:g.th, cs:filtre ? g.cs.filter(function(c){ return o.ecrans.some(function(e){ var r = statutEcran(o, e, c).s; return r === 'NT' || r === 'AC'; }); }) : g.cs};
