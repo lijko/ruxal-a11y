@@ -602,6 +602,14 @@ def main():
             page.wait_for_timeout(80)
             tops[nom] = round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
         verifier('Panneau des étapes collé sous l\'en-tête jusqu\'en bas de page, sur toutes les vues', all(v >= 16 for v in tops.values()), tops)
+        # Défilement : colonnes latérales immobiles (même position, même hauteur) du haut au bas de la page.
+        page.locator('#onglet-nav .onglet-tab').nth(1).click()
+        pos = set()
+        for y in range(0, page.evaluate('document.body.scrollHeight'), 80):
+            page.evaluate('window.scrollTo(0, %d)' % y)
+            pos.add(page.evaluate('(function(){var a=document.getElementById("panneau-etapes").getBoundingClientRect(),e=document.querySelector("nav.ecrans").getBoundingClientRect();return [Math.round(a.top),Math.round(a.height),Math.round(e.top),Math.round(e.height)].join(",")})()'))
+        verifier('Défilement : panneau des étapes et colonne des écrans sans saut', len([x for x in pos if not x.startswith('-')]) >= 1 and len(set(x for x in pos)) <= 2, pos)
+        page.evaluate('window.scrollTo(0, 0)')
         page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
         page.click('#btn-ref')
         page.evaluate('window.scrollTo(0, 3000)')

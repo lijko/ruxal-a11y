@@ -125,10 +125,11 @@ RUXAWEB 2 : audit par observations.
   .onglet-tab.ajout:hover{color:var(--accent)}
 
   /* ---------- Mise en page ---------- */
-  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere) 48px;min-height:calc(100vh - var(--barre-h, 130px) - var(--pied-h, 90px));display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere);min-height:calc(100vh - var(--barre-h, 130px));display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
   main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
   main:focus{outline:none}
-  footer.pied{max-width:var(--largeur);margin:0 auto;padding:16px var(--gouttiere) 32px;font-size:12.5px;color:var(--ink-soft)}
+  /* Mentions : à la fin de la colonne centrale, pour que les colonnes latérales collantes gardent toute leur hauteur jusqu'en bas. */
+  .pied{margin:8px 0 0;font-size:12.5px;color:var(--ink-soft)}
   .tete-page{display:flex;flex-direction:column;gap:4px}
 
   /* ---------- Cartes ---------- */
@@ -383,7 +384,7 @@ RUXAWEB 2 : audit par observations.
   @media print{
     :root{color-scheme:light}
     body{background:#fff!important}
-    .barre,aside.panneau-etapes,.lien-evitement,.ref-tete button,.ref-outils,#statut,.btn-haut,footer.pied{display:none!important}
+    .barre,aside.panneau-etapes,.lien-evitement,.ref-tete button,.ref-outils,#statut,.btn-haut,.pied{display:none!important}
     .page{display:block;padding:0;max-width:none;zoom:.8}
     .carte{box-shadow:none!important;border:1px solid #888!important;background:#fff!important;break-inside:avoid;display:block!important;margin-bottom:10px}
     .carte > * + *{margin-top:6px!important}
@@ -430,7 +431,7 @@ RUXAWEB 2 : audit par observations.
   /* Écran large : la page défile ; l'en-tête, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
     /* Colonnes latérales collantes, sur toute la hauteur disponible sous l'en-tête (24 px de marge en haut et en bas). */
-    .ecrans,aside.panneau-etapes{position:sticky;top:calc(var(--barre-h, 130px) + 24px);height:var(--colonne-h, calc(100vh - var(--barre-h, 130px) - 48px));overflow-y:auto}
+    .ecrans,aside.panneau-etapes{position:sticky;top:calc(var(--barre-h, 130px) + 24px);height:calc(100vh - var(--barre-h, 130px) - 48px);overflow-y:auto}
     .ecrans > .carte:last-child{flex:1 0 auto}
     .tableau{overflow:visible}
     .tableau.large{overflow-x:auto}
@@ -476,7 +477,7 @@ RUXAWEB 2 : audit par observations.
   <main id="main" tabindex="-1"></main>
   <aside class="panneau-etapes" id="panneau-etapes" aria-labelledby="panneau-etapes-titre"></aside>
 </div>
-<footer class="pied">Critères : RAWeb 1.1, Service information et presse (SIP), Luxembourg, CC BY 3.0 LU, intitulés non modifiés. Sélection de la méthode de contrôle simplifié v1.2.1, plus critères hors sélection. Pré-diagnostic, pas un audit de conformité. Code : EUPL-1.2.</footer>
+<p class="pied" id="pied">Critères : RAWeb 1.1, Service information et presse (SIP), Luxembourg, CC BY 3.0 LU, intitulés non modifiés. Sélection de la méthode de contrôle simplifié v1.2.1, plus critères hors sélection. Pré-diagnostic, pas un audit de conformité. Code : EUPL-1.2.</p>
 <dialog id="dlg" aria-labelledby="dlg-titre"><div class="dlg" id="dlg-corps"></div></dialog>
 <div id="statut" role="status" aria-live="polite" hidden></div>
 <button type="button" class="btn-haut" id="btn-haut" hidden><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>Haut de page</button>
@@ -1022,7 +1023,7 @@ RUXAWEB 2 : audit par observations.
   }
 
   // ---------- Rendu ----------
-  var $main = document.getElementById('main'), $etapes = document.getElementById('panneau-etapes'), $nav = document.getElementById('onglet-nav');
+  var $main = document.getElementById('main'), $etapes = document.getElementById('panneau-etapes'), $nav = document.getElementById('onglet-nav'), $pied = document.getElementById('pied');
   var brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:'nc', nomPartage:'', ecransPartage:[], vers:'', candidat:null};
   // État d'interface passager : jamais enregistré (ni dans le navigateur, ni dans les sauvegardes).
   // confirmation : action en attente de second clic ; saisieNc : ligne de la fiche où l'on écrit un NC ;
@@ -1046,6 +1047,7 @@ RUXAWEB 2 : audit par observations.
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
     var vues = {projet:vueProjet, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, resume:vueResume, referentiel:vueReferentiel};
     $main.innerHTML = (vues[state.vue] || vueProjet)(o);
+    ($main.querySelector('.centre') || $main).appendChild($pied);
     grilleRoving();
     // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
     var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
@@ -2259,25 +2261,13 @@ RUXAWEB 2 : audit par observations.
   // ---------- Démarrage ----------
   // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : le panneau des étapes, la colonne des écrans et l'en-tête de la grille se calent toujours dessous.
   (function(){
-    var barre = document.querySelector('header.barre'), pied = document.querySelector('footer.pied');
+    var barre = document.querySelector('header.barre');
     function caler(){
       document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px');
-      document.documentElement.style.setProperty('--pied-h', (pied ? pied.offsetHeight : 0) + 'px');
-      hauteurColonnes();
       focusPanneauEtapes();
     }
-    // Colonnes latérales : du haut (sous l'en-tête) jusqu'en bas de la fenêtre ; elles raccourcissent quand le pied de page
-    // apparaît, au lieu de remonter sous l'en-tête (une colonne collante ne peut pas dépasser le bas de la page).
-    var attente = false;
-    function hauteurColonnes(){
-      var haut = barre.offsetHeight + 24, bas = window.innerHeight - 24;
-      if(pied) bas = Math.min(bas, pied.getBoundingClientRect().top - 48);
-      document.documentElement.style.setProperty('--colonne-h', Math.max(220, bas - haut) + 'px');
-    }
-    window.addEventListener('scroll', function(){ if(attente) return; attente = true; requestAnimationFrame(function(){ attente = false; hauteurColonnes(); }); }, {passive:true});
-    window.addEventListener('resize', hauteurColonnes);
     caler();
-    if(window.ResizeObserver){ var ro = new ResizeObserver(caler); ro.observe(barre); if(pied) ro.observe(pied); ro.observe(document.getElementById('main')); } else window.addEventListener('resize', caler);
+    if(window.ResizeObserver) new ResizeObserver(caler).observe(barre); else window.addEventListener('resize', caler);
   })();
 
   // Haut de page : visible après un écran de défilement ; le focus revient sur le titre de la page.
