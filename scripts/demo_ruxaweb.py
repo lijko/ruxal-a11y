@@ -110,8 +110,8 @@ def main():
             if not ligne.count():
                 continue
             ligne.locator('[data-action="critere"]').click()
-            if page.locator('#dlg [data-action="clo-tous"]').count():
-                page.click('#dlg [data-action="clo-tous"]')
+            if page.locator('#dlg [data-action="statut-tous"]').count():
+                page.click('#dlg [data-action="statut-tous"]')
             page.click('#dlg [data-action="fermer-dlg"]')
 
         # Scénario : tunnel d'achat.

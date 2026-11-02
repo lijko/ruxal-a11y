@@ -194,21 +194,21 @@ def main():
         eid = nt.get_attribute('data-ecran')
         nt.click()
         verifier('Case : la fiche s\'ouvre sur l\'écran cliqué', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg .cible-fiche[data-bloc-ecran="%s"]' % eid).count() == 1)
-        page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="c"]' % eid).click()
-        verifier('Case : C posé, la fiche reste ouverte', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="c"][aria-pressed="true"]' % eid).count() == 1)
-        page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="na"]' % eid).click()
-        verifier('Case : choix modifiable (NA)', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="na"][aria-pressed="true"]' % eid).count() == 1)
+        page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="c"]' % eid).click()
+        verifier('Case : C posé, la fiche reste ouverte', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="c"][aria-pressed="true"]' % eid).count() == 1)
+        page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="na"]' % eid).click()
+        verifier('Case : choix modifiable (NA)', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="na"][aria-pressed="true"]' % eid).count() == 1)
         page.click('#dlg [data-action="fermer-dlg"]')
         for _ in range(600):
             c = page.locator('td.statut [data-action="cellule"]:has(.s-NT), td.statut [data-action="cellule"]:has(.s-AC)').first
             if c.count() == 0:
                 break
             c.click()
-            t = page.locator('#dlg [data-action="clo-tous"]')
+            t = page.locator('#dlg [data-action="statut-tous"]')
             if t.count():
                 t.click()
             else:
-                page.locator('#dlg .cible-fiche [data-action="clo"][data-tag="c"]').click()
+                page.locator('#dlg .cible-fiche [data-action="statut"][data-tag="c"]').click()
             page.click('#dlg [data-action="fermer-dlg"]')
         verifier('Grille : plus rien à définir', 'Tous les critères ont un statut' in page.locator('main').inner_text())
         sel = page.evaluate('RUXAWEB.taux("%s")' % oid)
@@ -256,6 +256,25 @@ def main():
         page.set_input_files('#fichier-import', str(ancien))
         page.wait_for_timeout(300)
         verifier('Import ancien format : refusé avec un message', 'pas une sauvegarde' in page.locator('#statut').inner_text())
+        # Sauvegarde 1.x (statuts critère par critère) : convertie, score repris.
+        ecr = [{'id': 'e%d' % i, 'nom': 'Écran %d' % i} for i in range(3)]
+        res = {}
+        for e in ecr:
+            res[e['id']] = {'raweb-1-1': {'statut': 'C', 'commentaire': ''}, 'raweb-8-2': {'statut': 'NA', 'commentaire': ''},
+                            'raweb-3-1': {'statut': 'NC', 'commentaire': 'Liens du pied de page sans indication visuelle.', 'element': '[pied de page]'}}
+        v1 = pathlib.Path(tempfile.mkdtemp()) / 'v1.json'
+        v1.write_text(json.dumps({'outil': 'RUXAWEB-etat', 'version': 1, 'outilVersion': '1.6', 'state': {'auditNom': 'v1', 'onglets': [
+            {'id': 'o1', 'nom': 'Audit rapide', 'scenario': 'sip-rapide', 'ecrans': ecr, 'presences': {}, 'resultats': res}]}}), encoding='utf-8')
+        page.set_input_files('#fichier-import', str(v1))
+        page.wait_for_timeout(300)
+        verifier('Import 1.x : converti avec un message', 'convertie' in page.locator('#statut').inner_text())
+        o1 = page.evaluate('RUXAWEB.state().onglets[0]')
+        verifier('Import 1.x : une seule observation NC partagée sur les 3 écrans', len([x for x in o1['obs'] if x['tag'] == 'nc']) == 1 and len([x for x in o1['obs'] if x['tag'] == 'nc'][0]['partage']['ecrans']) == 2)
+        verifier('Import 1.x : C et NA repris écran par écran', len([x for x in o1['obs'] if x['tag'] in ('c', 'na')]) == 6)
+        page.locator('#onglet-nav .onglet-tab').nth(1).click()
+        verifier('Import 1.x : statuts dans la grille', statut(page, 0, 'raweb-1-1') == 'C' and statut(page, 2, 'raweb-3-1') == 'NC' and statut(page, 1, 'raweb-8-2') == 'NA')
+        page.set_input_files('#fichier-import', str(s))  # retour au projet de test
+        page.wait_for_timeout(300)
 
         # Scénario : transition entre deux écrans.
         page.click('[data-action="projet"]')
@@ -426,9 +445,9 @@ def main():
         ligne = page.locator('tbody tr', has=page.locator('td.statut .s-NT')).first
         cid = ligne.locator('[data-action="critere"]').get_attribute('data-id')
         ligne.locator('[data-action="critere"]').click()
-        verifier('Fiche (grille) : boutons C / NC / NA par écran', page.locator('#dlg [data-action="clo"][data-tag="c"]').count() >= 1)
-        page.locator('#dlg [data-action="clo"][data-tag="c"]:not([disabled])').first.click()
-        verifier('Fiche (grille) : C posé, la fiche reste ouverte et à jour', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg [data-action="clo"][data-tag="c"][aria-pressed="true"]').count() == 1)
+        verifier('Fiche (grille) : boutons C / NC / NA par écran', page.locator('#dlg [data-action="statut"][data-tag="c"]').count() >= 1)
+        page.locator('#dlg [data-action="statut"][data-tag="c"]:not([disabled])').first.click()
+        verifier('Fiche (grille) : C posé, la fiche reste ouverte et à jour', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg [data-action="statut"][data-tag="c"][aria-pressed="true"]').count() == 1)
         page.click('#dlg [data-action="fermer-dlg"]')
         page.wait_for_timeout(100)
         verifier('Fiche fermée : contenu vidé', page.locator('#dlg-corps').inner_html() == '')
