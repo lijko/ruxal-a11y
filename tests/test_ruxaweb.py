@@ -94,7 +94,7 @@ def main():
         page.on('pageerror', lambda e: erreurs.append(str(e)))
         page.goto(URL)
         verifier('Ouverture : page Projet', page.locator('h1').inner_text().startswith('Projet A11Y') and page.locator('#t-nouveau').count() == 1 and page.locator('#t-fonctions').count() == 1)
-        verifier('Panneau des étapes présent, déplié sur le tableau de bord, titre masqué', page.locator('#panneau-etapes .parcours li').count() >= 9 and page.locator('#liste-etapes').is_visible() and 'Étapes' in page.locator('#panneau-etapes-titre').inner_text() and 'sr' in (page.get_attribute('#panneau-etapes-titre', 'class') or ''))
+        verifier('Panneau des étapes présent, déplié sur le tableau de bord, titre masqué', page.locator('#panneau-etapes .liste-etapes li').count() >= 9 and page.locator('#liste-etapes').is_visible() and 'Étapes' in page.locator('#panneau-etapes-titre').inner_text() and 'sr' in (page.get_attribute('#panneau-etapes-titre', 'class') or ''))
         txt = page.content().lower()
         verifier('Aucune mention de Claude', 'claude' not in txt and 'anthropic' not in txt)
 
@@ -125,9 +125,9 @@ def main():
         verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#liste-etapes .ici').inner_text())
         page.click('[data-action="etapes-bascule"]')
         verifier('Parcours replié de nouveau', page.locator('#liste-etapes').is_hidden())
-        page.click('.nav-parcours [aria-label^="Suivante"]')
+        page.click('.nav-etapes [aria-label^="Suivante"]')
         verifier('Parcours replié : Suivante mène à l\'étape 1', 'Usage standard' in page.locator('#panneau-etapes .en-cours').inner_text())
-        page.click('.nav-parcours [aria-label^="Précédente"]')
+        page.click('.nav-etapes [aria-label^="Précédente"]')
         verifier('Parcours replié : Précédente revient au tour à vide', 'Tour à vide' in page.locator('#panneau-etapes .en-cours').inner_text())
         page.click('[data-action="etapes-bascule"]')
 

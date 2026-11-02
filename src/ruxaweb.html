@@ -750,7 +750,7 @@ RUXAWEB 2 : audit par observations.
     html += pas(ico('etape-resume'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
     html += '</ol>';
     // Parcours replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
-    var ouvert = state.liste-etapesOuvert === undefined || state.liste-etapesOuvert === null ? (state.vue === 'projet' || state.vue === 'referentiel') : !!state.liste-etapesOuvert;
+    var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? (state.vue === 'projet' || state.vue === 'referentiel') : !!state.parcoursOuvert;
     var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
     var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '')+'</p>' : '';
     var points = '<span class="points" aria-hidden="true">'+tous.map(function(t){ return '<i class="'+(t.ici ? 'ici' : t.fait ? 'fait' : '')+'"></i>'; }).join('')+'</span>';
@@ -1561,7 +1561,7 @@ RUXAWEB 2 : audit par observations.
   var ACTIONS = {
     'etapes-bascule': function(b, o, a){
       var ouvert = b.getAttribute('aria-expanded') === 'true';
-      state.liste-etapesOuvert = !ouvert; sauver();
+      state.parcoursOuvert = !ouvert; sauver();
       $etapes.innerHTML = vuePanneauEtapes(onglet()); focusPanneauEtapes();
       var nb = $etapes.querySelector('[data-action="etapes-bascule"]'); if(nb) nb.focus();
       return ARRET;
