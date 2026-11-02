@@ -209,7 +209,15 @@ RUXAWEB 2 : audit par observations.
   .menu-liste button:hover{background:var(--accent-soft)}
   dialog{border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;max-width:760px;width:calc(100% - 32px);background:var(--surface-raised);color:var(--ink);box-shadow:var(--shadow-pop)}
   dialog::backdrop{background:rgba(10,15,20,.55)}
-  .dlg{padding:24px;display:flex;flex-direction:column;gap:14px;max-height:82vh;overflow:auto}
+  /* Fenêtre : seul le corps défile ; l'en-tête (titre et Fermer) reste visible. La marge de défilement garde
+     l'élément qui reçoit le focus sous l'en-tête, jamais derrière (WCAG 2.2, 2.4.11 Focus non masqué). */
+  .dlg{padding:0 24px 24px;display:flex;flex-direction:column;gap:14px;max-height:82vh;overflow:auto;scroll-padding-top:88px;overscroll-behavior:contain}
+  .dlg-tete{position:sticky;top:0;z-index:1;margin:0 -24px;padding:20px 24px 12px;background:var(--surface-raised);border-bottom:1px solid var(--border-soft)}
+  @media (max-width:640px){
+    dialog{width:100%;max-width:none;height:100dvh;max-height:none;margin:0;border-radius:0;border:0}
+    .dlg{max-height:100dvh;height:100%;padding:0 16px 16px}
+    .dlg-tete{margin:0 -16px;padding:14px 16px 10px}
+  }
   .dlg h2{font-size:19px}
   #statut{position:fixed;right:24px;bottom:24px;background:var(--ink);color:var(--surface);padding:12px 16px;border-radius:var(--radius);max-width:min(440px,calc(100% - 48px));z-index:40;font-weight:600;font-size:14px;box-shadow:var(--shadow-pop)}
   #statut.erreur{background:var(--c-nc);color:var(--surface)}
@@ -897,7 +905,7 @@ RUXAWEB 2 : audit par observations.
   }
   function ouvrirCollage(){
     var o = onglet(), e = ecranDe(o, state.ecranId);
-    var html = '<div class="rangee entre"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
+    var html = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
       '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | point de contrôle</code>. Le dernier champ accepte aussi des numéros de critères (<code>10.7, 11.9</code>). Seule l\'observation est obligatoire ; sinon, l\'outil propose un point de contrôle d\'après les mots. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
       '<p class="sans-marge doux petit">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | Visibilité du focus</code></p>' +
       '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller<span class="oblig" aria-hidden="true">*</span></label>' +
@@ -1688,7 +1696,7 @@ RUXAWEB 2 : audit par observations.
   function ouvrirCritere(id){
     var o = onglet(), c = PAR_ID[id]; if(!c) return;
     var obs = o ? o.obs.filter(function(x){ return x.criteres.indexOf(id) > -1; }) : [];
-    var html = '<div class="rangee entre"><h2 id="dlg-titre">'+esc(refTxt(c))+'</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
+    var html = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">'+esc(refTxt(c))+'</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
       infoCritere(c, 'h3');
     if(o){
       var bst = blocStatuts(o, c);
@@ -1887,7 +1895,7 @@ RUXAWEB 2 : audit par observations.
     'cellule': function(b, o, a){
       ui.ficheEcran = b.getAttribute('data-ecran'); ouvrirCritere(b.getAttribute('data-id'));
       var bl = document.querySelector('#dlg [data-bloc-ecran="'+ui.ficheEcran+'"]');
-      if(bl){ bl.scrollIntoView({block:'center'}); var f = bl.querySelector('button:not([disabled])'); if(f) f.focus(); }
+      if(bl){ bl.scrollIntoView({block:'start'}); var f = bl.querySelector('button:not([disabled])'); if(f) f.focus(); }
     },
     'grille-filtre': function(b, o, a){ ui.grilleFiltre = b.getAttribute('data-v'); rendre(); var bf = document.querySelector('[data-action="grille-filtre"][data-v="'+ui.grilleFiltre+'"]'); if(bf) bf.focus(); },
     'grille-definir': function(b, o, a){ ui.grilleFiltre = 'definir'; state.vue = 'grille'; rendre(true); },
