@@ -229,6 +229,8 @@ def main():
         verifier('Taux sélection SIP : 5 NC (6.2, 10.7, 11.1, 11.2, 11.10), sans 7.1', sel['C'] == sel['total'] - 5, sel)
         verifier('Taux élargi : 7.1 en plus', ela['C'] == ela['total'] - 6, ela)
         page.click('[data-action="valider"]')
+        verifier('Avant validation : points à vérifier affichés', page.locator('#t-alertes').count() == 1)
+        page.click('#t-alertes ~ .rangee [data-action="valider"]')
         verifier('Validation : résumé', page.locator('h1').inner_text().startswith('Résumé'))
         verifier('Résumé : deux taux', 'Taux sélection SIP' in page.locator('main').inner_text() and 'Taux élargi' in page.locator('main').inner_text())
 
@@ -273,18 +275,46 @@ def main():
         res = {}
         for e in ecr:
             res[e['id']] = {'raweb-1-1': {'statut': 'C', 'commentaire': ''}, 'raweb-8-2': {'statut': 'NA', 'commentaire': ''},
-                            'raweb-3-1': {'statut': 'NC', 'commentaire': 'Liens du pied de page sans indication visuelle.', 'element': '[pied de page]'}}
+                            'raweb-3-1': {'statut': 'NC', 'commentaire': 'Liens du pied de page sans indication visuelle.', 'element': '[pied de page]'},
+                            'raweb-6-1': {'statut': 'C', 'commentaire': 'The button is not read by the screen reader.'},
+                            'raweb-10-7': {'statut': 'NC', 'commentaire': 'Focus peu visible.'}}
         v1 = pathlib.Path(tempfile.mkdtemp()) / 'v1.json'
         v1.write_text(json.dumps({'outil': 'RUXAWEB-etat', 'version': 1, 'outilVersion': '1.6', 'state': {'auditNom': 'v1', 'onglets': [
-            {'id': 'o1', 'nom': 'Audit rapide', 'scenario': 'sip-rapide', 'ecrans': ecr, 'presences': {}, 'resultats': res}]}}), encoding='utf-8')
+            {'id': 'o1', 'nom': 'Audit rapide', 'scenario': 'sip-rapide', 'ecrans': ecr, 'presences': {}, 'resultats': res}], 'exportesJira': {'raweb-3-1': True}}}), encoding='utf-8')
         page.set_input_files('#fichier-import', str(v1))
         page.wait_for_timeout(300)
         verifier('Import 1.x : converti avec un message', 'convertie' in page.locator('#statut').inner_text())
         o1 = page.evaluate('RUXAWEB.state().onglets[0]')
-        verifier('Import 1.x : une seule observation NC partagée sur les 3 écrans', len([x for x in o1['obs'] if x['tag'] == 'nc']) == 1 and len([x for x in o1['obs'] if x['tag'] == 'nc'][0]['partage']['ecrans']) == 2)
-        verifier('Import 1.x : C et NA repris écran par écran', len([x for x in o1['obs'] if x['tag'] in ('c', 'na')]) == 6)
+        nc31l = [x for x in o1['obs'] if x['tag'] == 'nc' and x['criteres'] == ['raweb-3-1']]
+        verifier('Import 1.x : une seule observation NC partagée sur les 3 écrans', len(nc31l) == 1 and len(nc31l[0]['partage']['ecrans']) == 2)
+        verifier('Import 1.x : C et NA repris écran par écran', len([x for x in o1['obs'] if x['tag'] in ('c', 'na')]) == 9)
+        nc31 = [x['id'] for x in o1['obs'] if x['tag'] == 'nc' and x['criteres'] == ['raweb-3-1']][0]
+        verifier('Import 1.x : mémoire Jira reprise (3.1 déjà exporté, 10.7 non)', page.evaluate('RUXAWEB.state().exportesJira') == ['o1:' + nc31])
+        al = page.evaluate('RUXAWEB.alertes("o1")')
+        verifier('Avant validation : C au texte de défaut signalé', sum(1 for x in al if x.startswith('raweb-6-1|') and 'défaut' in x) == 3, al)
+        verifier('Avant validation : NC sans élément signalé', any(x.startswith('raweb-10-7|') and 'sans élément' in x for x in al), al)
         page.locator('#onglet-nav .onglet-tab').nth(1).click()
         verifier('Import 1.x : statuts dans la grille', statut(page, 0, 'raweb-1-1') == 'C' and statut(page, 2, 'raweb-3-1') == 'NC' and statut(page, 1, 'raweb-8-2') == 'NA')
+        # Grille au clavier : un seul arrêt Tab, puis les flèches.
+        page.click('[data-action="vue"][data-vue="grille"]')
+        verifier('Clavier : une seule case dans l\'ordre de tabulation', page.locator('.cel-btn[tabindex="0"]').count() == 1)
+        verifier('Grille : pas de compteur en double dans l\'en-tête', 'à définir sur l\'ensemble' not in page.locator('.titre-onglet').inner_text())
+        verifier('Grille : un tbody par thème', page.locator('table tbody').count() == page.locator('tr.theme').count() and page.locator('th[scope="rowgroup"]').count() > 0)
+        page.locator('.cel-btn[tabindex="0"]').focus()
+        d0 = page.evaluate('[document.activeElement.dataset.id, document.activeElement.dataset.ecran]')
+        page.keyboard.press('ArrowRight')
+        d1 = page.evaluate('[document.activeElement.dataset.id, document.activeElement.dataset.ecran]')
+        verifier('Clavier : flèche droite, écran suivant', d1[0] == d0[0] and d1[1] != d0[1], (d0, d1))
+        page.keyboard.press('ArrowDown')
+        d2 = page.evaluate('[document.activeElement.dataset.id, document.activeElement.dataset.ecran]')
+        verifier('Clavier : flèche bas, même écran, critère suivant', d2[1] == d1[1] and d2[0] != d1[0], (d1, d2))
+        page.keyboard.press('Control+End')
+        verifier('Clavier : Ctrl+Fin, dernière case', page.evaluate('document.activeElement') and page.evaluate('document.activeElement === Array.from(document.querySelectorAll(".cel-btn")).pop()'))
+        page.keyboard.press('Enter')
+        verifier('Clavier : Entrée ouvre la fiche', page.evaluate("document.getElementById('dlg').open"))
+        page.keyboard.press('Escape')
+        page.wait_for_timeout(100)
+        verifier('Clavier : retour sur la case à la fermeture', page.evaluate('document.activeElement.classList.contains("cel-btn")'))
         page.set_input_files('#fichier-import', str(s))  # retour au projet de test
         page.wait_for_timeout(300)
 
