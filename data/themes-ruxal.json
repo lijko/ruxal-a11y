@@ -1,47 +1,185 @@
 {
-  "note": "Taxonomie RUXAL, adaptable. Texte original.",
+  "note": "Taxonomie RUXAL, adaptable. Texte original. raam et raweb : critères des sélections RUXAAM et RUXAWEB rangés dans chaque thème (bonnes pratiques hors référentiel non comprises).",
   "themes": [
     {
       "nom": "Navigation & structure",
       "nom_en": "Navigation & structure",
       "description": "Tout ce qui permet ou empêche d'atteindre un élément ou un contenu, au clavier ou avec une technologie d'assistance ; structure de l'écran.",
-      "description_en": "Everything that allows or prevents reaching an element or content, by keyboard or with an assistive technology; screen structure."
+      "description_en": "Everything that allows or prevents reaching an element or content, by keyboard or with an assistive technology; screen structure.",
+      "raam": [
+        "5.2",
+        "5.3",
+        "7.1",
+        "8.5",
+        "10.1",
+        "10.2",
+        "10.3"
+      ],
+      "raweb": [
+        "2.1",
+        "6.1",
+        "6.2",
+        "7.3",
+        "8.5",
+        "8.6",
+        "9.1",
+        "9.2",
+        "9.3",
+        "10.7",
+        "10.14",
+        "12.6",
+        "12.7",
+        "12.8",
+        "12.9"
+      ]
     },
     {
       "nom": "Composants interactifs",
       "nom_en": "Interactive components",
       "description": "Nom, rôle et état des boutons et contrôles ; messages de statut ; gestes, limites de temps et authentification.",
-      "description_en": "Name, role and state of buttons and controls; status messages; gestures, time limits and authentication."
+      "description_en": "Name, role and state of buttons and controls; status messages; gestures, time limits and authentication.",
+      "raam": [
+        "5.1",
+        "5.4",
+        "5.5",
+        "8.7",
+        "11.1",
+        "11.2",
+        "11.10",
+        "11.11",
+        "11.12",
+        "11.13",
+        "11.15"
+      ],
+      "raweb": [
+        "7.1",
+        "7.5",
+        "12.11",
+        "13.1",
+        "13.11"
+      ]
     },
     {
       "nom": "Images & médias",
       "nom_en": "Images & media",
       "description": "Alternatives textuelles des images ; sous-titres, transcriptions et contrôle des médias et du son.",
-      "description_en": "Text alternatives for images; captions, transcripts and control of media and sound."
+      "description_en": "Text alternatives for images; captions, transcripts and control of media and sound.",
+      "raam": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "1.6",
+        "3.5",
+        "3.7",
+        "3.9",
+        "3.12",
+        "3.13"
+      ],
+      "raweb": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "1.6",
+        "1.7",
+        "4.1",
+        "4.2",
+        "4.3",
+        "4.4",
+        "4.8",
+        "4.9",
+        "4.10",
+        "4.11"
+      ]
     },
     {
       "nom": "Couleurs & contrastes",
       "nom_en": "Colors & contrast",
       "description": "Contrastes ; information qui ne doit pas reposer uniquement sur la couleur, la forme, la taille ou la position.",
-      "description_en": "Contrast; information that must not rely only on color, shape, size or position."
+      "description_en": "Contrast; information that must not rely only on color, shape, size or position.",
+      "raam": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "8.6"
+      ],
+      "raweb": [
+        "3.1",
+        "3.2",
+        "3.3",
+        "10.9",
+        "10.10"
+      ]
     },
     {
       "nom": "Contenu & lisibilité",
       "nom_en": "Content & readability",
       "description": "Texte lisible et agrandissable, tableaux, orientation, animations et flashs, documents.",
-      "description_en": "Readable and resizable text, tables, orientation, animations and flashes, documents."
+      "description_en": "Readable and resizable text, tables, orientation, animations and flashes, documents.",
+      "raam": [
+        "4.5",
+        "8.1",
+        "8.2",
+        "11.7",
+        "11.8",
+        "11.9"
+      ],
+      "raweb": [
+        "5.6",
+        "5.7",
+        "10.4",
+        "13.7",
+        "13.8"
+      ]
     },
     {
       "nom": "Fondations techniques",
       "nom_en": "Technical foundations",
       "description": "Langue, éléments décoratifs ignorés par les technologies d'assistance, respect des réglages d'accessibilité du système.",
-      "description_en": "Language, decorative elements ignored by assistive technologies, support of system accessibility settings."
+      "description_en": "Language, decorative elements ignored by assistive technologies, support of system accessibility settings.",
+      "raam": [
+        "6.1",
+        "6.2",
+        "12.3"
+      ],
+      "raweb": [
+        "8.2",
+        "8.3",
+        "8.4",
+        "8.7",
+        "8.8",
+        "10.8"
+      ]
     },
     {
       "nom": "Formulaires",
       "nom_en": "Forms",
       "description": "Étiquettes, champs, erreurs et aide à la saisie.",
-      "description_en": "Labels, fields, errors and input assistance."
+      "description_en": "Labels, fields, errors and input assistance.",
+      "raam": [
+        "9.1",
+        "9.2",
+        "9.3",
+        "9.5",
+        "9.6",
+        "9.7",
+        "9.8",
+        "9.9",
+        "9.10",
+        "9.11"
+      ],
+      "raweb": [
+        "11.1",
+        "11.2",
+        "11.5",
+        "11.6",
+        "11.7",
+        "11.9",
+        "11.10"
+      ]
     }
   ]
 }
