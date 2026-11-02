@@ -115,7 +115,7 @@ def main():
             page.click('#dlg [data-action="fermer-dlg"]')
 
         # Scénario : tunnel d'achat.
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         page.click('[data-action="nouvel-onglet"][data-type="scenario"]')
         page.fill('#onglet-nom', 'Achat d\'un produit')
         page.locator('#onglet-nom').blur()
@@ -137,9 +137,9 @@ def main():
                  attendu='Un avertissement avant expiration, avec la possibilité de prolonger.')
         # Lecture UX/POUR.
         audit(page)
-        if page.locator('#parcours-liste').is_hidden():
-            page.click('[data-action="parcours-bascule"]')
-        page.click('#parcours-liste [data-vue="ux"]')
+        if page.locator('#liste-etapes').is_hidden():
+            page.click('[data-action="etapes-bascule"]')
+        page.click('#liste-etapes [data-vue="ux"]')
         n = page.locator('[data-action="heur"][data-v="succes"]').count()
         for i in range(n):
             v = 'difficile' if i in (2, 5) else 'succes'

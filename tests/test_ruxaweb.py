@@ -67,9 +67,9 @@ def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit
 def aller_etape(page, etape):
     """Étape du protocole, par la liste des étapes (dépliée au besoin)."""
     aller_audit(page)
-    if page.locator('#parcours-liste').is_hidden():
-        page.click('[data-action="parcours-bascule"]')
-    page.click('#parcours-liste [data-etape="%s"]' % etape)
+    if page.locator('#liste-etapes').is_hidden():
+        page.click('[data-action="etapes-bascule"]')
+    page.click('#liste-etapes [data-etape="%s"]' % etape)
 
 
 def ecran(page, i):
@@ -94,7 +94,7 @@ def main():
         page.on('pageerror', lambda e: erreurs.append(str(e)))
         page.goto(URL)
         verifier('Ouverture : page Projet', page.locator('h1').inner_text().startswith('Projet A11Y') and page.locator('#t-nouveau').count() == 1 and page.locator('#t-fonctions').count() == 1)
-        verifier('Panneau des étapes présent, déplié sur le tableau de bord, titre masqué', page.locator('#aide .parcours li').count() >= 9 and page.locator('#parcours-liste').is_visible() and 'Étapes' in page.locator('#aide-titre').inner_text() and 'sr' in (page.get_attribute('#aide-titre', 'class') or ''))
+        verifier('Panneau des étapes présent, déplié sur le tableau de bord, titre masqué', page.locator('#panneau-etapes .parcours li').count() >= 9 and page.locator('#liste-etapes').is_visible() and 'Étapes' in page.locator('#panneau-etapes-titre').inner_text() and 'sr' in (page.get_attribute('#panneau-etapes-titre', 'class') or ''))
         txt = page.content().lower()
         verifier('Aucune mention de Claude', 'claude' not in txt and 'anthropic' not in txt)
 
@@ -118,18 +118,18 @@ def main():
         verifier('Contenu des écrans : interrupteur activé', sw.get_attribute('role') == 'switch' and sw.get_attribute('aria-checked') == 'true')
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         verifier('Audit : formulaire d\'observation', page.locator('#form-obs').count() == 1)
-        verifier('Parcours replié pendant l\'audit, étape en cours visible', page.locator('#parcours-liste').is_hidden() and 'Tour à vide' in page.locator('#aide .en-cours').inner_text())
-        page.click('[data-action="parcours-bascule"]')
-        bas = page.locator('[data-action="parcours-bascule"]')
-        verifier('Parcours déplié au clic, état annoncé, focus gardé', page.locator('#parcours-liste').is_visible() and bas.get_attribute('aria-expanded') == 'true' and page.evaluate('document.activeElement.dataset.action') == 'parcours-bascule')
-        verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#parcours-liste .ici').inner_text())
-        page.click('[data-action="parcours-bascule"]')
-        verifier('Parcours replié de nouveau', page.locator('#parcours-liste').is_hidden())
+        verifier('Parcours replié pendant l\'audit, étape en cours visible', page.locator('#liste-etapes').is_hidden() and 'Tour à vide' in page.locator('#panneau-etapes .en-cours').inner_text())
+        page.click('[data-action="etapes-bascule"]')
+        bas = page.locator('[data-action="etapes-bascule"]')
+        verifier('Parcours déplié au clic, état annoncé, focus gardé', page.locator('#liste-etapes').is_visible() and bas.get_attribute('aria-expanded') == 'true' and page.evaluate('document.activeElement.dataset.action') == 'etapes-bascule')
+        verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#liste-etapes .ici').inner_text())
+        page.click('[data-action="etapes-bascule"]')
+        verifier('Parcours replié de nouveau', page.locator('#liste-etapes').is_hidden())
         page.click('.nav-parcours [aria-label^="Suivante"]')
-        verifier('Parcours replié : Suivante mène à l\'étape 1', 'Usage standard' in page.locator('#aide .en-cours').inner_text())
+        verifier('Parcours replié : Suivante mène à l\'étape 1', 'Usage standard' in page.locator('#panneau-etapes .en-cours').inner_text())
         page.click('.nav-parcours [aria-label^="Précédente"]')
-        verifier('Parcours replié : Précédente revient au tour à vide', 'Tour à vide' in page.locator('#aide .en-cours').inner_text())
-        page.click('[data-action="parcours-bascule"]')
+        verifier('Parcours replié : Précédente revient au tour à vide', 'Tour à vide' in page.locator('#panneau-etapes .en-cours').inner_text())
+        page.click('[data-action="etapes-bascule"]')
 
         page.click('[data-action="vue"][data-vue="grille"]')
         groupes = page.locator('tr.theme').all_inner_texts()
@@ -260,7 +260,7 @@ def main():
         verifier('Import ancien format : refusé avec un message', 'pas une sauvegarde' in page.locator('#statut').inner_text())
 
         # Scénario : transition entre deux écrans.
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         page.click('[data-action="nouvel-onglet"]')
         page.check('input[name="onglet-type"][value="scenario"]')
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
@@ -289,7 +289,7 @@ def main():
         verifier('Excel : lignes POUR/UX du scénario', sum(1 for r in openpyxl.load_workbook(x2).active.iter_rows(values_only=True) if str(r[1] or '').startswith('POUR/UX')) == 8)
         jira = telecharger(page, 'export-jira')
         verifier('Scénario : ticket avec la transition', any(' -> ' in r[0] for r in csv.reader(io.StringIO(jira.read_text(encoding='utf-8-sig')))))
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         page.locator('[data-action="ouvrir"]').first.click()
 
         # Import d'un rapport axe-core puis Lighthouse : des résultats à reprendre, jamais un statut.
@@ -389,7 +389,7 @@ def main():
         verifier('Référentiel : regroupement par thèmes RUXAL', page.locator('.ref-groupe h2').first.inner_text().startswith('Navigation & Structure'))
         page.click('[data-action="theming"][data-v="officiel"]')
         page.emulate_media(media='print')
-        verifier('Impression : en-tête et Parcours masqués', page.locator('.barre').is_hidden() and page.locator('#aide').is_hidden())
+        verifier('Impression : en-tête et Parcours masqués', page.locator('.barre').is_hidden() and page.locator('#panneau-etapes').is_hidden())
         page.emulate_media(media='screen')
         page.locator('[data-action="ouvrir"]').first.click()
         aller_audit(page)
@@ -402,11 +402,11 @@ def main():
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 61)
 
         # Ordre « étape d'abord » : une étape sur tous les écrans, puis l'étape suivante.
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         page.click('[data-action="nouvel-onglet"]')
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         def en_cours():
-            return page.locator('#aide .en-cours').inner_text(), page.locator('.ecrans [aria-current="true"]').inner_text()
+            return page.locator('#panneau-etapes .en-cours').inner_text(), page.locator('.ecrans [aria-current="true"]').inner_text()
         verifier('Étape d\'abord : départ Tour à vide sur le premier écran', 'Tour à vide' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
         verifier('Étape d\'abord : bouton vers l\'écran suivant', 'écran suivant : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
@@ -420,8 +420,8 @@ def main():
         verifier('Étape d\'abord : bouton vers l\'étape suivante', 'étape suivante : Usage standard' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
         verifier('Étape d\'abord : étape suivante sur le premier écran', 'Usage standard' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
-        page.click('[data-action="parcours-bascule"]')
-        verifier('Étape d\'abord : Tour à vide fait (3/3 écrans)', '3/3 écrans' in page.locator('#parcours-liste').inner_text() and '(fait)' in page.locator('#parcours-liste [data-etape="vide"]').inner_text())
+        page.click('[data-action="etapes-bascule"]')
+        verifier('Étape d\'abord : Tour à vide fait (3/3 écrans)', '3/3 écrans' in page.locator('#liste-etapes').inner_text() and '(fait)' in page.locator('#liste-etapes [data-etape="vide"]').inner_text())
 
         page.click('[data-action="vue"][data-vue="grille"]')
         # Grille : un critère se pose conforme sans observation, depuis sa fiche.
@@ -507,17 +507,17 @@ def main():
         for y in (0, 30, 120):
             page.evaluate('window.scrollTo(0, %d)' % y)
             page.wait_for_timeout(50)
-            hauts.append(round(page.evaluate("document.getElementById('aide').getBoundingClientRect().top")))
+            hauts.append(round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top")))
         page.evaluate('window.scrollTo(0, 0)')
         verifier('Parcours fixe au défilement, sans saut', len(set(hauts)) == 1, hauts)
         # Jusqu'en bas de page, sur chaque vue, le panneau des étapes reste sous l'en-tête.
         tops = {}
         for nom, aller in (('saisie', lambda: aller_audit(page)), ('grille', lambda: page.click('[data-action="vue"][data-vue="grille"]')),
-                           ('projet', lambda: page.click('[data-action="accueil"]')), ('referentiel', lambda: page.click('#btn-ref'))):
+                           ('projet', lambda: page.click('[data-action="projet"]')), ('referentiel', lambda: page.click('#btn-ref'))):
             aller()
             page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
             page.wait_for_timeout(80)
-            tops[nom] = round(page.evaluate("document.getElementById('aide').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
+            tops[nom] = round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
         verifier('Panneau des étapes collé sous l\'en-tête jusqu\'en bas de page, sur toutes les vues', all(v >= 16 for v in tops.values()), tops)
         page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
         page.click('#btn-ref')
@@ -527,12 +527,12 @@ def main():
         page.click('#btn-haut')
         page.wait_for_function('scrollY < 5', timeout=5000)
         verifier('Haut de page : retour en haut, focus sur le titre', page.evaluate('scrollY') < 5 and page.evaluate('document.activeElement.tagName') == 'H1')
-        page.locator('[data-action="ouvrir"]').first.click() if page.locator('[data-action="ouvrir"]').count() else page.click('[data-action="accueil"]')
-        page.click('[data-action="accueil"]')
+        page.locator('[data-action="ouvrir"]').first.click() if page.locator('[data-action="ouvrir"]').count() else page.click('[data-action="projet"]')
+        page.click('[data-action="projet"]')
         page.locator('[data-action="ouvrir"]').first.click()
 
         # Fonctions primaires : configurateur au niveau du projet, testées avant les écrans, observations communes.
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         verifier('Page Projet : 8 fonctions préréglées', page.locator('[data-action="fonction-presente"]').count() >= 8 and 'Navigation principale' in page.inner_text('.liste-fonctions'))
         page.click('[data-action="fonction-presente"][data-id="nav"]')
         page.fill('#fonction-nouvelle', 'Bandeau cookies')
@@ -550,7 +550,7 @@ def main():
         page.click('#form-obs button[type=submit]')
         st = lambda i: statut(page, i, 'raweb-10-7')
         verifier('Fonction NC : NC sur les écrans cochés, pas sur les autres', [st(0), st(1), st(2)] == ['NC', 'NC', 'NT'], [st(0), st(1), st(2)])
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         verifier('Page Projet : état de la fonction', '1 NC (10.7)' in page.inner_text('.liste-fonctions'))
         page.click('[data-action="nouvel-onglet"][data-type="scenario"]')
         verifier('Nouvel onglet (scénario) : fonction du projet déjà cochée', page.locator('[data-fonction-ecran="nav"]:checked').count() == 3 and '1 NC (10.7)' in page.inner_text('main'))
@@ -582,13 +582,13 @@ def main():
         tf = [r for r in lignesF if '[Navigation principale]' in r[0]]
         verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation principale' in tf[0][1] and ' : ' in tf[0][1].split('\n')[1], [r[0] for r in lignesF])
         aller_audit(page)
-        if page.locator('#parcours-liste').is_hidden():
-            page.click('[data-action="parcours-bascule"]')
-        page.click('#parcours-liste [data-vue="resume"]')
+        if page.locator('#liste-etapes').is_hidden():
+            page.click('[data-action="etapes-bascule"]')
+        page.click('#liste-etapes [data-vue="resume"]')
         verifier('Résumé : état des fonctions primaires', 'Fonctions primaires' in page.inner_text('main') and '1 NC (10.7)' in page.inner_text('main'), page.inner_text('main')[:300])
 
         # Suppression d'un onglet en deux clics, depuis le tableau de bord.
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         avant = page.evaluate('RUXAWEB.state().onglets.length')
         dernier = page.locator('[data-action="suppr-onglet"]').last
         oid = dernier.get_attribute('data-id')
@@ -601,7 +601,7 @@ def main():
         verifier('Page des écrans : suppression de l\'onglet proposée', page.locator('main [data-action="suppr-onglet"]').count() == 1)
 
         page.emulate_media(color_scheme='dark')
-        page.click('[data-action="accueil"]')
+        page.click('[data-action="projet"]')
         verifier('Mode sombre : pas d\'erreur', not erreurs, erreurs)
         verifier('Aucune erreur JavaScript', not erreurs, erreurs)
         nav.close()

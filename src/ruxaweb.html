@@ -145,8 +145,8 @@ RUXAWEB 2 : audit par observations.
   .btn[disabled]{opacity:.5;cursor:not-allowed}
   .ico{width:16px;height:16px;flex:none}
   .ref-btn{background:none;border:0;padding:0;cursor:pointer;color:var(--accent);font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-  .lien-parcours{align-self:flex-start;background:none;border:0;padding:4px 0;color:var(--accent);font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-  .lien-parcours:hover{text-decoration-thickness:2px}
+  .lien-etapes{align-self:flex-start;background:none;border:0;padding:4px 0;color:var(--accent);font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .lien-etapes:hover{text-decoration-thickness:2px}
 
   /* ---------- Champs ---------- */
   label.lbl,.lbl{font-weight:700;font-size:13px;color:var(--ink-soft)}
@@ -214,35 +214,35 @@ RUXAWEB 2 : audit par observations.
   .btn-haut:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ---------- Panneau des étapes ---------- */
-  aside.aide{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 24px - 48px - var(--pied-h, 90px));min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
-  aside.aide h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
-  aside.aide p{font-size:14.5px}
-  aside.aide:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  .parcours-court{display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border-soft)}
-  .parcours-court .points{display:flex;gap:5px;flex-wrap:wrap}
-  .parcours-court .points i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink-faint);background:transparent}
-  .parcours-court .points i.fait{background:var(--c-conforme);border-color:var(--c-conforme)}
-  .parcours-court .points i.ici{background:var(--accent-fill);border-color:var(--accent-fill);box-shadow:0 0 0 2px var(--accent-soft)}
-  .parcours-court .en-cours{font-weight:700;line-height:1.35}
-  .nav-parcours{gap:8px}
-  .parcours{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-  .parcours .phase{padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
-  .parcours .phase:first-child{padding-top:0}
-  .parcours .pas-li{position:relative}
-  .parcours .pas-li:not(.fin)::after{content:"";position:absolute;left:21px;top:40px;bottom:-6px;width:2px;background:var(--border);border-radius:2px}
-  .parcours .pas-li.ok:not(.fin)::after{background:var(--c-conforme)}
-  .parcours button,.parcours span.pas{position:relative;z-index:1;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:none;border:0;border-radius:10px;padding:6px 8px;min-height:46px}
-  .parcours button{cursor:pointer}
-  .parcours button:hover{background:var(--surface-alt)}
-  .parcours .lib{display:flex;flex-direction:column;line-height:1.25}
-  .parcours .lib small{font-size:12px;color:var(--ink-soft);font-weight:500}
-  .parcours .rond{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface-raised);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--ink-soft)}
-  .parcours .rond svg{width:15px;height:15px}
-  .parcours .fait .rond{background:var(--c-conforme);border-color:var(--c-conforme);color:var(--surface)}
-  .parcours .ici{background:var(--accent-soft)}
-  .parcours .ici .lib{font-weight:800;color:var(--accent)}
-  .parcours .ici .rond{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-fill-ink);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 5px var(--accent-fill)}
-  @media (prefers-reduced-motion: no-preference){ .parcours .ici .rond{transition:box-shadow .2s} }
+  aside.panneau-etapes{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 24px - 48px - var(--pied-h, 90px));min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+  aside.panneau-etapes h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
+  aside.panneau-etapes p{font-size:14.5px}
+  aside.panneau-etapes:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .etape-courante{display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border-soft)}
+  .etape-courante .points{display:flex;gap:5px;flex-wrap:wrap}
+  .etape-courante .points i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink-faint);background:transparent}
+  .etape-courante .points i.fait{background:var(--c-conforme);border-color:var(--c-conforme)}
+  .etape-courante .points i.ici{background:var(--accent-fill);border-color:var(--accent-fill);box-shadow:0 0 0 2px var(--accent-soft)}
+  .etape-courante .en-cours{font-weight:700;line-height:1.35}
+  .nav-etapes{gap:8px}
+  .liste-etapes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+  .liste-etapes .phase{padding:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
+  .liste-etapes .phase:first-child{padding-top:0}
+  .liste-etapes .pas-li{position:relative}
+  .liste-etapes .pas-li:not(.fin)::after{content:"";position:absolute;left:21px;top:40px;bottom:-6px;width:2px;background:var(--border);border-radius:2px}
+  .liste-etapes .pas-li.ok:not(.fin)::after{background:var(--c-conforme)}
+  .liste-etapes button,.liste-etapes span.pas{position:relative;z-index:1;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:none;border:0;border-radius:10px;padding:6px 8px;min-height:46px}
+  .liste-etapes button{cursor:pointer}
+  .liste-etapes button:hover{background:var(--surface-alt)}
+  .liste-etapes .lib{display:flex;flex-direction:column;line-height:1.25}
+  .liste-etapes .lib small{font-size:12px;color:var(--ink-soft);font-weight:500}
+  .liste-etapes .rond{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface-raised);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--ink-soft)}
+  .liste-etapes .rond svg{width:15px;height:15px}
+  .liste-etapes .fait .rond{background:var(--c-conforme);border-color:var(--c-conforme);color:var(--surface)}
+  .liste-etapes .ici{background:var(--accent-soft)}
+  .liste-etapes .ici .lib{font-weight:800;color:var(--accent)}
+  .liste-etapes .ici .rond{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-fill-ink);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 5px var(--accent-fill)}
+  @media (prefers-reduced-motion: no-preference){ .liste-etapes .ici .rond{transition:box-shadow .2s} }
 
   /* ---------- Onglet : cadre Saisie / Grille ---------- */
   .titre-onglet{gap:12px}
@@ -350,7 +350,7 @@ RUXAWEB 2 : audit par observations.
   @media print{
     :root{color-scheme:light}
     body{background:#fff!important}
-    .barre,aside.aide,.lien-evitement,.ref-tete button,.ref-outils,#statut,.btn-haut,footer.pied{display:none!important}
+    .barre,aside.panneau-etapes,.lien-evitement,.ref-tete button,.ref-outils,#statut,.btn-haut,footer.pied{display:none!important}
     .page{display:block;padding:0;max-width:none;zoom:.8}
     .carte{box-shadow:none!important;border:1px solid #888!important;background:#fff!important;break-inside:avoid;display:block!important;margin-bottom:10px}
     .carte > * + *{margin-top:6px!important}
@@ -362,7 +362,7 @@ RUXAWEB 2 : audit par observations.
 
   /* ---------- Largeurs d'écran ---------- */
   @media (max-width:900px){
-    aside.aide{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1}
+    aside.panneau-etapes{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1}
     .projet-champ{border-left:0;padding-left:0;flex-basis:100%}
   }
   /* Écran large : la page défile ; l'en-tête, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
@@ -380,7 +380,7 @@ RUXAWEB 2 : audit par observations.
 <a class="lien-evitement" href="#main">Aller au contenu</a>
 <header class="barre">
   <div class="barre-in">
-    <button class="marque" type="button" data-action="accueil"><span class="marque-nom">RUXAWEB</span><small>Atelier d'audit · RAWeb 1.1 · 2.0</small></button>
+    <button class="marque" type="button" data-action="projet"><span class="marque-nom">RUXAWEB</span><small>Atelier d'audit · RAWeb 1.1 · 2.0</small></button>
     <div class="projet-champ">
       <span class="prefixe-projet" aria-hidden="true">Projet A11Y -</span>
       <label class="sr" for="audit-nom">Nom du projet (Projet A11Y)</label>
@@ -410,7 +410,7 @@ RUXAWEB 2 : audit par observations.
 </header>
 <div class="page">
   <main id="main" tabindex="-1"></main>
-  <aside class="aide" id="aide" aria-labelledby="aide-titre"></aside>
+  <aside class="panneau-etapes" id="panneau-etapes" aria-labelledby="panneau-etapes-titre"></aside>
 </div>
 <footer class="pied">Critères : RAWeb 1.1, Service information et presse (SIP), Luxembourg, CC BY 3.0 LU, intitulés non modifiés. Sélection de la méthode de contrôle simplifié v1.2.1, plus critères hors sélection. Pré-diagnostic, pas un audit de conformité. Code : EUPL-1.2.</footer>
 <dialog id="dlg" aria-labelledby="dlg-titre"><div class="dlg" id="dlg-corps"></div></dialog>
@@ -546,8 +546,8 @@ RUXAWEB 2 : audit par observations.
   ];
   var ETAPE = {}; ETAPES.forEach(function(e, i){ e.i = i; ETAPE[e.id] = e; });
 
-  var AIDE = {
-    accueil:{faire:"Nomme le projet, active ses fonctions primaires, puis crée un onglet par objet audité : un audit simple sur 3 à 5 écrans, ou un scénario qui suit un enchaînement d'écrans.",
+  var CONSIGNES = {
+    projet:{faire:"Nomme le projet, active ses fonctions primaires, puis crée un onglet par objet audité : un audit simple sur 3 à 5 écrans, ou un scénario qui suit un enchaînement d'écrans.",
       chercher:"Chaque onglet a son propre taux. Le taux sélection SIP se lit à côté d'un audit simplifié du SIP ; le taux élargi ajoute 6 critères hors sélection."},
     preparer:{faire:"Nomme les écrans, coche ceux où apparaît chaque fonction primaire et indique ce que chacun contient. Les critères liés à un contenu absent passent non applicables (NA).",
       chercher:"Le reste des critères forme le périmètre : chacun devra recevoir un statut, rien n'est conforme par défaut."},
@@ -564,10 +564,10 @@ RUXAWEB 2 : audit par observations.
   };
 
   // ---------- État ----------
-  function etatVide(){ return {v:2, auditNom:'', support:'desktop', onglets:[], vue:'accueil', ongletId:null, ecranId:null, etape:'vide', compteur:0, exportesJira:[]}; }
+  function etatVide(){ return {v:2, auditNom:'', support:'desktop', onglets:[], vue:'projet', ongletId:null, ecranId:null, etape:'vide', compteur:0, exportesJira:[]}; }
   var state = charger();
   function charger(){
-    try{ var s = JSON.parse(localStorage.getItem(CLE)); if(s && s.v === 2) return s; }catch(e){}
+    try{ var s = JSON.parse(localStorage.getItem(CLE)); if(s && s.v === 2){ if(s.vue === 'accueil') s.vue = 'projet'; return s; } }catch(e){}
     return etatVide();
   }
   function sauver(){ try{ localStorage.setItem(CLE, JSON.stringify(state)); }catch(e){} }
@@ -577,8 +577,23 @@ RUXAWEB 2 : audit par observations.
   function onglet(){ return state.onglets.filter(function(o){ return o.id === state.ongletId; })[0] || null; }
   function ecranDe(o, id){ return o.ecrans.filter(function(e){ return e.id === id; })[0] || null; }
   // Deux noms d'élément qui ne diffèrent que par la casse, les accents ou les espaces désignent le même élément.
-  // Icônes des boutons : décoratives, le libellé du bouton porte le sens.
-  var ICO = {"fichier": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>", "livre": "<path d=\"M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z\"/><path d=\"M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z\"/>", "import": "<path d=\"M12 3v12M7 10l5 5 5-5M4 21h16\"/>", "coller": "<rect x=\"7\" y=\"4\" width=\"10\" height=\"4\" rx=\"1\"/><path d=\"M7 6H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M8 13h8M8 17h5\"/>", "crayon": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M14 6l4 4\"/>", "corbeille": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "imprimer": "<path d=\"M6 9V3h12v6\"/><rect x=\"3\" y=\"9\" width=\"18\" height=\"8\" rx=\"2\"/><path d=\"M7 14h10v7H7z\"/>", "valider": "<path d=\"M5 12l5 5L20 7\"/>", "copier": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>"};
+  // Icônes (boutons et panneau des étapes) : décoratives, le libellé porte le sens.
+  var ICO = {
+    "fichier": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>",
+    "livre": "<path d=\"M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z\"/><path d=\"M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z\"/>",
+    "import": "<path d=\"M12 3v12M7 10l5 5 5-5M4 21h16\"/>",
+    "coller": "<rect x=\"7\" y=\"4\" width=\"10\" height=\"4\" rx=\"1\"/><path d=\"M7 6H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M8 13h8M8 17h5\"/>",
+    "crayon": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M14 6l4 4\"/>",
+    "corbeille": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>",
+    "imprimer": "<path d=\"M6 9V3h12v6\"/><rect x=\"3\" y=\"9\" width=\"18\" height=\"8\" rx=\"2\"/><path d=\"M7 14h10v7H7z\"/>",
+    "valider": "<path d=\"M5 12l5 5L20 7\"/>",
+    "copier": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>",
+    "etape-prep": "<path d=\"M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01\"/>",
+    "etape-vide": "<path d=\"M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>",
+    "etape-cloture": "<path d=\"M5 21V4h11l-2 4 2 4H5\"/>",
+    "etape-resume": "<path d=\"M4 20V10M10 20V4M16 20v-8M22 20H2\"/>",
+    "etape-ux": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6\"/>"
+  };
   function ico(n){ return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+ICO[n]+'</svg>'; }
   function cleNom(n){ return String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
   function nomExistant(o, n){
@@ -668,54 +683,46 @@ RUXAWEB 2 : audit par observations.
   }
 
   // ---------- Rendu ----------
-  var $main = document.getElementById('main'), $aide = document.getElementById('aide'), $nav = document.getElementById('onglet-nav');
+  var $main = document.getElementById('main'), $etapes = document.getElementById('panneau-etapes'), $nav = document.getElementById('onglet-nav');
   var brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:'nc', nomPartage:'', ecransPartage:[], vers:'', candidat:null};
   var confirmation = null;
 
   function rendre(focus){
     var o = onglet();
-    if(state.vue !== 'accueil' && state.vue !== 'referentiel' && !o){ state.vue = 'accueil'; }
+    if(state.vue !== 'projet' && state.vue !== 'referentiel' && !o){ state.vue = 'projet'; }
     // Ligne des onglets : un bouton par onglet de l'audit, avec son état, plus le tableau de bord et l'ajout.
-    $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="accueil"'+(state.vue === 'accueil' ? ' aria-current="page"' : '')+'><b>Projet</b><span>'+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</span></button>' +
+    $nav.innerHTML = '<button type="button" class="onglet-tab" data-action="projet"'+(state.vue === 'projet' ? ' aria-current="page"' : '')+'><b>Projet</b><span>'+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</span></button>' +
       state.onglets.map(function(x){
         var t = taux(x, SELECTION), te = taux(x, RAWEB);
-        var etat = t.complet ? t.pct+' % sélection SIP' : criteresATrancher(x).length+' à définir';
-        var ici = state.vue !== 'accueil' && state.vue !== 'referentiel' && x.id === state.ongletId;
+        var etat = t.complet ? t.pct+' % sélection SIP' : criteresADefinir(x).length+' à définir';
+        var ici = state.vue !== 'projet' && state.vue !== 'referentiel' && x.id === state.ongletId;
         return '<button type="button" class="onglet-tab" data-action="ouvrir" data-id="'+x.id+'"'+(ici ? ' aria-current="page"' : '')+'><b>'+esc(x.nom)+'</b><span>'+(x.type === 'scenario' ? 'Scénario' : 'Audit simple')+' · '+esc(etat)+'</span></button>';
       }).join('') + '<button type="button" class="onglet-tab ajout" data-action="projet-nouveau">+ Nouvel onglet</button>';
     var nomAudit = document.getElementById('audit-nom'); if(nomAudit && document.activeElement !== nomAudit) nomAudit.value = state.auditNom || '';
     var bRef = document.getElementById('btn-ref'); if(state.vue === 'referentiel') bRef.setAttribute('aria-current', 'page'); else bRef.removeAttribute('aria-current');
     document.querySelectorAll('#audit-support .tag').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-support') === state.support)); });
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
-    var vues = {accueil:vueAccueil, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, cloture:vueCloture, resume:vueResume, referentiel:vueReferentiel};
-    $main.innerHTML = (vues[state.vue] || vueAccueil)(o);
+    var vues = {projet:vueProjet, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, cloture:vueCloture, resume:vueResume, referentiel:vueReferentiel};
+    $main.innerHTML = (vues[state.vue] || vueProjet)(o);
     // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
     var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
-    $aide.innerHTML = vueAide(o);
-    focusParcours();
-    document.title = (o && state.vue !== 'accueil' && state.vue !== 'referentiel' ? o.nom + ' · ' : '') + 'Projet A11Y - ' + (state.auditNom || 'sans nom') + ' · RUXAWEB';
+    $etapes.innerHTML = vuePanneauEtapes(o);
+    focusPanneauEtapes();
+    document.title = (o && state.vue !== 'projet' && state.vue !== 'referentiel' ? o.nom + ' · ' : '') + 'Projet A11Y - ' + (state.auditNom || 'sans nom') + ' · RUXAWEB';
     sauver();
     if(focus){ var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:false}); } }
   }
 
   // Le panneau Parcours occupe toujours la même place et garde la même structure : le parcours, puis « À faire » et « À chercher ».
-  var ICONES = {
-    prep:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
-    vide:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
-    clo:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
-    res:'<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>',
-    ux:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'
-  };
-  function icone(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONES[n]+'</svg>'; }
   // Quand le panneau Parcours défile, il doit être atteignable au clavier pour faire défiler son contenu.
-  function focusParcours(){
-    if($aide.scrollHeight > $aide.clientHeight + 1) $aide.setAttribute('tabindex', '0');
-    else $aide.removeAttribute('tabindex');
+  function focusPanneauEtapes(){
+    if($etapes.scrollHeight > $etapes.clientHeight + 1) $etapes.setAttribute('tabindex', '0');
+    else $etapes.removeAttribute('tabindex');
   }
-  window.addEventListener('resize', function(){ focusParcours(); });
-  function vueAide(o){
-    var html = '<ol class="parcours" id="parcours-liste">';
-    var dansOnglet = !!o && state.vue !== 'accueil' && state.vue !== 'referentiel';
+  window.addEventListener('resize', function(){ focusPanneauEtapes(); });
+  function vuePanneauEtapes(o){
+    var html = '<ol class="liste-etapes" id="liste-etapes">';
+    var dansOnglet = !!o && state.vue !== 'projet' && state.vue !== 'referentiel';
     var e = o ? ecranDe(o, state.ecranId) : null;
     var tous = [];
     function pas(marque, txt, sous, ici, fait, fin, action, extra){
@@ -727,23 +734,23 @@ RUXAWEB 2 : audit par observations.
       return li+'<span class="pas '+c+'">'+inner+'</span></li>';
     }
     html += '<li class="phase">Avant</li>';
-    html += pas(icone('prep'), 'Préparer les écrans', 'noms et contenus', state.vue === 'preparer', !!o && o.ecrans.length > 0, true, 'vue', ' data-vue="preparer"');
+    html += pas(ico('etape-prep'), 'Préparer les écrans', 'noms et contenus', state.vue === 'preparer', !!o && o.ecrans.length > 0, true, 'vue', ' data-vue="preparer"');
     html += '<li class="phase"><span>Étapes, sur tous les écrans</span></li>';
     ETAPES.forEach(function(et, i){
       var fait = !!(o && etapeComplete(o, et.id));
       var sousE = et.outil + (o && dansOnglet && o.ecrans.length ? ' · '+faitsEtape(o, et.id)+'/'+cibles(o).length+(fonctionsOnglet(o).length ? ' faits' : ' écrans') : '');
-      html += pas(et.id === 'vide' ? icone('vide') : et.id, et.court || et.nom, sousE, state.vue === 'audit' && state.etape === et.id, fait, i === ETAPES.length - 1, 'etape', ' data-etape="'+et.id+'"');
+      html += pas(et.id === 'vide' ? ico('etape-vide') : et.id, et.court || et.nom, sousE, state.vue === 'audit' && state.etape === et.id, fait, i === ETAPES.length - 1, 'etape', ' data-etape="'+et.id+'"');
     });
     html += '<li class="phase">Pour finir</li>';
     if(o && o.type === 'scenario'){
       var ux = scoreUx(o);
-      html += pas(icone('ux'), 'Lecture POUR/UX', 'parcours entier', state.vue === 'ux', ux.vide === 0, false, 'vue', ' data-vue="ux"');
+      html += pas(ico('etape-ux'), 'Lecture POUR/UX', 'parcours entier', state.vue === 'ux', ux.vide === 0, false, 'vue', ' data-vue="ux"');
     }
-    html += pas(icone('clo'), 'Clôture', 'définir les NT', state.vue === 'cloture', !!(o && o.valide), false, 'vue', ' data-vue="cloture"');
-    html += pas(icone('res'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
+    html += pas(ico('etape-cloture'), 'Clôture', 'définir les NT', state.vue === 'cloture', !!(o && o.valide), false, 'vue', ' data-vue="cloture"');
+    html += pas(ico('etape-resume'), 'Résumé et exports', 'deux taux', state.vue === 'resume', false, true, 'vue', ' data-vue="resume"');
     html += '</ol>';
     // Parcours replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
-    var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? (state.vue === 'accueil' || state.vue === 'referentiel') : !!state.parcoursOuvert;
+    var ouvert = state.liste-etapesOuvert === undefined || state.liste-etapesOuvert === null ? (state.vue === 'projet' || state.vue === 'referentiel') : !!state.liste-etapesOuvert;
     var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
     var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '')+'</p>' : '';
     var points = '<span class="points" aria-hidden="true">'+tous.map(function(t){ return '<i class="'+(t.ici ? 'ici' : t.fait ? 'fait' : '')+'"></i>'; }).join('')+'</span>';
@@ -760,15 +767,15 @@ RUXAWEB 2 : audit par observations.
         var r = tous.filter(function(t){ return !t.fait; })[0] || tous[tous.length - 1];
         nav += aller(r, 'suiv', 'Reprendre');
       }
-      if(nav) nav = '<div class="rangee nav-parcours">'+nav+'</div>';
+      if(nav) nav = '<div class="rangee nav-etapes">'+nav+'</div>';
     }
     ecr += nav;
-    html = '<h2 id="aide-titre" class="sr">'+(o && o.type === 'scenario' ? 'Étapes du scénario' : 'Étapes de l\'audit')+'</h2><div class="parcours-court">'+points+resume+ecr+
-      '<button type="button" class="lien-parcours" data-action="parcours-bascule" aria-expanded="'+ouvert+'" aria-controls="parcours-liste">'+(ouvert ? 'Masquer les étapes' : 'Voir toutes les étapes')+'</button></div>' +
-      html.replace('<ol class="parcours" id="parcours-liste">', '<ol class="parcours" id="parcours-liste"'+(ouvert ? '' : ' hidden')+'>');
-    var a = state.vue === 'audit' ? ETAPE[state.etape] : (AIDE[state.vue] || AIDE.accueil);
-    if(state.vue === 'grille') a = AIDE.grille;
-    if(state.vue === 'ux') a = AIDE.ux;
+    html = '<h2 id="panneau-etapes-titre" class="sr">'+(o && o.type === 'scenario' ? 'Étapes du scénario' : 'Étapes de l\'audit')+'</h2><div class="etape-courante">'+points+resume+ecr+
+      '<button type="button" class="lien-etapes" data-action="etapes-bascule" aria-expanded="'+ouvert+'" aria-controls="liste-etapes">'+(ouvert ? 'Masquer les étapes' : 'Voir toutes les étapes')+'</button></div>' +
+      html.replace('<ol class="liste-etapes" id="liste-etapes">', '<ol class="liste-etapes" id="liste-etapes"'+(ouvert ? '' : ' hidden')+'>');
+    var a = state.vue === 'audit' ? ETAPE[state.etape] : (CONSIGNES[state.vue] || CONSIGNES.projet);
+    if(state.vue === 'grille') a = CONSIGNES.grille;
+    if(state.vue === 'ux') a = CONSIGNES.ux;
     html += '<h3>À faire</h3><p>'+esc(a.faire)+'</p><h3>À chercher</h3><p>'+esc(a.chercher)+'</p>';
     if(a.note) html += '<p class="petit doux">'+esc(a.note)+'</p>';
     return html;
@@ -790,12 +797,12 @@ RUXAWEB 2 : audit par observations.
       '<div class="tuile tuile-avenir"><b>Audit complet <span class="pastille s-NT">à venir</span></b><span class="doux">Les 136 critères du RAWeb 1.1, en vue d\'une déclaration d\'accessibilité.</span></div>' +
       '<button type="button" class="tuile" data-action="nouvel-onglet" data-type="scenario"><b>Scénario</b><span class="doux">Un enchaînement d\'écrans (achat, souscription), avec la lecture UX/POUR. Taux sélection SIP.</span></button></div>';
   }
-  function vueAccueil(){
+  function vueProjet(){
     var html = '<div class="tete-page"><h1>Projet A11Y - '+esc(state.auditNom || 'sans nom')+'</h1><p class="doux">'+(state.support === 'mobile' ? 'Web mobile' : 'Ordinateur')+' · '+state.onglets.length+' onglet'+(state.onglets.length > 1 ? 's' : '')+'</p></div>';
     if(state.onglets.length){
       html += '<section class="pile" aria-labelledby="t-onglets"><h2 id="t-onglets">Onglets</h2><div class="cartes">';
       state.onglets.forEach(function(o){
-        var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresATrancher(o).length;
+        var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresADefinir(o).length;
         var info = t.complet ? '<span class="val">'+t.pct+' %</span><span class="doux petit">sélection SIP'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %')+'</span>'
           : '<span class="pastille s-NT">'+n+' critère'+(n > 1 ? 's' : '')+' à définir</span>';
         if(o.type === 'scenario'){ var u = scoreUx(o); if(u.pct != null) info += '<span class="doux petit">POUR/UX '+u.pct+' %</span>'; }
@@ -829,7 +836,7 @@ RUXAWEB 2 : audit par observations.
     html += '</div><div class="rangee entre">'+(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT ? '<span class="doux petit">5 écrans au plus pour un audit simple.</span>' : '<button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button>')+'<span class="doux petit">'+(o.type === 'scenario' ? mini+' écrans au moins.' : mini+' à '+MAX_AUDIT+' écrans.')+'</span></div></section>';
     // Fonctions primaires : activées sur la page Projet ; ici, les écrans de cet onglet où chacune apparaît.
     var actives = fonctions().filter(function(f){ return f.presente; });
-    html += '<section class="carte pile" aria-labelledby="t-fonctions-onglet"><div class="rangee entre"><h2 id="t-fonctions-onglet">Fonctions primaires sur ces écrans</h2><button type="button" class="btn btn-s" data-action="accueil-fonctions">Gérer les fonctions du projet</button></div>' +
+    html += '<section class="carte pile" aria-labelledby="t-fonctions-onglet"><div class="rangee entre"><h2 id="t-fonctions-onglet">Fonctions primaires sur ces écrans</h2><button type="button" class="btn btn-s" data-action="projet-fonctions">Gérer les fonctions du projet</button></div>' +
       (actives.length ? actives.map(function(f){
         var ecrs = ecransFonction(o, f.id);
         return '<fieldset class="fonction-ecrans"><legend><b>'+esc(f.nom)+'</b> <span class="doux petit">'+esc(etatFonction(f))+'</span></legend><div class="rangee">' + o.ecrans.map(function(e){ return '<label class="choix"><input type="checkbox" data-fonction-ecran="'+f.id+'" value="'+e.id+'"'+(ecrs.indexOf(e.id) > -1 ? ' checked' : '')+'> '+esc(e.nom)+'</label>'; }).join('') + '</div></fieldset>';
@@ -890,7 +897,7 @@ RUXAWEB 2 : audit par observations.
   function faitsEtape(o, etId){ return cibles(o).filter(function(c){ return cibleFaite(c, etId); }).length; }
   function etapeComplete(o, etId){ return o.ecrans.length > 0 && faitsEtape(o, etId) === cibles(o).length; }
   // Cible suivante non faite pour l'étape, en partant de la cible donnée (ordre de la liste, en boucle).
-  function ecranSuivant(o, etId, depuis){
+  function cibleSuivante(o, etId, depuis){
     var l = cibles(o), i = l.map(function(x){ return x.id; }).indexOf(depuis), n = l.length;
     for(var k = 1; k <= n; k++){ var x = l[(i + k) % n]; if(x.id !== depuis && !cibleFaite(x, etId)) return x; }
     return null;
@@ -931,7 +938,7 @@ RUXAWEB 2 : audit par observations.
   }
   // Fin d'étape : l'outil passe à la cible suivante (fonction ou écran), puis à l'étape suivante.
   function boutonFin(o, et, curId){
-    var nx = ecranSuivant(o, et.id, curId), nxEt = nx ? null : etapeSuivante(o, et);
+    var nx = cibleSuivante(o, et.id, curId), nxEt = nx ? null : etapeSuivante(o, et);
     var ici = fonctionDe(curId) && fonctionCourante(o) ? 'cette fonction' : 'cet écran';
     var lib = nx ? 'Fait sur '+ici+', '+(nx.type === 'f' ? 'fonction suivante : ' : 'écran suivant : ')+esc(nx.nom) : (nxEt ? 'Fait sur '+ici+', étape suivante : '+esc(nxEt.nom) : 'Fait sur '+ici+', passer à la clôture');
     return '<div class="rangee" style="justify-content:flex-end"><button type="button" class="btn btn-p" data-action="etape-faite">'+lib+'</button></div>';
@@ -1198,8 +1205,8 @@ RUXAWEB 2 : audit par observations.
     if(champ || ligne.length){ ligne.push(champ); lignes.push(ligne); }
     if(lignes.length < 2) return null;
     var tete = lignes[0].map(function(h){ return h.trim().toLowerCase(); });
-    function col(re){ for(var k = 0; k < tete.length; k++) if(re.test(tete[k])) return k; return -1; }
-    var cR = col(/rule|règle|regle/), cS = col(/selector|sélecteur|target|élément|element/), cD = col(/^help$|description|summary|issue|titre/), cV = col(/review|manual|revue|statut|status/), cT = col(/tags|wcag/);
+    function colonne(re){ for(var k = 0; k < tete.length; k++) if(re.test(tete[k])) return k; return -1; }
+    var cR = colonne(/rule|règle|regle/), cS = colonne(/selector|sélecteur|target|élément|element/), cD = colonne(/^help$|description|summary|issue|titre/), cV = colonne(/review|manual|revue|statut|status/), cT = colonne(/tags|wcag/);
     if(cR < 0) return null;
     return {issues: lignes.slice(1).filter(function(l){ return (l[cR] || '').trim(); }).map(function(l){
       var v = cV > -1 ? (l[cV] || '').trim().toLowerCase() : '';
@@ -1241,14 +1248,14 @@ RUXAWEB 2 : audit par observations.
     var html = '<form class="carte pile'+(enModif ? ' form-modif' : '')+'" id="form-obs" novalidate><div class="rangee entre"><h2 id="form-obs-titre">'+(enModif ? 'Modifier l\'observation' : 'Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span>')+'</h2><p class="doux petit" style="margin:0"><span class="oblig" aria-hidden="true">*</span> champ obligatoire</p></div>';
     html += '<div class="champ"><label class="lbl" for="obs-texte">Observation<span class="oblig" aria-hidden="true">*</span></label><textarea id="obs-texte" rows="2" aria-required="true" placeholder="Ce que tu vois, entends ou atteins.">'+esc(brouillon.texte)+'</textarea><div id="obs-sugg" class="sugg">'+htmlSuggestions(brouillon.texte)+'</div></div>';
     // Résultat : mêmes boutons C, NC, NA qu'à la clôture ; la ligne d'aide dit ce que le choix fait aux critères.
-    var AIDE_RES = {
+    var TEXTES_RESULTAT = {
       c:'Conforme : les critères retenus passent conformes sur cet écran. Sur les autres écrans cochés, ils restent à confirmer.',
       nc:'Non conforme : les critères retenus passent non conformes sur tous les écrans concernés.',
       na:'Non applicable : les critères retenus passent non applicables sur les écrans concernés (contenu absent).'
     };
     html += '<div class="champ"><span class="lbl" id="lbl-resultat">Résultat</span><div class="rangee" style="align-items:center"><div class="tags tags-resultat" role="group" aria-labelledby="lbl-resultat">' +
       [['c','C'],['nc','NC'],['na','NA']].map(function(t){ return '<button type="button" class="tag tag-'+t[0]+'" data-action="tag" data-tag="'+t[0]+'" aria-pressed="'+(brouillon.tag === t[0])+'" aria-describedby="aide-resultat">'+t[1]+'</button>'; }).join('') +
-      '</div><p class="doux petit" id="aide-resultat" style="margin:0;flex:1 1 260px">'+(AIDE_RES[brouillon.tag] || '')+'</p></div></div>';
+      '</div><p class="doux petit" id="aide-resultat" style="margin:0;flex:1 1 260px">'+(TEXTES_RESULTAT[brouillon.tag] || '')+'</p></div></div>';
     if(!f){
     html += '<h3 class="sous-titre-form">Où</h3>';
     // Élément et écrans : les mêmes champs pour toute observation. L'écran en cours est toujours concerné ;
@@ -1352,11 +1359,11 @@ RUXAWEB 2 : audit par observations.
     return cadreOnglet(o, 'grille', infoOnglet(o), html + '</tbody></table></div>');
   }
   function infoOnglet(o){
-    var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresATrancher(o).length;
+    var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresADefinir(o).length;
     return '<span class="doux">'+(t.complet ? 'Sélection SIP '+t.pct+' %'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %') : n+' critère'+(n > 1 ? 's' : '')+' à définir sur l\'ensemble des écrans')+'</span>';
   }
 
-  function aTrancher(o){
+  function aDefinir(o){
     var l = [];
     o.ecrans.forEach(function(e){ CRITERES.forEach(function(c){ var s = statutEcran(o, e, c).s; if(s === 'NT' || s === 'AC') l.push({e:e, c:c, s:s}); }); });
     return l;
@@ -1364,8 +1371,8 @@ RUXAWEB 2 : audit par observations.
   // Clôture critère par critère : un critère à la fois, avec sa consigne, pour définir le statut en connaissance de cause
   // plutôt que de valider une longue liste en série. « Conforme sur les écrans restants » reste un choix explicite.
   var clotureNc = null;
-  function criteresATrancher(o){
-    var l = aTrancher(o), ids = [];
+  function criteresADefinir(o){
+    var l = aDefinir(o), ids = [];
     l.forEach(function(x){ if(ids.indexOf(x.c.id) === -1) ids.push(x.c.id); });
     ids.sort(function(a, b){ return CRITERES.indexOf(PAR_ID[a]) - CRITERES.indexOf(PAR_ID[b]); });
     return ids.map(function(id){ return {c:PAR_ID[id], ecrans:l.filter(function(x){ return x.c.id === id; })}; });
@@ -1402,7 +1409,7 @@ RUXAWEB 2 : audit par observations.
     return {html:html, restants:restants};
   }
   function vueCloture(o){
-    var l = criteresATrancher(o);
+    var l = criteresADefinir(o);
     var html = '<div class="rangee entre"><h1>Clôture : '+l.length+' critère'+(l.length > 1 ? 's' : '')+' à définir</h1><button type="button" class="btn btn-p" data-action="valider">'+(o.valide ? 'Onglet validé, voir le résumé' : 'Valider l\'onglet')+'</button></div>';
     // Le critère en cours reste affiché une fois son statut défini : le choix reste visible, on passe au suivant quand on veut.
     var c = PAR_ID[state.clotureCrit] && o.ecrans.some(function(e){ return !statutEcran(o, e, PAR_ID[state.clotureCrit]).cfg; }) ? PAR_ID[state.clotureCrit] : (l[0] ? l[0].c : null);
@@ -1447,7 +1454,7 @@ RUXAWEB 2 : audit par observations.
       '<div><div class="lbl">Taux sélection SIP</div><div class="val">'+(t.complet ? t.pct+' %' : '<span class="pastille s-NT" style="font-size:15px">incomplet</span>')+'</div><div class="doux petit">'+t.C+' conformes sur '+t.total+' applicables · 52 critères</div></div>' +
       (o.type === 'scenario' ? '' : '<div><div class="lbl">Taux élargi</div><div class="val second">'+(te.complet ? te.pct+' %' : 'incomplet')+'</div><div class="doux petit">'+te.C+' sur '+te.total+' · '+RAWEB.length+' critères</div></div>') +
       (o.type === 'scenario' ? (function(){ var u = scoreUx(o); return '<div><div class="lbl">Score POUR/UX</div><div class="val second">'+(u.pct != null ? u.pct+' %' : '-')+'</div><div class="doux petit">'+u.succes+' succès, '+u.difficile+' difficile(s), '+u.echec+' échec(s) · hors taux</div></div>'; })() : '') + '</div>' +
-      (!t.complet || (o.type !== 'scenario' && !te.complet) ? '<p class="doux" style="margin:0">'+criteresATrancher(o).length+' critère(s) à définir : passe par la grille ou la clôture.</p>' : '') +
+      (!t.complet || (o.type !== 'scenario' && !te.complet) ? '<p class="doux" style="margin:0">'+criteresADefinir(o).length+' critère(s) à définir : passe par la grille ou la clôture.</p>' : '') +
       (o.valide ? '' : '<p class="doux petit" style="margin:0">Onglet non validé : les taux restent provisoires.</p>') + '</section>';
     var foR = fonctionsOnglet(o);
     if(foR.length) html += '<section class="carte" aria-labelledby="t-fonctions-r"><h2 id="t-fonctions-r">Fonctions primaires</h2>' + foR.map(function(f){ return '<div class="elt"><span>'+esc(f.nom)+'</span><span class="doux petit">'+esc(etatFonction(f))+'</span></div>'; }).join('') + '</section>';
@@ -1552,26 +1559,26 @@ RUXAWEB 2 : audit par observations.
   // Renvoyer ARRET interrompt la suite du clic (en particulier le rafraîchissement de la fiche ouverte).
   var ARRET = {};
   var ACTIONS = {
-    'parcours-bascule': function(b, o, a){
+    'etapes-bascule': function(b, o, a){
       var ouvert = b.getAttribute('aria-expanded') === 'true';
-      state.parcoursOuvert = !ouvert; sauver();
-      $aide.innerHTML = vueAide(onglet()); focusParcours();
-      var nb = $aide.querySelector('[data-action="parcours-bascule"]'); if(nb) nb.focus();
+      state.liste-etapesOuvert = !ouvert; sauver();
+      $etapes.innerHTML = vuePanneauEtapes(onglet()); focusPanneauEtapes();
+      var nb = $etapes.querySelector('[data-action="etapes-bascule"]'); if(nb) nb.focus();
       return ARRET;
     },
-    'accueil': function(b, o, a){ state.vue = 'accueil'; rendre(true); },
+    'projet': function(b, o, a){ state.vue = 'projet'; rendre(true); },
     'projet-nouveau': function(b, o, a){
-      state.vue = 'accueil'; rendre();
+      state.vue = 'projet'; rendre();
       var cible = document.getElementById(a === 'projet-nouveau' ? 't-nouveau' : 't-fonctions');
       if(cible){ cible.setAttribute('tabindex', '-1'); cible.focus(); cible.scrollIntoView({block:'start'}); }
     },
-    'accueil-fonctions': function(b, o, a){ return ACTIONS['projet-nouveau'](b, o, a); },
+    'projet-fonctions': function(b, o, a){ return ACTIONS['projet-nouveau'](b, o, a); },
     'referentiel': function(b, o, a){ state.vue = 'referentiel'; rendre(true); },
     'imprimer-ref': function(b, o, a){ window.print(); },
     'nouvel-onglet': function(b, o, a){ nouvelOnglet(b.getAttribute('data-type')); rendre(true); },
     'support': function(b, o, a){ state.support = b.getAttribute('data-support'); sauver(); rendre(); },
     'ouvrir': function(b, o, a){
-      var deja = state.ongletId === b.getAttribute('data-id') && state.vue !== 'accueil';
+      var deja = state.ongletId === b.getAttribute('data-id') && state.vue !== 'projet';
       state.ongletId = b.getAttribute('data-id'); o = onglet();
       if(!deja || !ecranDe(o, state.ecranId)) state.ecranId = o.ecrans.length ? o.ecrans[0].id : null;
       if(!deja){
@@ -1590,7 +1597,7 @@ RUXAWEB 2 : audit par observations.
       var cur = cibles(o).filter(function(x){ return x.id === cibleCourante(o); })[0];
       cur.ref.etapes = cur.ref.etapes || {}; cur.ref.etapes[state.etape] = true;
       var e = cur.ref;
-      var etC = ETAPE[state.etape], nx = ecranSuivant(o, etC.id, cur.id);
+      var etC = ETAPE[state.etape], nx = cibleSuivante(o, etC.id, cur.id);
       if(nx){ allerCible(nx); message((nx.type === 'f' ? 'Fonction suivante : ' : 'Écran suivant : ')+nx.nom+', toujours à l\'étape '+etC.nom+'.'); }
       else {
         var suiv = etapeSuivante(o, etC);
@@ -1615,7 +1622,7 @@ RUXAWEB 2 : audit par observations.
       state.onglets = state.onglets.filter(function(x){ return x.id !== oid; });
       state.exportesJira = (state.exportesJira || []).filter(function(k){ return k.indexOf(oid + ':') !== 0; });
       if(state.ongletId === oid){ state.ongletId = state.onglets.length ? state.onglets[0].id : null; state.ecranId = null; }
-      state.vue = 'accueil'; sauver(); rendre(true); message('Onglet « '+cible.nom+' » supprimé.');
+      state.vue = 'projet'; sauver(); rendre(true); message('Onglet « '+cible.nom+' » supprimé.');
     },
     'modif-obs': function(b, o, a){
       var xm = o.obs.concat(obsF()).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xm) return ARRET;
@@ -1692,7 +1699,7 @@ RUXAWEB 2 : audit par observations.
       clotureNc = null; rendre(); focusCloture();
     },
     'valider': function(b, o, a){
-      var n = aTrancher(o).length;
+      var n = aDefinir(o).length;
       if(n){ message(n+' critère(s) restent à définir. Tu pourras valider l\'onglet ensuite.', true); return ARRET; }
       o.valide = true; state.vue = 'resume'; rendre(true); message('Onglet validé.');
     },
@@ -1824,7 +1831,7 @@ RUXAWEB 2 : audit par observations.
       fr.onload = function(){
         try{
           var s = JSON.parse(fr.result);
-          if(s && s.v === 2 && Array.isArray(s.onglets)){ state = s; state.vue = 'accueil'; rendre(true); message('Sauvegarde ouverte.'); }
+          if(s && s.v === 2 && Array.isArray(s.onglets)){ state = s; state.vue = 'projet'; rendre(true); message('Sauvegarde ouverte.'); }
           else message('Ce fichier n\'est pas une sauvegarde de RUXAWEB 2.', true);
         }catch(e){ message('Fichier illisible : choisis un fichier .json enregistré par RUXAWEB 2.', true); }
         t.value = '';
@@ -1973,7 +1980,7 @@ RUXAWEB 2 : audit par observations.
     function caler(){
       document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px');
       document.documentElement.style.setProperty('--pied-h', (pied ? pied.offsetHeight : 0) + 'px');
-      focusParcours();
+      focusPanneauEtapes();
     }
     caler();
     if(window.ResizeObserver){ var ro = new ResizeObserver(caler); ro.observe(barre); if(pied) ro.observe(pied); } else window.addEventListener('resize', caler);
