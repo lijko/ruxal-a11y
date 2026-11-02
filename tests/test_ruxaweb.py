@@ -198,13 +198,25 @@ def main():
         verifier('Case : C posé, la fiche reste ouverte', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="c"][aria-pressed="true"]' % eid).count() == 1)
         page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="na"]' % eid).click()
         verifier('Case : choix modifiable (NA)', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="statut"][data-tag="na"][aria-pressed="true"]' % eid).count() == 1)
+        # Tous les écrans : un NC commun devient une seule observation partagée.
+        tous = page.locator('#dlg [data-bloc-ecran="tous"]')
+        verifier('Fiche : ligne Tous les écrans', tous.count() == 1)
+        avant = page.evaluate('RUXAWEB.state().onglets[0].obs.length')
+        tous.locator('[data-action="statut-nc"]').click()
+        page.fill('#statut-txt', 'Défaut présent sur tous les écrans.')
+        page.click('#dlg [data-action="statut-nc-ok"]')
+        dern = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
+        verifier('Tous les écrans (NC) : une seule observation partagée', dern['tag'] == 'nc' and dern['partage'] and len(dern['partage']['ecrans']) >= 1)
+        verifier('Tous les écrans (NC) : NC allumé partout', page.locator('#dlg [data-action="statut-nc"][aria-pressed="true"]').count() >= 3)
+        tous.locator('[data-action="statut"][data-tag="na"]').click()
+        verifier('Tous les écrans (NA) : remplace le NC partagé', page.locator('#dlg [data-action="statut"][data-tag="na"][aria-pressed="true"]').count() >= 3 and page.locator('#dlg [data-action="statut-nc"][aria-pressed="true"]').count() == 0)
         page.click('#dlg [data-action="fermer-dlg"]')
         for _ in range(600):
             c = page.locator('td.statut [data-action="cellule"]:has(.s-NT), td.statut [data-action="cellule"]:has(.s-AC)').first
             if c.count() == 0:
                 break
             c.click()
-            t = page.locator('#dlg [data-action="statut-tous"]')
+            t = page.locator('#dlg [data-bloc-ecran="tous"] [data-action="statut"][data-tag="c"]')
             if t.count():
                 t.click()
             else:
@@ -446,7 +458,7 @@ def main():
         cid = ligne.locator('[data-action="critere"]').get_attribute('data-id')
         ligne.locator('[data-action="critere"]').click()
         verifier('Fiche (grille) : boutons C / NC / NA par écran', page.locator('#dlg [data-action="statut"][data-tag="c"]').count() >= 1)
-        page.locator('#dlg [data-action="statut"][data-tag="c"]:not([disabled])').first.click()
+        page.locator('#dlg [data-bloc-ecran]:not([data-bloc-ecran="tous"]) [data-action="statut"][data-tag="c"]:not([disabled])').first.click()
         verifier('Fiche (grille) : C posé, la fiche reste ouverte et à jour', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg [data-action="statut"][data-tag="c"][aria-pressed="true"]').count() == 1)
         page.click('#dlg [data-action="fermer-dlg"]')
         page.wait_for_timeout(100)

@@ -93,6 +93,7 @@ RUXAWEB 2 : audit par observations.
   .pile{display:flex;flex-direction:column;gap:12px}
   .rangee{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .outils-grille{display:grid;grid-template-columns:max-content max-content 1fr;gap:10px 12px;align-items:center}
+  .outils-grille > .tags{justify-self:start}
   .outils-grille > .btn{justify-self:end;min-height:38px}
   @media (max-width:640px){ .outils-grille{grid-template-columns:1fr} .outils-grille > span:empty{display:none} .outils-grille > .btn{justify-self:start} }
   .entre{justify-content:space-between}
@@ -287,6 +288,12 @@ RUXAWEB 2 : audit par observations.
   /* ---------- Tableaux ---------- */
   .tableau{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface-raised);box-shadow:var(--shadow)}
   table{border-collapse:collapse;width:100%;font-size:14px}
+  /* Coins du tableau : les cellules d'angle suivent l'arrondi du cadre (pas d'overflow:hidden, qui casserait l'en-tête collant). */
+  .tableau thead tr:first-child > :first-child{border-top-left-radius:calc(var(--radius-lg) - 1px)}
+  .tableau thead tr:first-child > :last-child{border-top-right-radius:calc(var(--radius-lg) - 1px)}
+  .tableau tbody tr:last-child > :first-child{border-bottom-left-radius:calc(var(--radius-lg) - 1px)}
+  .tableau tbody tr:last-child > :last-child{border-bottom-right-radius:calc(var(--radius-lg) - 1px)}
+  .tableau tbody tr:last-child > *{border-bottom:0}
   th,td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:left;vertical-align:top}
   thead th{position:sticky;top:0;background:var(--surface-alt);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap;vertical-align:bottom}
   tbody th{font-weight:400}
@@ -309,6 +316,7 @@ RUXAWEB 2 : audit par observations.
   td.col-ici .cel-btn:hover{background:color-mix(in srgb, var(--accent-soft), var(--ink) 12%)}
   .cel-btn:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
   .nb-obs{font-size:11px;font-weight:700;opacity:.8}
+  .obs.ligne-tous{border-bottom:2px solid var(--border)}
   .obs.cible-fiche{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
   td.intitule{min-width:220px}
   table.contenus-table{table-layout:fixed}
@@ -1509,7 +1517,7 @@ RUXAWEB 2 : audit par observations.
   }
   // ---------- Rendu : statuts posés dans la grille, résumé et fiche d'un critère ----------
   // Un statut posé depuis la grille est une observation d'étape « cloture » (nom gardé pour les sauvegardes existantes).
-  // « Conforme sur les écrans restants » reste un choix explicite, critère par critère.
+  // « Tous les écrans » pose le même statut sur chaque écran modifiable, critère par critère.
   var saisieNc = null;
   function criteresADefinir(o){
     var l = aDefinir(o), ids = [];
@@ -1518,38 +1526,62 @@ RUXAWEB 2 : audit par observations.
     return ids.map(function(id){ return {c:PAR_ID[id], ecrans:l.filter(function(x){ return x.c.id === id; })}; });
   }
   // Statut posé dans la grille pour un critère sur un écran (le dernier), toujours modifiable.
+  // Un statut posé pour « tous les écrans » avec un NC est une seule observation partagée (un seul ticket Jira).
+  function estGrille(x, cid){ return x.etape === 'cloture' && x.criteres.length === 1 && x.criteres[0] === cid && x.tag !== 'nt'; }
   function obsGrille(o, eid, cid){
-    var l = o.obs.filter(function(x){ return x.etape === 'cloture' && x.ecran === eid && x.criteres.length === 1 && x.criteres[0] === cid && x.tag !== 'nt'; });
+    var l = o.obs.filter(function(x){ return estGrille(x, cid) && (x.ecran === eid || (x.partage && x.partage.ecrans.indexOf(eid) > -1)); });
     return l[l.length - 1] || null;
   }
-  function poserStatut(o, eid, cid, tag, texte){
-    o.obs = o.obs.filter(function(x){ return !(x.etape === 'cloture' && x.ecran === eid && x.criteres.length === 1 && x.criteres[0] === cid && x.tag !== 'nt'); });
-    o.obs.push({id:uid(), n:suivant(), ecran:eid, etape:'cloture', texte:texte || 'Défini dans la grille', attendu:'', point:'', criteres:[cid], tag:tag, partage:null});
+  // Retire l'écran du statut posé dans la grille (une observation partagée garde ses autres écrans).
+  function retirerStatut(o, eid, cid){
+    o.obs = o.obs.filter(function(x){
+      if(!estGrille(x, cid)) return true;
+      if(x.partage && x.partage.ecrans.indexOf(eid) > -1){ x.partage.ecrans = x.partage.ecrans.filter(function(id){ return id !== eid; }); if(!x.partage.ecrans.length) x.partage = null; return true; }
+      if(x.ecran !== eid) return true;
+      if(x.partage){ x.ecran = x.partage.ecrans.shift(); if(!x.partage.ecrans.length) x.partage = null; return true; }
+      return false;
+    });
+  }
+  function poserStatut(o, eids, cid, tag, texte){
+    eids = [].concat(eids); if(!eids.length) return;
+    eids.forEach(function(eid){ retirerStatut(o, eid, cid); });
+    if(tag === 'nc') o.obs.push({id:uid(), n:suivant(), ecran:eids[0], etape:'cloture', texte:texte, attendu:'', point:'', criteres:[cid], tag:'nc', partage:eids.length > 1 ? {nom:'', ecrans:eids.slice(1)} : null});
+    else eids.forEach(function(eid){ o.obs.push({id:uid(), n:suivant(), ecran:eid, etape:'cloture', texte:'Défini dans la grille', attendu:'', point:'', criteres:[cid], tag:tag, partage:null}); });
     o.valide = false;
+  }
+  // Écrans où le statut d'un critère peut se poser depuis la fiche (pas de contenu absent, pas défini par une observation de l'audit).
+  function ecransModifiables(o, c){
+    return o.ecrans.filter(function(e){ var r = statutEcran(o, e, c); return !r.cfg && (!!obsGrille(o, e.id, c.id) || r.s === 'NT' || r.s === 'AC'); });
   }
   // Statut d'un critère sur chaque écran, à poser sans observation (C, NA) ou avec une courte observation (NC).
   // Un statut venu d'une observation de l'audit n'est pas modifiable ici : on le retest.
-  function blocStatuts(o, c){
-    var restants = 0;
-    var html = o.ecrans.map(function(e){
-      var r = statutEcran(o, e, c); if(r.cfg) return '';
-      var clo = obsGrille(o, e.id, c.id), cle = e.id+'|'+c.id;
-      var modifiable = !!clo || r.s === 'NT' || r.s === 'AC';
-      if(r.s === 'NT' || r.s === 'AC') restants++;
-      var sel = r.s === 'AC' || r.s === 'NT' ? '' : r.s;
-      var note = r.s === 'AC' ? 'conforme sur un autre écran, à confirmer ici' : (!modifiable ? 'défini par une observation' : (clo && clo.tag === 'nc' ? clo.texte : ''));
-      return '<div class="centre-v obs'+(state.ficheEcran === e.id ? ' cible-fiche' : '')+'" data-bloc-ecran="'+e.id+'"><div class="corps"><span><b>'+esc(e.nom)+'</b>'+(note ? ' <span class="doux petit">('+esc(note)+')</span>' : '')+'</span>' +
-        (saisieNc === cle ? '<div class="rangee"><label class="sr" for="statut-txt">Observation de non-conformité sur '+esc(e.nom)+'</label>' +
+  function ligneStatut(c, eid, nom, note, sel, modifiable, extra){
+    var cle = eid+'|'+c.id;
+    return '<div class="centre-v obs'+(state.ficheEcran === eid ? ' cible-fiche' : '')+(eid === 'tous' ? ' ligne-tous' : '')+'" data-bloc-ecran="'+eid+'"><div class="corps"><span><b>'+esc(nom)+'</b>'+(note ? ' <span class="doux petit">('+esc(note)+')</span>' : '')+'</span>' +
+        (saisieNc === cle ? '<div class="rangee"><label class="sr" for="statut-txt">Observation de non-conformité, '+esc(nom)+'</label>' +
             '<input class="souple-240" type="text" id="statut-txt" aria-required="true" placeholder="Observation (obligatoire pour un NC)" autocomplete="off">' +
-            '<button type="button" class="btn btn-s btn-p" data-action="statut-nc-ok" data-ecran="'+e.id+'" data-crit="'+c.id+'">Enregistrer</button></div>' : '') +
-        (!modifiable && r.s !== 'NT' ? '<button type="button" class="btn btn-s" data-action="retest" data-ecran="'+e.id+'" data-crit="'+c.id+'">Retester (#nt)</button>' : '')+'</div>' +
-            '<div class="tags" role="group" aria-label="Statut sur '+esc(e.nom)+'">' +
+            '<button type="button" class="btn btn-s btn-p" data-action="statut-nc-ok" data-ecran="'+eid+'" data-crit="'+c.id+'">Enregistrer</button></div>' : '') + (extra || '') + '</div>' +
+      '<div class="tags" role="group" aria-label="Statut, '+esc(nom)+'">' +
         [['c','C','statut'],['nc','NC','statut-nc'],['na','NA','statut']].map(function(t){
           var on = sel === t[1] || (t[0] === 'nc' && saisieNc === cle);
-          return '<button type="button" class="tag tag-'+t[0]+'" data-action="'+t[2]+'" data-tag="'+t[0]+'" data-ecran="'+e.id+'" data-crit="'+c.id+'" aria-pressed="'+on+'"'+(modifiable ? '' : ' disabled')+'>'+t[1]+'</button>';
+          return '<button type="button" class="tag tag-'+t[0]+'" data-action="'+t[2]+'" data-tag="'+t[0]+'" data-ecran="'+eid+'" data-crit="'+c.id+'" aria-pressed="'+on+'"'+(modifiable ? '' : ' disabled')+'>'+t[1]+'</button>';
         }).join('') + '</div></div>';
+  }
+  function blocStatuts(o, c){
+    var mods = ecransModifiables(o, c);
+    var sels = mods.map(function(e){ var r = statutEcran(o, e, c).s; return r === 'AC' || r === 'NT' ? '' : r; });
+    var selTous = sels.length && sels.every(function(x){ return x && x === sels[0]; }) ? sels[0] : '';
+    var fixes = o.ecrans.filter(function(e){ return !statutEcran(o, e, c).cfg && mods.indexOf(e) === -1; });
+    var html = mods.length > 1 ? ligneStatut(c, 'tous', 'Tous les écrans', fixes.length ? 'sauf '+fixes.map(function(e){ return e.nom; }).join(', ')+', défini par une observation' : '', selTous, true) : '';
+    html += o.ecrans.map(function(e){
+      var r = statutEcran(o, e, c); if(r.cfg) return '';
+      var clo = obsGrille(o, e.id, c.id);
+      var modifiable = !!clo || r.s === 'NT' || r.s === 'AC';
+      var sel = r.s === 'AC' || r.s === 'NT' ? '' : r.s;
+      var note = r.s === 'AC' ? 'conforme sur un autre écran, à confirmer ici' : (!modifiable ? 'défini par une observation' : (clo && clo.tag === 'nc' ? clo.texte : ''));
+      return ligneStatut(c, e.id, e.nom, note, sel, modifiable, !modifiable && r.s !== 'NT' ? '<button type="button" class="btn btn-s" data-action="retest" data-ecran="'+e.id+'" data-crit="'+c.id+'">Retester (#nt)</button>' : '');
     }).join('');
-    return {html:html, restants:restants};
+    return {html:html};
   }
   function vueUx(o){
     var r = scoreUx(o);
@@ -1605,8 +1637,7 @@ RUXAWEB 2 : audit par observations.
       infoCritere(c, 'h3');
     if(o){
       var bst = blocStatuts(o, c);
-      html += '<h3 class="marge-haut-4 lbl">Statut par écran</h3><p class="sans-marge doux petit">C et NA se posent sans observation ; NC demande une phrase.</p>' + bst.html +
-        (bst.restants > 1 ? '<div><button type="button" class="btn btn-l" data-action="statut-tous" data-crit="'+c.id+'">Conforme sur les '+bst.restants+' écrans restants</button></div>' : '');
+      html += '<h3 class="marge-haut-4 lbl">Statut par écran</h3><p class="sans-marge doux petit">C et NA se posent sans observation ; NC demande une phrase. « Tous les écrans » donne le même statut partout.</p>' + bst.html;
       html += '<h3 class="marge-haut-4 lbl">Observations ('+obs.length+')</h3>' + (obs.length ? obs.map(function(x){ return '<div class="petit">'+esc((ecranDe(o, x.ecran) || {}).nom)+' · '+(x.tag === 'nt' ? 'retest' : '#'+x.tag)+' · '+esc(x.texte)+'</div>'; }).join('') : '<p class="sans-marge doux petit">Aucune.</p>');
     }
     document.getElementById('dlg-corps').innerHTML = html;
@@ -1812,19 +1843,15 @@ RUXAWEB 2 : audit par observations.
     },
     'statut': function(b, o, a){
       var eid = b.getAttribute('data-ecran'), cid0 = b.getAttribute('data-crit');
-      poserStatut(o, eid, cid0, b.getAttribute('data-tag'));
+      poserStatut(o, eid === 'tous' ? ecransModifiables(o, PAR_ID[cid0]).map(function(e){ return e.id; }) : eid, cid0, b.getAttribute('data-tag'));
       saisieNc = null; rendre(); var bc = document.querySelector('[data-action="statut"][data-ecran="'+eid+'"][data-crit="'+cid0+'"][data-tag="'+b.getAttribute('data-tag')+'"]'); if(bc) bc.focus();
-    },
-    'statut-tous': function(b, o, a){
-      var cid = b.getAttribute('data-crit'), cc = PAR_ID[cid];
-      o.ecrans.forEach(function(e){ var r = statutEcran(o, e, cc); if(r.s === 'NT' || r.s === 'AC') poserStatut(o, e.id, cid, 'c'); });
-      saisieNc = null; rendre(); message(refTxt(cc)+' : conforme sur les écrans restants.');
     },
     'statut-nc': function(b, o, a){ saisieNc = b.getAttribute('data-ecran')+'|'+b.getAttribute('data-crit'); rendre(); var it = document.getElementById('statut-txt'); if(it) it.focus(); },
     'statut-nc-ok': function(b, o, a){
       var tx = (document.getElementById('statut-txt').value || '').trim();
       if(!tx){ message('Décris l\'observation de non-conformité.', true); var ct = document.getElementById('statut-txt'); ct.setAttribute('aria-invalid', 'true'); ct.focus(); return ARRET; }
-      poserStatut(o, b.getAttribute('data-ecran'), b.getAttribute('data-crit'), 'nc', tx);
+      var eidN = b.getAttribute('data-ecran'), cidN = b.getAttribute('data-crit');
+      poserStatut(o, eidN === 'tous' ? ecransModifiables(o, PAR_ID[cidN]).map(function(e){ return e.id; }) : eidN, cidN, 'nc', tx);
       saisieNc = null; rendre();
     },
     'valider': function(b, o, a){
@@ -1892,7 +1919,7 @@ RUXAWEB 2 : audit par observations.
     if(!ev.target.closest('.menu')){ menu.hidden = true; document.getElementById('btn-menu').setAttribute('aria-expanded','false'); }
     if(!b) return;
     var a = b.getAttribute('data-action'), o = onglet();
-    var dansFiche = !!b.closest('#dlg') && ['statut','statut-nc','statut-nc-ok','statut-tous'].indexOf(a) > -1;
+    var dansFiche = !!b.closest('#dlg') && ['statut','statut-nc','statut-nc-ok'].indexOf(a) > -1;
     // Un choix dans le menu Fichier le referme (sauf la première demande de « Nouvel audit », qui attend sa confirmation).
     if(b.closest('#menu-fichier') && !(a === 'reinit' && confirmation !== 'reinit')){
       menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
