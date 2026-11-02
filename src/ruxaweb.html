@@ -226,7 +226,7 @@ RUXAWEB 2 : audit par observations.
   .btn-haut:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ---------- Panneau des étapes ---------- */
-  aside.panneau-etapes{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 24px - 48px - var(--pied-h, 90px));min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+  aside.panneau-etapes{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
   aside.panneau-etapes h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
   aside.panneau-etapes p{font-size:14.5px}
   aside.panneau-etapes:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -269,7 +269,7 @@ RUXAWEB 2 : audit par observations.
   .ecrans button:hover{background:var(--surface-alt)}
   .ecrans button[aria-current="true"]{background:var(--accent-fill);color:var(--accent-fill-ink);font-weight:700}
   .ecrans .carte > p{padding:4px 8px 8px;font-size:13px;color:var(--ink-soft)}
-  .elt{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 8px;font-size:14px}
+  .elt{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 8px;font-size:14px}
   h2.titre-ecran{font-size:21px}
 
   /* ---------- Formulaire d'observation ---------- */
@@ -303,7 +303,7 @@ RUXAWEB 2 : audit par observations.
   .tableau tbody:last-child tr:last-child > :last-child{border-bottom-right-radius:calc(var(--radius-lg) - 1px)}
   .tableau tbody:last-child tr:last-child > *{border-bottom:0}
   th,td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:left;vertical-align:top}
-  thead th{position:sticky;top:0;background:var(--surface-alt);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap;vertical-align:bottom}
+  thead th{position:sticky;top:0;background:var(--surface-alt);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap;vertical-align:middle}
   tbody th{font-weight:400}
   tbody tr:hover td,tbody tr:hover th{background:color-mix(in srgb, var(--surface-alt) 60%, transparent)}
   tr.theme th{background:var(--surface-alt);font-weight:800;font-size:13px}
@@ -429,7 +429,9 @@ RUXAWEB 2 : audit par observations.
   }
   /* Écran large : la page défile ; l'en-tête, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
-    .ecrans{position:sticky;top:calc(var(--barre-h, 130px) + 24px);max-height:calc(100vh - var(--barre-h, 130px) - 24px - 48px - var(--pied-h, 90px));overflow-y:auto}
+    /* Colonnes latérales collantes, sur toute la hauteur disponible sous l'en-tête (24 px de marge en haut et en bas). */
+    .ecrans,aside.panneau-etapes{position:sticky;top:calc(var(--barre-h, 130px) + 24px);height:var(--colonne-h, calc(100vh - var(--barre-h, 130px) - 48px));overflow-y:auto}
+    .ecrans > .carte:last-child{flex:1 0 auto}
     .tableau{overflow:visible}
     .tableau.large{overflow-x:auto}
     thead th{top:var(--barre-h, 130px);z-index:2}
@@ -904,6 +906,7 @@ RUXAWEB 2 : audit par observations.
       '<div class="ecart-haut-8"><button type="button" class="btn btn-s" data-action="copier-consigne" data-cible="'+id+'">'+ico('copier')+'Copier la consigne</button></div></details>';
   }
   function ouvrirCollage(){
+    ui.dlg = 'coller';
     var o = onglet(), e = ecranDe(o, state.ecranId);
     var html = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
       '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | point de contrôle</code>. Le dernier champ accepte aussi des numéros de critères (<code>10.7, 11.9</code>). Seule l\'observation est obligatoire ; sinon, l\'outil propose un point de contrôle d\'après les mots. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
@@ -1023,8 +1026,8 @@ RUXAWEB 2 : audit par observations.
   var brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:'nc', nomPartage:'', ecransPartage:[], vers:'', candidat:null};
   // État d'interface passager : jamais enregistré (ni dans le navigateur, ni dans les sauvegardes).
   // confirmation : action en attente de second clic ; saisieNc : ligne de la fiche où l'on écrit un NC ;
-  // ficheEcran : écran mis en avant dans la fiche ; derniereCase : case de la grille qui garde le focus ; grilleFiltre : tous | definir.
-  var ui = {confirmation:null, saisieNc:null, ficheEcran:null, derniereCase:null, grilleFiltre:'tous'};
+  // dlg : fenêtre ouverte (fiche, coller, config) ; ficheEcran : écran mis en avant dans la fiche ; derniereCase : case de la grille qui garde le focus ; grilleFiltre : tous | definir.
+  var ui = {confirmation:null, saisieNc:null, ficheEcran:null, derniereCase:null, grilleFiltre:'tous', dlg:null};
 
   function rendre(focus){
     var o = onglet();
@@ -1165,6 +1168,39 @@ RUXAWEB 2 : audit par observations.
     return html;
   }
 
+  // Fonctions primaires (activées sur la page Projet) : les écrans de cet onglet où chacune apparaît.
+  function blocFonctionsEcrans(o){
+    var actives = fonctions().filter(function(f){ return f.presente; });
+    return '<div class="rangee entre"><h2 id="t-fonctions-onglet">Fonctions primaires sur ces écrans</h2>' +
+        '<button type="button" class="btn btn-s" data-action="projet-fonctions">Gérer les fonctions du projet</button></div>' +
+      (actives.length ? actives.map(function(f){
+        var ecrs = ecransFonction(o, f.id);
+        return '<fieldset class="fonction-ecrans"><legend><b>'+esc(f.nom)+'</b> <span class="doux petit">'+esc(etatFonction(f))+'</span></legend>' +
+            '<div class="rangee">' + o.ecrans.map(function(e){ return '<label class="choix">' +
+            '<input type="checkbox" data-fonction-ecran="'+f.id+'" value="'+e.id+'"'+(ecrs.indexOf(e.id) > -1 ? ' checked' : '')+'> '+esc(e.nom)+'</label>'; }).join('') + '</div></fieldset>';
+      }).join('') : '<p class="doux">Aucune fonction primaire active. Active-les sur la page Projet : navigation principale, recherche, pied de page...</p>');
+  }
+  // Contenu des écrans : un interrupteur par contenu et par écran. Activé : l'écran contient ce contenu ; sinon ses critères passent NA.
+  function blocContenus(o){
+    return '<h2 id="t-contenus">Contenu des écrans</h2>' +
+        '<div class="sans-bord tableau"><table class="contenus-table"><thead><tr><th scope="col">L\'écran contient</th>' +
+      o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>' + DECLENCHEURS.map(function(d){
+        return '<tr><th scope="row" title="'+esc(d.question)+'">'+esc(d.libelle)+'</th>' + o.ecrans.map(function(e){
+          var on = !!(e.contenus || {})[d.id];
+          return '<td><button type="button" role="switch" class="switch" aria-checked="'+on+'" aria-label="'+esc(d.libelle)+' ('+esc(e.nom)+')" data-action="contenu" data-ecran="'+e.id+'" data-d="'+d.id+'"><span class="bouton" aria-hidden="true"></span></button></td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  // Même réglage, à tout moment, dans une fenêtre : la grille et les statuts derrière se mettent à jour.
+  function ouvrirConfiguration(){
+    var o = onglet(); if(!o) return;
+    ui.dlg = 'config';
+    document.getElementById('dlg-corps').innerHTML = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">Contenus et fonctions des écrans</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
+      '<p class="sans-marge doux petit">Un contenu absent rend ses critères non applicables (NA) sur cet écran ; une fonction primaire cochée y applique ses observations.</p>' +
+      '<section class="pile" aria-labelledby="t-contenus">' + blocContenus(o) + '</section>' +
+      '<section class="pile" aria-labelledby="t-fonctions-onglet">' + blocFonctionsEcrans(o) + '</section>';
+    var d = document.getElementById('dlg'); if(!d.open) d.showModal();
+  }
   function vuePreparer(o){
     var mini = o.type === 'scenario' ? 2 : 3;
     var html = '<h1>Écrans de l\'onglet</h1><div class="carte grille2">' +
@@ -1182,26 +1218,8 @@ RUXAWEB 2 : audit par observations.
         (o.ecrans.length > mini ? '<button type="button" class="btn btn-s btn-danger" data-action="suppr-ecran" data-id="'+e.id+'">'+(ui.confirmation === 'ecran-'+e.id ? 'Confirmer la suppression' : 'Supprimer')+'</button>' : '') + '</div>';
     });
     html += '</div><div class="rangee entre">'+(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT ? '<span class="doux petit">5 écrans au plus pour un audit simple.</span>' : '<button type="button" class="btn btn-l btn-d" data-action="ajout-ecran">+ Ajouter un écran</button>')+'<span class="doux petit">'+(o.type === 'scenario' ? mini+' écrans au moins.' : mini+' à '+MAX_AUDIT+' écrans.')+'</span></div></section>';
-    // Fonctions primaires : activées sur la page Projet ; ici, les écrans de cet onglet où chacune apparaît.
-    var actives = fonctions().filter(function(f){ return f.presente; });
-    html += '<section class="carte pile" aria-labelledby="t-fonctions-onglet">' +
-        '<div class="rangee entre"><h2 id="t-fonctions-onglet">Fonctions primaires sur ces écrans</h2>' +
-        '<button type="button" class="btn btn-s" data-action="projet-fonctions">Gérer les fonctions du projet</button></div>' +
-      (actives.length ? actives.map(function(f){
-        var ecrs = ecransFonction(o, f.id);
-        return '<fieldset class="fonction-ecrans"><legend><b>'+esc(f.nom)+'</b> <span class="doux petit">'+esc(etatFonction(f))+'</span></legend>' +
-            '<div class="rangee">' + o.ecrans.map(function(e){ return '<label class="choix">' +
-            '<input type="checkbox" data-fonction-ecran="'+f.id+'" value="'+e.id+'"'+(ecrs.indexOf(e.id) > -1 ? ' checked' : '')+'> '+esc(e.nom)+'</label>'; }).join('') + '</div></fieldset>';
-      }).join('') : '<p class="doux">Aucune fonction primaire active. Active-les sur la page Projet : navigation principale, recherche, pied de page...</p>') + '</section>';
-    // Contenu des écrans : un interrupteur par contenu et par écran. Activé : l'écran contient ce contenu.
-    html += '<section class="carte pile" aria-labelledby="t-contenus"><h2 id="t-contenus">Contenu des écrans</h2>' +
-        '<div class="sans-bord tableau"><table class="contenus-table"><thead><tr><th scope="col">L\'écran contient</th>' +
-      o.ecrans.map(function(e){ return '<th scope="col">'+esc(e.nom)+'</th>'; }).join('') + '</tr></thead><tbody>' + DECLENCHEURS.map(function(d){
-        return '<tr><th scope="row" title="'+esc(d.question)+'">'+esc(d.libelle)+'</th>' + o.ecrans.map(function(e){
-          var on = !!(e.contenus || {})[d.id];
-          return '<td><button type="button" role="switch" class="switch" aria-checked="'+on+'" aria-label="'+esc(d.libelle)+' ('+esc(e.nom)+')" data-action="contenu" data-ecran="'+e.id+'" data-d="'+d.id+'"><span class="bouton" aria-hidden="true"></span></button></td>';
-        }).join('') + '</tr>';
-      }).join('') + '</tbody></table></div></section>';
+    html += '<section class="carte pile" aria-labelledby="t-fonctions-onglet">' + blocFonctionsEcrans(o) + '</section>';
+    html += '<section class="carte pile" aria-labelledby="t-contenus">' + blocContenus(o) + '</section>';
     html += '<div class="a-droite rangee"><button type="button" class="btn btn-p" data-action="vue" data-vue="audit">Auditer</button></div>';
     html += '<section class="carte rangee entre" aria-labelledby="t-suppr-onglet">' +
         '<div><h2 class="titre-encadre" id="t-suppr-onglet">Supprimer cet onglet</h2>' +
@@ -1280,7 +1298,8 @@ RUXAWEB 2 : audit par observations.
       var faitIci = vue === 'audit' && (x.etapes || {})[state.etape];
       html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id && !fC ? ' aria-current="true"' : '')+'><span>'+(faitIci ? '<span class="coche" aria-hidden="true">&#10003;</span>' : '')+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+(faitIci ? '<span class="sr"> (étape faite)</span>' : '')+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
     });
-    html += '<button class="lien-action" type="button" data-action="vue" data-vue="preparer">Gérer les écrans</button></div>';
+    html += '<button class="lien-action" type="button" data-action="configurer">Contenus et fonctions</button>' +
+      '<button class="lien-action" type="button" data-action="vue" data-vue="preparer">Gérer les écrans</button></div>';
     var elts = {};
     // Un élément est répété quand ses observations, une ou plusieurs, touchent au moins deux écrans.
     var libelles = {};
@@ -1293,8 +1312,7 @@ RUXAWEB 2 : audit par observations.
   // Fin d'étape : l'outil passe à la cible suivante (fonction ou écran), puis à l'étape suivante.
   function boutonFin(o, et, curId){
     var nx = cibleSuivante(o, et.id, curId), nxEt = nx ? null : etapeSuivante(o, et);
-    var ici = fonctionDe(curId) && fonctionCourante(o) ? 'cette fonction' : 'cet écran';
-    var lib = nx ? 'Fait sur '+ici+', '+(nx.type === 'f' ? 'fonction suivante : ' : 'écran suivant : ')+esc(nx.nom) : (nxEt ? 'Fait sur '+ici+', étape suivante : '+esc(nxEt.nom) : 'Fait sur '+ici+', passer à la clôture');
+    var lib = 'Valider puis passer à : ' + (nx ? esc(nx.nom) : (nxEt ? 'étape '+esc(nxEt.nom) : 'la grille'));
     return '<div class="a-droite rangee"><button type="button" class="btn btn-p" data-action="etape-faite">'+lib+'</button></div>';
   }
   function ligneObsF(x){
@@ -1695,6 +1713,7 @@ RUXAWEB 2 : audit par observations.
   }
   function ouvrirCritere(id){
     var o = onglet(), c = PAR_ID[id]; if(!c) return;
+    ui.dlg = 'fiche';
     var obs = o ? o.obs.filter(function(x){ return x.criteres.indexOf(id) > -1; }) : [];
     var html = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">'+esc(refTxt(c))+'</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
       infoCritere(c, 'h3');
@@ -1890,7 +1909,12 @@ RUXAWEB 2 : audit par observations.
       rendre(); message('Fonction « '+nomF+' » ajoutée et active, sur tous les écrans de chaque onglet.');
       var bn = document.querySelector('[data-action="fonction-presente"][data-id="'+nf.id+'"]'); if(bn) bn.focus();
     },
-    'contenu': function(b, o, a){ var ec = ecranDe(o, b.getAttribute('data-ecran')); ec.contenus = ec.contenus || {}; var d = b.getAttribute('data-d'); ec.contenus[d] = !ec.contenus[d]; o.valide = false; rendre(); var bc = document.querySelector('[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus(); },
+    'contenu': function(b, o, a){
+      var ec = ecranDe(o, b.getAttribute('data-ecran')); ec.contenus = ec.contenus || {}; var d = b.getAttribute('data-d'); ec.contenus[d] = !ec.contenus[d]; o.valide = false;
+      var fen = ui.dlg === 'config'; rendre(); if(fen) ouvrirConfiguration();
+      var bc = document.querySelector((fen ? '#dlg ' : '')+'[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus();
+    },
+    'configurer': function(b, o, a){ ouvrirConfiguration(); },
     'critere': function(b, o, a){ ui.ficheEcran = null; ouvrirCritere(b.getAttribute('data-id')); },
     'cellule': function(b, o, a){
       ui.ficheEcran = b.getAttribute('data-ecran'); ouvrirCritere(b.getAttribute('data-id'));
@@ -2006,7 +2030,7 @@ RUXAWEB 2 : audit par observations.
   document.querySelectorAll('[data-ico]').forEach(function(sp){ sp.outerHTML = ico(sp.getAttribute('data-ico')); });
   // Fiche refermée : son contenu est vidé, pour qu'aucun bouton caché ne reste dans la page.
   document.getElementById('dlg').addEventListener('close', function(){
-    document.getElementById('dlg-corps').innerHTML = '';
+    document.getElementById('dlg-corps').innerHTML = ''; ui.dlg = null;
     // Retour sur la case d'où la fiche a été ouverte (la grille a pu être redessinée entre-temps).
     if(state.vue === 'grille' && ui.derniereCase){ var bc = $main.querySelector('.cel-btn[data-id="'+ui.derniereCase.id+'"][data-ecran="'+ui.derniereCase.e+'"]'); if(bc) bc.focus(); }
   });
@@ -2070,6 +2094,7 @@ RUXAWEB 2 : audit par observations.
       var lst = ecransFonction(o, fid).filter(function(id){ return id !== t.value; }); if(t.checked) lst.push(t.value);
       o.fonctionsEcrans[fid] = o.ecrans.map(function(x){ return x.id; }).filter(function(id){ return lst.indexOf(id) > -1; });
       o.valide = false; sauver();
+      if(ui.dlg === 'config') rendre(); // la fenêtre reste telle quelle (focus gardé) ; la page derrière se met à jour
     }
     else if(t.hasAttribute('data-ecran-nom')){ var e = ecranDe(o, t.getAttribute('data-ecran-nom')); e.nom = t.value.trim() || e.nom; sauver(); }
     else if(t.hasAttribute('data-crit') || t.hasAttribute('data-ecran-partage')){
@@ -2238,10 +2263,21 @@ RUXAWEB 2 : audit par observations.
     function caler(){
       document.documentElement.style.setProperty('--barre-h', barre.offsetHeight + 'px');
       document.documentElement.style.setProperty('--pied-h', (pied ? pied.offsetHeight : 0) + 'px');
+      hauteurColonnes();
       focusPanneauEtapes();
     }
+    // Colonnes latérales : du haut (sous l'en-tête) jusqu'en bas de la fenêtre ; elles raccourcissent quand le pied de page
+    // apparaît, au lieu de remonter sous l'en-tête (une colonne collante ne peut pas dépasser le bas de la page).
+    var attente = false;
+    function hauteurColonnes(){
+      var haut = barre.offsetHeight + 24, bas = window.innerHeight - 24;
+      if(pied) bas = Math.min(bas, pied.getBoundingClientRect().top - 48);
+      document.documentElement.style.setProperty('--colonne-h', Math.max(220, bas - haut) + 'px');
+    }
+    window.addEventListener('scroll', function(){ if(attente) return; attente = true; requestAnimationFrame(function(){ attente = false; hauteurColonnes(); }); }, {passive:true});
+    window.addEventListener('resize', hauteurColonnes);
     caler();
-    if(window.ResizeObserver){ var ro = new ResizeObserver(caler); ro.observe(barre); if(pied) ro.observe(pied); } else window.addEventListener('resize', caler);
+    if(window.ResizeObserver){ var ro = new ResizeObserver(caler); ro.observe(barre); if(pied) ro.observe(pied); ro.observe(document.getElementById('main')); } else window.addEventListener('resize', caler);
   })();
 
   // Haut de page : visible après un écran de défilement ; le focus revient sur le titre de la page.

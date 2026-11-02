@@ -315,6 +315,17 @@ def main():
         page.keyboard.press('Escape')
         page.wait_for_timeout(100)
         verifier('Clavier : retour sur la case à la fermeture', page.evaluate('document.activeElement.classList.contains("cel-btn")'))
+        # Contenus et fonctions, à tout moment, dans une fenêtre.
+        page.click('[data-action="configurer"]')
+        verifier('Configuration : fenêtre avec en-tête fixe et interrupteurs', page.locator('#dlg .dlg-tete').count() == 1 and page.locator('#dlg [data-action="contenu"]').count() > 0)
+        sw = page.locator('#dlg [data-action="contenu"][data-d="formulaire"]').first
+        etat = sw.get_attribute('aria-checked')
+        sw.click()
+        sw2 = page.locator('#dlg [data-action="contenu"][data-d="formulaire"]').first
+        verifier('Configuration : interrupteur basculé, fenêtre à jour, focus gardé', sw2.get_attribute('aria-checked') != etat and page.evaluate('document.activeElement.closest("#dlg") !== null && document.activeElement.dataset.d === "formulaire"'))
+        sw2.click()
+        page.keyboard.press('Escape')
+        page.wait_for_timeout(100)
         verifier('État d\'interface jamais enregistré', page.evaluate('["ficheEcran","grilleFiltre","confirmation"].every(function(k){ return !(k in RUXAWEB.state()); })'))
         # Sauvegarde 2.0 ou 2.1 : statuts de clôture et nom de partage normalisés à l'ouverture.
         v20 = pathlib.Path(tempfile.mkdtemp()) / 'v20.json'
@@ -480,16 +491,16 @@ def main():
         def en_cours():
             return page.locator('#panneau-etapes .en-cours').inner_text(), page.locator('.ecrans [aria-current="true"]').inner_text()
         verifier('Étape d\'abord : départ Tour à vide sur le premier écran', 'Tour à vide' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
-        verifier('Étape d\'abord : bouton vers l\'écran suivant', 'écran suivant : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
+        verifier('Étape d\'abord : bouton vers l\'écran suivant', 'Valider puis passer à : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
         verifier('Étape d\'abord : même étape, écran suivant', 'Tour à vide' in en_cours()[0] and 'formulaire' in en_cours()[1], en_cours())
         verifier('Étape d\'abord : premier écran coché pour l\'étape', page.locator('.ecrans [data-action="ecran"]').first.locator('.coche').count() == 1)
         page.locator('.ecrans [data-action="ecran"]').first.click()
         verifier('Étape d\'abord : changer d\'écran garde l\'étape', 'Tour à vide' in en_cours()[0])
         page.locator('.ecrans [data-action="ecran"]').nth(2).click()
-        verifier('Étape d\'abord : dernier écran, bouton vers l\'étape suivante', 'écran suivant : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
+        verifier('Étape d\'abord : dernier écran, bouton vers l\'étape suivante', 'Valider puis passer à : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
-        verifier('Étape d\'abord : bouton vers l\'étape suivante', 'étape suivante : Usage standard' in page.locator('[data-action="etape-faite"]').inner_text())
+        verifier('Étape d\'abord : bouton vers l\'étape suivante', 'Valider puis passer à : étape Usage standard' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
         verifier('Étape d\'abord : étape suivante sur le premier écran', 'Usage standard' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
         page.click('[data-action="etapes-bascule"]')
@@ -634,7 +645,7 @@ def main():
         page.click('[data-action="ouvrir"][data-id="%s"]' % oidF)
         aller_audit(page)
         page.click('.ecrans [data-action="cible-fonction"][data-id="nav"]')
-        verifier('Fonction : bouton de fin vers la fonction suivante', 'fonction suivante : Bandeau cookies' in page.inner_text('[data-action="etape-faite"]'))
+        verifier('Fonction : bouton de fin vers la fonction suivante', 'Valider puis passer à : Bandeau cookies' in page.inner_text('[data-action="etape-faite"]'))
         page.click('[data-action="etape-faite"]')
         page.click('[data-action="etape-faite"]')
         verifier('Après les fonctions : premier écran', page.inner_text('h2.titre-ecran') == 'Accueil' and 'Fonctions primaires sur cet écran' in page.inner_text('main'))
