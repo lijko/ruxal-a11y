@@ -233,6 +233,7 @@ def main():
         page.click('#t-alertes ~ .rangee [data-action="valider"]')
         verifier('Validation : résumé', page.locator('h1').inner_text().startswith('Résumé'))
         verifier('Résumé : deux taux', 'Taux sélection SIP' in page.locator('main').inner_text() and 'Taux élargi' in page.locator('main').inner_text())
+        verifier('Résumé : niveau du taux écrit et coloré', page.locator('main .niveau[class*="niv-"]').count() >= 1)
 
         # Exports.
         x = telecharger(page, 'export-xlsx')

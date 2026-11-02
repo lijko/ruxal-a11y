@@ -3056,7 +3056,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     if(/[,"\n\r]/.test(t)) t = '"'+t.replace(/"/g,'""')+'"';
     return t;
   }
-  var PRIORITE_JIRA = {critique:'Highest', serieux:'High', modere:'Medium', mineur:'Low'};
+  // Priorités du projet Jira des tickets d'accessibilité (noms exacts, pour l'import CSV).
+  var PRIORITE_JIRA = {critique:'Blocker', serieux:'Highest', modere:'Medium', mineur:'Minor'};
   function buildJiraImportCSV(toutReexporter){
     var header = ['Summary','Description','Issue Type','Priority','Labels','Labels','Labels'].concat(state.plateforme ? ['Labels'] : []);
     var lignes = [header.map(csvEscapeVirgule).join(',')];
