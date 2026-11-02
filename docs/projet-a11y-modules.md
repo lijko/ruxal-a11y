@@ -71,7 +71,7 @@ Les **éléments répétés libres** restent possibles en plus : un élément ho
 1. Préparer : nom de l'onglet, mode, écrans et leurs contenus (interrupteurs actuels).
 2. Configurer les fonctions primaires.
 3. Étapes de test, chacune sur tous les écrans (ordre « étape d'abord ») : tour à vide, usage standard, code et outils, lecteur d'écran, clavier. **À chaque étape, les fonctions primaires passent en premier**, puis les écrans : à l'étape Clavier, on teste la navigation principale, puis chaque écran. Une fonction déjà testée à cette étape (dans un autre onglet du projet) est marquée faite.
-4. Clôture : définir les critères encore sans statut.
+4. Compléter la grille : définir, case par case, les critères encore sans statut (filtre « À définir »).
 5. Résumé et exports : deux taux, état des fonctions primaires, non-conformités.
 
 ## 3. Module Scénario

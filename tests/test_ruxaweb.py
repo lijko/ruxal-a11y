@@ -40,7 +40,7 @@ def statut(page, ecran, crit):
     aller_audit(page)
     page.click('[data-action="vue"][data-vue="grille"]')
     ligne = page.locator('tr', has=page.locator('[data-action="critere"][data-id="%s"]' % crit))
-    return ligne.locator('td.statut').nth(ecran).inner_text().split('\n')[0].strip()
+    return ligne.locator('td.statut').nth(ecran).locator('.pastille').inner_text().split('\n')[0].replace(' !', '').strip()
 
 
 def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit=None):
@@ -185,37 +185,35 @@ def main():
 
         # Taux : hors sélection (7.1 NC) ne change que le taux élargi.
         oid = page.evaluate('RUXAWEB.state().onglets[0].id')
-        page.click('[data-action="vue"][data-vue="cloture"]')
-        verifier('Clôture : un critère à la fois, avec sa consigne', page.locator('#clo-titre').count() == 1 and 'Comment vérifier' in page.locator('main').inner_text())
-        premier = page.locator('#clo-titre').inner_text()
-        page.locator('[data-action="clo-crit"]').first.click()
-        verifier('Clôture : passage à un autre critère', page.locator('#clo-titre').inner_text() != premier)
-        tous = page.locator('[data-action="clo-tous"]')
-        if tous.count():
-            cid = tous.get_attribute('data-crit')
-            tous.click()
-            verifier('Clôture : conforme sur les écrans restants en un clic', all(statut(page, i, cid) in ('C', 'NA') for i in range(3)))
-            page.click('[data-action="vue"][data-vue="cloture"]')
-        page.locator('[data-action="clo-crit"]').first.click()
-        b = page.locator('[data-action="clo"][data-tag="c"][aria-pressed="false"]:not([disabled])').first
-        b.click()
-        verifier('Clôture : le choix reste affiché (C allumé)', page.locator('[data-action="clo"][data-tag="c"][aria-pressed="true"]').count() >= 1)
-        page.locator('[data-action="clo"][data-tag="na"]:not([disabled])').first.click()
-        verifier('Clôture : choix modifiable (NA allumé, C éteint)', page.locator('[data-action="clo"][data-tag="na"][aria-pressed="true"]').count() >= 1)
+        page.click('[data-action="vue"][data-vue="grille"]')
+        verifier('Grille : colonne Résultat (et non Onglet)', 'Résultat' in page.locator('thead').inner_text() and 'Onglet' not in page.locator('thead').inner_text())
+        verifier('Grille : les cases d\'écran sont des boutons', page.locator('td.statut [data-action="cellule"]').count() > 0)
+        page.click('[data-action="grille-filtre"][data-v="definir"]')
+        verifier('Grille : filtre À définir, chaque ligne a encore un NT', all(page.locator('tbody tr:not(.theme)').nth(i).locator('.s-NT, .s-AC').count() > 0 for i in range(page.locator('tbody tr:not(.theme)').count())))
+        nt = page.locator('td.statut [data-action="cellule"]:has(.s-NT)').first
+        eid = nt.get_attribute('data-ecran')
+        nt.click()
+        verifier('Case : la fiche s\'ouvre sur l\'écran cliqué', page.evaluate("document.getElementById('dlg').open") and page.locator('#dlg .cible-fiche[data-bloc-ecran="%s"]' % eid).count() == 1)
+        page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="c"]' % eid).click()
+        verifier('Case : C posé, la fiche reste ouverte', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="c"][aria-pressed="true"]' % eid).count() == 1)
+        page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="na"]' % eid).click()
+        verifier('Case : choix modifiable (NA)', page.locator('#dlg [data-bloc-ecran="%s"] [data-action="clo"][data-tag="na"][aria-pressed="true"]' % eid).count() == 1)
+        page.click('#dlg [data-action="fermer-dlg"]')
         for _ in range(600):
-            b = page.locator('[data-action="clo"][data-tag="c"][aria-pressed="false"]:not([disabled])')
-            ecr = page.locator('.obs:has([data-action="clo"])')
-            libres = [i for i in range(ecr.count()) if ecr.nth(i).locator('[aria-pressed="true"]').count() == 0 and ecr.nth(i).locator('[disabled]').count() == 0]
-            if libres:
-                ecr.nth(libres[0]).locator('[data-action="clo"][data-tag="c"]').click()
-                continue
-            suivant = page.locator('[data-action="clo-crit"]')
-            if suivant.count() == 0:
+            c = page.locator('td.statut [data-action="cellule"]:has(.s-NT), td.statut [data-action="cellule"]:has(.s-AC)').first
+            if c.count() == 0:
                 break
-            suivant.first.click()
+            c.click()
+            t = page.locator('#dlg [data-action="clo-tous"]')
+            if t.count():
+                t.click()
+            else:
+                page.locator('#dlg .cible-fiche [data-action="clo"][data-tag="c"]').click()
+            page.click('#dlg [data-action="fermer-dlg"]')
+        verifier('Grille : plus rien à définir', 'Tous les critères ont un statut' in page.locator('main').inner_text())
         sel = page.evaluate('RUXAWEB.taux("%s")' % oid)
         ela = page.evaluate('RUXAWEB.taux("%s", true)' % oid)
-        verifier('Clôture : plus rien à valider', sel['complet'] and ela['complet'], (sel, ela))
+        verifier('Grille complète : plus rien à définir', sel['complet'] and ela['complet'], (sel, ela))
         verifier('Taux sélection SIP : 5 NC (6.2, 10.7, 11.1, 11.2, 11.10), sans 7.1', sel['C'] == sel['total'] - 5, sel)
         verifier('Taux élargi : 7.1 en plus', ela['C'] == ela['total'] - 6, ela)
         page.click('[data-action="valider"]')
@@ -435,7 +433,7 @@ def main():
         page.wait_for_timeout(100)
         verifier('Fiche fermée : contenu vidé', page.locator('#dlg-corps').inner_html() == '')
         ligne2 = page.locator('tbody tr', has=page.locator('[data-action="critere"][data-id="%s"]' % cid))
-        verifier('Grille : critère conforme sans observation', 'C' in [x.strip() for x in ligne2.locator('td.statut').all_inner_texts()])
+        verifier('Grille : critère conforme sans observation', 'C' in [x.strip() for x in ligne2.locator('td.statut .pastille').all_inner_texts()])
         # Modifier une observation : une note devient non conforme avec un critère.
         aller_audit(page)
         page.fill('#obs-texte', 'Un seul facteur pour montrer l\'état actif.')
