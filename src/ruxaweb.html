@@ -1547,38 +1547,30 @@ RUXAWEB 2 : audit par observations.
     var t2 = document.getElementById('obs-texte'); if(t2) t2.focus();
   }
 
-  document.addEventListener('click', function(ev){
-    var b = ev.target.closest('[data-action]');
-    var menu = document.getElementById('menu-fichier');
-    if(!ev.target.closest('.menu')){ menu.hidden = true; document.getElementById('btn-menu').setAttribute('aria-expanded','false'); }
-    if(!b) return;
-    var a = b.getAttribute('data-action'), o = onglet();
-    var dansFiche = !!b.closest('#dlg') && ['clo','clo-nc','clo-nc-ok','clo-tous'].indexOf(a) > -1;
-    // Un choix dans le menu Fichier le referme (sauf la première demande de « Nouvel audit », qui attend sa confirmation).
-    if(b.closest('#menu-fichier') && !(a === 'reinit' && confirmation !== 'reinit')){
-      menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
-      setTimeout(function(){ var f = document.activeElement; if(!f || f === document.body || menu.contains(f)) bm.focus(); }, 0);
-    }
-    if(['suppr-obs','suppr-ecran','suppr-onglet','reinit'].indexOf(a) === -1) confirmation = null;
-    lireBrouillon();
-    if(a === 'parcours-bascule'){
+  // ---------- Actions ----------
+  // Une fonction par valeur de data-action. Chacune reçoit le bouton cliqué, l'onglet en cours et le nom de l'action.
+  // Renvoyer ARRET interrompt la suite du clic (en particulier le rafraîchissement de la fiche ouverte).
+  var ARRET = {};
+  var ACTIONS = {
+    'parcours-bascule': function(b, o, a){
       var ouvert = b.getAttribute('aria-expanded') === 'true';
       state.parcoursOuvert = !ouvert; sauver();
       $aide.innerHTML = vueAide(onglet()); focusParcours();
       var nb = $aide.querySelector('[data-action="parcours-bascule"]'); if(nb) nb.focus();
-      return;
-    }
-    if(a === 'accueil'){ state.vue = 'accueil'; rendre(true); }
-    else if(a === 'projet-nouveau' || a === 'accueil-fonctions'){
+      return ARRET;
+    },
+    'accueil': function(b, o, a){ state.vue = 'accueil'; rendre(true); },
+    'projet-nouveau': function(b, o, a){
       state.vue = 'accueil'; rendre();
       var cible = document.getElementById(a === 'projet-nouveau' ? 't-nouveau' : 't-fonctions');
       if(cible){ cible.setAttribute('tabindex', '-1'); cible.focus(); cible.scrollIntoView({block:'start'}); }
-    }
-    else if(a === 'referentiel'){ state.vue = 'referentiel'; rendre(true); }
-    else if(a === 'imprimer-ref'){ window.print(); }
-    else if(a === 'nouvel-onglet'){ nouvelOnglet(b.getAttribute('data-type')); rendre(true); }
-    else if(a === 'support'){ state.support = b.getAttribute('data-support'); sauver(); rendre(); }
-    else if(a === 'ouvrir'){
+    },
+    'accueil-fonctions': function(b, o, a){ return ACTIONS['projet-nouveau'](b, o, a); },
+    'referentiel': function(b, o, a){ state.vue = 'referentiel'; rendre(true); },
+    'imprimer-ref': function(b, o, a){ window.print(); },
+    'nouvel-onglet': function(b, o, a){ nouvelOnglet(b.getAttribute('data-type')); rendre(true); },
+    'support': function(b, o, a){ state.support = b.getAttribute('data-support'); sauver(); rendre(); },
+    'ouvrir': function(b, o, a){
       var deja = state.ongletId === b.getAttribute('data-id') && state.vue !== 'accueil';
       state.ongletId = b.getAttribute('data-id'); o = onglet();
       if(!deja || !ecranDe(o, state.ecranId)) state.ecranId = o.ecrans.length ? o.ecrans[0].id : null;
@@ -1589,12 +1581,12 @@ RUXAWEB 2 : audit par observations.
         if(stp){ state.etape = stp.id; var ne = cibles(o).filter(function(x){ return !cibleFaite(x, stp.id); })[0]; if(ne) allerCible(ne); }
       }
       state.vue = deja || o.obs.length ? 'audit' : 'preparer'; rendre(true);
-    }
-    else if(a === 'vue'){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit simple')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return; } if(v === 'audit' && state.vue === 'preparer'){ var pc = cibles(o).filter(function(x){ return !cibleFaite(x, state.etape); })[0]; if(pc) allerCible(pc); } state.vue = v; rendre(true); }
-    else if(a === 'etape'){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); }
-    else if(a === 'ecran'){ if(brouillon.modif) viderBrouillon(); state.fonctionId = null; state.ecranId = b.getAttribute('data-id'); rendre(true); }
-    else if(a === 'cible-fonction'){ if(brouillon.modif) viderBrouillon(); state.fonctionId = b.getAttribute('data-id'); state.vue = 'audit'; rendre(true); }
-    else if(a === 'etape-faite'){
+    },
+    'vue': function(b, o, a){ var v = b.getAttribute('data-vue'); if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit simple')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return ARRET; } if(v === 'audit' && state.vue === 'preparer'){ var pc = cibles(o).filter(function(x){ return !cibleFaite(x, state.etape); })[0]; if(pc) allerCible(pc); } state.vue = v; rendre(true); },
+    'etape': function(b, o, a){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return ARRET; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); },
+    'ecran': function(b, o, a){ if(brouillon.modif) viderBrouillon(); state.fonctionId = null; state.ecranId = b.getAttribute('data-id'); rendre(true); },
+    'cible-fonction': function(b, o, a){ if(brouillon.modif) viderBrouillon(); state.fonctionId = b.getAttribute('data-id'); state.vue = 'audit'; rendre(true); },
+    'etape-faite': function(b, o, a){
       var cur = cibles(o).filter(function(x){ return x.id === cibleCourante(o); })[0];
       cur.ref.etapes = cur.ref.etapes || {}; cur.ref.etapes[state.etape] = true;
       var e = cur.ref;
@@ -1610,45 +1602,45 @@ RUXAWEB 2 : audit par observations.
         else { state.vue = 'cloture'; message('Toutes les étapes sont faites sur tous les écrans : place à la clôture.'); }
       }
       rendre(true);
-    }
-    else if(a === 'tag'){ brouillon.tag = b.getAttribute('data-tag'); rendre(); var bt = document.querySelector('.tag[data-tag="'+brouillon.tag+'"]'); if(bt) bt.focus(); }
-    else if(a === 'suppr-onglet'){
-      var oid = b.getAttribute('data-id'), cible = state.onglets.filter(function(x){ return x.id === oid; })[0]; if(!cible) return;
+    },
+    'tag': function(b, o, a){ brouillon.tag = b.getAttribute('data-tag'); rendre(); var bt = document.querySelector('.tag[data-tag="'+brouillon.tag+'"]'); if(bt) bt.focus(); },
+    'suppr-onglet': function(b, o, a){
+      var oid = b.getAttribute('data-id'), cible = state.onglets.filter(function(x){ return x.id === oid; })[0]; if(!cible) return ARRET;
       if(confirmation !== 'onglet-'+oid){
         confirmation = 'onglet-'+oid; rendre();
         var bc = document.querySelector('[data-action="suppr-onglet"][data-id="'+oid+'"]'); if(bc) bc.focus();
-        return;
+        return ARRET;
       }
       confirmation = null;
       state.onglets = state.onglets.filter(function(x){ return x.id !== oid; });
       state.exportesJira = (state.exportesJira || []).filter(function(k){ return k.indexOf(oid + ':') !== 0; });
       if(state.ongletId === oid){ state.ongletId = state.onglets.length ? state.onglets[0].id : null; state.ecranId = null; }
       state.vue = 'accueil'; sauver(); rendre(true); message('Onglet « '+cible.nom+' » supprimé.');
-    }
-    else if(a === 'modif-obs'){
-      var xm = o.obs.concat(obsF()).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xm) return;
+    },
+    'modif-obs': function(b, o, a){
+      var xm = o.obs.concat(obsF()).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xm) return ARRET;
       brouillon = {texte:xm.texte, attendu:xm.attendu || '', point:xm.point || '', element:'', crits:xm.criteres.slice(), tag:xm.tag, nomPartage:xm.elementNom || '',
         ecransPartage:xm.partage ? xm.partage.ecrans.slice() : [], vers:xm.vers || '', candidat:null, modif:xm.id};
       rendre(); var tm = document.getElementById('obs-texte'); if(tm){ tm.focus(); tm.scrollIntoView({block:'center'}); }
       message('Observation chargée dans le formulaire : modifie-la, puis enregistre.');
-    }
-    else if(a === 'retest-fonction'){
+    },
+    'retest-fonction': function(b, o, a){
       // Retest commun : la fonction est la même partout, le critère repart à NT dans tous les onglets.
-      var xr = obsF().filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xr) return;
+      var xr = obsF().filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xr) return ARRET;
       obsF().push({id:uid(), n:suivant(), fonction:xr.fonction, etape:state.etape, texte:'Retest après correction', attendu:'', point:'', criteres:xr.criteres.slice(), tag:'nt', partage:null});
       state.onglets.forEach(function(x){ x.valide = false; });
       rendre(); message('Retest : les critères de cette observation repartent à NT sur tous les écrans de la fonction, dans tous les onglets.');
-    }
-    else if(a === 'annuler-modif'){
+    },
+    'annuler-modif': function(b, o, a){
       viderBrouillon(); rendre(); var ta2 = document.getElementById('obs-texte'); if(ta2) ta2.focus(); message('Modification annulée.');
-    }
-    else if(a === 'suppr-obs'){
+    },
+    'suppr-obs': function(b, o, a){
       var id = b.getAttribute('data-id');
       if(confirmation === 'obs-'+id){ if(brouillon.modif === id) viderBrouillon(); o.obs = o.obs.filter(function(x){ return x.id !== id; }); state.obsF = obsF().filter(function(x){ return x.id !== id; }); confirmation = null; o.valide = false; rendre(); message('Observation supprimée.'); }
       else { confirmation = 'obs-'+id; rendre(); var bs = document.querySelector('[data-action="suppr-obs"][data-id="'+id+'"]'); if(bs) bs.focus(); }
-    }
-    else if(a === 'ajout-ecran'){ if(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT){ message('Un audit simple compte 5 écrans au plus.', true); return; } o.ecrans.push({id:uid(), nom:'Écran '+(o.ecrans.length + 1), contenus:{}, etapes:{}}); o.valide = false; rendre(); var ins = $main.querySelectorAll('[data-ecran-nom]'); ins[ins.length - 1].focus(); }
-    else if(a === 'suppr-ecran'){
+    },
+    'ajout-ecran': function(b, o, a){ if(o.type !== 'scenario' && o.ecrans.length >= MAX_AUDIT){ message('Un audit simple compte 5 écrans au plus.', true); return ARRET; } o.ecrans.push({id:uid(), nom:'Écran '+(o.ecrans.length + 1), contenus:{}, etapes:{}}); o.valide = false; rendre(); var ins = $main.querySelectorAll('[data-ecran-nom]'); ins[ins.length - 1].focus(); },
+    'suppr-ecran': function(b, o, a){
       var ie = b.getAttribute('data-id');
       if(confirmation === 'ecran-'+ie){
         o.ecrans = o.ecrans.filter(function(x){ return x.id !== ie; });
@@ -1657,105 +1649,123 @@ RUXAWEB 2 : audit par observations.
         Object.keys(o.fonctionsEcrans || {}).forEach(function(k){ o.fonctionsEcrans[k] = o.fonctionsEcrans[k].filter(function(y){ return y !== ie; }); });
         confirmation = null; o.valide = false; rendre(); message('Écran supprimé, avec ses observations.');
       } else { confirmation = 'ecran-'+ie; rendre(); var bse = document.querySelector('[data-action="suppr-ecran"][data-id="'+ie+'"]'); if(bse) bse.focus(); }
-    }
-    else if(a === 'fonction-presente'){
+    },
+    'fonction-presente': function(b, o, a){
       var fp = fonctionDe(b.getAttribute('data-id')); fp.presente = !fp.presente;
       // Activée : par défaut sur tous les écrans de chaque onglet (à décocher dans « Gérer les écrans »).
       if(fp.presente) state.onglets.forEach(function(x){ x.fonctionsEcrans = x.fonctionsEcrans || {}; if(!ecransFonction(x, fp.id).length) x.fonctionsEcrans[fp.id] = x.ecrans.map(function(y){ return y.id; }); });
       state.onglets.forEach(function(x){ x.valide = false; });
       rendre(); var bf = document.querySelector('[data-action="fonction-presente"][data-id="'+fp.id+'"]'); if(bf) bf.focus();
-    }
-    else if(a === 'fonction-ajout'){
+    },
+    'fonction-ajout': function(b, o, a){
       var inF = document.getElementById('fonction-nouvelle'), nomF = (inF.value || '').replace(/\s+/g, ' ').trim();
-      if(!nomF){ message('Écris le nom de la fonction à ajouter.', true); inF.focus(); return; }
-      if(fonctions().some(function(x){ return cleNom(x.nom) === cleNom(nomF); })){ message('Cette fonction existe déjà.', true); inF.focus(); return; }
+      if(!nomF){ message('Écris le nom de la fonction à ajouter.', true); inF.focus(); return ARRET; }
+      if(fonctions().some(function(x){ return cleNom(x.nom) === cleNom(nomF); })){ message('Cette fonction existe déjà.', true); inF.focus(); return ARRET; }
       var nf = {id:'f'+uid(), nom:nomF, presente:true, etapes:{}}; fonctions().push(nf);
       state.onglets.forEach(function(x){ x.fonctionsEcrans = x.fonctionsEcrans || {}; x.fonctionsEcrans[nf.id] = x.ecrans.map(function(y){ return y.id; }); });
       rendre(); message('Fonction « '+nomF+' » ajoutée et active, sur tous les écrans de chaque onglet.');
       var bn = document.querySelector('[data-action="fonction-presente"][data-id="'+nf.id+'"]'); if(bn) bn.focus();
-    }
-    else if(a === 'contenu'){ var ec = ecranDe(o, b.getAttribute('data-ecran')); ec.contenus = ec.contenus || {}; var d = b.getAttribute('data-d'); ec.contenus[d] = !ec.contenus[d]; o.valide = false; rendre(); var bc = document.querySelector('[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus(); }
-    else if(a === 'critere'){ ouvrirCritere(b.getAttribute('data-id')); }
-    else if(a === 'fermer-dlg'){ document.getElementById('dlg').close(); }
-    else if(a === 'retest'){
+    },
+    'contenu': function(b, o, a){ var ec = ecranDe(o, b.getAttribute('data-ecran')); ec.contenus = ec.contenus || {}; var d = b.getAttribute('data-d'); ec.contenus[d] = !ec.contenus[d]; o.valide = false; rendre(); var bc = document.querySelector('[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus(); },
+    'critere': function(b, o, a){ ouvrirCritere(b.getAttribute('data-id')); },
+    'fermer-dlg': function(b, o, a){ document.getElementById('dlg').close(); },
+    'retest': function(b, o, a){
       o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'', texte:'Retest après correction', attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:'nt', partage:null});
       o.valide = false; rendre(); ouvrirCritere(b.getAttribute('data-crit')); message('Critère remis à NT sur cet écran. Les observations précédentes restent en historique.');
-    }
-    else if(a === 'clo'){
+    },
+    'clo': function(b, o, a){
       var eid = b.getAttribute('data-ecran'), cid0 = b.getAttribute('data-crit');
       poserCloture(o, eid, cid0, b.getAttribute('data-tag'));
       clotureNc = null; rendre(); var bc = document.querySelector('[data-action="clo"][data-ecran="'+eid+'"][data-crit="'+cid0+'"][data-tag="'+b.getAttribute('data-tag')+'"]'); if(bc) bc.focus();
-    }
-    else if(a === 'clo-tous'){
+    },
+    'clo-tous': function(b, o, a){
       var cid = b.getAttribute('data-crit'), cc = PAR_ID[cid];
       o.ecrans.forEach(function(e){ var r = statutEcran(o, e, cc); if(r.s === 'NT' || r.s === 'AC') poserCloture(o, e.id, cid, 'c'); });
       clotureNc = null; rendre(); var bs = document.querySelector('[data-action="clo-crit"]') || document.getElementById('clo-titre'); if(bs) bs.focus(); message(refTxt(cc)+' : conforme sur les écrans restants.');
-    }
-    else if(a === 'clo-crit'){ state.clotureCrit = b.getAttribute('data-crit'); clotureNc = null; rendre(); focusCloture(); }
-    else if(a === 'clo-nc'){ clotureNc = b.getAttribute('data-ecran')+'|'+b.getAttribute('data-crit'); rendre(); var it = document.getElementById('clo-txt'); if(it) it.focus(); }
-    else if(a === 'clo-nc-ok'){
+    },
+    'clo-crit': function(b, o, a){ state.clotureCrit = b.getAttribute('data-crit'); clotureNc = null; rendre(); focusCloture(); },
+    'clo-nc': function(b, o, a){ clotureNc = b.getAttribute('data-ecran')+'|'+b.getAttribute('data-crit'); rendre(); var it = document.getElementById('clo-txt'); if(it) it.focus(); },
+    'clo-nc-ok': function(b, o, a){
       var tx = (document.getElementById('clo-txt').value || '').trim();
-      if(!tx){ message('Décris l\'observation de non-conformité.', true); var ct = document.getElementById('clo-txt'); ct.setAttribute('aria-invalid', 'true'); ct.focus(); return; }
+      if(!tx){ message('Décris l\'observation de non-conformité.', true); var ct = document.getElementById('clo-txt'); ct.setAttribute('aria-invalid', 'true'); ct.focus(); return ARRET; }
       poserCloture(o, b.getAttribute('data-ecran'), b.getAttribute('data-crit'), 'nc', tx);
       clotureNc = null; rendre(); focusCloture();
-    }
-    else if(a === 'valider'){
+    },
+    'valider': function(b, o, a){
       var n = aTrancher(o).length;
-      if(n){ message(n+' critère(s) restent à définir. Tu pourras valider l\'onglet ensuite.', true); return; }
+      if(n){ message(n+' critère(s) restent à définir. Tu pourras valider l\'onglet ensuite.', true); return ARRET; }
       o.valide = true; state.vue = 'resume'; rendre(true); message('Onglet validé.');
-    }
-    else if(a === 'heur'){
+    },
+    'heur': function(b, o, a){
       o.heuristiques = o.heuristiques || {};
       var hid = b.getAttribute('data-h'), cur = o.heuristiques[hid] = o.heuristiques[hid] || {};
       cur.statut = b.getAttribute('data-v'); o.valide = false; rendre();
       var bh = document.querySelector('[data-action="heur"][data-h="'+hid+'"][data-v="'+cur.statut+'"]'); if(bh) bh.focus();
-    }
-    else if(a === 'theming'){ state.theming = b.getAttribute('data-v'); rendre(); var bt = document.querySelector('[data-action="theming"][data-v="'+state.theming+'"]'); if(bt) bt.focus(); }
-    else if(a === 'coller-obs'){ ouvrirCollage(); }
-    else if(a === 'sugg'){
+    },
+    'theming': function(b, o, a){ state.theming = b.getAttribute('data-v'); rendre(); var bt = document.querySelector('[data-action="theming"][data-v="'+state.theming+'"]'); if(bt) bt.focus(); },
+    'coller-obs': function(b, o, a){ ouvrirCollage(); },
+    'sugg': function(b, o, a){
       lireBrouillon(); brouillon.point = b.getAttribute('data-point'); brouillon.element = b.getAttribute('data-element') || '';
       var deja = brouillon.crits.slice(); brouillon.crits = criteresProposes(); deja.forEach(function(id){ if(brouillon.crits.indexOf(id) === -1) brouillon.crits.push(id); });
       rendre(); var op = document.getElementById('obs-point'); if(op) op.focus();
       message('Point de contrôle choisi : vérifie les critères retenus.');
-    }
-    else if(a === 'coller-ok'){
+    },
+    'coller-ok': function(b, o, a){
       var oc = onglet(), r = lireCollage(document.getElementById('coller-texte').value, oc, ecranDe(oc, state.ecranId));
-      if(!r.pistes.length){ message(r.erreurs.length ? 'Aucune ligne lue : '+r.erreurs.join(' ; ')+'.' : 'Colle au moins une ligne d\'observation.', true); document.getElementById('coller-texte').setAttribute('aria-invalid', 'true'); document.getElementById('coller-texte').focus(); return; }
+      if(!r.pistes.length){ message(r.erreurs.length ? 'Aucune ligne lue : '+r.erreurs.join(' ; ')+'.' : 'Colle au moins une ligne d\'observation.', true); document.getElementById('coller-texte').setAttribute('aria-invalid', 'true'); document.getElementById('coller-texte').focus(); return ARRET; }
       oc.candidats = (oc.candidats || []).concat(r.pistes);
       var parEcran = {}; r.pistes.forEach(function(k){ var nm = ecranDe(oc, k.ecran).nom; parEcran[nm] = (parEcran[nm] || 0) + 1; });
       document.getElementById('dlg').close(); rendre();
       message(pluriel(r.pistes.length, 'piste ajoutée', 'pistes ajoutées')+' ('+Object.keys(parEcran).map(function(nm){ return nm+' : '+parEcran[nm]; }).join(', ')+').'+(r.erreurs.length ? ' À revoir : '+r.erreurs.join(' ; ')+'.' : ''), !!r.erreurs.length);
       var pr = $main.querySelector('[data-action="reprendre"]'); if(pr) pr.focus();
-    }
-    else if(a === 'copier-consigne'){
+    },
+    'copier-consigne': function(b, o, a){
       var zone = document.getElementById(b.getAttribute('data-cible'));
       var ok = function(){ message('Consigne copiée : colle-la dans ton IA, avec tes notes à la fin.'); };
       var manuel = function(){ zone.focus(); zone.select(); message('Copie automatique impossible ici : la consigne est sélectionnée, copie-la avec Ctrl+C.', true); };
       if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(zone.value).then(ok, manuel); else manuel();
-    }
-    else if(a === 'import-auto'){ document.getElementById('fichier-auto').click(); }
-    else if(a === 'reprendre'){
-      var k = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!k) return;
+    },
+    'import-auto': function(b, o, a){ document.getElementById('fichier-auto').click(); },
+    'reprendre': function(b, o, a){
+      var k = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!k) return ARRET;
       viderBrouillon();
       if(k.source === 'collage'){ brouillon.texte = k.titre; brouillon.nomPartage = k.element || ''; brouillon.tag = k.tag || 'nc'; brouillon.point = k.point || ''; brouillon.element = k.typeElement || ''; }
       else { brouillon.texte = k.titre + ' (' + k.nb + ' élément' + (k.nb > 1 ? 's' : '') + (k.exemples.length ? ' : ' + k.exemples.join(', ') : '') + ')'; brouillon.tag = k.type === 'violation' ? 'nc' : brouillon.tag; }
       brouillon.crits = k.criteres.slice(); brouillon.candidat = k.id;
       rendre(); var ta = document.getElementById('obs-texte'); if(ta){ ta.focus(); ta.scrollIntoView({block:'center'}); }
       message('Piste reprise dans le formulaire : vérifie l\'observation, les critères et le résultat, puis enregistre.');
-    }
-    else if(a === 'ecarter'){
+    },
+    'ecarter': function(b, o, a){
       var k2 = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(k2) k2.etat = 'ecarte';
       rendre(); message('Piste écartée.'); var nx = $main.querySelector('[data-action="reprendre"]') || document.getElementById('obs-texte'); if(nx) nx.focus();
-    }
-    else if(a === 'export-xlsx'){ exporterXlsx(); }
-    else if(a === 'export-jira'){ exporterJira(false); }
-    else if(a === 'export-jira-tout'){ exporterJira(true); }
-    else if(a === 'export-json'){ telecharger(nomFichier('sauvegarde','json'), JSON.stringify(state, null, 1)); message('Sauvegarde téléchargée.'); }
-    else if(a === 'import-json'){ document.getElementById('fichier-import').click(); }
-    else if(a === 'reinit'){
-      if(confirmation !== 'reinit'){ confirmation = 'reinit'; b.textContent = 'Confirmer : tout effacer'; return; }
+    },
+    'export-xlsx': function(b, o, a){ exporterXlsx(); },
+    'export-jira': function(b, o, a){ exporterJira(false); },
+    'export-jira-tout': function(b, o, a){ exporterJira(true); },
+    'export-json': function(b, o, a){ telecharger(nomFichier('sauvegarde','json'), JSON.stringify(state, null, 1)); message('Sauvegarde téléchargée.'); },
+    'import-json': function(b, o, a){ document.getElementById('fichier-import').click(); },
+    'reinit': function(b, o, a){
+      if(confirmation !== 'reinit'){ confirmation = 'reinit'; b.textContent = 'Confirmer : tout effacer'; return ARRET; }
       confirmation = null; state = etatVide(); viderBrouillon(); rendre(true); message('Nouvel audit. Pense à sauvegarder le précédent si besoin.');
     }
+  };
+
+  document.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-action]');
+    var menu = document.getElementById('menu-fichier');
+    if(!ev.target.closest('.menu')){ menu.hidden = true; document.getElementById('btn-menu').setAttribute('aria-expanded','false'); }
+    if(!b) return;
+    var a = b.getAttribute('data-action'), o = onglet();
+    var dansFiche = !!b.closest('#dlg') && ['clo','clo-nc','clo-nc-ok','clo-tous'].indexOf(a) > -1;
+    // Un choix dans le menu Fichier le referme (sauf la première demande de « Nouvel audit », qui attend sa confirmation).
+    if(b.closest('#menu-fichier') && !(a === 'reinit' && confirmation !== 'reinit')){
+      menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
+      setTimeout(function(){ var f = document.activeElement; if(!f || f === document.body || menu.contains(f)) bm.focus(); }, 0);
+    }
+    if(['suppr-obs','suppr-ecran','suppr-onglet','reinit'].indexOf(a) === -1) confirmation = null;
+    lireBrouillon();
+    var action = ACTIONS[a];
+    if(action && action(b, o, a) === ARRET) return;
     if(dansFiche && document.getElementById('dlg').open){
       var cidF = b.getAttribute('data-crit'); ouvrirCritere(cidF);
       var cibleF = a === 'clo' ? document.querySelector('#dlg [data-action="clo"][data-ecran="'+b.getAttribute('data-ecran')+'"][data-tag="'+b.getAttribute('data-tag')+'"]') : (a === 'clo-nc' ? document.querySelector('#dlg #clo-txt') : document.getElementById('dlg-titre'));
