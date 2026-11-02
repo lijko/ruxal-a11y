@@ -2,32 +2,46 @@
   "note": "Taxonomie RUXAL, adaptable. Texte original.",
   "themes": [
     {
-      "nom": "Navigation & Structure",
-      "description": "Tout ce qui permet ou empêche d'atteindre un élément ou un contenu, notamment au clavier ; structure de l'écran."
+      "nom": "Navigation & structure",
+      "nom_en": "Navigation & structure",
+      "description": "Tout ce qui permet ou empêche d'atteindre un élément ou un contenu, au clavier ou avec une technologie d'assistance ; structure de l'écran.",
+      "description_en": "Everything that allows or prevents reaching an element or content, by keyboard or with an assistive technology; screen structure."
     },
     {
-      "nom": "Composants Interactifs",
-      "description": "Boutons, contrôles, messages de statut, gestes et limites de temps."
+      "nom": "Composants interactifs",
+      "nom_en": "Interactive components",
+      "description": "Nom, rôle et état des boutons et contrôles ; messages de statut ; gestes, limites de temps et authentification.",
+      "description_en": "Name, role and state of buttons and controls; status messages; gestures, time limits and authentication."
     },
     {
-      "nom": "Images & Médias",
-      "description": "Alternatives aux images, aux médias et au son."
+      "nom": "Images & médias",
+      "nom_en": "Images & media",
+      "description": "Alternatives textuelles des images ; sous-titres, transcriptions et contrôle des médias et du son.",
+      "description_en": "Text alternatives for images; captions, transcripts and control of media and sound."
     },
     {
-      "nom": "Couleurs & Contrastes",
-      "description": "Couleur, contrastes, forme, taille et position."
+      "nom": "Couleurs & contrastes",
+      "nom_en": "Colors & contrast",
+      "description": "Contrastes ; information qui ne doit pas reposer uniquement sur la couleur, la forme, la taille ou la position.",
+      "description_en": "Contrast; information that must not rely only on color, shape, size or position."
     },
     {
-      "nom": "Contenu & Lisibilité",
-      "description": "Lisibilité du texte, agrandissement, tableaux, mouvement, orientation."
+      "nom": "Contenu & lisibilité",
+      "nom_en": "Content & readability",
+      "description": "Texte lisible et agrandissable, tableaux, orientation, animations et flashs, documents.",
+      "description_en": "Readable and resizable text, tables, orientation, animations and flashes, documents."
     },
     {
-      "nom": "Fondations Techniques",
-      "description": "Langue, éléments décoratifs, respect des réglages d'accessibilité du système."
+      "nom": "Fondations techniques",
+      "nom_en": "Technical foundations",
+      "description": "Langue, éléments décoratifs ignorés par les technologies d'assistance, respect des réglages d'accessibilité du système.",
+      "description_en": "Language, decorative elements ignored by assistive technologies, support of system accessibility settings."
     },
     {
       "nom": "Formulaires",
-      "description": "Étiquettes, champs, erreurs et aide à la saisie."
+      "nom_en": "Forms",
+      "description": "Étiquettes, champs, erreurs et aide à la saisie.",
+      "description_en": "Labels, fields, errors and input assistance."
     }
   ]
 }
