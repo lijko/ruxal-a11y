@@ -8,7 +8,7 @@
   (référence ; facultatif comme connaissance de l'agent Observations).
 - consigne-observations-ruxaweb.txt : consigne complète de l'agent Observations, liste des points de contrôle comprise,
   à partir de modele-consigne-observations.txt (écrit à la main) ; vérifie la limite de 8 000 caractères.
-La consigne de l'agent Tickets (consigne-tickets-a11y.txt) est écrite à la main dans le même dossier.
+La consigne de l'agent [A11Y] JIRA Task (consigne-tickets-a11y.txt), qui remet au format un ticket existant, est écrite à la main\ndans le même dossier ; le script vérifie sa longueur.
 
 Usage : python3 scripts/copilot.py            régénère les deux fichiers
         python3 scripts/copilot.py --check    vérifie qu'ils sont à jour (code retour 1 sinon)
@@ -97,6 +97,9 @@ def main():
     for nom, t in fichiers.items():
         if '—' in t or '–' in t:
             sys.exit(nom + ' : tiret long ou demi-cadratin interdit')
+    manuelle = (SORTIE / 'consigne-tickets-a11y.txt').read_text(encoding='utf-8')
+    if len(manuelle) > LIMITE_INSTRUCTIONS or '\u2014' in manuelle or '\u2013' in manuelle:
+        sys.exit('consigne-tickets-a11y.txt : plus de %d caractères ou tiret long' % LIMITE_INSTRUCTIONS)
     if '--check' in sys.argv:
         vieux = [n for n, t in fichiers.items() if not (SORTIE / n).exists() or (SORTIE / n).read_text(encoding='utf-8') != t]
         if vieux:
