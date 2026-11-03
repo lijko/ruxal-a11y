@@ -2,7 +2,7 @@
   "source": "RAAM 1.1, Service information et presse (SIP), Luxembourg, https://accessibilite.public.lu/fr/raam1.1/",
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteMobile",
   "licence": "CC BY 3.0 LU",
-  "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si l'écran contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxal.json). Champ etape : étape du protocole de test RUXAAM où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4).",
+  "note": "Intitulés, niveaux et références WCAG repris du référentiel officiel, nettoyés des liens de glossaire, sans autre modification (ponctuation et apostrophes typographiques d'origine). Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si l'écran contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxal.json). Champ etape : étape du protocole de test RUXAAM où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4). Champ intitule_en : intitulé officiel anglais (en/json/criteres.json du même dépôt), ajouté par scripts/intitules_en.py pour les exports en anglais.",
   "criteres": [
     {
       "raam": "1.1",
@@ -18,7 +18,8 @@
       ],
       "theme_ruxal": "Images & médias",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "Is every decorative graphic element ignored by assistive technologies?"
     },
     {
       "raam": "1.2",
@@ -34,7 +35,8 @@
       ],
       "theme_ruxal": "Images & médias",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "Does each graphic element conveying information have an alternative accessible to assistive technologies?"
     },
     {
       "raam": "1.3",
@@ -50,7 +52,8 @@
       ],
       "theme_ruxal": "Images & médias",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "For each graphic element conveying information, is the alternative accessible to assistive technologies relevant (excluding special cases)?"
     },
     {
       "raam": "1.4",
@@ -67,7 +70,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "captcha",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "For each graphic element used as a CAPTCHA or as a test graphic element, does the alternative rendered by the assistive technologies make it possible to identify the nature and function of the graphic element?"
     },
     {
       "raam": "1.5",
@@ -84,7 +88,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "captcha",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Does each graphic element used as a CAPTCHA have an alternative?"
     },
     {
       "raam": "1.6",
@@ -101,7 +106,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "image-complexe",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "Does each graphic element conveying information have, where necessary, a detailed description?"
     },
     {
       "raam": "2.1",
@@ -119,7 +125,8 @@
       ],
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, information must not be provided by colour alone. Is this rule respected?"
     },
     {
       "raam": "2.2",
@@ -136,7 +143,8 @@
       ],
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?"
     },
     {
       "raam": "2.3",
@@ -153,7 +161,8 @@
       ],
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, are the colours used in the user interface components and the graphic elements conveying information sufficiently contrasted (excluding special cases)?"
     },
     {
       "raam": "3.5",
@@ -170,7 +179,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "media-temporel",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Does each pre-recorded synchronised time-based media have, if necessary, an alternative (excluding special cases)?"
     },
     {
       "raam": "3.7",
@@ -189,7 +199,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "media-temporel",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Does each synchronised time-based media have, where appropriate, synchronised captions (excluding special cases)?"
     },
     {
       "raam": "3.9",
@@ -206,7 +217,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "media-temporel",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Does each pre-recorded time-based media (video only or synchronised) have, where appropriate, a synchronised audio description (excluding special cases)?"
     },
     {
       "raam": "3.12",
@@ -223,7 +235,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "media-temporel",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Is each automatically triggered sound sequence controllable by the user?"
     },
     {
       "raam": "3.13",
@@ -244,7 +257,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "declencheur": "media-temporel",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Does each time-based media have, where necessary, the viewing control features?"
     },
     {
       "raam": "4.5",
@@ -263,7 +277,8 @@
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "si présent",
       "declencheur": "tableau-donnees",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "For each data table, are the row and column headings correctly linked to the data cells?"
     },
     {
       "raam": "5.1",
@@ -293,7 +308,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "Is each user interface component, if necessary, compatible with assistive technologies (excluding special cases)?"
     },
     {
       "raam": "5.2",
@@ -319,7 +335,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "Is every user interface component accessible and operable by keyboard and any pointing device (excluding special cases)?"
     },
     {
       "raam": "5.3",
@@ -337,7 +354,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "Does each change of context meet one of these conditions?"
     },
     {
       "raam": "5.4",
@@ -355,7 +373,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "On each screen, are the status messages correctly rendered by assistive technologies?"
     },
     {
       "raam": "5.5",
@@ -370,7 +389,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "Is each state of a toggle control presented to the user perceptible?"
     },
     {
       "raam": "6.1",
@@ -386,7 +406,8 @@
       ],
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each screen, are texts rendered by assistive technologies in the main language of the screen?"
     },
     {
       "raam": "6.2",
@@ -402,7 +423,8 @@
       ],
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each screen, interface elements must not be used only for layout purposes. Is this rule respected?"
     },
     {
       "raam": "7.1",
@@ -425,7 +447,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each screen, is the information structured by the appropriate use of headings?"
     },
     {
       "raam": "8.1",
@@ -444,7 +467,8 @@
       ],
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each screen, is the visible content carrying information accessible to assistive technologies?"
     },
     {
       "raam": "8.2",
@@ -462,7 +486,8 @@
       ],
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "On each screen, can the user increase the font size by at least 200% (excluding special cases)?"
     },
     {
       "raam": "8.5",
@@ -481,7 +506,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each screen, for each element receiving the focus, is the focus visible?"
     },
     {
       "raam": "8.6",
@@ -499,7 +525,8 @@
       ],
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, information must not be conveyed solely by shape, size or location. Is this rule respected?"
     },
     {
       "raam": "8.7",
@@ -515,7 +542,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each screen, is the additional content that appears when the focus is set or when a user interface component is hovered over controllable by the user (excluding special cases)?"
     },
     {
       "raam": "9.1",
@@ -532,7 +560,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Does each form field have a visible label?"
     },
     {
       "raam": "9.2",
@@ -556,7 +585,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "Does each form field have a label that is accessible to assistive technologies?"
     },
     {
       "raam": "9.3",
@@ -578,7 +608,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "Is each label associated with a form field relevant?"
     },
     {
       "raam": "9.5",
@@ -599,7 +630,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "In each form, is the label of each button relevant?"
     },
     {
       "raam": "9.6",
@@ -618,7 +650,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "In each form, are the related form controls identified, if necessary?"
     },
     {
       "raam": "9.7",
@@ -635,7 +668,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "Are the mandatory form fields correctly identified (excluding special cases)?"
     },
     {
       "raam": "9.8",
@@ -652,7 +686,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "For each form field expecting a specific data type and/or format, is the related information available?"
     },
     {
       "raam": "9.9",
@@ -669,7 +704,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "In each form, are input errors accessible?"
     },
     {
       "raam": "9.10",
@@ -686,7 +722,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "In each form, is the error management accompanied, if necessary, by suggestions of expected data types, formats or values?"
     },
     {
       "raam": "9.11",
@@ -703,7 +740,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "declencheur": "formulaire",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "For each form that modifies or deletes data, or transmits answers to a test or examination, or whose validation has financial or legal consequences, can the data entered be modified, updated or rendered by the user?"
     },
     {
       "raam": "10.1",
@@ -719,7 +757,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each screen, is the navigation sequence consistent?"
     },
     {
       "raam": "10.2",
@@ -738,7 +777,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each screen, is the reading sequence by assistive technologies consistent?"
     },
     {
       "raam": "10.3",
@@ -756,7 +796,8 @@
       ],
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each screen, the navigation must not contain any keyboard traps. Is this rule respected?"
     },
     {
       "raam": "11.1",
@@ -774,7 +815,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "For each screen, does the user have control over each time limit modifying content (excluding special cases)?"
     },
     {
       "raam": "11.2",
@@ -791,7 +833,8 @@
       "theme_ruxal": "Composants interactifs",
       "statut": "si présent",
       "declencheur": "session",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "For each screen, can each process limiting the time of a session be stopped or deleted (excluding special cases)?"
     },
     {
       "raam": "11.7",
@@ -807,7 +850,8 @@
       ],
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, are sudden change in brightness or blinking effects used correctly?"
     },
     {
       "raam": "11.8",
@@ -825,7 +869,8 @@
       ],
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, is each moving or blinking content controllable by the user?"
     },
     {
       "raam": "11.9",
@@ -841,7 +886,8 @@
       ],
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, is the content offered viewable regardless of screen orientation (portrait or landscape) (excluding special cases)?"
     },
     {
       "raam": "11.10",
@@ -859,7 +905,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "On each screen, are the features that can be activated using a complex gesture able to be activated using a simple gesture (excluding special cases)?"
     },
     {
       "raam": "11.11",
@@ -873,7 +920,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "On each screen, are the features that can be activated by performing simultaneous actions activated by means of a single action? Is this rule respected (excluding special cases)?"
     },
     {
       "raam": "11.12",
@@ -889,7 +937,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, can actions triggered by a pointing device on a single point on the screen be cancelled (excluding special cases)?"
     },
     {
       "raam": "11.13",
@@ -906,7 +955,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each screen, can the features involving movement from or to the device be satisfied in an alternative way (excluding special cases)?"
     },
     {
       "raam": "11.15",
@@ -920,7 +970,8 @@
       ],
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "Is an alternative method available for each identification or control functionality that relies on the use of biological characteristics of the user?"
     },
     {
       "raam": "12.3",
@@ -934,7 +985,8 @@
       ],
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "3b"
+      "etape": "3b",
+      "intitule_en": "The application does not interfere with the accessibility features of the platform. Is this rule respected?"
     }
   ]
 }

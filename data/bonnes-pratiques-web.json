@@ -1,23 +1,26 @@
 {
-  "note": "Bonnes pratiques RUXAL pour le web, hors RAWeb 1.1. Textes originaux. Cochables, jamais comptées dans le taux.",
+  "note": "Bonnes pratiques RUXAL pour le web, hors RAWeb 1.1. Textes originaux. Cochables, jamais comptées dans le taux. Champ libelle_en : même texte en anglais, pour les exports en anglais.",
   "bonnes_pratiques": [
     {
       "id": "bp1",
       "theme_ruxal": "Composants interactifs",
       "libelle": "Chaque cible isolée (bouton, icône, case à cocher, lien hors d'un texte) mesure au moins 24×24 px CSS, ou est assez espacée de ses voisines pour être activée sans erreur.",
-      "etape": "1"
+      "etape": "1",
+      "libelle_en": "Each isolated target (button, icon, checkbox, link outside a text) is at least 24×24 CSS px, or is spaced enough from its neighbours to be activated without error."
     },
     {
       "id": "bp2",
       "theme_ruxal": "Navigation & structure",
       "libelle": "Chaque fenêtre modale se ferme par un bouton visible atteignable au clavier et par la touche Échap.",
-      "etape": "4"
+      "etape": "4",
+      "libelle_en": "Each modal window closes with a visible button reachable by keyboard and with the Escape key."
     },
     {
       "id": "bp3",
       "theme_ruxal": "Navigation & structure",
       "libelle": "Quand une fenêtre modale se ferme, le focus revient sur l'élément qui l'avait ouverte (s'il existe encore).",
-      "etape": "4"
+      "etape": "4",
+      "libelle_en": "When a modal window closes, focus returns to the element that opened it (if it still exists)."
     }
   ]
 }

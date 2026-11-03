@@ -247,6 +247,7 @@ def main():
         menu = [r for r in rows[1:] if 'focus invisible' in r[0]]
         verifier('Jira : un seul ticket pour l\'observation valable sur 3 écrans', len(menu) == 1, [r[0] for r in rows[1:]])
         verifier('Jira : référence RAWeb', 'RAWeb 1.1, Criterion 10.7' in menu[0][1] if menu else False)
+        verifier('Jira : intitulé officiel anglais dans la référence', ('RAWeb 1.1, Criterion 10.7: On each web page, for each element receiving keyboard focus, is the focus visible?' in menu[0][1]) if menu else False, menu[0][1][-400:] if menu else '')
         verifier('Jira : observation retestée sur un seul écran toujours exporté (encore NC ailleurs)', len(menu) == 1)
         # Mémoire des exports Jira : rien ne repart, sauf « tout réexporter ».
         page.click('#btn-menu')

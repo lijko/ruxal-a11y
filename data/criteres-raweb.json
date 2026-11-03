@@ -3,7 +3,7 @@
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteWeb",
   "selection": "Méthode de contrôle simplifié de l'accessibilité v1.2.1 du SIP (https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) : union des 47 critères testés manuellement et des 19 critères testés avec Axe, soit 52 critères distincts. Champ audit_simplifie : manière dont la méthode du SIP teste le critère. Ajouts RUXAWEB (hors sélection du SIP) : critères 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, marqués hors_selection. Ils n'entrent pas dans le taux « sélection SIP », calculé sur la même sélection que l'audit simplifié du SIP, mais comptent dans le taux élargi.",
   "licence": "CC BY 3.0 LU",
-  "note": "Intitulés, niveaux et références WCAG / EN 301 549 repris du dépôt officiel (fr/json/criteres.json, fr/niveaux.json), nettoyés des liens de glossaire, sans autre modification. Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si la page contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxaweb.json). Champ etape : étape du protocole de test RUXAWEB où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4).",
+  "note": "Intitulés, niveaux et références WCAG / EN 301 549 repris du dépôt officiel (fr/json/criteres.json, fr/niveaux.json), nettoyés des liens de glossaire, sans autre modification. Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si la page contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxaweb.json). Champ etape : étape du protocole de test RUXAWEB où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4). Champ intitule_en : intitulé officiel anglais (en/json/criteres.json du même dépôt), ajouté par scripts/intitules_en.py pour les exports en anglais.",
   "criteres": [
     {
       "raweb": "1.1",
@@ -20,7 +20,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Images & médias",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "Does each image conveying information have a text alternative?"
     },
     {
       "raweb": "1.2",
@@ -39,7 +40,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Images & médias",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "Is every decorative image, without a caption, correctly ignored by assistive technologies?"
     },
     {
       "raweb": "1.3",
@@ -58,7 +60,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Images & médias",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "For each image conveying information with a text alternative, is this alternative relevant (excluding special cases)?"
     },
     {
       "raweb": "1.4",
@@ -76,7 +79,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "3a",
-      "declencheur": "captcha"
+      "declencheur": "captcha",
+      "intitule_en": "For each image used as a CAPTCHA or test image, with a text alternative, does this alternative make it possible to identify the nature and function of the image?"
     },
     {
       "raweb": "1.5",
@@ -94,7 +98,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "captcha"
+      "declencheur": "captcha",
+      "intitule_en": "For each image used as a CAPTCHA, is there an alternative access solution to the content or to the CAPTCHA function?"
     },
     {
       "raweb": "1.6",
@@ -112,7 +117,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "3a",
-      "declencheur": "image-complexe"
+      "declencheur": "image-complexe",
+      "intitule_en": "Does each image conveying information have, if necessary, a detailed description?"
     },
     {
       "raweb": "1.7",
@@ -130,7 +136,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "3a",
-      "declencheur": "image-complexe"
+      "declencheur": "image-complexe",
+      "intitule_en": "For each image conveying information with a detailed description, is this description relevant?"
     },
     {
       "raweb": "2.1",
@@ -148,7 +155,8 @@
       "theme_ruxal": "Navigation & structure",
       "statut": "si présent",
       "etape": "2",
-      "declencheur": "cadre"
+      "declencheur": "cadre",
+      "intitule_en": "Does each frame have a frame title?"
     },
     {
       "raweb": "3.1",
@@ -167,7 +175,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, the information must not be provided by colour alone. Is this rule respected?"
     },
     {
       "raweb": "3.2",
@@ -185,7 +194,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?"
     },
     {
       "raweb": "3.3",
@@ -203,7 +213,8 @@
       "hors_selection": true,
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, are the colours used in the user interface components or graphic element conveying information sufficiently contrasting (excluding special cases)?"
     },
     {
       "raweb": "4.1",
@@ -223,7 +234,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "intitule_en": "Does each pre-recorded time-based media have, if necessary, a transcript or an audio description (excluding special cases)?"
     },
     {
       "raweb": "4.2",
@@ -244,7 +256,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "intitule_en": "For each pre-recorded time-based media with a synchronised transcript or audio description, are these relevant (excluding special cases)?"
     },
     {
       "raweb": "4.3",
@@ -264,7 +277,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "intitule_en": "Does each synchronised time-based media have, if necessary, synchronised captions (excluding special cases)?"
     },
     {
       "raweb": "4.4",
@@ -285,7 +299,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "intitule_en": "For each synchronised time-based media with synchronised captions, are these captions relevant (excluding special cases)?"
     },
     {
       "raweb": "4.8",
@@ -303,7 +318,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-non-temporel"
+      "declencheur": "media-non-temporel",
+      "intitule_en": "Does each non-time-based media have, if necessary, an alternative (excluding special cases)?"
     },
     {
       "raweb": "4.9",
@@ -321,7 +337,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-non-temporel"
+      "declencheur": "media-non-temporel",
+      "intitule_en": "For each non-time-based media having an alternative, is this alternative relevant?"
     },
     {
       "raweb": "4.10",
@@ -339,7 +356,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "1",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "intitule_en": "Is each automatically triggered sound controllable by the user?"
     },
     {
       "raweb": "4.11",
@@ -361,7 +379,8 @@
       "theme_ruxal": "Images & médias",
       "statut": "si présent",
       "etape": "4",
-      "declencheur": "media-temporel"
+      "declencheur": "media-temporel",
+      "intitule_en": "Is the viewing of each time-based media, if required, accessible and operable by keyboard and any pointing device?"
     },
     {
       "raweb": "5.6",
@@ -379,7 +398,8 @@
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "si présent",
       "etape": "2",
-      "declencheur": "tableau-donnees"
+      "declencheur": "tableau-donnees",
+      "intitule_en": "For each data table, are each column header and each row header correctly declared?"
     },
     {
       "raweb": "5.7",
@@ -397,7 +417,8 @@
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "si présent",
       "etape": "2",
-      "declencheur": "tableau-donnees"
+      "declencheur": "tableau-donnees",
+      "intitule_en": "For each data table, is the appropriate technique used to associate each cell with its headers (excluding special cases)?"
     },
     {
       "raweb": "6.1",
@@ -418,7 +439,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "Is every link explicit (except in special cases)?"
     },
     {
       "raweb": "6.2",
@@ -437,7 +459,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each web page, does each link have an accessible name?"
     },
     {
       "raweb": "7.1",
@@ -457,7 +480,8 @@
       "hors_selection": true,
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "Is each script, if necessary, compatible with assistive technologies?"
     },
     {
       "raweb": "7.3",
@@ -478,7 +502,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "Is each script accessible and operable by keyboard and any pointing device (excluding special cases)?"
     },
     {
       "raweb": "7.5",
@@ -496,7 +521,8 @@
       "hors_selection": true,
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each web page, are status messages correctly rendered (by assistive technologies)?"
     },
     {
       "raweb": "8.2",
@@ -515,7 +541,8 @@
       "audit_simplifie": "Axe",
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "For each web page, is the generated source code valid for the specified document type?"
     },
     {
       "raweb": "8.3",
@@ -532,7 +559,8 @@
       "audit_simplifie": "Axe",
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "On each web page, is the default language present?"
     },
     {
       "raweb": "8.4",
@@ -549,7 +577,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "For each web page with a default language, is the language code relevant?"
     },
     {
       "raweb": "8.5",
@@ -566,7 +595,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "Does every web page have a page title?"
     },
     {
       "raweb": "8.6",
@@ -583,7 +613,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "For each web page with a page title, is this title relevant?"
     },
     {
       "raweb": "8.7",
@@ -601,7 +632,8 @@
       "theme_ruxal": "Fondations techniques",
       "statut": "si présent",
       "etape": "3a",
-      "declencheur": "changement-langue"
+      "declencheur": "changement-langue",
+      "intitule_en": "On each web page, is each language change indicated in the source code (excluding special cases)?"
     },
     {
       "raweb": "8.8",
@@ -619,7 +651,8 @@
       "theme_ruxal": "Fondations techniques",
       "statut": "si présent",
       "etape": "2",
-      "declencheur": "changement-langue"
+      "declencheur": "changement-langue",
+      "intitule_en": "On each web page, is the language code for each language change valid and relevant?"
     },
     {
       "raweb": "9.1",
@@ -642,7 +675,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each web page, is the information structured by the appropriate use of headings?"
     },
     {
       "raweb": "9.2",
@@ -659,7 +693,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "2"
+      "etape": "2",
+      "intitule_en": "On each web page, is the document structure consistent (excluding special cases)?"
     },
     {
       "raweb": "9.3",
@@ -677,7 +712,8 @@
       "hors_selection": true,
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each web page, is each list correctly structured?"
     },
     {
       "raweb": "10.4",
@@ -695,7 +731,8 @@
       "hors_selection": true,
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, is the text still readable when the font size is increased by at least 200% (excluding special cases)?"
     },
     {
       "raweb": "10.7",
@@ -714,7 +751,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each web page, for each element receiving keyboard focus, is the focus visible?"
     },
     {
       "raweb": "10.8",
@@ -733,7 +771,8 @@
       "audit_simplifie": "Axe",
       "theme_ruxal": "Fondations techniques",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "For each web page, should hidden content be ignored by assistive technologies?"
     },
     {
       "raweb": "10.9",
@@ -752,7 +791,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, information must not be conveyed solely by shape, size or location. Is this rule respected?"
     },
     {
       "raweb": "10.10",
@@ -771,7 +811,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Couleurs & contrastes",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "On each web page, information must not be conveyed by shape, size or location only. Is this rule implemented appropriately?"
     },
     {
       "raweb": "10.14",
@@ -788,7 +829,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each web page, can additional content that appears using CSS styles only be made visible using the keyboard and any pointing device?"
     },
     {
       "raweb": "11.1",
@@ -812,7 +854,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "Does each form input field have a label?"
     },
     {
       "raweb": "11.2",
@@ -834,7 +877,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "Is each label associated with a form input field relevant (excluding special cases)?"
     },
     {
       "raweb": "11.5",
@@ -854,7 +898,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "In each form, are the related form controls grouped together, if necessary?"
     },
     {
       "raweb": "11.6",
@@ -874,7 +919,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "In each form, does each group of related form controls have a legend?"
     },
     {
       "raweb": "11.7",
@@ -894,7 +940,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "In each form, is each legend associated with a group of related form controls relevant?"
     },
     {
       "raweb": "11.9",
@@ -914,7 +961,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "In each form, is the label of each button relevant (excluding special cases)?"
     },
     {
       "raweb": "11.10",
@@ -934,7 +982,8 @@
       "theme_ruxal": "Formulaires",
       "statut": "si présent",
       "etape": "3b",
-      "declencheur": "formulaire"
+      "declencheur": "formulaire",
+      "intitule_en": "In each form, is the error management used appropriately (excluding special cases)?"
     },
     {
       "raweb": "12.6",
@@ -955,7 +1004,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "3a"
+      "etape": "3a",
+      "intitule_en": "Can content grouping blocks present on several web pages (with the exception of the main regions composing the document structure) be reached or avoided, if necessary?"
     },
     {
       "raweb": "12.7",
@@ -976,7 +1026,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each web page, is there a bypass or skip link to the main content region (excluding special cases)?"
     },
     {
       "raweb": "12.8",
@@ -993,7 +1044,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each web page, is the navigation sequence consistent?"
     },
     {
       "raweb": "12.9",
@@ -1012,7 +1064,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each web page, navigation must not contain any keyboard traps. Is this rule respected?"
     },
     {
       "raweb": "12.11",
@@ -1029,7 +1082,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "4"
+      "etape": "4",
+      "intitule_en": "On each web page, is the additional content that appears when hovering, focusing or activating a user interface component accessible by keyboard if necessary?"
     },
     {
       "raweb": "13.1",
@@ -1048,7 +1102,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "For each web page, does the user have control over each time limit modifying the content (excluding special cases)?"
     },
     {
       "raweb": "13.7",
@@ -1065,7 +1120,8 @@
       "audit_simplifie": "manuel",
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, are sudden changes in brightness or blinking used correctly?"
     },
     {
       "raweb": "13.8",
@@ -1084,7 +1140,8 @@
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Contenu & lisibilité",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, is every moving or blinking content controllable by the user (excluding special cases)?"
     },
     {
       "raweb": "13.11",
@@ -1102,7 +1159,8 @@
       "hors_selection": true,
       "theme_ruxal": "Composants interactifs",
       "statut": "cœur",
-      "etape": "1"
+      "etape": "1",
+      "intitule_en": "On each web page, can actions triggered by a pointing device on a single point on the screen be cancelled (except in special cases)?"
     }
   ]
 }

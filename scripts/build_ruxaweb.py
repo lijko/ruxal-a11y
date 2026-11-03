@@ -71,6 +71,7 @@ def construire():
             'declencheur': c.get('declencheur', ''),
             'etape': c.get('etape', ''),
             'libelle': c['intitule'],
+            'libelle_en': c['intitule_en'],
             'impact': t['impact'],
             'explication': t['explication'],
         })
@@ -89,6 +90,7 @@ def construire():
             'niveau': t['gravite'],
             'niveau_wcag': '',
             'libelle': b['libelle'],
+            'libelle_en': b['libelle_en'],
             'impact': t['impact'],
             'explication': t['explication'],
             'note': t.get('note', ''),

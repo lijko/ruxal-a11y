@@ -159,6 +159,7 @@ def main():
         champ.fill('Accueil[button "Valider"] | (disabled)')
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
         verifier('Jira : élément concerné repris, | remplacé par /', f and 'Accueil[button ""Valider""] / (disabled)' in f, f and f[:300])
+        verifier('Jira : intitulé officiel anglais dans la référence', f and 'RAAM 1.1, Criterion 5.1: Is each user interface component, if necessary, compatible with assistive technologies (excluding special cases)?' in f)
         verifier('Jira sans plateforme : iOS et Android', f and '- iOS: <to be completed>' in f and '- Android: <to be completed>' in f)
         verifier('Jira sans plateforme : 7 colonnes', f and f.splitlines()[0].count(',') == 6, f and f.splitlines()[0])
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
