@@ -1,0 +1,191 @@
+RUXAWEB checkpoints (points de contrôle). Text by Bertrand Kempf, CC BY 4.0.
+Copy the checkpoint name exactly as written after "Checkpoint:" (in French), in the 4th field of each line.
+If the checkpoint lists element types, add the type in parentheses, written exactly as below, e.g. Présence d'un nom (lien).
+The RAWeb criteria are given for information only: never write them in the line, the tool deduces them from the checkpoint.
+
+== Restitution par le lecteur d'écran ==
+Checkpoint: Présence d'un nom
+Symptom: Élément restitué sans nom (seulement « bouton », « lien », « image »...)
+Element types:
+- (image porteuse d'information): RAWeb 1.1 (Does each image conveying information have a text alternative?)
+- (lien): RAWeb 6.2 (On each web page, does each link have an accessible name?)
+- (champ de formulaire): RAWeb 11.1 (Does each form input field have a label?)
+- (bouton de formulaire): RAWeb 11.9 (In each form, is the label of each button relevant (excluding special cases)?)
+- (cadre): RAWeb 2.1 (Does each frame have a frame title?)
+- (composant construit en script (bouton, onglet, menu)): RAWeb 7.1 (Is each script, if necessary, compatible with assistive technologies?)
+
+Checkpoint: Pertinence du nom
+Symptom: Nom restitué faux, vague ou incompréhensible hors contexte (« cliquez ici », « image123.png »)
+Element types:
+- (image porteuse d'information): RAWeb 1.3 (For each image conveying information with a text alternative, is this alternative relevant (excluding special cases)?)
+- (CAPTCHA): RAWeb 1.4 (For each image used as a CAPTCHA or test image, with a text alternative, does this alternative make it possible to identify the nature and function of the image?)
+- (lien): RAWeb 6.1 (Is every link explicit (except in special cases)?)
+- (champ de formulaire): RAWeb 11.2 (Is each label associated with a form input field relevant (excluding special cases)?)
+- (bouton de formulaire): RAWeb 11.9 (In each form, is the label of each button relevant (excluding special cases)?)
+- (groupe de champs): RAWeb 11.7 (In each form, is each legend associated with a group of related form controls relevant?)
+- (composant construit en script (bouton, onglet, menu)): RAWeb 7.1 (Is each script, if necessary, compatible with assistive technologies?)
+
+Checkpoint: Éléments décoratifs ignorés
+Symptom: Image ou élément décoratif restitué par le lecteur d'écran
+RAWeb criteria: 1.2 (Is every decorative image, without a caption, correctly ignored by assistive technologies?)
+
+Checkpoint: Contenus cachés
+Symptom: Contenu caché restitué, ou contenu visible ignoré par le lecteur d'écran
+RAWeb criteria: 10.8 (For each web page, should hidden content be ignored by assistive technologies?)
+
+Checkpoint: Rôle et état
+Symptom: Rôle ou état non restitué (bouton lu comme du texte, case cochée ou menu ouvert non annoncé)
+RAWeb criteria: 7.1 (Is each script, if necessary, compatible with assistive technologies?)
+
+Checkpoint: Messages
+Symptom: Message de confirmation, de chargement ou d'erreur affiché mais non restitué
+Element types:
+- (message d'erreur de formulaire): RAWeb 11.10 (In each form, is the error management used appropriately (excluding special cases)?)
+RAWeb criteria: 7.5 (On each web page, are status messages correctly rendered (by assistive technologies)?)
+
+Checkpoint: Langue
+Symptom: Texte prononcé dans la mauvaise langue
+Element types:
+- (écran entier): RAWeb 8.3 (On each web page, is the default language present?), 8.4 (For each web page with a default language, is the language code relevant?)
+- (passage dans une autre langue): RAWeb 8.7 (On each web page, is each language change indicated in the source code (excluding special cases)?), 8.8 (On each web page, is the language code for each language change valid and relevant?)
+
+Checkpoint: Titre de l'écran
+Symptom: Titre de l'écran (onglet du navigateur) absent, identique partout ou peu clair
+RAWeb criteria: 8.5 (Does every web page have a page title?), 8.6 (For each web page with a page title, is this title relevant?)
+
+== Structure et code ==
+Checkpoint: Titres
+Symptom: Titres absents, sautés, mal hiérarchisés, ou texte mis en forme comme un titre sans en être un
+RAWeb criteria: 9.1 (On each web page, is the information structured by the appropriate use of headings?)
+
+Checkpoint: Zones principales
+Symptom: En-tête, navigation, contenu principal ou pied absents ou mal déclarés
+RAWeb criteria: 9.2 (On each web page, is the document structure consistent (excluding special cases)?)
+
+Checkpoint: Listes
+Symptom: Liste visuelle non restituée comme une liste
+RAWeb criteria: 9.3 (On each web page, is each list correctly structured?)
+
+Checkpoint: Tableaux de données
+Symptom: En-têtes de tableau non restitués, ou cellule lue sans son en-tête
+RAWeb criteria: 5.6 (For each data table, are each column header and each row header correctly declared?), 5.7 (For each data table, is the appropriate technique used to associate each cell with its headers (excluding special cases)?)
+
+Checkpoint: Validité du code
+Symptom: Code source invalide (balises mal fermées, identifiants en double)
+RAWeb criteria: 8.2 (For each web page, is the generated source code valid for the specified document type?)
+
+== Clavier et focus ==
+Checkpoint: Atteinte et activation
+Symptom: Élément impossible à atteindre ou à activer au clavier, ou au pointeur
+Element types:
+- (lecteur média): RAWeb 4.11 (Is the viewing of each time-based media, if required, accessible and operable by keyboard and any pointing device?)
+- (contenu qui apparaît par la mise en forme seule): RAWeb 10.14 (On each web page, can additional content that appears using CSS styles only be made visible using the keyboard and any pointing device?)
+RAWeb criteria: 7.3 (Is each script accessible and operable by keyboard and any pointing device (excluding special cases)?)
+
+Checkpoint: Visibilité du focus
+Symptom: On ne voit pas où se trouve le focus
+RAWeb criteria: 10.7 (On each web page, for each element receiving keyboard focus, is the focus visible?)
+
+Checkpoint: Ordre du focus
+Symptom: Ordre de tabulation illogique, ou focus perdu ou déplacé de façon inattendue après une action
+RAWeb criteria: 12.8 (On each web page, is the navigation sequence consistent?)
+Good practices: bp3
+
+Checkpoint: Sortie au clavier
+Symptom: Focus bloqué dans un élément, impossible d'en sortir au clavier
+RAWeb criteria: 12.9 (On each web page, navigation must not contain any keyboard traps. Is this rule respected?)
+Good practices: bp2
+
+Checkpoint: Contournement des blocs
+Symptom: Aucun lien d'évitement, ou menus et blocs répétés impossibles à passer
+RAWeb criteria: 12.6 (Can content grouping blocks present on several web pages (with the exception of the main regions composing the document structure) be reached or avoided, if necessary?), 12.7 (On each web page, is there a bypass or skip link to the main content region (excluding special cases)?)
+
+Checkpoint: Contenus additionnels
+Symptom: Infobulle, sous-menu ou contenu au survol ou au focus impossible à atteindre, à garder affiché ou à fermer
+RAWeb criteria: 10.14 (On each web page, can additional content that appears using CSS styles only be made visible using the keyboard and any pointing device?), 12.11 (On each web page, is the additional content that appears when hovering, focusing or activating a user interface component accessible by keyboard if necessary?)
+
+== Perception visuelle ==
+Checkpoint: Contrastes
+Symptom: Texte, icône, bordure de champ, indicateur de focus ou graphique trop peu contrasté avec son voisinage
+Element types:
+- (texte): RAWeb 3.2 (On each web page, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?)
+- (icône, bordure, focus ou graphique): RAWeb 3.3 (On each web page, are the colours used in the user interface components or graphic element conveying information sufficiently contrasting (excluding special cases)?)
+
+Checkpoint: Information par la couleur
+Symptom: Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)
+RAWeb criteria: 3.1 (On each web page, the information must not be provided by colour alone. Is this rule respected?)
+
+Checkpoint: Information par la forme ou la position
+Symptom: Information donnée uniquement par la forme, la taille ou la position (« le bouton rond à droite »)
+RAWeb criteria: 10.9 (On each web page, information must not be conveyed solely by shape, size or location. Is this rule respected?), 10.10 (On each web page, information must not be conveyed by shape, size or location only. Is this rule implemented appropriately?)
+
+Checkpoint: Description détaillée
+Symptom: Graphique, schéma ou carte sans description détaillée, ou description incomplète
+RAWeb criteria: 1.6 (Does each image conveying information have, if necessary, a detailed description?), 1.7 (For each image conveying information with a detailed description, is this description relevant?)
+
+Checkpoint: Agrandissement
+Symptom: Contenu tronqué, superposé ou illisible quand le texte est agrandi
+RAWeb criteria: 10.4 (On each web page, is the text still readable when the font size is increased by at least 200% (excluding special cases)?)
+
+Checkpoint: Taille des cibles
+Symptom: Cible trop petite ou trop proche de ses voisines pour être activée sans erreur
+Good practices: bp1
+
+== Formulaires ==
+Checkpoint: Étiquettes
+Symptom: Champ sans étiquette, ou étiquette peu claire ou disparue à la saisie
+RAWeb criteria: 11.1 (Does each form input field have a label?), 11.2 (Is each label associated with a form input field relevant (excluding special cases)?)
+
+Checkpoint: Regroupements
+Symptom: Champs liés (adresse, boutons radio) non regroupés, ou groupe sans légende ou à la légende peu claire
+RAWeb criteria: 11.5 (In each form, are the related form controls grouped together, if necessary?), 11.6 (In each form, does each group of related form controls have a legend?), 11.7 (In each form, is each legend associated with a group of related form controls relevant?)
+
+Checkpoint: Contrôle de saisie
+Symptom: Format attendu non indiqué, erreur non signalée, peu explicite ou non restituée
+RAWeb criteria: 11.10 (In each form, is the error management used appropriately (excluding special cases)?)
+
+Checkpoint: Boutons de formulaire
+Symptom: Bouton d'envoi ou d'action à l'intitulé absent ou peu clair
+RAWeb criteria: 11.9 (In each form, is the label of each button relevant (excluding special cases)?)
+
+Checkpoint: CAPTCHA
+Symptom: CAPTCHA sans alternative, ou dont la nature n'est pas restituée
+RAWeb criteria: 1.4 (For each image used as a CAPTCHA or test image, with a text alternative, does this alternative make it possible to identify the nature and function of the image?), 1.5 (For each image used as a CAPTCHA, is there an alternative access solution to the content or to the CAPTCHA function?)
+
+== Médias ==
+Checkpoint: Transcription et audiodescription
+Symptom: Audio ou vidéo sans transcription ni audiodescription, ou alternative incomplète
+RAWeb criteria: 4.1 (Does each pre-recorded time-based media have, if necessary, a transcript or an audio description (excluding special cases)?), 4.2 (For each pre-recorded time-based media with a synchronised transcript or audio description, are these relevant (excluding special cases)?)
+
+Checkpoint: Sous-titres
+Symptom: Vidéo sans sous-titres, ou sous-titres incomplets ou décalés
+RAWeb criteria: 4.3 (Does each synchronised time-based media have, if necessary, synchronised captions (excluding special cases)?), 4.4 (For each synchronised time-based media with synchronised captions, are these captions relevant (excluding special cases)?)
+
+Checkpoint: Son automatique
+Symptom: Son lancé automatiquement, sans moyen de l'arrêter
+RAWeb criteria: 4.10 (Is each automatically triggered sound controllable by the user?)
+
+Checkpoint: Commandes du lecteur
+Symptom: Lecteur audio ou vidéo inutilisable au clavier ou au pointeur
+RAWeb criteria: 4.11 (Is the viewing of each time-based media, if required, accessible and operable by keyboard and any pointing device?)
+
+Checkpoint: Médias non temporels
+Symptom: Carte interactive, visite virtuelle, animation ou objet embarqué sans alternative, ou alternative incomplète
+RAWeb criteria: 4.8 (Does each non-time-based media have, if necessary, an alternative (excluding special cases)?), 4.9 (For each non-time-based media having an alternative, is this alternative relevant?)
+
+== Temps, mouvement et pointeur ==
+Checkpoint: Limites de temps
+Symptom: Délai, déconnexion ou rafraîchissement automatique sans possibilité de l'arrêter ou de le prolonger
+RAWeb criteria: 13.1 (For each web page, does the user have control over each time limit modifying the content (excluding special cases)?)
+
+Checkpoint: Mouvement
+Symptom: Contenu qui bouge, défile ou clignote sans pouvoir le mettre en pause
+RAWeb criteria: 13.8 (On each web page, is every moving or blinking content controllable by the user (excluding special cases)?)
+
+Checkpoint: Flashs
+Symptom: Flashs ou changements brusques de luminosité
+RAWeb criteria: 13.7 (On each web page, are sudden changes in brightness or blinking used correctly?)
+
+Checkpoint: Annulation au pointeur
+Symptom: Action déclenchée dès l'appui, sans pouvoir l'annuler en glissant hors de l'élément
+RAWeb criteria: 13.11 (On each web page, can actions triggered by a pointing device on a single point on the screen be cancelled (except in special cases)?)

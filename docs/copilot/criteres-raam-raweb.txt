@@ -1,0 +1,667 @@
+Official criteria titles of RAAM 1.1 and RAWeb 1.1 (Service information et presse, Luxembourg, CC BY 3.0 LU),
+taken from the official repositories github.com/accessibility-luxembourg.
+Each criterion: reference, official English title (EN), official French title (FR), RUXAL theme for the ticket title, link.
+Copy the titles unchanged in the Reference section, never translate or rephrase them.
+This list covers the criteria of the RUXAL quick audits. For any other criterion, the full referentials are on accessibilite.public.lu.
+
+== RAAM 1.1 (52 criteria) ==
+RAAM 1.1, Criterion 1.1
+EN: Is every decorative graphic element ignored by assistive technologies?
+FR: Chaque élément graphique de décoration est-il ignoré par les technologies d’assistance ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-1-1
+
+RAAM 1.1, Criterion 1.2
+EN: Does each graphic element conveying information have an alternative accessible to assistive technologies?
+FR: Chaque élément graphique porteur d’information possède-t-il une alternative accessible aux technologies d’assistance ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-1-2
+
+RAAM 1.1, Criterion 1.3
+EN: For each graphic element conveying information, is the alternative accessible to assistive technologies relevant (excluding special cases)?
+FR: Pour chaque élément graphique porteur d’information, l’alternative accessible aux technologies d’assistance est-elle pertinente (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-1-3
+
+RAAM 1.1, Criterion 1.4
+EN: For each graphic element used as a CAPTCHA or as a test graphic element, does the alternative rendered by the assistive technologies make it possible to identify the nature and function of the graphic element?
+FR: Pour chaque élément graphique utilisé comme CAPTCHA ou comme élément graphique de test, l’alternative restituée par les technologies d’assistance permet-elle d’identifier la nature et la fonction de l’élément graphique ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-1-4
+
+RAAM 1.1, Criterion 1.5
+EN: Does each graphic element used as a CAPTCHA have an alternative?
+FR: Chaque élément graphique utilisé comme CAPTCHA possède-t-il une alternative ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-1-5
+
+RAAM 1.1, Criterion 1.6
+EN: Does each graphic element conveying information have, where necessary, a detailed description?
+FR: Chaque élément graphique porteur d’information a-t-il, si nécessaire, une description détaillée ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-1-6
+
+RAAM 1.1, Criterion 2.1
+EN: On each screen, information must not be provided by colour alone. Is this rule respected?
+FR: Dans chaque écran, l’information ne doit pas être donnée uniquement par la couleur. Cette règle est-elle respectée ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-2-1
+
+RAAM 1.1, Criterion 2.2
+EN: On each screen, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?
+FR: Dans chaque écran, le contraste entre la couleur du texte et la couleur de son arrière-plan est-il suffisamment élevé (hors cas particuliers) ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-2-2
+
+RAAM 1.1, Criterion 2.3
+EN: On each screen, are the colours used in the user interface components and the graphic elements conveying information sufficiently contrasted (excluding special cases)?
+FR: Dans chaque écran, les couleurs utilisées dans les composants d’interface et les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-2-3
+
+RAAM 1.1, Criterion 3.5
+EN: Does each pre-recorded synchronised time-based media have, if necessary, an alternative (excluding special cases)?
+FR: Chaque média temporel synchronisé pré-enregistré a-t-il, si nécessaire, une alternative (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-3-5
+
+RAAM 1.1, Criterion 3.7
+EN: Does each synchronised time-based media have, where appropriate, synchronised captions (excluding special cases)?
+FR: Chaque média temporel synchronisé a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-3-7
+
+RAAM 1.1, Criterion 3.9
+EN: Does each pre-recorded time-based media (video only or synchronised) have, where appropriate, a synchronised audio description (excluding special cases)?
+FR: Chaque média temporel pré-enregistré (seulement vidéo ou synchronisé) a-t-il, si nécessaire, une audiodescription synchronisée (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-3-9
+
+RAAM 1.1, Criterion 3.12
+EN: Is each automatically triggered sound sequence controllable by the user?
+FR: Chaque séquence sonore déclenchée automatiquement est-elle contrôlable par l’utilisateur ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-3-12
+
+RAAM 1.1, Criterion 3.13
+EN: Does each time-based media have, where necessary, the viewing control features?
+FR: Chaque média temporel a-t-il, si nécessaire, les fonctionnalités de contrôle de sa consultation ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-3-13
+
+RAAM 1.1, Criterion 4.5
+EN: For each data table, are the row and column headings correctly linked to the data cells?
+FR: Pour chaque tableau de données, les entêtes de lignes et de colonnes sont-ils correctement reliés aux cellules de données ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-4-5
+
+RAAM 1.1, Criterion 5.1
+EN: Is each user interface component, if necessary, compatible with assistive technologies (excluding special cases)?
+FR: Chaque composant d’interface est-il, si nécessaire, compatible avec les technologies d’assistance (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-5-1
+
+RAAM 1.1, Criterion 5.2
+EN: Is every user interface component accessible and operable by keyboard and any pointing device (excluding special cases)?
+FR: Chaque composant d’interface est-il contrôlable par le clavier et tout dispositif de pointage (hors cas particuliers) ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-5-2
+
+RAAM 1.1, Criterion 5.3
+EN: Does each change of context meet one of these conditions?
+FR: Chaque changement de contexte respecte-t-il une de ces conditions ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-5-3
+
+RAAM 1.1, Criterion 5.4
+EN: On each screen, are the status messages correctly rendered by assistive technologies?
+FR: Dans chaque écran, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-5-4
+
+RAAM 1.1, Criterion 5.5
+EN: Is each state of a toggle control presented to the user perceptible?
+FR: Chaque état d’un contrôle à bascule présenté à l’utilisateur est-il perceptible ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-5-5
+
+RAAM 1.1, Criterion 6.1
+EN: On each screen, are texts rendered by assistive technologies in the main language of the screen?
+FR: Dans chaque écran, les textes sont-ils restitués par les technologies d’assistance dans la langue principale de l’écran ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-6-1
+
+RAAM 1.1, Criterion 6.2
+EN: On each screen, interface elements must not be used only for layout purposes. Is this rule respected?
+FR: Dans chaque écran, les éléments de l’interface ne doivent pas être utilisés uniquement à des fins de présentation. Cette règle est-elle respectée ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-6-2
+
+RAAM 1.1, Criterion 7.1
+EN: On each screen, is the information structured by the appropriate use of headings?
+FR: Dans chaque écran, l’information est-elle structurée par l’utilisation appropriée de titres ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-7-1
+
+RAAM 1.1, Criterion 8.1
+EN: On each screen, is the visible content carrying information accessible to assistive technologies?
+FR: Dans chaque écran, le contenu visible porteur d’information est-il accessible aux technologies d’assistance ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-8-1
+
+RAAM 1.1, Criterion 8.2
+EN: On each screen, can the user increase the font size by at least 200% (excluding special cases)?
+FR: Dans chaque écran, l’utilisateur peut-il augmenter la taille des caractères de 200% au moins (hors cas particuliers) ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-8-2
+
+RAAM 1.1, Criterion 8.5
+EN: On each screen, for each element receiving the focus, is the focus visible?
+FR: Dans chaque écran, pour chaque élément recevant le focus, la prise de focus est-elle visible ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-8-5
+
+RAAM 1.1, Criterion 8.6
+EN: On each screen, information must not be conveyed solely by shape, size or location. Is this rule respected?
+FR: Dans chaque écran, l’information ne doit pas être donnée uniquement par la forme, taille ou position. Cette règle est-elle respectée ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-8-6
+
+RAAM 1.1, Criterion 8.7
+EN: On each screen, is the additional content that appears when the focus is set or when a user interface component is hovered over controllable by the user (excluding special cases)?
+FR: Dans chaque écran, les contenus additionnels apparaissant à la prise de focus ou au survol d’un composant d’interface sont-ils contrôlables par l’utilisateur (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-8-7
+
+RAAM 1.1, Criterion 9.1
+EN: Does each form field have a visible label?
+FR: Chaque champ de formulaire a-t-il une étiquette visible ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-1
+
+RAAM 1.1, Criterion 9.2
+EN: Does each form field have a label that is accessible to assistive technologies?
+FR: Chaque champ de formulaire a-t-il une étiquette accessible aux technologies d’assistance ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-2
+
+RAAM 1.1, Criterion 9.3
+EN: Is each label associated with a form field relevant?
+FR: Chaque étiquette associée à un champ de formulaire est-elle pertinente ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-3
+
+RAAM 1.1, Criterion 9.5
+EN: In each form, is the label of each button relevant?
+FR: Dans chaque formulaire, l’intitulé de chaque bouton est-il pertinent ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-5
+
+RAAM 1.1, Criterion 9.6
+EN: In each form, are the related form controls identified, if necessary?
+FR: Dans chaque formulaire, les champs de même nature sont-ils identifiés, si nécessaire ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-6
+
+RAAM 1.1, Criterion 9.7
+EN: Are the mandatory form fields correctly identified (excluding special cases)?
+FR: Les champs de formulaire obligatoires sont-ils correctement identifiés (hors cas particuliers) ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-7
+
+RAAM 1.1, Criterion 9.8
+EN: For each form field expecting a specific data type and/or format, is the related information available?
+FR: Pour chaque champ de formulaire qui attend un type de données et/ou un format spécifique, l’information correspondante est-elle disponible ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-8
+
+RAAM 1.1, Criterion 9.9
+EN: In each form, are input errors accessible?
+FR: Dans chaque formulaire, les erreurs de saisie sont-elles accessibles ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-9
+
+RAAM 1.1, Criterion 9.10
+EN: In each form, is the error management accompanied, if necessary, by suggestions of expected data types, formats or values?
+FR: Dans chaque formulaire, le contrôle de saisie est-il accompagné, si nécessaire, de suggestions des types, formats de données ou valeurs attendus ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-10
+
+RAAM 1.1, Criterion 9.11
+EN: For each form that modifies or deletes data, or transmits answers to a test or examination, or whose validation has financial or legal consequences, can the data entered be modified, updated or rendered by the user?
+FR: Pour chaque formulaire qui modifie ou supprime des données, ou qui transmet des réponses à un test ou à un examen, ou dont la validation a des conséquences financières ou juridiques, les données saisies peuvent-elles être modifiées, mises à jour ou récupérées par l’utilisateur ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-9-11
+
+RAAM 1.1, Criterion 10.1
+EN: On each screen, is the navigation sequence consistent?
+FR: Dans chaque écran, l’ordre de tabulation au clavier est-il cohérent ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-10-1
+
+RAAM 1.1, Criterion 10.2
+EN: On each screen, is the reading sequence by assistive technologies consistent?
+FR: Dans chaque écran, l’ordre de restitution par les technologies d’assistance est-il cohérent ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-10-2
+
+RAAM 1.1, Criterion 10.3
+EN: On each screen, the navigation must not contain any keyboard traps. Is this rule respected?
+FR: Dans chaque écran, la navigation ne doit pas contenir de piège au clavier. Cette règle est-elle respectée ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-10-3
+
+RAAM 1.1, Criterion 11.1
+EN: For each screen, does the user have control over each time limit modifying content (excluding special cases)?
+FR: Pour chaque écran, l’utilisateur a-t-il le contrôle de chaque limite de temps modifiant le contenu (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-1
+
+RAAM 1.1, Criterion 11.2
+EN: For each screen, can each process limiting the time of a session be stopped or deleted (excluding special cases)?
+FR: Pour chaque écran, chaque procédé limitant le temps d’une session peut-il être arrêté ou supprimé (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-2
+
+RAAM 1.1, Criterion 11.7
+EN: On each screen, are sudden change in brightness or blinking effects used correctly?
+FR: Dans chaque écran, les changements brusques de luminosité ou les effets de flash sont-ils correctement utilisés ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-7
+
+RAAM 1.1, Criterion 11.8
+EN: On each screen, is each moving or blinking content controllable by the user?
+FR: Dans chaque écran, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-8
+
+RAAM 1.1, Criterion 11.9
+EN: On each screen, is the content offered viewable regardless of screen orientation (portrait or landscape) (excluding special cases)?
+FR: Dans chaque écran, le contenu proposé est-il consultable quelle que soit l’orientation de l’écran (portrait ou paysage) (hors cas particuliers) ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-9
+
+RAAM 1.1, Criterion 11.10
+EN: On each screen, are the features that can be activated using a complex gesture able to be activated using a simple gesture (excluding special cases)?
+FR: Dans chaque écran, les fonctionnalités activables au moyen d’un geste complexe sont-elles activables au moyen d’un geste simple (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-10
+
+RAAM 1.1, Criterion 11.11
+EN: On each screen, are the features that can be activated by performing simultaneous actions activated by means of a single action? Is this rule respected (excluding special cases)?
+FR: Dans chaque écran, les fonctionnalités activables par la réalisation d’actions simultanées sont-elles activables au moyen d’une action unique. Cette règle est-elle respectée (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-11
+
+RAAM 1.1, Criterion 11.12
+EN: On each screen, can actions triggered by a pointing device on a single point on the screen be cancelled (excluding special cases)?
+FR: Dans chaque écran, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-12
+
+RAAM 1.1, Criterion 11.13
+EN: On each screen, can the features involving movement from or to the device be satisfied in an alternative way (excluding special cases)?
+FR: Dans chaque écran, les fonctionnalités qui impliquent un mouvement de l’appareil ou vers l’appareil peuvent-elles être satisfaites de manière alternative (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-13
+
+RAAM 1.1, Criterion 11.15
+EN: Is an alternative method available for each identification or control functionality that relies on the use of biological characteristics of the user?
+FR: Chaque fonctionnalité d’identification ou de contrôle qui repose sur l’utilisation de caractéristiques biologiques de l’utilisateur dispose-t-elle d’une méthode alternative ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-11-15
+
+RAAM 1.1, Criterion 12.3
+EN: The application does not interfere with the accessibility features of the platform. Is this rule respected?
+FR: L’application ne perturbe pas les fonctionnalités d’accessibilité de la plateforme. Cette règle est-elle respectée ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-12-3
+
+== RAWeb 1.1 (58 criteria) ==
+RAWeb 1.1, Criterion 1.1
+EN: Does each image conveying information have a text alternative?
+FR: Chaque image porteuse d’information a-t-elle une alternative textuelle ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-1
+
+RAWeb 1.1, Criterion 1.2
+EN: Is every decorative image, without a caption, correctly ignored by assistive technologies?
+FR: Chaque image de décoration, sans légende, est-elle correctement ignorée par les technologies d’assistance ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-2
+
+RAWeb 1.1, Criterion 1.3
+EN: For each image conveying information with a text alternative, is this alternative relevant (excluding special cases)?
+FR: Pour chaque image porteuse d’information ayant une alternative textuelle, cette alternative est-elle pertinente (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-3
+
+RAWeb 1.1, Criterion 1.4
+EN: For each image used as a CAPTCHA or test image, with a text alternative, does this alternative make it possible to identify the nature and function of the image?
+FR: Pour chaque image utilisée comme CAPTCHA ou comme image-test, ayant une alternative textuelle, cette alternative permet-elle d’identifier la nature et la fonction de l’image ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-4
+
+RAWeb 1.1, Criterion 1.5
+EN: For each image used as a CAPTCHA, is there an alternative access solution to the content or to the CAPTCHA function?
+FR: Pour chaque image utilisée comme CAPTCHA, une solution d’accès alternatif au contenu ou à la fonction du CAPTCHA est-elle présente ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-5
+
+RAWeb 1.1, Criterion 1.6
+EN: Does each image conveying information have, if necessary, a detailed description?
+FR: Chaque image porteuse d’information a-t-elle, si nécessaire, une description détaillée ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-6
+
+RAWeb 1.1, Criterion 1.7
+EN: For each image conveying information with a detailed description, is this description relevant?
+FR: Pour chaque image porteuse d’information ayant une description détaillée, cette description est-elle pertinente ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-1-7
+
+RAWeb 1.1, Criterion 2.1
+EN: Does each frame have a frame title?
+FR: Chaque cadre a-t-il un titre de cadre ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-2-1
+
+RAWeb 1.1, Criterion 3.1
+EN: On each web page, the information must not be provided by colour alone. Is this rule respected?
+FR: Dans chaque page web, l’information ne doit pas être donnée uniquement par la couleur. Cette règle est-elle respectée ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-3-1
+
+RAWeb 1.1, Criterion 3.2
+EN: On each web page, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?
+FR: Dans chaque page web, le contraste entre la couleur du texte et la couleur de son arrière-plan est-il suffisamment élevé (hors cas particuliers) ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-3-2
+
+RAWeb 1.1, Criterion 3.3
+EN: On each web page, are the colours used in the user interface components or graphic element conveying information sufficiently contrasting (excluding special cases)?
+FR: Dans chaque page web, les couleurs utilisées dans les composants d’interface ou les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-3-3
+
+RAWeb 1.1, Criterion 4.1
+EN: Does each pre-recorded time-based media have, if necessary, a transcript or an audio description (excluding special cases)?
+FR: Chaque média temporel pré-enregistré a-t-il, si nécessaire, une transcription textuelle ou une audiodescription (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-1
+
+RAWeb 1.1, Criterion 4.2
+EN: For each pre-recorded time-based media with a synchronised transcript or audio description, are these relevant (excluding special cases)?
+FR: Pour chaque média temporel pré-enregistré ayant une transcription textuelle ou une audiodescription synchronisée, celles-ci sont-elles pertinentes (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-2
+
+RAWeb 1.1, Criterion 4.3
+EN: Does each synchronised time-based media have, if necessary, synchronised captions (excluding special cases)?
+FR: Chaque média temporel synchronisé a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-3
+
+RAWeb 1.1, Criterion 4.4
+EN: For each synchronised time-based media with synchronised captions, are these captions relevant (excluding special cases)?
+FR: Pour chaque média temporel synchronisé ayant des sous-titres synchronisés, ces sous-titres sont-ils pertinents (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-4
+
+RAWeb 1.1, Criterion 4.8
+EN: Does each non-time-based media have, if necessary, an alternative (excluding special cases)?
+FR: Chaque média non temporel a-t-il, si nécessaire, une alternative (hors cas particuliers) ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-8
+
+RAWeb 1.1, Criterion 4.9
+EN: For each non-time-based media having an alternative, is this alternative relevant?
+FR: Pour chaque média non temporel ayant une alternative, cette alternative est-elle pertinente ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-9
+
+RAWeb 1.1, Criterion 4.10
+EN: Is each automatically triggered sound controllable by the user?
+FR: Chaque son déclenché automatiquement est-il contrôlable par l’utilisateur ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-10
+
+RAWeb 1.1, Criterion 4.11
+EN: Is the viewing of each time-based media, if required, accessible and operable by keyboard and any pointing device?
+FR: La consultation de chaque média temporel est-elle, si nécessaire, contrôlable par le clavier et tout dispositif de pointage ?
+Theme: Images & médias
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-4-11
+
+RAWeb 1.1, Criterion 5.6
+EN: For each data table, are each column header and each row header correctly declared?
+FR: Pour chaque tableau de données, chaque en-tête de colonne et chaque en-tête de ligne sont-ils correctement déclarés ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-5-6
+
+RAWeb 1.1, Criterion 5.7
+EN: For each data table, is the appropriate technique used to associate each cell with its headers (excluding special cases)?
+FR: Pour chaque tableau de données, la technique appropriée permettant d’associer chaque cellule avec ses en-têtes est-elle utilisée (hors cas particuliers) ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-5-7
+
+RAWeb 1.1, Criterion 6.1
+EN: Is every link explicit (except in special cases)?
+FR: Chaque lien est-il explicite (hors cas particuliers) ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-6-1
+
+RAWeb 1.1, Criterion 6.2
+EN: On each web page, does each link have an accessible name?
+FR: Dans chaque page web, chaque lien a-t-il un intitulé ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-6-2
+
+RAWeb 1.1, Criterion 7.1
+EN: Is each script, if necessary, compatible with assistive technologies?
+FR: Chaque script est-il, si nécessaire, compatible avec les technologies d’assistance ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-7-1
+
+RAWeb 1.1, Criterion 7.3
+EN: Is each script accessible and operable by keyboard and any pointing device (excluding special cases)?
+FR: Chaque script est-il contrôlable par le clavier et par tout dispositif de pointage (hors cas particuliers) ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-7-3
+
+RAWeb 1.1, Criterion 7.5
+EN: On each web page, are status messages correctly rendered (by assistive technologies)?
+FR: Dans chaque page web, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-7-5
+
+RAWeb 1.1, Criterion 8.2
+EN: For each web page, is the generated source code valid for the specified document type?
+FR: Pour chaque page web, le code source généré est-il valide selon le type de document spécifié ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-2
+
+RAWeb 1.1, Criterion 8.3
+EN: On each web page, is the default language present?
+FR: Dans chaque page web, la langue par défaut est-elle présente ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-3
+
+RAWeb 1.1, Criterion 8.4
+EN: For each web page with a default language, is the language code relevant?
+FR: Pour chaque page web ayant une langue par défaut, le code de langue est-il pertinent ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-4
+
+RAWeb 1.1, Criterion 8.5
+EN: Does every web page have a page title?
+FR: Chaque page web a-t-elle un titre de page ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-5
+
+RAWeb 1.1, Criterion 8.6
+EN: For each web page with a page title, is this title relevant?
+FR: Pour chaque page web ayant un titre de page, ce titre est-il pertinent ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-6
+
+RAWeb 1.1, Criterion 8.7
+EN: On each web page, is each language change indicated in the source code (excluding special cases)?
+FR: Dans chaque page web, chaque changement de langue est-il indiqué dans le code source (hors cas particuliers) ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-7
+
+RAWeb 1.1, Criterion 8.8
+EN: On each web page, is the language code for each language change valid and relevant?
+FR: Dans chaque page web, le code de langue de chaque changement de langue est-il valide et pertinent ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-8
+
+RAWeb 1.1, Criterion 9.1
+EN: On each web page, is the information structured by the appropriate use of headings?
+FR: Dans chaque page web, l’information est-elle structurée par l’utilisation appropriée de titres ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-9-1
+
+RAWeb 1.1, Criterion 9.2
+EN: On each web page, is the document structure consistent (excluding special cases)?
+FR: Dans chaque page web, la structure du document est-elle cohérente ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-9-2
+
+RAWeb 1.1, Criterion 9.3
+EN: On each web page, is each list correctly structured?
+FR: Dans chaque page web, chaque liste est-elle correctement structurée ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-9-3
+
+RAWeb 1.1, Criterion 10.4
+EN: On each web page, is the text still readable when the font size is increased by at least 200% (excluding special cases)?
+FR: Dans chaque page web, le texte reste-t-il lisible lorsque la taille des caractères est augmentée jusqu’à 200 %, au moins (hors cas particuliers) ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-4
+
+RAWeb 1.1, Criterion 10.7
+EN: On each web page, for each element receiving keyboard focus, is the focus visible?
+FR: Dans chaque page web, pour chaque élément recevant le focus du clavier, la prise de focus est-elle visible ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-7
+
+RAWeb 1.1, Criterion 10.8
+EN: For each web page, should hidden content be ignored by assistive technologies?
+FR: Pour chaque page web, les contenus cachés ont-ils vocation à être ignorés par les technologies d’assistance ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-8
+
+RAWeb 1.1, Criterion 10.9
+EN: On each web page, information must not be conveyed solely by shape, size or location. Is this rule respected?
+FR: Dans chaque page web, l’information ne doit pas être donnée uniquement par la forme, taille ou position. Cette règle est-elle respectée ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-9
+
+RAWeb 1.1, Criterion 10.10
+EN: On each web page, information must not be conveyed by shape, size or location only. Is this rule implemented appropriately?
+FR: Dans chaque page web, l’information ne doit pas être donnée par la forme, taille ou position uniquement. Cette règle est-elle implémentée de façon pertinente ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-10
+
+RAWeb 1.1, Criterion 10.14
+EN: On each web page, can additional content that appears using CSS styles only be made visible using the keyboard and any pointing device?
+FR: Dans chaque page web, les contenus additionnels apparaissant via les styles CSS uniquement peuvent-ils être rendus visibles au clavier et par tout dispositif de pointage ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-14
+
+RAWeb 1.1, Criterion 11.1
+EN: Does each form input field have a label?
+FR: Chaque champ de formulaire a-t-il une étiquette ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-1
+
+RAWeb 1.1, Criterion 11.2
+EN: Is each label associated with a form input field relevant (excluding special cases)?
+FR: Chaque étiquette associée à un champ de formulaire est-elle pertinente (hors cas particuliers) ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-2
+
+RAWeb 1.1, Criterion 11.5
+EN: In each form, are the related form controls grouped together, if necessary?
+FR: Dans chaque formulaire, les champs de même nature sont-ils regroupés, si nécessaire ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-5
+
+RAWeb 1.1, Criterion 11.6
+EN: In each form, does each group of related form controls have a legend?
+FR: Dans chaque formulaire, chaque regroupement de champs de même nature a-t-il une légende ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-6
+
+RAWeb 1.1, Criterion 11.7
+EN: In each form, is each legend associated with a group of related form controls relevant?
+FR: Dans chaque formulaire, chaque légende associée à un regroupement de champs de même nature est-elle pertinente ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-7
+
+RAWeb 1.1, Criterion 11.9
+EN: In each form, is the label of each button relevant (excluding special cases)?
+FR: Dans chaque formulaire, l’intitulé de chaque bouton est-il pertinent (hors cas particuliers) ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-9
+
+RAWeb 1.1, Criterion 11.10
+EN: In each form, is the error management used appropriately (excluding special cases)?
+FR: Dans chaque formulaire, le contrôle de saisie est-il utilisé de manière pertinente (hors cas particuliers) ?
+Theme: Formulaires
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-11-10
+
+RAWeb 1.1, Criterion 12.6
+EN: Can content grouping blocks present on several web pages (with the exception of the main regions composing the document structure) be reached or avoided, if necessary?
+FR: Les zones de regroupement de contenus présentes dans plusieurs pages web (à l’exception des zones principales constituant la structure du document) peuvent-elles être atteintes ou évitées, si nécessaire ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-12-6
+
+RAWeb 1.1, Criterion 12.7
+EN: On each web page, is there a bypass or skip link to the main content region (excluding special cases)?
+FR: Dans chaque page web, un lien d’évitement ou d’accès rapide à la zone de contenu principal est-il présent (hors cas particuliers) ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-12-7
+
+RAWeb 1.1, Criterion 12.8
+EN: On each web page, is the navigation sequence consistent?
+FR: Dans chaque page web, l’ordre de tabulation est-il cohérent ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-12-8
+
+RAWeb 1.1, Criterion 12.9
+EN: On each web page, navigation must not contain any keyboard traps. Is this rule respected?
+FR: Dans chaque page web, la navigation ne doit pas contenir de piège au clavier. Cette règle est-elle respectée ?
+Theme: Navigation & structure
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-12-9
+
+RAWeb 1.1, Criterion 12.11
+EN: On each web page, is the additional content that appears when hovering, focusing or activating a user interface component accessible by keyboard if necessary?
+FR: Dans chaque page web, les contenus additionnels apparaissant au survol, à la prise de focus ou à l’activation d’un composant d’interface sont-ils si nécessaire atteignables au clavier ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-12-11
+
+RAWeb 1.1, Criterion 13.1
+EN: For each web page, does the user have control over each time limit modifying the content (excluding special cases)?
+FR: Pour chaque page web, l’utilisateur a-t-il le contrôle de chaque limite de temps modifiant le contenu (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-13-1
+
+RAWeb 1.1, Criterion 13.7
+EN: On each web page, are sudden changes in brightness or blinking used correctly?
+FR: Dans chaque page web, les changements brusques de luminosité ou les effets de flash sont-ils correctement utilisés ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-13-7
+
+RAWeb 1.1, Criterion 13.8
+EN: On each web page, is every moving or blinking content controllable by the user (excluding special cases)?
+FR: Dans chaque page web, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur (hors cas particuliers) ?
+Theme: Contenu & lisibilité
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-13-8
+
+RAWeb 1.1, Criterion 13.11
+EN: On each web page, can actions triggered by a pointing device on a single point on the screen be cancelled (except in special cases)?
+FR: Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ?
+Theme: Composants interactifs
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-13-11

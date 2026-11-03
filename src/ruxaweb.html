@@ -875,10 +875,12 @@ RUXAWEB 2 : audit par observations.
     return {s:sy, element:idx};
   }
   function lireCollage(texte, o, eDefaut){
-    var pistes = [], erreurs = [], e = eDefaut;
+    var pistes = [], erreurs = [], e = eDefaut, fin = false;
     var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; });
     String(texte || '').split(/\r?\n/).forEach(function(brut, n){
       var l = brut.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').replace(/`/g, '').trim();
+      // Questions de l'IA sur des notes trop vagues : tout ce qui suit « To clarify: » (ou « À préciser : ») est ignoré.
+      if(fin || /^(?:to clarify|à préciser|a preciser)\s*:/i.test(l)){ fin = true; return; }
       if(!l || /^(statut\s*\|)/i.test(l)) return;
       var me = /^(?:#+\s*)?(?:écran|ecran|screen)\s*:\s*(.+)$/i.exec(l);
       if(me){
@@ -914,12 +916,13 @@ RUXAWEB 2 : audit par observations.
       'statut | élément | observation | point de contrôle\n\n' +
       'Règles :\n' +
       '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
-      '- élément : type et libellé, par exemple button "Payer", ou le nom d\'un élément répété, par exemple Menu principal ; laisse vide si aucun\n' +
-      '- observation : une phrase claire, fidèle aux notes, sans rien inventer\n' +
+      '- élément : type et libellé, par exemple button "Payer", ou le nom d\'un élément répété, par exemple Menu principal ; jamais le nom de l\'écran ; laisse vide si aucun\n' +
+      '- observation : une phrase claire en anglais (elle devient le « Actual behavior » du ticket Jira), fidèle aux notes, sans rien inventer\n' +
       '- point de contrôle : recopie exactement un nom de la liste ci-dessous ; s\'il indique des types, ajoute le type entre parenthèses, par exemple Présence d\'un nom (lien) ; laisse vide si aucun ne convient\n' +
       '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
-      '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme\n\n' +
-      'Exemple :\nÉcran : Accueil\nNC | Menu principal | On ne voit pas le focus en tabulant dans le menu. | Visibilité du focus\nNC | link "En savoir plus" | Les liens « En savoir plus » sont identiques hors contexte. | Pertinence du nom (lien)\n\n' +
+      '- un défaut par ligne ; jamais de « | » dans un champ ; jamais de numéro de critère ni de gravité\n' +
+      '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme ; une note trop vague va après les lignes, sous « To clarify: », avec une question courte\n\n' +
+      'Exemple :\nÉcran : Accueil\nNC | Main navigation | The keyboard focus is not visible on the main navigation links. | Visibilité du focus\nNC | link "En savoir plus" | Several "En savoir plus" links have the same text and cannot be told apart out of context. | Pertinence du nom (lien)\n\n' +
       'Points de contrôle :\n' + SYMPTOMES.map(function(x){ return '- ' + x.controle + ' : ' + x.symptome + (x.selon.length ? ' ; types : ' + x.selon.map(function(y){ return y.element; }).join(', ') : ''); }).join('\n') +
       '\n\nMes notes :\n[colle tes notes ici]';
   }
