@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: EUPL-1.2
 """Génère les fichiers de connaissances des agents Copilot (docs/copilot/) à partir de data/.
 
-- criteres-raam-raweb.txt : intitulés officiels EN et FR, thème RUXAL et lien de chaque critère (agent Tickets A11Y).
+- criteres-raam-raweb.txt : intitulés officiels EN et FR, thème RUXAL et lien de chaque critère (référence).
 - points-de-controle-ruxaweb.txt : les points de contrôle de RUXAWEB, leurs types d'élément et leurs critères
   (référence ; facultatif comme connaissance de l'agent Observations).
 - consigne-observations-ruxaweb.txt : consigne complète de l'agent Observations, liste des points de contrôle comprise,
@@ -12,7 +12,7 @@
   ou un ticket existant devient un ticket Jira au format de l'équipe), à partir de modele-consigne-ticket.txt, avec les
   intitulés officiels EN de la sélection RAAM ou RAWeb rangés par thème RUXAL ; vérifie la limite de 8 000 caractères.
 
-Usage : python3 scripts/copilot.py            régénère les deux fichiers
+Usage : python3 scripts/copilot.py            régénère les fichiers
         python3 scripts/copilot.py --check    vérifie qu'ils sont à jour (code retour 1 sinon)
 """
 import json
