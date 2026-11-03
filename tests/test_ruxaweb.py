@@ -682,6 +682,7 @@ def main():
         # Suppression d'un onglet en deux clics, depuis le tableau de bord.
         page.click('[data-action="projet"]')
         avant = page.evaluate('RUXAWEB.state().onglets.length')
+        verifier('Carte d\'onglet : la suppression est dans la carte', page.locator('.tuile-onglet [data-action="suppr-onglet"]').count() == page.locator('.tuile-onglet').count() > 0)
         dernier = page.locator('[data-action="suppr-onglet"]').last
         oid = dernier.get_attribute('data-id')
         dernier.click()
