@@ -5,8 +5,10 @@
 
 - criteres-raam-raweb.txt : intitulés officiels EN et FR, thème RUXAL et lien de chaque critère (agent Tickets A11Y).
 - points-de-controle-ruxaweb.txt : les points de contrôle de RUXAWEB, leurs types d'élément et leurs critères
-  (agent Observations RUXAWEB, qui convertit des notes au format du collage).
-Les consignes des deux agents (consigne-*.txt) sont écrites à la main dans le même dossier.
+  (référence ; facultatif comme connaissance de l'agent Observations).
+- consigne-observations-ruxaweb.txt : consigne complète de l'agent Observations, liste des points de contrôle comprise,
+  à partir de modele-consigne-observations.txt (écrit à la main) ; vérifie la limite de 8 000 caractères.
+La consigne de l'agent Tickets (consigne-tickets-a11y.txt) est écrite à la main dans le même dossier.
 
 Usage : python3 scripts/copilot.py            régénère les deux fichiers
         python3 scripts/copilot.py --check    vérifie qu'ils sont à jour (code retour 1 sinon)
@@ -69,8 +71,29 @@ def points():
     return '\n'.join(l)
 
 
+LIMITE_INSTRUCTIONS = 8000  # champ Instructions d'Agent Builder (Microsoft 365 Copilot)
+
+
+def consigne_observations():
+    # Consigne complète, liste des points de contrôle comprise : l'agent n'a besoin d'aucun fichier de connaissances.
+    d = charger('symptomes-ruxaweb.json')
+    lignes = []
+    for f in d['familles']:
+        for s in [x for x in d['symptomes'] if x['famille'] == f['id']]:
+            t = '- ' + s['controle'] + ' : ' + s['symptome']
+            if s.get('selon'):
+                t += ' [' + ', '.join(x['element'] for x in s['selon']) + ']'
+            lignes.append(t)
+    modele = (SORTIE / 'modele-consigne-observations.txt').read_text(encoding='utf-8')
+    t = modele.replace('{{POINTS}}', '\n'.join(lignes))
+    if len(t) > LIMITE_INSTRUCTIONS:
+        sys.exit('consigne-observations-ruxaweb.txt : %d caractères, au-delà de la limite de %d' % (len(t), LIMITE_INSTRUCTIONS))
+    return t
+
+
 def main():
-    fichiers = {'criteres-raam-raweb.txt': criteres(), 'points-de-controle-ruxaweb.txt': points()}
+    fichiers = {'criteres-raam-raweb.txt': criteres(), 'points-de-controle-ruxaweb.txt': points(),
+                'consigne-observations-ruxaweb.txt': consigne_observations()}
     for nom, t in fichiers.items():
         if '—' in t or '–' in t:
             sys.exit(nom + ' : tiret long ou demi-cadratin interdit')

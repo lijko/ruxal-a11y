@@ -103,7 +103,7 @@ Identifiants stables : `raam-1-2` pour le critère RAAM 1.2, `bp1` pour une bonn
 - `src/` : outils (code)
 - `data/` : critères, thèmes, couche POUR/heuristiques (données)
 - `docs/` : documentation
-- `docs/copilot/` : deux agents Copilot, chacun avec sa consigne (`consigne-*.txt`, à coller dans Instructions) et son fichier de connaissances : « Observations RUXAWEB » convertit des notes au format du collage (`points-de-controle-ruxaweb.txt`), « Tickets A11Y » rédige les tickets Jira (`criteres-raam-raweb.txt`, intitulés officiels EN et FR). Les connaissances se régénèrent avec `python3 scripts/copilot.py` après tout changement de `data/`.
+- `docs/copilot/` : deux agents Copilot, chacun avec sa consigne (`consigne-*.txt`, à coller dans Instructions) et son fichier de connaissances : « [A11Y] Observation -> RUXAWEB » convertit des notes au format du collage (consigne autonome, liste des points de contrôle comprise : aucun fichier de connaissances nécessaire), « Tickets A11Y » rédige les tickets Jira (`criteres-raam-raweb.txt`, intitulés officiels EN et FR). Les connaissances se régénèrent avec `python3 scripts/copilot.py` après tout changement de `data/`.
 - `scripts/` : génération des outils à partir de `data/` ; `intitules_en.py` ajoute aux critères l'intitulé officiel anglais (dépôts du SIP), repris dans les tickets Jira ; `demo_ruxaam.py` et `demo_ruxaweb.py` régénèrent les données fictives en saisissant un audit dans l'outil (Playwright)
 - `exemples/` : données fictives à ouvrir dans l'outil pour l'essayer (`donnees-fictives-ruxaam.json` : bouton « Importer » de RUXAAM ; `donnees-fictives-ruxaweb.json` : Fichier, « Ouvrir une sauvegarde » de RUXAWEB)
 - `tests/` : tests de bout en bout de l'outil (Playwright)

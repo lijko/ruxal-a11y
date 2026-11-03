@@ -581,7 +581,7 @@ def main():
         verifier('Coller (points de contrôle) : type d\'élément gardé', any(k['point'] == 'nom-absent' and k['typeElement'] != '' for k in pc))
         # Exemple de la consigne de l'agent Copilot, avec une question finale : 4 pistes, la question ignorée.
         cons = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observations-ruxaweb.txt').read_text(encoding='utf-8')
-        ex = cons.split('Output:\n')[1].strip().replace('Écran : Panier\n', '').replace('Écran : Livraison\n', '')
+        ex = cons.split('Output:\n')[1].split('\n\nCHECKPOINTS')[0].strip().replace('Écran : Panier\n', '').replace('Écran : Livraison\n', '')
         avantC = len(page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats || []'))
         page.click('[data-action="coller-obs"]')
         page.fill('#coller-texte', ex + '\nTo clarify:\n- "page lente" : which element and what happens?')
