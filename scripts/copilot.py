@@ -91,15 +91,38 @@ def consigne_observations():
     return t
 
 
+RECO = {'raam': 'Per platform, only what applies: iOS, Android, cross-platform (native traits, roles and properties, e.g. '
+                 'accessibilityTraits = .button, Role.Button, accessibilityRole="button").',
+        'raweb': 'Native HTML first (button, label, alt, lang), ARIA only when native HTML is not possible.'}
+
+
+def consigne_ticket(cle):
+    # Consigne complète de l'agent ticket, une par référentiel : liste des critères (intitulés officiels EN) par thème RUXAL.
+    lab = 'RAAM 1.1' if cle == 'raam' else 'RAWeb 1.1'
+    themes = [t['nom'] for t in charger('themes-ruxal.json')['themes']]
+    cs = charger('criteres-%s.json' % cle)['criteres']
+    blocs = []
+    for t in themes:
+        du = sorted([c for c in cs if c['theme_ruxal'] == t], key=lambda c: tri(c[cle]))
+        if du:
+            blocs.append('# ' + t + '\n' + '\n'.join('%s %s' % (c[cle], c['intitule_en']) for c in du))
+    v = {'SUPPORT': 'mobile app' if cle == 'raam' else 'website', 'REF': lab, 'URL': URL[cle], 'RECO': RECO[cle],
+         'CRITERES': '\n'.join(blocs)}
+    t = (SORTIE / 'modele-consigne-ticket.txt').read_text(encoding='utf-8')
+    for k, x in v.items():
+        t = t.replace('{{' + k + '}}', x)
+    if len(t) > LIMITE_INSTRUCTIONS:
+        sys.exit('consigne-ticket-%s.txt : %d caractères, au-delà de la limite de %d' % (cle, len(t), LIMITE_INSTRUCTIONS))
+    return t
+
+
 def main():
     fichiers = {'criteres-raam-raweb.txt': criteres(), 'points-de-controle-ruxaweb.txt': points(),
-                'consigne-observations-ruxaweb.txt': consigne_observations()}
+                'consigne-observations-ruxaweb.txt': consigne_observations(),
+                'consigne-ticket-mobile.txt': consigne_ticket('raam'), 'consigne-ticket-web.txt': consigne_ticket('raweb')}
     for nom, t in fichiers.items():
         if '—' in t or '–' in t:
             sys.exit(nom + ' : tiret long ou demi-cadratin interdit')
-    manuelle = (SORTIE / 'consigne-tickets-a11y.txt').read_text(encoding='utf-8')
-    if len(manuelle) > LIMITE_INSTRUCTIONS or '\u2014' in manuelle or '\u2013' in manuelle:
-        sys.exit('consigne-tickets-a11y.txt : plus de %d caractères ou tiret long' % LIMITE_INSTRUCTIONS)
     if '--check' in sys.argv:
         vieux = [n for n, t in fichiers.items() if not (SORTIE / n).exists() or (SORTIE / n).read_text(encoding='utf-8') != t]
         if vieux:
