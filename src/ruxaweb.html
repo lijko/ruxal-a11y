@@ -1158,7 +1158,7 @@ RUXAWEB 2 : audit par observations.
   // Suppression en deux clics : le même bouton devient « Confirmer la suppression ». enMenu : entrée du menu d'une carte d'onglet.
   function boutonSupprOnglet(o, enMenu){
     var arme = ui.confirmation === 'onglet-'+o.id;
-    return '<button type="button" class="'+(enMenu ? 'menu-danger' : 'btn btn-s btn-danger')+'" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+ico('corbeille')+(arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet')+'</button>';
+    return '<button type="button" class="'+(enMenu ? 'menu-danger' : 'btn btn-s btn-danger')+'" data-action="suppr-onglet" data-id="'+o.id+'" aria-label="'+(arme ? 'Confirmer la suppression de l\'onglet ' : 'Supprimer l\'onglet ')+esc(o.nom)+'">'+ico('corbeille')+(enMenu ? (arme ? 'Confirmer' : 'Supprimer') : (arme ? 'Confirmer la suppression' : 'Supprimer l\'onglet'))+'</button>';
   }
   // Menu d'actions d'une carte d'onglet (bouton ⋮ en haut à droite) : bouton qui déplie une liste, Échap le referme.
   function menuOnglet(o){
