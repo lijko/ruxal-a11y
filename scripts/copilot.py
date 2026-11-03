@@ -8,7 +8,9 @@
   (référence ; facultatif comme connaissance de l'agent Observations).
 - consigne-observations-ruxaweb.txt : consigne complète de l'agent Observations, liste des points de contrôle comprise,
   à partir de modele-consigne-observations.txt (écrit à la main) ; vérifie la limite de 8 000 caractères.
-La consigne de l'agent [A11Y] JIRA Task (consigne-tickets-a11y.txt), qui remet au format un ticket existant, est écrite à la main\ndans le même dossier ; le script vérifie sa longueur.
+- consigne-ticket-mobile.txt et consigne-ticket-web.txt : consignes complètes des agents [A11Y] JIRA Task (une observation
+  ou un ticket existant devient un ticket Jira au format de l'équipe), à partir de modele-consigne-ticket.txt, avec les
+  intitulés officiels EN de la sélection RAAM ou RAWeb rangés par thème RUXAL ; vérifie la limite de 8 000 caractères.
 
 Usage : python3 scripts/copilot.py            régénère les deux fichiers
         python3 scripts/copilot.py --check    vérifie qu'ils sont à jour (code retour 1 sinon)
