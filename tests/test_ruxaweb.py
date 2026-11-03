@@ -690,10 +690,16 @@ def main():
         # Suppression d'un onglet en deux clics, depuis le tableau de bord.
         page.click('[data-action="projet"]')
         avant = page.evaluate('RUXAWEB.state().onglets.length')
-        verifier('Carte d\'onglet : la suppression est dans la carte', page.locator('.tuile-onglet [data-action="suppr-onglet"]').count() == page.locator('.tuile-onglet').count() > 0)
-        dernier = page.locator('[data-action="suppr-onglet"]').last
-        oid = dernier.get_attribute('data-id')
-        dernier.click()
+        verifier('Carte d\'onglet : un menu d\'actions par carte, fermé', page.locator('.tuile-onglet [data-action="menu-onglet"][aria-expanded="false"]').count() == page.locator('.tuile-onglet').count() > 0)
+        kebab = page.locator('[data-action="menu-onglet"]').last
+        oid = kebab.get_attribute('data-id')
+        kebab.click()
+        verifier('Menu d\'onglet : ouvert, focus sur la première action', page.locator('[data-action="menu-onglet"][data-id="%s"][aria-expanded="true"]' % oid).count() == 1 and page.evaluate('document.activeElement.dataset.action') == 'gerer-ecrans')
+        page.keyboard.press('Escape')
+        verifier('Menu d\'onglet : Échap le referme et rend le focus au bouton', page.locator('#menu-%s' % oid).is_hidden() and page.evaluate('document.activeElement.dataset.action') == 'menu-onglet')
+        page.click('[data-action="menu-onglet"][data-id="%s"]' % oid)
+        page.click('#menu-%s [data-action="suppr-onglet"]' % oid)
+        verifier('Menu d\'onglet : le menu reste ouvert pour confirmer', page.locator('#menu-%s' % oid).is_visible())
         verifier('Supprimer un onglet : confirmation demandée', page.evaluate('RUXAWEB.state().onglets.length') == avant and 'Confirmer' in page.locator('[data-action="suppr-onglet"][data-id="%s"]' % oid).inner_text())
         page.click('[data-action="suppr-onglet"][data-id="%s"]' % oid)
         verifier('Supprimer un onglet : onglet retiré', page.evaluate('RUXAWEB.state().onglets.length') == avant - 1 and 'supprimé' in page.locator('#statut').inner_text())
