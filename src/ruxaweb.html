@@ -206,7 +206,9 @@ RUXAWEB 2 : audit par observations.
   /* ---------- Menu, fenêtre, message ---------- */
   .menu{position:relative}
   .menu-liste{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius);padding:6px;min-width:270px;display:flex;flex-direction:column;z-index:20;box-shadow:var(--shadow-pop)}
-  .menu-liste button{text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer}
+  /* Menus : un nom d'action tient toujours sur une ligne ; le menu s'élargit au besoin, sans dépasser l'écran. */
+  .menu-liste{max-width:calc(100vw - 32px)}
+  .menu-liste button{text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer;white-space:nowrap}
   .menu-liste button:hover{background:var(--accent-soft)}
   dialog{border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;max-width:760px;width:calc(100% - 32px);background:var(--surface-raised);color:var(--ink);box-shadow:var(--shadow-pop)}
   dialog::backdrop{background:rgba(10,15,20,.55)}
@@ -360,7 +362,6 @@ RUXAWEB 2 : audit par observations.
   .tuile-onglet .tuile-titre{padding-right:40px}
   .tuile-menu{position:absolute;top:10px;right:10px;z-index:2}
   .tuile-menu .menu-liste{min-width:260px}
-  .tuile-menu .menu-liste button{white-space:nowrap}
   .btn-kebab{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid transparent;border-radius:8px;background:none;color:var(--ink-soft);cursor:pointer}
   .btn-kebab:hover,.btn-kebab[aria-expanded="true"]{background:var(--surface-alt);color:var(--ink);border-color:var(--border)}
   .menu-liste .menu-danger{display:flex;align-items:center;gap:8px;color:var(--c-nc);font-weight:600}
