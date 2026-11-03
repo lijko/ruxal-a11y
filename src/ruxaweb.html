@@ -359,7 +359,8 @@ RUXAWEB 2 : audit par observations.
   .tuile-onglet:has(.tuile-lien:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
   .tuile-actions{position:relative;z-index:1;display:flex;justify-content:flex-end;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft)}
   .liste-fonctions{display:flex;flex-direction:column}
-  .fonction-ligne{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--border-soft)}
+  .actions-objet{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border-soft)}
+  .fonction-ligne{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--border-soft)}
   .fonction-nom{font-weight:600}
   .ajout-fonction input{flex:1 1 240px;width:auto}
 
@@ -729,6 +730,7 @@ RUXAWEB 2 : audit par observations.
   var FONCTIONS_DEFAUT = [['nav','Navigation principale'],['menu','Menu ou menu burger'],['recherche','Recherche'],['form','Formulaire type'],
     ['modale','Fenêtre modale'],['retour','Retour ou fil d\'Ariane'],['notif','Notifications et messages'],['pied','Pied de page']];
   function fonctions(){ if(!state.fonctions) state.fonctions = FONCTIONS_DEFAUT.map(function(f){ return {id:f[0], nom:f[1], presente:false, etapes:{}}; }); return state.fonctions; }
+  function fonctionAjoutee(f){ return !FONCTIONS_DEFAUT.some(function(d){ return d[0] === f.id; }); }
   function fonctionDe(id){ return fonctions().filter(function(f){ return f.id === id; })[0] || null; }
   function obsF(){ return state.obsF || (state.obsF = []); }
   function ecransFonction(o, fid){ return ((o.fonctionsEcrans || {})[fid] || []).filter(function(id){ return ecranDe(o, id); }); }
@@ -1179,7 +1181,9 @@ RUXAWEB 2 : audit par observations.
         '<h2 id="t-fonctions">Fonctions primaires</h2><p class="doux petit">Active celles que le site propose. Une fonction se teste une fois pour tout le projet, à chaque étape avant les écrans ; dans chaque onglet, « Gérer les écrans » dit sur quels écrans elle apparaît.</p></div>' +
       '<div class="liste-fonctions">' + fonctions().map(function(f){
         return '<div class="fonction-ligne"><button type="button" role="switch" class="switch" aria-checked="'+f.presente+'" data-action="fonction-presente" data-id="'+f.id+'" aria-label="'+esc(f.nom)+'"><span class="bouton" aria-hidden="true"></span></button>' +
-          '<span class="fonction-nom">'+esc(f.nom)+'</span><span class="fonction-etat doux petit">'+esc(etatFonction(f))+'</span></div>';
+          '<span class="fonction-nom">'+esc(f.nom)+'</span><span class="fonction-etat doux petit">'+esc(etatFonction(f))+'</span>' +
+          (fonctionAjoutee(f) ? (function(){ var arme = ui.confirmation === 'fonction-'+f.id;
+            return '<button type="button" class="btn btn-s btn-danger" data-action="suppr-fonction" data-id="'+f.id+'" aria-label="'+(arme ? 'Confirmer la suppression de la fonction ' : 'Supprimer la fonction ')+esc(f.nom)+'">'+ico('corbeille')+(arme ? 'Confirmer' : 'Supprimer')+'</button>'; })() : '<span></span>') + '</div>';
       }).join('') + '</div>' +
       '<div class="rangee ajout-fonction"><label class="sr" for="fonction-nouvelle">Autre fonction primaire</label>' +
           '<input type="text" id="fonction-nouvelle" placeholder="Autre fonction (ex. Bandeau cookies)" autocomplete="off">' +
@@ -1222,13 +1226,14 @@ RUXAWEB 2 : audit par observations.
   }
   function vuePreparer(o){
     var mini = o.type === 'scenario' ? 2 : 3;
-    var html = '<h1>Écrans de l\'onglet</h1><div class="carte grille2">' +
+    var html = '<h1>Écrans de l\'onglet</h1><section class="carte pile" aria-label="Onglet"><div class="grille2">' +
       '<div class="champ"><label class="lbl" for="onglet-nom">Nom de l\'onglet<span class="oblig" aria-hidden="true">*</span></label>' +
           '<input type="text" id="onglet-nom" value="'+esc(o.nom)+'" autocomplete="off" aria-required="true"></div>' +
       '<fieldset class="groupe-nu champ"><legend class="lbl">Type</legend><div class="rangee">' +
       '<label class="choix"><input type="radio" name="onglet-type" value="rapide"'+(o.type !== 'scenario' ? ' checked' : '')+'> Audit simple</label>' +
       '<label class="choix doux"><input type="radio" name="onglet-type" value="complet" disabled> Audit complet (à venir)</label>' +
-      '<label class="choix"><input type="radio" name="onglet-type" value="scenario"'+(o.type === 'scenario' ? ' checked' : '')+'> Scénario</label></div></fieldset></div>';
+      '<label class="choix"><input type="radio" name="onglet-type" value="scenario"'+(o.type === 'scenario' ? ' checked' : '')+'> Scénario</label></div></fieldset></div>' +
+      '<div class="actions-objet"><span class="doux petit">Supprimer efface ses écrans et ses observations : pense à sauvegarder le projet avant.</span>'+boutonSupprOnglet(o)+'</div></section>';
     html += '<section class="carte pile" aria-labelledby="t-ecrans"><h2 id="t-ecrans">'+(o.type === 'scenario' ? 'Écrans du parcours, dans l\'ordre' : 'Écrans de l\'échantillon')+'</h2>' +
         '<p class="sans-marge doux petit"><span class="oblig" aria-hidden="true">*</span> Chaque écran doit avoir un nom.</p><div>';
     o.ecrans.forEach(function(e, i){
@@ -1240,9 +1245,6 @@ RUXAWEB 2 : audit par observations.
     html += '<section class="carte pile" aria-labelledby="t-fonctions-onglet">' + blocFonctionsEcrans(o) + '</section>';
     html += '<section class="carte pile" aria-labelledby="t-contenus">' + blocContenus(o) + '</section>';
     html += '<div class="a-droite rangee"><button type="button" class="btn btn-p" data-action="vue" data-vue="audit">Auditer</button></div>';
-    html += '<section class="carte rangee entre" aria-labelledby="t-suppr-onglet">' +
-        '<div><h2 class="titre-encadre" id="t-suppr-onglet">Supprimer cet onglet</h2>' +
-        '<p class="marge-haut-2 doux petit">Ses écrans et ses observations sont effacés. Pense à sauvegarder le projet avant.</p></div>'+boutonSupprOnglet(o)+'</section>';
     return html;
   }
 
@@ -1919,6 +1921,24 @@ RUXAWEB 2 : audit par observations.
       state.onglets.forEach(function(x){ x.valide = false; });
       rendre(); var bf = document.querySelector('[data-action="fonction-presente"][data-id="'+fp.id+'"]'); if(bf) bf.focus();
     },
+    // Une fonction ajoutée à la main se supprime avec ses observations, ses écrans cochés et sa mémoire Jira.
+    'suppr-fonction': function(b, o, a){
+      var fid = b.getAttribute('data-id'), f = fonctionDe(fid); if(!f || !fonctionAjoutee(f)) return ARRET;
+      if(ui.confirmation !== 'fonction-'+fid){
+        ui.confirmation = 'fonction-'+fid; rendre();
+        var bc = document.querySelector('[data-action="suppr-fonction"][data-id="'+fid+'"]'); if(bc) bc.focus();
+        return ARRET;
+      }
+      ui.confirmation = null;
+      var ids = obsF().filter(function(x){ return x.fonction === fid; }).map(function(x){ return 'projet:' + x.id; });
+      state.obsF = obsF().filter(function(x){ return x.fonction !== fid; });
+      state.fonctions = fonctions().filter(function(x){ return x.id !== fid; });
+      state.onglets.forEach(function(x){ if(x.fonctionsEcrans) delete x.fonctionsEcrans[fid]; x.valide = false; });
+      state.exportesJira = (state.exportesJira || []).filter(function(k){ return ids.indexOf(k) === -1; });
+      if(state.fonctionId === fid) state.fonctionId = null;
+      rendre(); message('Fonction « '+f.nom+' » supprimée.');
+      var inF = document.getElementById('fonction-nouvelle'); if(inF) inF.focus();
+    },
     'fonction-ajout': function(b, o, a){
       var inF = document.getElementById('fonction-nouvelle'), nomF = (inF.value || '').replace(/\s+/g, ' ').trim();
       if(!nomF){ message('Écris le nom de la fonction à ajouter.', true); inF.focus(); return ARRET; }
@@ -2036,7 +2056,7 @@ RUXAWEB 2 : audit par observations.
       menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
       setTimeout(function(){ var f = document.activeElement; if(!f || f === document.body || menu.contains(f)) bm.focus(); }, 0);
     }
-    if(['suppr-obs','suppr-ecran','suppr-onglet','reinit','valider'].indexOf(a) === -1) ui.confirmation = null;
+    if(['suppr-obs','suppr-ecran','suppr-onglet','suppr-fonction','reinit','valider'].indexOf(a) === -1) ui.confirmation = null;
     lireBrouillon();
     var action = ACTIONS[a];
     if(action && action(b, o, a) === ARRET) return;
