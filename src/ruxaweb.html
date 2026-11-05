@@ -574,7 +574,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.6';
+  var VERSION = '2.7';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -1120,7 +1120,7 @@ RUXAWEB 2 : audit par observations.
     html += '<li class="phase"><span>Étapes, sur tous les écrans</span></li>';
     ETAPES.forEach(function(et, i){
       var fait = !!(o && etapeComplete(o, et.id));
-      var sousE = et.outil + (o && dansOnglet && o.ecrans.length ? ' · '+faitsEtape(o, et.id)+'/'+cibles(o).length+(fonctionsOnglet(o).length ? ' faits' : ' écrans') : '');
+      var sousE = et.outil + (o && dansOnglet && o.ecrans.length ? ' · '+faitsEtape(o, et.id)+'/'+cibles(o).length+' validés' : '');
       html += pas(et.id === 'vide' ? ico('etape-vide') : et.id, et.court || et.nom, sousE, state.vue === 'audit' && state.etape === et.id, fait, i === ETAPES.length - 1, 'etape', ' data-etape="'+et.id+'"');
     });
     html += '<li class="phase">Pour finir</li>';
@@ -1134,12 +1134,19 @@ RUXAWEB 2 : audit par observations.
     // Panneau replié : une ligne de pastilles et l'étape en cours ; la liste détaillée se déplie à la demande.
     var ouvert = state.parcoursOuvert === undefined || state.parcoursOuvert === null ? (state.vue === 'projet' || state.vue === 'referentiel') : !!state.parcoursOuvert;
     var k = -1; tous.forEach(function(t, i){ if(t.ici) k = i; });
-    var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : '')+'</p>' : '';
+    // L'étape en cours dit en clair ce que compte « x/y validés » : les fonctions primaires puis les écrans de l'onglet.
+    var avancement = '';
+    if(k > -1 && dansOnglet && state.vue === 'audit' && o.ecrans.length){
+      var nf = fonctionsOnglet(o).length, ne = o.ecrans.length;
+      avancement = '<p class="petit doux">Étape validée sur '+faitsEtape(o, state.etape)+' des '+cibles(o).length+' : '+(nf ? pluriel(nf, 'fonction primaire', 'fonctions primaires')+' et ' : '')+pluriel(ne, 'écran', 'écrans')+'.</p>';
+    }
+    var resume = k > -1 ? '<p class="en-cours">En cours : '+tous[k].txt+(ETAPE[state.etape] && state.vue === 'audit' ? ' <span class="doux">('+ETAPE[state.etape].outil+')</span>' : (tous[k].sous ? ' <span class="doux">('+tous[k].sous+')</span>' : ''))+'</p>'+avancement : '';
     var points = '<span class="points" aria-hidden="true">'+tous.map(function(t){ return '<i class="'+(t.ici ? 'ici' : t.fait ? 'fait' : '')+'"></i>'; }).join('')+'</span>';
     var fA = dansOnglet && state.vue === 'audit' ? fonctionCourante(o) : null;
     var ecr = fA ? '<p class="petit doux">Fonction primaire : <b>'+esc(fA.nom)+'</b></p>' : (e && dansOnglet ? '<p class="petit doux">Écran : <b>'+esc(e.nom)+'</b></p>' : '');
     // Navigation sans déplier : étape précédente et suivante, ou reprise à la première étape non faite.
-    function aller(t, sens, lib){ return '<button type="button" class="btn btn-s'+(sens === 'suiv' ? ' btn-l' : '')+'" data-action="'+t.action+'"'+t.extra+' aria-label="'+lib+' : '+esc(t.txt)+'">'+(sens === 'prec' ? '&larr; ' : '')+lib+(sens === 'suiv' ? ' &rarr;' : '')+'</button>'; }
+    // Précédente et Suivante ont le même poids : l'action principale reste « Valider puis passer à ».
+    function aller(t, sens, lib){ return '<button type="button" class="btn btn-s" data-action="'+t.action+'"'+t.extra+' aria-label="'+lib+' : '+esc(t.txt)+'">'+(sens === 'prec' ? '&larr; ' : '')+lib+(sens === 'suiv' ? ' &rarr;' : '')+'</button>'; }
     var nav = '';
     if(dansOnglet){
       if(k > -1){

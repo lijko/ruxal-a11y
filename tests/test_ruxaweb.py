@@ -506,7 +506,7 @@ def main():
         page.click('[data-action="etape-faite"]')
         verifier('Étape d\'abord : étape suivante sur le premier écran', 'Usage standard' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
         page.click('[data-action="etapes-bascule"]')
-        verifier('Étape d\'abord : Tour à vide fait (3/3 écrans)', '3/3 écrans' in page.locator('#liste-etapes').inner_text() and '(fait)' in page.locator('#liste-etapes [data-etape="vide"]').inner_text())
+        verifier('Étape d\'abord : Tour à vide fait (3/3 validés)', '3/3 validés' in page.locator('#liste-etapes').inner_text() and '(fait)' in page.locator('#liste-etapes [data-etape="vide"]').inner_text())
 
         page.click('[data-action="vue"][data-vue="grille"]')
         # Grille : un critère se pose conforme sans observation, depuis sa fiche.
