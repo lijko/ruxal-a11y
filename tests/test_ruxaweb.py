@@ -706,6 +706,7 @@ def main():
         jf = telecharger(page, 'export-jira')
         lignesF = [r for r in csv.reader(io.StringIO(jf.read_text(encoding='utf-8-sig')))][1:]
         tf = [r for r in lignesF if '[Navigation principale]' in r[0]]
+        verifier('Jira : tags indicatifs design ou code dans les labels', all(('design' in r or 'code' in r) for r in lignesF[1:]) and len(lignesF[0]) == 10, lignesF[0])
         verifier('Jira : fonction primaire notée All screens [..], thème anglais', len(tf) == 1 and 'All screens [Navigation principale]: ' in tf[0][0] and '| Navigation & structure |' in tf[0][0], [r[0] for r in lignesF])
         verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation principale' in tf[0][1] and ' : ' in tf[0][1].split('\n')[1], [r[0] for r in lignesF])
         aller_audit(page)

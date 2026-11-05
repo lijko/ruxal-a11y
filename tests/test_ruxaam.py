@@ -108,7 +108,7 @@ def main():
         verifier('Référentiel : consignes génériques (aucun raccourci ni menu de lecteur d\'écran)', not any(x in page.locator('.crit-explication').all_inner_texts().__str__() for x in ('Insert+', 'rotor', 'NVDA', 'VoiceOver', 'TalkBack', 'Colour Contrast')))
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.30', 'version 1.30' in aide)
+        verifier('Aide : version 1.31', 'version 1.31' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation alternative' in aide)
         verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran ["Libellé" type]' in aide)
         verifier('Aide : déclencheurs à jour', 'limite de session' in aide and 'lien coloré' not in aide)
@@ -162,7 +162,8 @@ def main():
         verifier('Jira : titre avec thème anglais et « Emplacement: défaut »', f and '| Interactive components | ' in f and '| Composants interactifs |' not in f and '| Interactive components | All screens: <defect>' in f, f and f[:300])
         verifier('Jira : intitulé officiel anglais dans la référence', f and 'RAAM 1.1, Criterion 5.1: Is each user interface component, if necessary, compatible with assistive technologies (excluding special cases)?' in f)
         verifier('Jira sans plateforme : iOS et Android', f and '- iOS: <to be completed>' in f and '- Android: <to be completed>' in f)
-        verifier('Jira sans plateforme : 7 colonnes', f and f.splitlines()[0].count(',') == 6, f and f.splitlines()[0])
+        verifier('Jira sans plateforme : 9 colonnes (dont 2 pour les tags)', f and f.splitlines()[0].count(',') == 8, f and f.splitlines()[0])
+        verifier('Jira : tag indicatif code pour 5.1, thème du label en français', f and ',code' in f and 'composants-interactifs' in f, f and f[-200:])
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
         verifier('Mémoire Jira : second export sans fichier', f is None)
         verifier('Mémoire Jira : message « déjà exporté »', 'Aucun nouveau ticket : 1 critère(s) non conforme(s) déjà exporté(s)' in message(page), message(page))
@@ -179,7 +180,7 @@ def main():
             verifier('Jira %s (tout réexporter) : 2 tickets' % code, f and f.count(',Task,') == 2)
             verifier('Jira %s : bouton enfoncé' % code, presse == 'true')
             verifier('Jira %s : seule la plateforme choisie' % code, f and ligne in f and not any(x in f for x in autres))
-            verifier('Jira %s : étiquette et colonne Labels en plus' % code, f and etiquette in f and f.splitlines()[0].count(',') == 7)
+            verifier('Jira %s : étiquette et colonne Labels en plus' % code, f and etiquette in f and f.splitlines()[0].count(',') == 9)
         page.click('#plateformeToggle [data-plateforme="cross"]')  # second clic : désélection
         verifier('Plateforme : second clic désélectionne', page.evaluate("JSON.parse(localStorage.getItem('atelier-ruxal-state')).plateforme") == '')
 

@@ -574,7 +574,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.5';
+  var VERSION = '2.6';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -2251,6 +2251,12 @@ RUXAWEB 2 : audit par observations.
   // Noms anglais des thèmes RUXAL, utilisés dans le titre des tickets Jira (l'interface garde les noms français).
   var THEME_EN = {'Navigation & structure':'Navigation & structure', 'Composants interactifs':'Interactive components', 'Images & médias':'Images & media',
     'Couleurs & contrastes':'Colors & contrast', 'Contenu & lisibilité':'Content & readability', 'Fondations techniques':'Technical foundations', 'Formulaires':'Forms'};
+  // Tags Jira indicatifs (le product owner trie), selon le point de contrôle : design, code, ou les deux quand le
+  // correctif dépend de la cause (ou sans point de contrôle).
+  var TAGS_POINT = {};
+  ['contraste','couleur-seule','forme-position','cible-petite','flash'].forEach(function(id){ TAGS_POINT[id] = ['design']; });
+  ['nom-absent','decoratif-restitue','cache-restitue','role-etat','message-non-restitue','langue','zones','listes','tableau','code-invalide',
+   'non-atteignable','ordre-focus','piege','commandes-media','annulation-pointeur'].forEach(function(id){ TAGS_POINT[id] = ['code']; });
   function ticketJira(x, objet, zone){
         var cs = x.criteres.map(function(id){ return PAR_ID[id]; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
         // Défaut : le symptôme en 8 mots au plus, sinon à compléter (une phrase coupée n'est pas un titre).
@@ -2261,7 +2267,8 @@ RUXAWEB 2 : audit par observations.
           'h1. Actual behavior / Impact', x.texte, 'Impact: '+String(cs[0].impact || '').replace(/^RAWeb [\d.]+ \([^)]*\)\s*:\s*/, ''), '',
           'h1. Expected behavior', x.attendu || cs[0].libelle_en, '', 'h1. Recommendations', '- <to be completed>', '', 'h1. Reference']
           .concat(cs.map(function(c){ return c.horsRef ? '- Good practice outside RAWeb 1.1: '+c.libelle_en : '- RAWeb 1.1, Criterion '+c.ref+': '+c.libelle_en+'\n  '+URL_CRITERE.replace('/fr/','/en/')+c.ref.replace('.', '-'); })).join('\n');
-        var labels = ['accessibilite', state.support === 'mobile' ? 'mobile-web' : 'desktop', cs[0].horsRef ? 'hors-raweb' : 'RAWeb-'+cs[0].ref, cs[0].theme_ruxal.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')];
+        var labels = ['accessibilite', state.support === 'mobile' ? 'mobile-web' : 'desktop', cs[0].horsRef ? 'hors-raweb' : 'RAWeb-'+cs[0].ref, cs[0].theme_ruxal.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')].concat(TAGS_POINT[x.point] || ['design', 'code']);
+        while(labels.length < 6) labels.push('');
         return [summary, desc, 'Task', PRIORITE[cs[0].niveau] || 'Medium'].concat(labels).map(csv).join(',');
   }
   // Un ticket par observation non conforme encore valide (pas remplacée par un retest). Une observation qui vaut sur
@@ -2269,7 +2276,7 @@ RUXAWEB 2 : audit par observations.
   // Mémoire des exports : un ticket déjà exporté ne repart pas, sauf demande « tout réexporter ».
   function exporterJira(tout){
     var deja = state.exportesJira || [], nouveaux = [], ignores = 0;
-    var lignes = [['Summary','Description','Issue Type','Priority','Labels','Labels','Labels','Labels'].map(csv).join(',')], n = 0;
+    var lignes = [['Summary','Description','Issue Type','Priority','Labels','Labels','Labels','Labels','Labels','Labels'].map(csv).join(',')], n = 0;
     state.onglets.forEach(function(o){
       o.obs.forEach(function(x){
         if(x.tag !== 'nc' || !x.criteres.length) return;

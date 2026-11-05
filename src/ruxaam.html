@@ -1180,10 +1180,14 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.30';
+  var APP_VERSION = '1.31';
   // Noms anglais des thèmes RUXAL, utilisés dans le titre des tickets Jira (l'interface garde les noms français).
   var THEME_EN = {'Navigation & structure':'Navigation & structure', 'Composants interactifs':'Interactive components', 'Images & médias':'Images & media',
     'Couleurs & contrastes':'Colors & contrast', 'Contenu & lisibilité':'Content & readability', 'Fondations techniques':'Technical foundations', 'Formulaires':'Forms'};
+  // Tags Jira indicatifs (le product owner trie) : design, code, ou les deux quand le correctif dépend de la cause.
+  var TAG_DESIGN = ['2.1','2.2','2.3','8.6','9.1','11.7'];
+  var TAG_CODE = ['1.1','4.5','5.1','5.2','5.4','6.1','6.2','8.1','9.2','10.1','10.2','10.3','11.12','12.3'];
+  function tagsJira(c){ return TAG_DESIGN.indexOf(c.raam) > -1 ? ['design'] : TAG_CODE.indexOf(c.raam) > -1 ? ['code'] : ['design', 'code']; }
   function tousEcrans(){ var l = []; state.onglets.forEach(function(o){ o.ecrans.forEach(function(e){ if(l.indexOf(e.nom) === -1) l.push(e.nom); }); }); return l; }
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
@@ -3064,7 +3068,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Priorités du projet Jira des tickets d'accessibilité (noms exacts, pour l'import CSV).
   var PRIORITE_JIRA = {critique:'Critical', serieux:'Major', modere:'Medium', mineur:'Minor'};
   function buildJiraImportCSV(toutReexporter){
-    var header = ['Summary','Description','Issue Type','Priority','Labels','Labels','Labels'].concat(state.plateforme ? ['Labels'] : []);
+    var header = ['Summary','Description','Issue Type','Priority','Labels','Labels','Labels'].concat(state.plateforme ? ['Labels'] : []).concat(['Labels','Labels']);
     var lignes = [header.map(csvEscapeVirgule).join(',')];
     var ordreThemes = THEMES_RUXAL;
     var items = [];
@@ -3152,7 +3156,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         '',
         'h1. Reference'
       ]).concat(refLines)).join('\n');
-      var labels = ['accessibilite'].concat(state.plateforme ? [{ios:'ios',android:'android',cross:'multiplateforme'}[state.plateforme]] : []).concat([(c.horsRaam ? 'hors-raam' : 'RAAM-'+c.raam), theme.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')]);
+      var labels = ['accessibilite'].concat(state.plateforme ? [{ios:'ios',android:'android',cross:'multiplateforme'}[state.plateforme]] : []).concat([(c.horsRaam ? 'hors-raam' : 'RAAM-'+c.raam), c.theme_ruxal.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')]).concat(tagsJira(c));
+      while(labels.length < header.length - 4) labels.push('');
       lignes.push([summary, desc, 'Task', PRIORITE_JIRA[c.niveau]||'Medium'].concat(labels).map(csvEscapeVirgule).join(','));
     });
     return { csv: lignes.join('\r\n'), nb: items.length, ignores: ignores, ids: items.map(function(it){ return it.c.id; }) };
