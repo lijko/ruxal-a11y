@@ -43,15 +43,22 @@ def statut(page, ecran, crit):
     return ligne.locator('td.statut').nth(ecran).locator('.pastille').inner_text().split('\n')[0].replace(' !', '').strip()
 
 
+def chercher(page, point=None, element=None, crit=None):
+    # Recherche unique du formulaire : un symptôme (point de contrôle, éventuellement un type d'élément) ou un critère.
+    sel = '#liste-criteres option[data-crit="%s"]' % crit if crit else '#liste-criteres option[data-point="%s"][data-element="%s"]' % (point, '' if element is None else element)
+    if not crit and element is None and page.locator(sel).count() == 0:
+        sel = '#liste-criteres option[data-point="%s"]' % point
+    page.fill('#obs-ajout', page.locator(sel).first.get_attribute('value'))
+    page.wait_for_timeout(50)
+
+
 def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit=None):
     aller_audit(page)
     page.fill('#obs-texte', texte)
     if point:
-        page.select_option('#obs-point', point)
-    if element is not None:
-        page.select_option('#obs-element', str(element))
+        chercher(page, point, element)
     if crit:
-        page.select_option('#obs-ajout', crit)
+        chercher(page, crit=crit)
     page.click('[data-action="tag"][data-tag="%s"]' % tag)
     if partage:
         nom, quels = partage
@@ -351,7 +358,7 @@ def main():
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         verifier('Scénario : champ Transition vers', page.locator('#obs-vers').count() == 1)
         page.fill('#obs-texte', 'Le focus reste sur le bouton Continuer après le passage à l\'étape suivante.')
-        page.select_option('#obs-point', 'ordre-focus')
+        chercher(page, 'ordre-focus')
         page.select_option('#obs-vers', index=1)
         page.click('[data-action="tag"][data-tag="nc"]')
         page.click('#form-obs button[type=submit]')
@@ -482,7 +489,7 @@ def main():
         verifier('Résultat : aide qui suit le choix (C)', 'restent à confirmer' in page.inner_text('#aide-resultat') and page.get_attribute('[data-action="tag"][data-tag="c"]', 'aria-describedby') == 'aide-resultat')
         page.click('[data-action="tag"][data-tag="nc"]')
         verifier('Résultat : aide qui suit le choix (NC)', 'non conformes' in page.inner_text('#aide-resultat'))
-        verifier('Saisie : rappel de notation sous Élément', 'Écran ["Payer" button]' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
+        verifier('Saisie : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 61)
 
@@ -530,7 +537,7 @@ def main():
         verifier('Note enregistrée sans critère', note['criteres'] == [])
         page.click('[data-action="modif-obs"][data-id="%s"]' % note['id'])
         verifier('Modifier : observation chargée, titre et boutons', page.input_value('#obs-texte').startswith('Un seul facteur') and page.inner_text('#form-obs-titre') == 'Modifier l\'observation' and page.locator('[data-action="annuler-modif"]').count() == 1)
-        page.select_option('#obs-ajout', 'raweb-3-1')
+        chercher(page, crit='raweb-3-1')
         page.click('#form-obs button[type=submit]')
         obs = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
         modif = [x for x in obs if x['id'] == note['id']]
@@ -546,7 +553,9 @@ def main():
         page.wait_for_timeout(400)
         verifier('Suggestions : Visibilité du focus proposée', 'Visibilité du focus' in page.inner_text('#obs-sugg'), page.inner_text('#obs-sugg'))
         page.locator('#obs-sugg [data-point="focus-invisible"]').click()
-        verifier('Suggestion choisie : point de contrôle et critère 10.7', page.input_value('#obs-point') == 'focus-invisible' and page.locator('[data-crit="raweb-10-7"]:checked').count() == 1 and page.input_value('#obs-texte').startswith('On ne voit pas'))
+        verifier('Suggestion choisie : point de contrôle et critère 10.7', page.locator('[data-crit="raweb-10-7"]:checked').count() == 1 and page.input_value('#obs-texte').startswith('On ne voit pas'))
+        page.click('#form-obs details summary')
+        verifier('Formulaire : plus de champ Point de contrôle, trois questions, bouton qui dit le résultat', page.locator('#obs-point').count() == 0 and page.locator('#form-obs h3.sous-titre-form').count() == 3 and 'Enregistrer : non conforme' in page.inner_text('#form-obs button[type=submit]'))
         verifier('Attendu : aide sur le ticket Jira', 'Expected behavior' in page.inner_text('#aide-attendu'))
         verifier('Champs obligatoires : Observation marquée, Attendu facultatif', page.get_attribute('#obs-texte', 'aria-required') == 'true' and page.locator('label[for="obs-texte"] .oblig').count() == 1 and 'facultatif' in page.inner_text('label[for="obs-attendu"]') and page.locator('label[for="obs-attendu"] .oblig').count() == 0)
         page.fill('#obs-texte', '')
@@ -685,9 +694,9 @@ def main():
         page.locator('[data-fonction-ecran="nav"]').nth(2).uncheck()
         page.click('main [data-action="vue"][data-vue="audit"]')
         verifier('Étape d\'abord : la fonction primaire passe avant les écrans', page.inner_text('h2.titre-ecran') == 'Navigation principale' and page.locator('.ecrans [data-action="cible-fonction"][aria-current="true"]').count() == 1)
-        verifier('Fonction : pas de bloc Où, recap sur la fonction', page.locator('#obs-partage-nom').count() == 0 and 'fonction primaire' in page.inner_text('#recap-obs'))
+        verifier('Fonction : pas de bloc Où, recap sur la fonction', page.locator('#obs-partage-nom').count() == 0)
         page.fill('#obs-texte', 'Focus invisible dans la navigation principale.')
-        page.select_option('#obs-point', 'focus-invisible')
+        chercher(page, 'focus-invisible')
         page.click('#form-obs button[type=submit]')
         st = lambda i: statut(page, i, 'raweb-10-7')
         verifier('Fonction NC : NC sur les écrans cochés, pas sur les autres', [st(0), st(1), st(2)] == ['NC', 'NC', 'NT'], [st(0), st(1), st(2)])
@@ -716,7 +725,7 @@ def main():
         aller_audit(page)
         page.click('.ecrans [data-action="cible-fonction"][data-id="nav"]')
         page.fill('#obs-texte', 'Focus toujours invisible sur le lien Contact du menu.')
-        page.select_option('#obs-point', 'focus-invisible')
+        chercher(page, 'focus-invisible')
         page.click('#form-obs button[type=submit]')
         jf = telecharger(page, 'export-jira')
         lignesF = [r for r in csv.reader(io.StringIO(jf.read_text(encoding='utf-8-sig')))][1:]
