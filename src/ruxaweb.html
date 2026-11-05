@@ -574,7 +574,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.3';
+  var VERSION = '2.4';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -907,7 +907,17 @@ RUXAWEB 2 : audit par observations.
       pistes.push({id:uid(), ecran:e.id, outil:'Collage', source:'collage', regle:'', type:tag === 'nc' ? 'violation' : 'note', tag:tag, titre:obs, element:element, nb:1, exemples:[], criteres:crits, propose:propose,
         point:point ? point.s.id : '', typeElement:point && point.element > -1 ? String(point.element) : '', etat:'ouvert'});
     });
-    return {pistes:pistes, erreurs:erreurs};
+    // Même non-conformité (élément, observation, point de contrôle) sur plusieurs écrans : une seule piste, dont les
+    // autres écrans seront cochés à la reprise (une observation partagée, un seul ticket Jira).
+    var vus = {}, fusion = [];
+    pistes.forEach(function(k){
+      if(k.tag !== 'nc'){ fusion.push(k); return; }
+      var cle = [cleNom(k.element), cleNom(k.titre), k.point, k.criteres.slice().sort().join(',')].join('|');
+      var p = vus[cle];
+      if(p){ if(p.ecran !== k.ecran && p.autresEcrans.indexOf(k.ecran) === -1) p.autresEcrans.push(k.ecran); return; }
+      k.autresEcrans = []; vus[cle] = k; fusion.push(k);
+    });
+    return {pistes:fusion, erreurs:erreurs, lues:pistes.length};
   }
   // Consigne à donner à une IA (Copilot ou autre) pour convertir des notes libres au format du collage.
   function consigneIA(o){
@@ -916,13 +926,13 @@ RUXAWEB 2 : audit par observations.
       'statut | élément | observation | point de contrôle\n\n' +
       'Règles :\n' +
       '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
-      '- élément : type et libellé, par exemple button "Payer", ou le nom d\'un élément répété, par exemple Menu principal ; jamais le nom de l\'écran ; laisse vide si aucun\n' +
+      '- élément : libellé entre guillemets puis type, par exemple "Payer" button ; sans libellé, le type seul ; dans un autre élément, du plus large au plus précis, séparés par une virgule, par exemple "Livraison" form, "Code postal" field ; un élément répété : son nom seul, par exemple Menu principal ; l\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut ; jamais le nom de l\'écran ; laisse vide si aucun\n' +
       '- observation : une phrase claire en anglais (elle devient le « Actual behavior » du ticket Jira), fidèle aux notes, sans rien inventer\n' +
       '- point de contrôle : recopie exactement un nom de la liste ci-dessous ; s\'il indique des types, ajoute le type entre parenthèses, par exemple Présence d\'un nom (lien) ; laisse vide si aucun ne convient\n' +
       '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
-      '- un défaut par ligne ; jamais de « | » dans un champ ; jamais de numéro de critère ni de gravité\n' +
+      '- un défaut par ligne ; même défaut sur plusieurs écrans : une ligne par écran, exactement la même, l\'outil les regroupe ; jamais de « | » dans un champ ; jamais de numéro de critère ni de gravité\n' +
       '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme ; une note trop vague va après les lignes, sous « To clarify: », avec une question courte\n\n' +
-      'Exemple :\nÉcran : Accueil\nNC | Main navigation | The keyboard focus is not visible on the main navigation links. | Visibilité du focus\nNC | link "En savoir plus" | Several "En savoir plus" links have the same text and cannot be told apart out of context. | Pertinence du nom (lien)\n\n' +
+      'Exemple :\nÉcran : Accueil\nNC | Main navigation | The keyboard focus is not visible on the main navigation links. | Visibilité du focus\nNC | "En savoir plus" link | Several "En savoir plus" links have the same text and cannot be told apart out of context. | Pertinence du nom (lien)\n\n' +
       'Points de contrôle :\n' + SYMPTOMES.map(function(x){ return '- ' + x.controle + ' : ' + x.symptome + (x.selon.length ? ' ; types : ' + x.selon.map(function(y){ return y.element; }).join(', ') : ''); }).join('\n') +
       '\n\nMes notes :\n[colle tes notes ici]';
   }
@@ -940,7 +950,7 @@ RUXAWEB 2 : audit par observations.
       '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | point de contrôle</code>. Le dernier champ accepte aussi des numéros de critères (<code>10.7, 11.9</code>). Seule l\'observation est obligatoire ; sinon, l\'outil propose un point de contrôle d\'après les mots. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
       '<p class="sans-marge doux petit">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | Visibilité du focus</code></p>' +
       '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller<span class="oblig" aria-hidden="true">*</span></label>' +
-          '<textarea id="coller-texte" rows="8" aria-required="true" placeholder="NC | button &quot;Payer&quot; | Le bouton n\'a pas de nom. | Présence d\'un nom (bouton de formulaire)"></textarea></div>' +
+          '<textarea id="coller-texte" rows="8" aria-required="true" placeholder="NC | &quot;Payer&quot; button | Le bouton n\'a pas de nom. | Présence d\'un nom (bouton de formulaire)"></textarea></div>' +
       blocConsigne(o, 'consigne-dlg') +
       '<div class="rangee entre"><span class="doux petit">Les lignes deviennent des pistes à vérifier : rien ne compte avant de les reprendre.</span>' +
           '<button type="button" class="btn btn-p" data-action="coller-ok">'+ico('valider')+'Ajouter aux pistes</button></div>';
@@ -1438,6 +1448,7 @@ RUXAWEB 2 : audit par observations.
       return '<div class="obs">'+pastille+'<div class="corps"><span class="texte">'+esc(k.titre)+'</span>' +
         '<span class="rangee">'+(k.element ? '<span class="etiq">'+esc(k.element)+'</span>' : '')+(k.point ? '<span class="doux petit">'+esc((SYMPTOMES.filter(function(x){ return x.id === k.point; })[0] || {}).controle || '')+'</span>' : '')+(k.regle ? '<span class="etiq etiq-ref">'+esc(k.regle)+'</span>' : '')+k.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('') +
         (colle ? (k.propose ? '<span class="doux petit">proposé d\'après les mots de l\'observation</span>' : (k.criteres.length ? '' : '<span class="doux petit">aucun critère : à choisir</span>')) : '<span class="doux petit">'+k.nb+' élément'+(k.nb > 1 ? 's' : '')+'</span>')+'</span>' +
+        (k.autresEcrans && k.autresEcrans.length ? '<span class="doux petit">aussi sur : '+esc(k.autresEcrans.map(function(id){ return (ecranDe(o, id) || {}).nom; }).filter(Boolean).join(', '))+'</span>' : '') +
         (k.exemples && k.exemples.length ? '<code class="coupe-mots petit doux">'+esc(k.exemples.join(' · '))+'</code>' : '') + '</div>' +
         '<span class="fixe rangee"><button type="button" class="btn btn-s btn-l" data-action="reprendre" data-id="'+k.id+'">Reprendre</button>' +
             '<button type="button" class="btn btn-s" data-action="ecarter" data-id="'+k.id+'">Écarter</button></span></div>';
@@ -1481,8 +1492,8 @@ RUXAWEB 2 : audit par observations.
     // une observation qui touche plusieurs écrans est une observation sur un élément répété, sans autre saisie.
     var noms = {}; o.obs.forEach(function(x){ if(x.elementNom) noms[x.elementNom] = true; });
     html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-partage-nom">Élément</label>' +
-        '<input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. button &quot;Payer&quot;" autocomplete="off" aria-describedby="aide-element">' +
-        '<p class="sans-marge doux petit" id="aide-element">Type et libellé, sans l\'écran : l\'export Jira note Écran[button "Payer"], ou [Menu principal] pour un élément répété.</p><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
+        '<input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. &quot;Payer&quot; button" autocomplete="off" aria-describedby="aide-element">' +
+        '<p class="sans-marge doux petit" id="aide-element">Libellé puis type, sans l\'écran : l\'export Jira note Écran ["Payer" button], ou [Menu principal] pour un élément répété.</p><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
       '<fieldset class="groupe-nu champ"><legend class="sans-retrait lbl">Écrans concernés</legend><div class="ecart-col-20 rangee">' + o.ecrans.map(function(x){
         if(x.id === e.id) return '<label class="choix"><input type="checkbox" checked disabled> '+esc(x.nom)+' <span class="doux petit">(écran en cours)</span></label>';
         return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>';
@@ -1557,8 +1568,8 @@ RUXAWEB 2 : audit par observations.
       '<p class="sans-marge doux">'+RAWEB.length+' critères RAWeb 1.1 ('+SELECTION.length+' de la sélection SIP, '+(RAWEB.length - SELECTION.length)+' hors sélection) et '+(CRITERES.length - RAWEB.length)+' bonnes pratiques hors RAWeb. Chaque fiche dit comment vérifier le critère, à quelle étape, son impact et sa gravité.</p>' +
       '<div class="ref-outils">'+boutonsRegroupement()+'</div>' +
       '<section class="carte pile" aria-labelledby="t-noter"><h2 id="t-noter">Noter les éléments</h2>' +
-      '<p class="sans-marge">Dans une observation, le champ Élément reçoit le type et le libellé de l\'élément, par exemple <code>button "Payer"</code>, avec son état entre parenthèses si besoin : <code>button "Payer" (désactivé)</code>.</p>' +
-      '<p class="sans-marge">L\'export Jira ajoute l\'écran devant : <code>Panier[button "Payer"]</code>. Un élément répété sur plusieurs écrans est noté sans écran : <code>[Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
+      '<p class="sans-marge">Dans une observation, le champ Élément reçoit le libellé entre guillemets puis le type, par exemple <code>"Payer" button</code>. Sans libellé visible, le type seul : <code>list</code>. Dans un autre élément, du plus large au plus précis, séparés par une virgule : <code>"Livraison" form, "Code postal" field</code>. L\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut : <code>"Payer" button (disabled)</code> ; sinon, dis-le dans l\'observation. Pas de points, pas de crochets.</p>' +
+      '<p class="sans-marge">L\'export Jira ajoute l\'écran devant : <code>Panier ["Payer" button]</code>. Un élément répété sur plusieurs écrans est noté sans écran : <code>[Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
       '<section class="carte pile" aria-labelledby="t-ia"><h2 id="t-ia">Convertir des notes avec une IA</h2>' +
           '<p class="sans-marge">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la Saisie). L\'outil les ajoute comme pistes à vérifier.</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
     groupesCriteres(officiel).forEach(function(g){
@@ -2039,7 +2050,8 @@ RUXAWEB 2 : audit par observations.
       oc.candidats = (oc.candidats || []).concat(r.pistes);
       var parEcran = {}; r.pistes.forEach(function(k){ var nm = ecranDe(oc, k.ecran).nom; parEcran[nm] = (parEcran[nm] || 0) + 1; });
       document.getElementById('dlg').close(); rendre();
-      message(pluriel(r.pistes.length, 'piste ajoutée', 'pistes ajoutées')+' ('+Object.keys(parEcran).map(function(nm){ return nm+' : '+parEcran[nm]; }).join(', ')+').'+(r.erreurs.length ? ' À revoir : '+r.erreurs.join(' ; ')+'.' : ''), !!r.erreurs.length);
+      var fusionnees = r.lues - r.pistes.length;
+      message(pluriel(r.pistes.length, 'piste ajoutée', 'pistes ajoutées')+(fusionnees > 0 ? ', '+pluriel(fusionnees, 'ligne identique regroupée', 'lignes identiques regroupées') : '')+' ('+Object.keys(parEcran).map(function(nm){ return nm+' : '+parEcran[nm]; }).join(', ')+').'+(r.erreurs.length ? ' À revoir : '+r.erreurs.join(' ; ')+'.' : ''), !!r.erreurs.length);
       var pr = $main.querySelector('[data-action="reprendre"]'); if(pr) pr.focus();
     },
     'copier-consigne': function(b, o, a){
@@ -2052,11 +2064,11 @@ RUXAWEB 2 : audit par observations.
     'reprendre': function(b, o, a){
       var k = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!k) return ARRET;
       viderBrouillon();
-      if(k.source === 'collage'){ brouillon.texte = k.titre; brouillon.nomPartage = k.element || ''; brouillon.tag = k.tag || 'nc'; brouillon.point = k.point || ''; brouillon.element = k.typeElement || ''; }
+      if(k.source === 'collage'){ brouillon.texte = k.titre; brouillon.nomPartage = k.element || ''; brouillon.tag = k.tag || 'nc'; brouillon.point = k.point || ''; brouillon.element = k.typeElement || ''; brouillon.ecransPartage = (k.autresEcrans || []).filter(function(id){ return id !== k.ecran && ecranDe(o, id); }); }
       else { brouillon.texte = k.titre + ' (' + k.nb + ' élément' + (k.nb > 1 ? 's' : '') + (k.exemples.length ? ' : ' + k.exemples.join(', ') : '') + ')'; brouillon.tag = k.type === 'violation' ? 'nc' : brouillon.tag; }
       brouillon.crits = k.criteres.slice(); brouillon.candidat = k.id;
       rendre(); var ta = document.getElementById('obs-texte'); if(ta){ ta.focus(); ta.scrollIntoView({block:'center'}); }
-      message('Piste reprise dans le formulaire : vérifie l\'observation, les critères et le résultat, puis enregistre.');
+      message('Piste reprise dans le formulaire'+(brouillon.ecransPartage.length ? ', avec '+pluriel(brouillon.ecransPartage.length + 1, 'écran coché', 'écrans cochés') : '')+' : vérifie l\'observation, les critères et le résultat, puis enregistre.');
     },
     'ecarter': function(b, o, a){
       var k2 = (o.candidats || []).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(k2) k2.etat = 'ecarte';
@@ -2240,9 +2252,9 @@ RUXAWEB 2 : audit par observations.
         var cs = x.criteres.map(function(id){ return PAR_ID[id]; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
         var defaut = x.texte.replace(/\s+/g, ' '); if(defaut.length > 90) defaut = defaut.slice(0, 87).trim() + '...';
         var summary = '[A11Y] | '+(state.auditNom || 'Projet A11Y')+' | '+cs[0].theme_ruxal+' | '+objet+' : '+defaut;
-        var desc = ['Flow(s) / Screen(s) / Element(s) in concern', zone, '',
-          'Actual behavior / Impact', x.texte, 'Impact: '+String(cs[0].impact || '').replace(/^RAWeb [\d.]+ \([^)]*\)\s*:\s*/, ''), '',
-          'Expected behavior', x.attendu || cs[0].libelle_en, '', 'Recommendations', '- <to be completed>', '', 'Reference']
+        var desc = ['h1. Flow(s) / Screen(s) / Element(s) in concern', zone, '',
+          'h1. Actual behavior / Impact', x.texte, 'Impact: '+String(cs[0].impact || '').replace(/^RAWeb [\d.]+ \([^)]*\)\s*:\s*/, ''), '',
+          'h1. Expected behavior', x.attendu || cs[0].libelle_en, '', 'h1. Recommendations', '- <to be completed>', '', 'h1. Reference']
           .concat(cs.map(function(c){ return c.horsRef ? '- Good practice outside RAWeb 1.1: '+c.libelle_en : '- RAWeb 1.1, Criterion '+c.ref+': '+c.libelle_en+'\n  '+URL_CRITERE.replace('/fr/','/en/')+c.ref.replace('.', '-'); })).join('\n');
         var labels = ['accessibilite', state.support === 'mobile' ? 'mobile-web' : 'desktop', cs[0].horsRef ? 'hors-raweb' : 'RAWeb-'+cs[0].ref, cs[0].theme_ruxal.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')];
         return [summary, desc, 'Task', PRIORITE[cs[0].niveau] || 'Medium'].concat(labels).map(csv).join(',');
@@ -2264,7 +2276,7 @@ RUXAWEB 2 : audit par observations.
         var e = ecranDe(o, x.ecran) || {nom:''};
         var ecrans = [e.nom].concat(x.partage ? x.partage.ecrans.map(function(id){ return (ecranDe(o, id) || {}).nom; }) : []).filter(Boolean);
         var versE = x.vers ? ecranDe(o, x.vers) : null;
-        var objet = versE ? e.nom+' -> '+versE.nom : (x.elementNom ? (x.partage ? '['+x.elementNom+']' : e.nom+'['+x.elementNom+']') : e.nom);
+        var objet = versE ? e.nom+' -> '+versE.nom : (x.elementNom ? (x.partage ? '['+x.elementNom+']' : e.nom+' ['+x.elementNom+']') : e.nom);
         lignes.push(ticketJira(x, objet, x.partage ? (x.elementNom ? objet+' ('+ecrans.join(', ')+')' : ecrans.join(', ')) : objet));
         n++;
       });

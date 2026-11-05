@@ -108,9 +108,9 @@ def main():
         verifier('Référentiel : consignes génériques (aucun raccourci ni menu de lecteur d\'écran)', not any(x in page.locator('.crit-explication').all_inner_texts().__str__() for x in ('Insert+', 'rotor', 'NVDA', 'VoiceOver', 'TalkBack', 'Colour Contrast')))
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.27', 'version 1.27' in aide)
+        verifier('Aide : version 1.29', 'version 1.29' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation alternative' in aide)
-        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran[type "Libellé"]' in aide)
+        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran ["Libellé" type]' in aide)
         verifier('Aide : déclencheurs à jour', 'limite de session' in aide and 'lien coloré' not in aide)
         verifier('Aide : mémoire des exports Jira documentée', 'tout réexporter' in aide and 'pas réexporté automatiquement' in aide)
 

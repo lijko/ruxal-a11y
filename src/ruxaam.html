@@ -1180,7 +1180,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.27';
+  var APP_VERSION = '1.29';
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -1418,7 +1418,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var r = o.resultats[ecranId] && o.resultats[ecranId][critereId];
     return r ? (r.commentaire||'') : '';
   }
-  // Élément concerné (notation « Écran[type "Libellé"] », voir l'Aide) : une ligne, propre à un critère et à un écran.
+  // Élément concerné (notation « Écran ["Libellé" type] », voir l'Aide) : une ligne, propre à un critère et à un écran.
   function getElementCritere(o, ecranId, critereId){
     var r = o.resultats[ecranId] && o.resultats[ecranId][critereId];
     return r ? (r.element||'') : '';
@@ -1812,15 +1812,16 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return '<h3 id="aide-notation" tabindex="-1" style="margin:18px 0 6px;">Noter les éléments</h3>' + boutonRetourChamp() +
       '<p class="muted" style="margin:0 0 8px;">Une notation simple pour désigner ce qui est en cause : <b>crochets = élément, flèche = parcours</b>. Elle sert dans le champ « Élément concerné » et dans tes commentaires ; l\'export Jira la reprend telle quelle.</p>' +
       '<table class="aide-table"><caption class="sr-only">Notation des écrans, éléments et parcours</caption><thead><tr><th scope="col">Ce que tu désignes</th><th scope="col">Notation</th><th scope="col">Exemple</th></tr></thead><tbody>' +
-      [['Un écran','Écran','Produits'],['Un élément','Écran[type]','Produits[list]'],['Un élément avec son libellé','Écran[type "Libellé"]','Accueil[button "Connexion"]'],['Un élément avec un état','Écran[type "Libellé"] (état)','Accueil[button "Valider"] (disabled)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
+      [['Un écran','Écran','Produits'],['Un élément','Écran ["Libellé" type]','Accueil ["Connexion" button]'],['Un élément dans un autre','Écran ["Libellé" type, "Libellé" type]','Contact ["Nous écrire" form, "Email" field]'],['Un élément répété','["Libellé" type]','[Main navigation, "Accueil" tab]'],['Un élément dans un état','Écran ["Libellé" type] (état)','Accueil ["Valider" button] (disabled)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
         return '<tr><th scope="row">'+escapeHtml(r[0])+'</th><td><code>'+escapeHtml(r[1])+'</code></td><td><code>'+escapeHtml(r[2])+'</code></td></tr>';
       }).join('') + '</tbody></table>' +
       '<ul class="aide-liste">' +
-        '<li>Les crochets servent seulement à l\'élément, collés au nom de l\'écran. Jamais autour de l\'écran.</li>' +
-        '<li>Types courants : header, button, link, field, list, image, tab, checkbox, dialog, card.</li>' +
-        '<li>L\'état est un mot court entre parenthèses (disabled, selected, expanded, error, focused). Plusieurs états : <code>(disabled, focused)</code>.</li>' +
-        '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt;[card "Consommation"]</code>.</li>' +
-        '<li>Une variante d\'écran ou une condition ne se note pas : dis-la en une phrase dans le commentaire.</li>' +
+        '<li>La notation sert à retrouver l\'élément, pas à le décrire : un seul crochet, en mots ordinaires.</li>' +
+        '<li>Libellé entre guillemets, type en clair, du plus large au plus précis, séparés par une virgule. Pas de points ni de crochets imbriqués.</li>' +
+        '<li>Élément répété (navigation, header, footer) : pas d\'écran devant.</li>' +
+        '<li>L\'état seulement s\'il faut le provoquer pour voir le défaut (disabled, selected, expanded, error). Sinon, dis-le dans le commentaire.</li>' +
+        '<li>Types courants : header, button, link, field, form, list, image, tab, checkbox, dialog, card.</li>' +
+        '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt; ["Consommation" card]</code>.</li>' +
         '<li>N\'utilise pas le caractère | (il sert de séparateur dans le titre du ticket).</li>' +
         '<li>Types et états en anglais, noms d\'écrans et libellés comme dans l\'application.</li>' +
       '</ul>' + boutonRetourChamp();
@@ -2805,7 +2806,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       return '<div class="nc-followup-ecran">' +
         '<div class="comment-label-row element-label-row"><label class="comment-label" for="'+elId+'">Élément concerné'+(multi ? ' ('+escapeHtml(e.nom)+')' : '')+'</label>' +
           '<button type="button" class="icon-btn" data-action="aide-notation" data-focus="'+elId+'" aria-label="Aide : comment noter l\'élément" title="Aide : comment noter l\'élément">'+ICON_AIDE+'</button></div>' +
-        '<input type="text" class="element-input" id="'+elId+'" name="'+elId+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="set-element-critere" data-crit="'+c.id+'" data-ecran="'+e.id+'" value="'+escapeHtml(getElementCritere(o, e.id, c.id))+'" placeholder="Ex. '+(multi ? escapeHtml(e.nom) : 'Accueil')+'[button &quot;Fermer&quot;]">' +
+        '<input type="text" class="element-input" id="'+elId+'" name="'+elId+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="set-element-critere" data-crit="'+c.id+'" data-ecran="'+e.id+'" value="'+escapeHtml(getElementCritere(o, e.id, c.id))+'" placeholder="Ex. '+(multi ? escapeHtml(e.nom) : 'Accueil')+' [&quot;Fermer&quot; button]">' +
         '<div class="comment-label-row"><label class="comment-label" for="comment-'+o.id+'-'+c.id+'-'+e.id+'">'+labelTxt+'</label>' +
           commentaireToolbarHtml(c.id, e.id) +
         '</div>' +
@@ -3114,17 +3115,17 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         ? ['- Outside the RAAM 1.1 reference (good practice): '+c.libelle_en].concat((c.sources||[]).map(function(s){ return '- '+s.t+' : '+s.u; }))
         : ['- RAAM 1.1, Criterion '+c.raam+': '+c.libelle_en, '  '+refUrl];
       var desc = [
-        'Flow(s) / Screen(s) / Element(s) in concern'
-      ].concat(flowsTxt, objets.length ? objets : ['<Screen>[<element>]'], [
+        'h1. Flow(s) / Screen(s) / Element(s) in concern'
+      ].concat(flowsTxt, objets.length ? objets : ['<Screen> [<element>]'], [
         '',
-        'Actual behavior / Impact',
+        'h1. Actual behavior / Impact',
         commentaires.length ? commentaires.join('\n') : '<to be completed>',
         'Impact: '+impactTxt,
         '',
-        'Expected behavior',
+        'h1. Expected behavior',
         c.libelle_en,
         '',
-        'Recommendations',
+        'h1. Recommendations',
         '',
         'Per platform:'
       ].concat(
@@ -3137,7 +3138,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         'Best practices:',
         '- <to be completed>',
         '',
-        'Reference'
+        'h1. Reference'
       ]).concat(refLines)).join('\n');
       var labels = ['accessibilite'].concat(state.plateforme ? [{ios:'ios',android:'android',cross:'multiplateforme'}[state.plateforme]] : []).concat([(c.horsRaam ? 'hors-raam' : 'RAAM-'+c.raam), theme.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')]);
       lignes.push([summary, desc, 'Task', PRIORITE_JIRA[c.niveau]||'Medium'].concat(labels).map(csvEscapeVirgule).join(','));
