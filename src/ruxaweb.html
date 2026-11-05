@@ -574,7 +574,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.4';
+  var VERSION = '2.5';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -1493,7 +1493,7 @@ RUXAWEB 2 : audit par observations.
     var noms = {}; o.obs.forEach(function(x){ if(x.elementNom) noms[x.elementNom] = true; });
     html += '<div class="grille2"><div class="champ"><label class="lbl" for="obs-partage-nom">Élément</label>' +
         '<input type="text" id="obs-partage-nom" list="noms-partages" value="'+esc(brouillon.nomPartage)+'" placeholder="Ex. &quot;Payer&quot; button" autocomplete="off" aria-describedby="aide-element">' +
-        '<p class="sans-marge doux petit" id="aide-element">Libellé puis type, sans l\'écran : l\'export Jira note Écran ["Payer" button], ou [Menu principal] pour un élément répété.</p><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
+        '<p class="sans-marge doux petit" id="aide-element">Libellé puis type, sans l\'écran : l\'export Jira note Écran ["Payer" button], ou All screens [Menu principal] pour un élément présent sur tous les écrans.</p><datalist id="noms-partages">'+Object.keys(noms).map(function(n){ return '<option value="'+esc(n)+'">'; }).join('')+'</datalist></div>' +
       '<fieldset class="groupe-nu champ"><legend class="sans-retrait lbl">Écrans concernés</legend><div class="ecart-col-20 rangee">' + o.ecrans.map(function(x){
         if(x.id === e.id) return '<label class="choix"><input type="checkbox" checked disabled> '+esc(x.nom)+' <span class="doux petit">(écran en cours)</span></label>';
         return '<label class="choix"><input type="checkbox" data-ecran-partage="'+x.id+'"'+(brouillon.ecransPartage.indexOf(x.id) > -1 ? ' checked' : '')+'> '+esc(x.nom)+'</label>';
@@ -1569,7 +1569,7 @@ RUXAWEB 2 : audit par observations.
       '<div class="ref-outils">'+boutonsRegroupement()+'</div>' +
       '<section class="carte pile" aria-labelledby="t-noter"><h2 id="t-noter">Noter les éléments</h2>' +
       '<p class="sans-marge">Dans une observation, le champ Élément reçoit le libellé entre guillemets puis le type, par exemple <code>"Payer" button</code>. Sans libellé visible, le type seul : <code>list</code>. Dans un autre élément, du plus large au plus précis, séparés par une virgule : <code>"Livraison" form, "Code postal" field</code>. L\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut : <code>"Payer" button (disabled)</code> ; sinon, dis-le dans l\'observation. Pas de points, pas de crochets.</p>' +
-      '<p class="sans-marge">L\'export Jira ajoute l\'écran devant : <code>Panier ["Payer" button]</code>. Un élément répété sur plusieurs écrans est noté sans écran : <code>[Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
+      '<p class="sans-marge">L\'export Jira ajoute l\'écran devant : <code>Panier ["Payer" button]</code>. Un élément présent sur tous les écrans est noté <code>All screens [Menu principal]</code> ; sur quelques écrans, ils sont listés : <code>Panier, Paiement [Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
       '<section class="carte pile" aria-labelledby="t-ia"><h2 id="t-ia">Convertir des notes avec une IA</h2>' +
           '<p class="sans-marge">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la Saisie). L\'outil les ajoute comme pistes à vérifier.</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
     groupesCriteres(officiel).forEach(function(g){
@@ -2248,10 +2248,15 @@ RUXAWEB 2 : audit par observations.
   function csv(v){ var t = String(v == null ? '' : v); return /[,"\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t; }
   function pluriel(n, un, plusieurs){ return n + ' ' + (n > 1 ? plusieurs : un); }
   // Une ligne de ticket Jira (CSV) pour une observation non conforme ; objet et zone disent où elle se trouve.
+  // Noms anglais des thèmes RUXAL, utilisés dans le titre des tickets Jira (l'interface garde les noms français).
+  var THEME_EN = {'Navigation & structure':'Navigation & structure', 'Composants interactifs':'Interactive components', 'Images & médias':'Images & media',
+    'Couleurs & contrastes':'Colors & contrast', 'Contenu & lisibilité':'Content & readability', 'Fondations techniques':'Technical foundations', 'Formulaires':'Forms'};
   function ticketJira(x, objet, zone){
         var cs = x.criteres.map(function(id){ return PAR_ID[id]; }).sort(function(a, b){ return RANG_GRAVITE[a.niveau] - RANG_GRAVITE[b.niveau]; });
-        var defaut = x.texte.replace(/\s+/g, ' '); if(defaut.length > 90) defaut = defaut.slice(0, 87).trim() + '...';
-        var summary = '[A11Y] | '+(state.auditNom || 'Projet A11Y')+' | '+cs[0].theme_ruxal+' | '+objet+' : '+defaut;
+        // Défaut : le symptôme en 8 mots au plus, sinon à compléter (une phrase coupée n'est pas un titre).
+        var defaut = x.texte.replace(/\s+/g, ' ').trim().replace(/[.!]+$/, '');
+        if(!defaut || defaut.split(' ').length > 8) defaut = '<defect>';
+        var summary = '[A11Y] | '+(state.auditNom || 'Projet A11Y')+' | '+(THEME_EN[cs[0].theme_ruxal] || cs[0].theme_ruxal)+' | '+objet+': '+defaut;
         var desc = ['h1. Flow(s) / Screen(s) / Element(s) in concern', zone, '',
           'h1. Actual behavior / Impact', x.texte, 'Impact: '+String(cs[0].impact || '').replace(/^RAWeb [\d.]+ \([^)]*\)\s*:\s*/, ''), '',
           'h1. Expected behavior', x.attendu || cs[0].libelle_en, '', 'h1. Recommendations', '- <to be completed>', '', 'h1. Reference']
@@ -2276,8 +2281,9 @@ RUXAWEB 2 : audit par observations.
         var e = ecranDe(o, x.ecran) || {nom:''};
         var ecrans = [e.nom].concat(x.partage ? x.partage.ecrans.map(function(id){ return (ecranDe(o, id) || {}).nom; }) : []).filter(Boolean);
         var versE = x.vers ? ecranDe(o, x.vers) : null;
-        var objet = versE ? e.nom+' -> '+versE.nom : (x.elementNom ? (x.partage ? '['+x.elementNom+']' : e.nom+' ['+x.elementNom+']') : e.nom);
-        lignes.push(ticketJira(x, objet, x.partage ? (x.elementNom ? objet+' ('+ecrans.join(', ')+')' : ecrans.join(', ')) : objet));
+        var tous = ecrans.length > 1 && o.ecrans.every(function(y){ return ecrans.indexOf(y.nom) > -1; });
+        var objet = versE ? e.nom+' -> '+versE.nom : (x.elementNom ? (x.partage ? (tous ? 'All screens' : ecrans.join(', '))+' ['+x.elementNom+']' : e.nom+' ['+x.elementNom+']') : (x.partage ? (tous ? 'All screens' : ecrans.join(', ')) : e.nom));
+        lignes.push(ticketJira(x, objet, x.partage ? (x.elementNom ? objet : ecrans.join(', ')) : objet));
         n++;
       });
     });
@@ -2289,7 +2295,7 @@ RUXAWEB 2 : audit par observations.
       if(!tout && deja.indexOf(cle) > -1){ ignores++; return; }
       nouveaux.push(cle);
       var ecr = []; state.onglets.forEach(function(o){ ecransFonction(o, f.id).forEach(function(id){ ecr.push((state.onglets.length > 1 ? o.nom+' : ' : '')+ecranDe(o, id).nom); }); });
-      lignes.push(ticketJira(x, '['+f.nom+']', '['+f.nom+'] ('+ecr.join(', ')+')'));
+      lignes.push(ticketJira(x, 'All screens ['+f.nom+']', 'All screens ['+f.nom+'] ('+ecr.join(', ')+')'));
       n++;
     });
     if(!n){

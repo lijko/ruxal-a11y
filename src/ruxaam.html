@@ -1180,7 +1180,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.29';
+  var APP_VERSION = '1.30';
+  // Noms anglais des thèmes RUXAL, utilisés dans le titre des tickets Jira (l'interface garde les noms français).
+  var THEME_EN = {'Navigation & structure':'Navigation & structure', 'Composants interactifs':'Interactive components', 'Images & médias':'Images & media',
+    'Couleurs & contrastes':'Colors & contrast', 'Contenu & lisibilité':'Content & readability', 'Fondations techniques':'Technical foundations', 'Formulaires':'Forms'};
+  function tousEcrans(){ var l = []; state.onglets.forEach(function(o){ o.ecrans.forEach(function(e){ if(l.indexOf(e.nom) === -1) l.push(e.nom); }); }); return l; }
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
   var CRITERES = [
@@ -1812,13 +1816,13 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     return '<h3 id="aide-notation" tabindex="-1" style="margin:18px 0 6px;">Noter les éléments</h3>' + boutonRetourChamp() +
       '<p class="muted" style="margin:0 0 8px;">Une notation simple pour désigner ce qui est en cause : <b>crochets = élément, flèche = parcours</b>. Elle sert dans le champ « Élément concerné » et dans tes commentaires ; l\'export Jira la reprend telle quelle.</p>' +
       '<table class="aide-table"><caption class="sr-only">Notation des écrans, éléments et parcours</caption><thead><tr><th scope="col">Ce que tu désignes</th><th scope="col">Notation</th><th scope="col">Exemple</th></tr></thead><tbody>' +
-      [['Un écran','Écran','Produits'],['Un élément','Écran ["Libellé" type]','Accueil ["Connexion" button]'],['Un élément dans un autre','Écran ["Libellé" type, "Libellé" type]','Contact ["Nous écrire" form, "Email" field]'],['Un élément répété','["Libellé" type]','[Main navigation, "Accueil" tab]'],['Un élément dans un état','Écran ["Libellé" type] (état)','Accueil ["Valider" button] (disabled)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
+      [['Un écran','Écran','Produits'],['Un élément','Écran ["Libellé" type]','Accueil ["Connexion" button]'],['Un élément dans un autre','Écran ["Libellé" type, "Libellé" type]','Contact ["Nous écrire" form, "Email" field]'],['Un élément sur tous les écrans','All screens ["Libellé" type]','All screens [Main navigation, "Accueil" tab]'],['Un élément dans un état','Écran ["Libellé" type] (état)','Accueil ["Valider" button] (disabled)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
         return '<tr><th scope="row">'+escapeHtml(r[0])+'</th><td><code>'+escapeHtml(r[1])+'</code></td><td><code>'+escapeHtml(r[2])+'</code></td></tr>';
       }).join('') + '</tbody></table>' +
       '<ul class="aide-liste">' +
         '<li>La notation sert à retrouver l\'élément, pas à le décrire : un seul crochet, en mots ordinaires.</li>' +
         '<li>Libellé entre guillemets, type en clair, du plus large au plus précis, séparés par une virgule. Pas de points ni de crochets imbriqués.</li>' +
-        '<li>Élément répété (navigation, header, footer) : pas d\'écran devant.</li>' +
+        '<li>Élément présent sur tous les écrans (navigation, header, footer) : All screens à la place du nom d\'écran. Un défaut d\'écran présent partout : All screens seul.</li>' +
         '<li>L\'état seulement s\'il faut le provoquer pour voir le défaut (disabled, selected, expanded, error). Sinon, dis-le dans le commentaire.</li>' +
         '<li>Types courants : header, button, link, field, form, list, image, tab, checkbox, dialog, card.</li>' +
         '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt; ["Consommation" card]</code>.</li>' +
@@ -3084,24 +3088,32 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     });
     items.forEach(function(it){
       var c = it.c;
-      var theme = c.theme_ruxal;
+      var theme = THEME_EN[c.theme_ruxal] || c.theme_ruxal;
       var multi = it.concernes.length > 1;
-      var ecransNoms = [], objets = [];
+      var ecransNoms = [], objets = [], touches = [], elems = [];
       var propre = function(t){ return String(t||'').replace(/\s+/g,' ').replace(/\|/g,'/').trim(); };
       it.concernes.forEach(function(x){ x.ecrans.forEach(function(e){
         var el = propre(getElementCritere(x.o, e.id, c.id));
         var nom = el || e.nom;
-        if(ecransNoms.indexOf(nom) === -1){ ecransNoms.push(nom); objets.push(el || (e.nom+'[<element>]')); }
+        if(ecransNoms.indexOf(nom) === -1){ ecransNoms.push(nom); objets.push(el || (e.nom+' [<element>]')); }
+        if(touches.indexOf(e.nom) === -1) touches.push(e.nom);
+        elems.push(el);
       }); });
+      // Emplacement du titre : un élément répété identique partout, sinon « All screens » si tous les écrans de l'audit
+      // sont touchés, sinon les écrans (ou éléments) concernés.
+      var lieu = ecransNoms.join(', ');
+      if(elems.length > 1 && elems[0] && elems.every(function(v){ return v === elems[0]; })) lieu = elems[0];
+      else if(touches.length > 1 && tousEcrans().every(function(n){ return touches.indexOf(n) > -1; })) lieu = 'All screens';
       var commentaires = it.concernes.map(function(x){
         var t = commentaireCritereTexte(x.o, c);
         return t ? (multi ? x.o.nom+' : '+t : t) : '';
       }).filter(function(t){ return t; });
       var brut = '';
       it.concernes.forEach(function(x){ x.ecrans.forEach(function(e){ if(!brut) brut = getCommentaireCritere(x.o, e.id, c.id).trim(); }); });
-      var defaut = brut ? brut.split(/[.\n|]/)[0].trim() : c.libelle_en;
-      if(defaut.length > 90) defaut = defaut.slice(0, 87).trim() + '...';
-      var summary = '[A11Y] | '+state.auditNom+' | '+theme+' | '+ecransNoms.join(', ')+' : '+defaut;
+      // Défaut : le symptôme en 8 mots au plus, jamais l'intitulé du critère ; sinon à compléter.
+      var defaut = brut ? brut.split(/[.\n|]/)[0].trim() : '';
+      if(!defaut || defaut.split(/\s+/).length > 8) defaut = '<defect>';
+      var summary = '[A11Y] | '+state.auditNom+' | '+theme+' | '+lieu+': '+defaut;
       if(summary.length > 250) summary = summary.slice(0, 247).trim() + '...';
       // Notation de la skill : crochets = élément, flèche = flow. L'outil connaît les écrans, pas les éléments :
       // l'élément reste à compléter (<...>), jamais entre crochets. Pas de référence WCAG dans le ticket.
