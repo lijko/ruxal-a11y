@@ -282,6 +282,8 @@ RUXAWEB 2 : audit par observations.
   .pied-form{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border-soft);padding-top:14px}
   #form-obs .pied-form{border-top:0;padding-top:0}
   .sugg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .crit-retenus{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+  .crit-retenus li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--border-soft);border-radius:var(--radius);background:var(--surface-sunk)}
   .sugg:empty{display:none}
   .sugg-btn{min-height:30px;border-radius:var(--radius-pill);font-weight:600;white-space:normal;text-align:left}
   .crit-choix{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto;border:1px solid var(--border-soft);border-radius:var(--radius);padding:6px 10px;background:var(--surface)}
@@ -575,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.9';
+  var VERSION = '2.10';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -851,7 +853,7 @@ RUXAWEB 2 : audit par observations.
   }
   // Sous le champ Observation : les points de contrôle que suggèrent les mots déjà écrits, à choisir d'un clic.
   function htmlSuggestions(texte){
-    var l = suggerer(texte).filter(function(r){ return criteresSuggestion(r).some(function(id){ return brouillon.crits.indexOf(id) === -1; }); }).slice(0, 3);
+    var l = suggerer(texte).filter(function(r){ return criteresSuggestion(r).some(function(id){ return brouillon.crits.indexOf(id) === -1 && (brouillon.retires || []).indexOf(id) === -1; }); }).slice(0, 3);
     if(!l.length) return '';
     return '<span class="doux petit">D\'après ton observation :</span>' + l.map(function(r){
       var cs = criteresSuggestion(r).map(function(id){ return PAR_ID[id].ref || 'BP'; });
@@ -1481,6 +1483,12 @@ RUXAWEB 2 : audit par observations.
     CRITERES.forEach(function(c){ l.push('<option value="'+esc(refTxt(c)+' · '+(c.libelle.length > 110 ? c.libelle.slice(0, 108)+'...' : c.libelle))+'" data-crit="'+c.id+'">'); });
     return l.join('');
   }
+  // Nom court d'un critère : le nom du premier point de contrôle qui y mène, sinon le début de son intitulé.
+  function nomCourt(c){
+    var sy = SYMPTOMES.filter(function(x){ return x.criteres.indexOf(c.id) > -1 || x.selon.some(function(y){ return y.criteres.indexOf(c.id) > -1; }); })[0];
+    if(sy) return sy.controle;
+    return c.libelle.length > 60 ? c.libelle.slice(0, 58).trim()+'...' : c.libelle;
+  }
   var TEXTES_RESULTAT = {
     c:'Conforme ici ; sur les autres écrans cochés, les critères restent à confirmer.',
     nc:'Les critères passent non conformes sur les écrans concernés.',
@@ -1518,12 +1526,17 @@ RUXAWEB 2 : audit par observations.
     html += '<h3 class="sous-titre-form">2. Quels critères ?</h3>';
     html += '<div id="obs-sugg" class="sugg">'+htmlSuggestions(brouillon.texte)+'</div>';
     var choisis = brouillon.crits;
+    // Critères retenus : un nom court, l'intitulé officiel au survol ; « Retirer » ne sert que si la proposition est fausse.
     if(choisis.length){
-      html += '<fieldset class="groupe-nu champ"><legend class="lbl">Critères retenus</legend><div class="crit-choix">' + choisis.map(function(id){
+      html += '<div class="champ"><span class="lbl" id="lbl-retenus">Critères retenus</span><ul class="crit-retenus" aria-labelledby="lbl-retenus">' + choisis.map(function(id){
         var c = PAR_ID[id];
-        return '<label class="choix"><input type="checkbox" data-crit="'+id+'" checked> <span><b>'+esc(refTxt(c))+'</b>'+(c.horsSelection ? ' <span class="doux petit">hors sélection SIP</span>' : '')+' · '+esc(c.libelle)+'</span></label>';
-      }).join('') + '</div></fieldset>';
+        return '<li><span title="'+esc(c.libelle)+'"><b>'+esc(refTxt(c))+'</b> · '+esc(nomCourt(c))+(c.horsSelection ? ' <span class="doux petit">hors sélection SIP</span>' : '')+'</span>' +
+          '<button type="button" class="btn btn-s" data-action="retirer-crit" data-retirer="'+id+'" aria-label="Retirer '+esc(refTxt(c))+'">Retirer</button></li>';
+      }).join('') + '</ul></div>';
     }
+    var retires = (brouillon.retires || []).filter(function(id){ return choisis.indexOf(id) === -1; });
+    if(retires.length) html += '<p class="sans-marge doux petit">Retiré : '+retires.map(function(id){ var c = PAR_ID[id];
+        return '<button type="button" class="ref-btn" data-action="remettre-crit" data-retirer="'+id+'">Remettre '+esc(refTxt(c))+' · '+esc(nomCourt(c))+'</button>'; }).join(', ')+'</p>';
     html += '<div class="champ"><label class="lbl" for="obs-ajout">'+(choisis.length ? 'Ajouter un critère' : 'Chercher un critère')+'</label>' +
         '<input type="text" id="obs-ajout" list="liste-criteres" autocomplete="off" placeholder="Un mot (focus, contraste, étiquette...) ou un numéro (10.7)" aria-describedby="aide-ajout">' +
         '<p class="sans-marge doux petit" id="aide-ajout">'+(choisis.length ? '' : 'Sans critère, l\'observation reste une note libre.')+'</p>' +
@@ -1795,12 +1808,11 @@ RUXAWEB 2 : audit par observations.
     if(g('obs-attendu') !== null) brouillon.attendu = g('obs-attendu');
     if(g('obs-partage-nom') !== null) brouillon.nomPartage = g('obs-partage-nom');
     if(g('obs-vers') !== null) brouillon.vers = g('obs-vers');
-    var cr = f.querySelectorAll('[data-crit]');
-    if(cr.length) brouillon.crits = Array.prototype.filter.call(cr, function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-crit'); });
+    // Les critères retenus ne se lisent pas dans le formulaire : Retirer et Remettre modifient directement le brouillon.
     var ep = f.querySelectorAll('[data-ecran-partage]');
     if(ep.length) brouillon.ecransPartage = Array.prototype.filter.call(ep, function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-ecran-partage'); });
   }
-  function viderBrouillon(){ brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], tag:brouillon.modif ? 'nc' : brouillon.tag, nomPartage:'', ecransPartage:[], vers:'', candidat:null, modif:null}; }
+  function viderBrouillon(){ brouillon = {texte:'', attendu:'', point:'', element:'', crits:[], retires:[], tag:brouillon.modif ? 'nc' : brouillon.tag, nomPartage:'', ecransPartage:[], vers:'', candidat:null, modif:null}; }
   var MAX_AUDIT = 5;
   function nouvelOnglet(type){
     var n = state.onglets.length + 1, sc = type === 'scenario';
@@ -2044,6 +2056,20 @@ RUXAWEB 2 : audit par observations.
     },
     'theming': function(b, o, a){ state.theming = b.getAttribute('data-v'); rendre(); var bt = document.querySelector('[data-action="theming"][data-v="'+state.theming+'"]'); if(bt) bt.focus(); },
     'coller-obs': function(b, o, a){ ouvrirCollage(); },
+    'retirer-crit': function(b, o, a){
+      lireBrouillon(); var id = b.getAttribute('data-retirer');
+      brouillon.crits = brouillon.crits.filter(function(x){ return x !== id; });
+      brouillon.retires = (brouillon.retires || []).filter(function(x){ return x !== id; }).concat([id]);
+      rendre(); var z = document.querySelector('[data-action="remettre-crit"][data-retirer="'+id+'"]') || document.getElementById('obs-ajout'); if(z) z.focus();
+      message('Critère retiré.');
+    },
+    'remettre-crit': function(b, o, a){
+      lireBrouillon(); var id = b.getAttribute('data-retirer');
+      if(brouillon.crits.indexOf(id) === -1) brouillon.crits.push(id);
+      brouillon.retires = (brouillon.retires || []).filter(function(x){ return x !== id; });
+      rendre(); var z = document.querySelector('[data-action="retirer-crit"][data-retirer="'+id+'"]'); if(z) z.focus();
+      message('Critère remis.');
+    },
     'sugg': function(b, o, a){
       lireBrouillon(); brouillon.point = b.getAttribute('data-point'); brouillon.element = b.getAttribute('data-element') || '';
       var deja = brouillon.crits.slice(); brouillon.crits = criteresProposes(); deja.forEach(function(id){ if(brouillon.crits.indexOf(id) === -1) brouillon.crits.push(id); });
