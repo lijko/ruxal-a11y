@@ -43,14 +43,26 @@ def statut(page, ecran, crit):
     return ligne.locator('td.statut').nth(ecran).locator('.pastille').inner_text().split('\n')[0].replace(' !', '').strip()
 
 
+def _symptomes():
+    import re as _re
+    html = (ROOT / 'src' / 'ruxaweb.html').read_text(encoding='utf-8')
+    return {x['id']: x for x in json.loads(_re.search(r'var SYMPTOMES = (\[.*?\]);\n', html, _re.S).group(1))}
+
+
+SYMPTOMES = _symptomes()
+
+
 def chercher(page, point=None, element=None, crit=None):
-    # Recherche unique du formulaire : un symptôme (point de contrôle, éventuellement un type d'élément) ou un critère.
-    sel = '#liste-criteres option[data-crit="%s"]' % crit if crit else '#liste-criteres option[data-point="%s"][data-element="%s"]' % (point, '' if element is None else element)
-    if not crit and element is None and page.locator(sel).count() == 0:
-        sel = '#liste-criteres option[data-point="%s"]' % point
-    page.evaluate("document.getElementById('det-ajout').open = true")
-    page.fill('#obs-ajout', page.locator(sel).first.get_attribute('value'))
-    page.wait_for_timeout(50)
+    # Recherche du formulaire : une ligne par critère. Un point de contrôle (et son type) donne ses critères, ajoutés un à un.
+    if crit:
+        crits = [crit]
+    else:
+        sy = SYMPTOMES[point]
+        crits = list(sy['criteres']) + (list(sy['selon'][element]['criteres']) if element is not None else [])
+    for c in crits:
+        page.evaluate("document.getElementById('det-ajout').open = true")
+        page.fill('#obs-ajout', page.locator('#liste-criteres option[data-crit="%s"]' % c).first.get_attribute('value'))
+        page.wait_for_timeout(50)
 
 
 def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit=None):
@@ -560,6 +572,7 @@ def main():
         page.click('[data-action="remettre-crit"][data-retirer="raweb-10-7"]')
         verifier('Remettre un critère retiré', page.locator('[data-action="retirer-crit"][data-retirer="raweb-10-7"]').count() == 1 and 'Visibilité du focus' in page.inner_text('.crit-retenus'))
         verifier('Saisie : recherche repliée (correction) et renvoi vers la grille', page.evaluate("document.getElementById('det-ajout').open") is False and 'Va dans la grille' in page.inner_text('#form-obs'))
+        verifier('Recherche : une seule ligne par critère (pas de doublon)', page.evaluate("(function(){var v=[].map.call(document.querySelectorAll('#liste-criteres option'),function(o){return o.getAttribute('data-crit')});return v.length===new Set(v).size && v.length>50})()"))
         verifier('Formulaire : plus de champ Point de contrôle, trois questions, bouton qui dit le résultat', page.locator('#obs-point').count() == 0 and page.locator('#form-obs h3.sous-titre-form').count() == 3 and 'Enregistrer : non conforme' in page.inner_text('#form-obs button[type=submit]'))
         page.click('#form-obs details summary')
         verifier('Attendu : aide sur le ticket Jira', 'Expected behavior' in page.inner_text('#aide-attendu'))

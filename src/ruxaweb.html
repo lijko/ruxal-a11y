@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.11';
+  var VERSION = '2.12';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -1469,19 +1469,20 @@ RUXAWEB 2 : audit par observations.
   // Récapitulatif au pied du formulaire : ce qui sera enregistré.
   // Formulaire d'observation en trois questions, dans l'ordre où l'auditeur pense : ce qu'il a vu, les critères, le résultat.
   // Les points de contrôle ne sont plus un champ : ils servent en coulisse aux suggestions et à la recherche de critères.
-  function refsPoint(sy, i){
-    var l = sy.criteres.slice(); if(i > -1) l = l.concat(sy.selon[i].criteres);
-    return l.filter(function(id, k){ return l.indexOf(id) === k; }).map(function(id){ return PAR_ID[id].ref || 'BP'; }).join(', ');
-  }
-  // Une seule recherche : par mots (le symptôme), par numéro ou par intitulé de critère.
+
+  // Une seule recherche, une ligne par critère : numéro, noms simples (points de contrôle) et début de l'intitulé officiel,
+  // pour qu'un mot, un numéro ou l'intitulé retrouvent le même critère, sans doublon.
   function optionsRecherche(){
-    var l = [];
-    SYMPTOMES.forEach(function(sy){
-      if(sy.criteres.length || !sy.selon.length) l.push('<option value="'+esc(sy.controle+' ('+refsPoint(sy, -1)+')')+'" data-point="'+sy.id+'" data-element="">');
-      sy.selon.forEach(function(x, i){ l.push('<option value="'+esc(sy.controle+', '+x.element+' ('+refsPoint(sy, i)+')')+'" data-point="'+sy.id+'" data-element="'+i+'">'); });
-    });
-    CRITERES.forEach(function(c){ l.push('<option value="'+esc(refTxt(c)+' · '+(c.libelle.length > 110 ? c.libelle.slice(0, 108)+'...' : c.libelle))+'" data-crit="'+c.id+'">'); });
-    return l.join('');
+    return CRITERES.map(function(c){
+      var noms = [], point = '', elt = '';
+      SYMPTOMES.forEach(function(sy){
+        if(sy.criteres.indexOf(c.id) > -1){ noms.push(sy.controle); if(!point) point = sy.id; }
+        sy.selon.forEach(function(x, i){ if(x.criteres.indexOf(c.id) > -1){ noms.push(sy.controle+', '+x.element); if(!point){ point = sy.id; elt = String(i); } } });
+      });
+      noms = noms.filter(function(n, k){ return noms.indexOf(n) === k; });
+      var lib = c.libelle.length > 90 ? c.libelle.slice(0, 88)+'...' : c.libelle;
+      return '<option value="'+esc(refTxt(c)+' · '+(noms.length ? noms.join(' / ')+' · ' : '')+lib)+'" data-crit="'+c.id+'" data-point="'+point+'" data-element="'+elt+'">';
+    }).join('');
   }
   // Nom court d'un critère : le nom du premier point de contrôle qui y mène, sinon le début de son intitulé.
   function nomCourt(c){
@@ -2203,8 +2204,8 @@ RUXAWEB 2 : audit par observations.
     if(!opt) return false;
     lireBrouillon();
     var aj = [];
-    if(opt.getAttribute('data-crit')) aj = [opt.getAttribute('data-crit')];
-    else { var sy = SYMPTOMES.filter(function(x){ return x.id === opt.getAttribute('data-point'); })[0]; var ie = opt.getAttribute('data-element'); aj = criteresSuggestion({s:sy, element:ie === '' ? -1 : +ie}); if(!brouillon.point){ brouillon.point = sy.id; brouillon.element = ie; } }
+    aj = [opt.getAttribute('data-crit')];
+    if(!brouillon.point && opt.getAttribute('data-point')){ brouillon.point = opt.getAttribute('data-point'); brouillon.element = opt.getAttribute('data-element'); }
     aj.forEach(function(id){ if(brouillon.crits.indexOf(id) === -1) brouillon.crits.push(id); });
     brouillon.rechercheOuverte = true;
     rendre(); var z = document.getElementById('obs-ajout'); if(z) z.focus();
