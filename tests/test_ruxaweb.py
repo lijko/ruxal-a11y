@@ -606,6 +606,21 @@ def main():
         page.locator('[data-action="ecran"][data-id="%s"]' % ids[0]).first.click()
         page.locator('[data-action="reprendre"][data-id="%s"]' % fus[0]['id']).click()
         verifier('Reprendre une piste regroupée : autres écrans cochés', page.locator('[data-ecran-partage="%s"]:checked' % ids[1]).count() == 1)
+        # Une observation partagée se modifie depuis n'importe lequel de ses écrans, sans perdre ses écrans.
+        page.fill('#obs-texte', 'Focus lost in the menu.')
+        page.click('button:has-text("Enregistrer")')
+        page.wait_for_timeout(100)
+        xs = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
+        xp = xs[-1]
+        page.locator('[data-action="ecran"][data-id="%s"]' % ids[1]).first.click()
+        verifier('Observation partagée : Modifier sur un autre écran, Supprimer seulement sur son écran', page.locator('[data-action="modif-obs"][data-id="%s"]' % xp['id']).count() == 1 and page.locator('[data-action="suppr-obs"][data-id="%s"]' % xp['id']).count() == 0)
+        page.locator('[data-action="modif-obs"][data-id="%s"]' % xp['id']).click()
+        page.fill('#obs-partage-nom', 'Main navigation')
+        page.click('button:has-text("Enregistrer")')
+        page.wait_for_timeout(100)
+        xa = [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == xp['id']][0]
+        verifier('Observation partagée modifiée ailleurs : mêmes écrans, élément changé', xa['ecran'] == xp['ecran'] and sorted(xa['partage']['ecrans']) == sorted(xp['partage']['ecrans']) and xa['elementNom'] == 'Main navigation', xa)
+        page.locator('[data-action="ecran"][data-id="%s"]' % ids[0]).first.click()
         page.fill('#obs-texte', '')
         page.click('#btn-ref')
         verifier('Référentiel : consigne pour une IA', page.locator('#consigne-ref').count() == 1 and 'Convertir des notes' in page.inner_text('main'))

@@ -574,7 +574,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.7';
+  var VERSION = '2.8';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -1302,8 +1302,8 @@ RUXAWEB 2 : audit par observations.
       '<span class="texte">'+esc(x.texte)+(x.attendu ? ' <span class="doux">Attendu : '+esc(x.attendu)+'</span>' : '')+'</span>' +
       '<span class="rangee">'+x.criteres.map(function(id){ return '<span class="etiq etiq-ref">'+esc(refTxt(PAR_ID[id]))+'</span>'; }).join('')+badgePartage(o, x)+
       (origine ? '<span class="doux petit">observé sur '+esc(origine)+'</span>' : '')+(invalide ? '<span class="doux petit">remplacé par un retest</span>' : '')+'</span></div>' +
-      (origine ? '' : '<span class="fixe rangee">'+(x.tag !== 'nt' ? (brouillon.modif === x.id ? '<span class="doux petit">en cours de modification</span>' : '<button type="button" class="btn btn-s" data-action="modif-obs" data-id="'+x.id+'" aria-label="Modifier l\'observation : '+esc(x.texte.length > 60 ? x.texte.slice(0, 58)+'...' : x.texte)+'">'+ico('crayon')+'Modifier</button>') : '')+
-        '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+ico('corbeille')+(ui.confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button></span>')+'</div>';
+      ('<span class="fixe rangee">'+(x.tag !== 'nt' ? (brouillon.modif === x.id ? '<span class="doux petit">en cours de modification</span>' : '<button type="button" class="btn btn-s" data-action="modif-obs" data-id="'+x.id+'" aria-label="Modifier l\'observation : '+esc(x.texte.length > 60 ? x.texte.slice(0, 58)+'...' : x.texte)+'">'+ico('crayon')+'Modifier</button>') : '')+
+        (origine ? '' : '<button type="button" class="btn btn-s btn-danger" data-action="suppr-obs" data-id="'+x.id+'">'+ico('corbeille')+(ui.confirmation === 'obs-'+x.id ? 'Confirmer' : 'Supprimer')+'</button>')+'</span>')+'</div>';
   }
 
   function criteresProposes(){
@@ -1837,9 +1837,11 @@ RUXAWEB 2 : audit par observations.
     var avant = brouillon.modif ? o.obs.filter(function(y){ return y.id === brouillon.modif; })[0] : null;
     if(avant){
       // Même observation : identifiant, ordre, écran, étape et origine gardés (retests et mémoire Jira restent valables).
-      x.id = avant.id; x.n = avant.n; x.ecran = avant.ecran; x.etape = avant.etape; if(avant.source) x.source = avant.source;
-      if(x.partage) x.partage.ecrans = x.partage.ecrans.filter(function(id){ return id !== x.ecran; });
-      if(x.partage && !x.partage.ecrans.length) x.partage = null;
+      // Modifiable depuis n'importe lequel de ses écrans : l'écran d'origine est gardé s'il reste coché.
+      var ensemble = [e.id].concat(brouillon.ecransPartage.filter(function(id){ return id !== e.id; }));
+      x.id = avant.id; x.n = avant.n; x.ecran = ensemble.indexOf(avant.ecran) > -1 ? avant.ecran : e.id; x.etape = avant.etape; if(avant.source) x.source = avant.source;
+      var reste = ensemble.filter(function(id){ return id !== x.ecran; });
+      x.partage = reste.length ? {ecrans:reste} : null;
       o.obs[o.obs.indexOf(avant)] = x;
     } else o.obs.push(x);
     o.valide = false;
@@ -1931,7 +1933,7 @@ RUXAWEB 2 : audit par observations.
     'modif-obs': function(b, o, a){
       var xm = o.obs.concat(obsF()).filter(function(y){ return y.id === b.getAttribute('data-id'); })[0]; if(!xm) return ARRET;
       brouillon = {texte:xm.texte, attendu:xm.attendu || '', point:xm.point || '', element:'', crits:xm.criteres.slice(), tag:xm.tag, nomPartage:xm.elementNom || '',
-        ecransPartage:xm.partage ? xm.partage.ecrans.slice() : [], vers:xm.vers || '', candidat:null, modif:xm.id};
+        ecransPartage:(xm.ecran ? [xm.ecran] : []).concat(xm.partage ? xm.partage.ecrans : []).filter(function(id){ return id !== state.ecranId; }), vers:xm.vers || '', candidat:null, modif:xm.id};
       rendre(); var tm = document.getElementById('obs-texte'); if(tm){ tm.focus(); tm.scrollIntoView({block:'center'}); }
       message('Observation chargée dans le formulaire : modifie-la, puis enregistre.');
     },
