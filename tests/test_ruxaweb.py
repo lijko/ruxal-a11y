@@ -48,6 +48,7 @@ def chercher(page, point=None, element=None, crit=None):
     sel = '#liste-criteres option[data-crit="%s"]' % crit if crit else '#liste-criteres option[data-point="%s"][data-element="%s"]' % (point, '' if element is None else element)
     if not crit and element is None and page.locator(sel).count() == 0:
         sel = '#liste-criteres option[data-point="%s"]' % point
+    page.evaluate("document.getElementById('det-ajout').open = true")
     page.fill('#obs-ajout', page.locator(sel).first.get_attribute('value'))
     page.wait_for_timeout(50)
 
@@ -558,6 +559,7 @@ def main():
         verifier('Retirer un critère : il passe en « Retiré », avec Remettre', page.locator('[data-action="retirer-crit"][data-retirer="raweb-10-7"]').count() == 0 and page.locator('[data-action="remettre-crit"][data-retirer="raweb-10-7"]').count() == 1)
         page.click('[data-action="remettre-crit"][data-retirer="raweb-10-7"]')
         verifier('Remettre un critère retiré', page.locator('[data-action="retirer-crit"][data-retirer="raweb-10-7"]').count() == 1 and 'Visibilité du focus' in page.inner_text('.crit-retenus'))
+        verifier('Saisie : recherche repliée (correction) et renvoi vers la grille', page.evaluate("document.getElementById('det-ajout').open") is False and 'Va dans la grille' in page.inner_text('#form-obs'))
         verifier('Formulaire : plus de champ Point de contrôle, trois questions, bouton qui dit le résultat', page.locator('#obs-point').count() == 0 and page.locator('#form-obs h3.sous-titre-form').count() == 3 and 'Enregistrer : non conforme' in page.inner_text('#form-obs button[type=submit]'))
         page.click('#form-obs details summary')
         verifier('Attendu : aide sur le ticket Jira', 'Expected behavior' in page.inner_text('#aide-attendu'))

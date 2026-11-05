@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.10';
+  var VERSION = '2.11';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -1499,6 +1499,8 @@ RUXAWEB 2 : audit par observations.
     var html = '<form class="carte pile'+(enModif ? ' form-modif' : '')+'" id="form-obs" novalidate>' +
         '<div class="rangee entre"><h2 id="form-obs-titre">'+(enModif ? 'Modifier l\'observation' : 'Nouvelle observation <span class="doux petit">· '+esc(et.nom)+'</span>')+'</h2>' +
         '<span class="rangee"><span class="doux petit"><span class="oblig" aria-hidden="true">*</span> obligatoire</span><button type="button" class="ref-btn petit" data-action="referentiel">Aide</button></span></div>';
+    // Deux chemins séparés : ici on part d'une observation ; on part d'un critère dans la grille.
+    if(!f && !enModif) html += '<p class="sans-marge doux petit">Tu pars d\'un critère plutôt que d\'une observation ? <button type="button" class="ref-btn" data-action="vue" data-vue="grille">Va dans la grille</button>.</p>';
     // 1. Ce que l'auditeur a vu.
     html += '<h3 class="sous-titre-form">1. Qu\'as-tu vu ?</h3>';
     html += '<div class="champ"><label class="lbl" for="obs-texte">Observation<span class="oblig" aria-hidden="true">*</span></label>' +
@@ -1537,10 +1539,12 @@ RUXAWEB 2 : audit par observations.
     var retires = (brouillon.retires || []).filter(function(id){ return choisis.indexOf(id) === -1; });
     if(retires.length) html += '<p class="sans-marge doux petit">Retiré : '+retires.map(function(id){ var c = PAR_ID[id];
         return '<button type="button" class="ref-btn" data-action="remettre-crit" data-retirer="'+id+'">Remettre '+esc(refTxt(c))+' · '+esc(nomCourt(c))+'</button>'; }).join(', ')+'</p>';
-    html += '<div class="champ"><label class="lbl" for="obs-ajout">'+(choisis.length ? 'Ajouter un critère' : 'Chercher un critère')+'</label>' +
-        '<input type="text" id="obs-ajout" list="liste-criteres" autocomplete="off" placeholder="Un mot (focus, contraste, étiquette...) ou un numéro (10.7)" aria-describedby="aide-ajout">' +
-        '<p class="sans-marge doux petit" id="aide-ajout">'+(choisis.length ? '' : 'Sans critère, l\'observation reste une note libre.')+'</p>' +
-        '<datalist id="liste-criteres">'+optionsRecherche()+'</datalist></div>';
+    if(!choisis.length && !retires.length) html += '<p class="sans-marge doux petit">L\'outil propose les critères d\'après ton observation. Sans critère, elle reste une note libre.</p>';
+    // Correction seulement : la recherche ne sert qu'à compléter ou rectifier les critères de cette observation.
+    html += '<details class="champ" id="det-ajout"'+(brouillon.rechercheOuverte ? ' open' : '')+'><summary class="ref-btn petit">Le bon critère n\'est pas proposé ?</summary>' +
+        '<label class="lbl" for="obs-ajout">Chercher un critère</label>' +
+        '<input type="text" id="obs-ajout" list="liste-criteres" autocomplete="off" placeholder="Un mot (focus, contraste, étiquette...) ou un numéro (10.7)">' +
+        '<datalist id="liste-criteres">'+optionsRecherche()+'</datalist></details>';
     // 3. Le résultat, au moment d'enregistrer.
     var lib = choisis.length ? {nc:'non conforme', c:'conforme', na:'non applicable'}[brouillon.tag] : '';
     html += '<h3 class="sous-titre-form">3. Résultat</h3>';
@@ -2202,6 +2206,7 @@ RUXAWEB 2 : audit par observations.
     if(opt.getAttribute('data-crit')) aj = [opt.getAttribute('data-crit')];
     else { var sy = SYMPTOMES.filter(function(x){ return x.id === opt.getAttribute('data-point'); })[0]; var ie = opt.getAttribute('data-element'); aj = criteresSuggestion({s:sy, element:ie === '' ? -1 : +ie}); if(!brouillon.point){ brouillon.point = sy.id; brouillon.element = ie; } }
     aj.forEach(function(id){ if(brouillon.crits.indexOf(id) === -1) brouillon.crits.push(id); });
+    brouillon.rechercheOuverte = true;
     rendre(); var z = document.getElementById('obs-ajout'); if(z) z.focus();
     message(aj.length > 1 ? aj.length+' critères ajoutés.' : 'Critère ajouté.');
     return true;
