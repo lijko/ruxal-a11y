@@ -601,6 +601,7 @@ def main():
         # Coller des observations : format lisible, changement d'écran, critères proposés si absents.
         page.click('[data-action="coller-obs"]')
         verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and '- Visibilité du focus :' in page.input_value('#consigne-dlg'))
+        verifier('Consigne IA : anglais par défaut et cas particuliers', all(k in page.input_value('#consigne-dlg') for k in ('en anglais par défaut', 'cas particuliers')))
         noms = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].ecrans.map(function(e){return e.nom})')
         page.fill('#coller-texte', 'NC | Menu principal | Focus invisible dans le menu. | 10.7\n- C | | Les titres sont bien hiérarchisés. |\nÉcran : %s\nLe contraste du texte gris clair est trop faible\nNC | button "Payer" | Bouton sans nom. | 99.9' % noms[1])
         page.click('[data-action="coller-ok"]')
@@ -621,7 +622,7 @@ def main():
         bons = [k['point'] == a[0] and set('raweb-' + r.replace('.', '-') for r in a[1]) <= set(k['criteres']) for k, a in zip(pc, attendus)]
         verifier('Coller (points de contrôle) : %d lignes, critères déduits' % len(attendus), all(bons) and len(pc) == len(attendus), [k['point'] for k, b in zip(pc, bons) if not b])
         verifier('Coller (points de contrôle) : type d\'élément gardé', any(k['point'] == 'nom-absent' and k['typeElement'] != '' for k in pc))
-        # Exemple de la consigne de l'agent Copilot, avec une question finale : 4 pistes, la question ignorée.
+        # Exemple de la consigne de l'agent Copilot, avec une question finale : 3 pistes, la question ignorée.
         cons = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observations-ruxaweb.txt').read_text(encoding='utf-8')
         ex = cons.split('Output:\n')[1].split('\n\nCHECKPOINTS')[0].strip().replace('Écran : Cart\n', '').replace('Écran : Delivery\n', '')
         avantC = len(page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats || []'))
@@ -630,7 +631,7 @@ def main():
         page.click('[data-action="coller-ok"]')
         page.wait_for_timeout(100)
         ajout = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats')[avantC:]
-        verifier('Agent Copilot : exemple de la consigne lu (4 pistes, critères exacts, question ignorée)', len(ajout) == 4 and [k['criteres'] for k in ajout] == [['raweb-10-7'], ['raweb-6-1'], ['raweb-11-9'], ['raweb-11-1']] and not any(k['propose'] for k in ajout), [(k['titre'][:30], k['criteres']) for k in ajout])
+        verifier('Agent Copilot : exemple de la consigne lu (3 pistes, critères exacts, question ignorée)', len(ajout) == 3 and [k['criteres'] for k in ajout] == [['raweb-10-7'], ['raweb-11-9'], ['raweb-11-1']] and not any(k['propose'] for k in ajout), [(k['titre'][:30], k['criteres']) for k in ajout])
         for k in ajout:
             page.locator('[data-action="ecarter"]').last.click()
         page.locator('[data-action="reprendre"]').first.click()

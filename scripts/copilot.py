@@ -6,11 +6,13 @@
 - criteres-raam-raweb.txt : intitulés officiels EN et FR, thème RUXAL et lien de chaque critère (référence).
 - points-de-controle-ruxaweb.txt : les points de contrôle de RUXAWEB, leurs types d'élément et leurs critères
   (référence ; facultatif comme connaissance de l'agent Observations).
-- consigne-observations-ruxaweb.txt : consigne complète de l'agent Observations, liste des points de contrôle comprise,
-  à partir de modele-consigne-observations.txt (écrit à la main) ; vérifie la limite de 8 000 caractères.
-- consigne-ticket-mobile.txt et consigne-ticket-web.txt : consignes complètes des agents [A11Y] JIRA Task (une observation
-  ou un ticket existant devient un ticket Jira au format de l'équipe), à partir de modele-consigne-ticket.txt, avec les
-  intitulés officiels EN de la sélection RAAM ou RAWeb rangés par thème RUXAL ; vérifie la limite de 8 000 caractères.
+- consigne-observations-ruxaweb.txt : consigne de l'agent « [A11Y] Observation -> RUXAWEB », à partir de
+  modele-consigne-observations.txt (écrit à la main), liste des points de contrôle tirée de data/ (symptome_court si présent).
+
+Fichiers écrits à la main, vérifiés seulement : consigne-observation-raweb.txt (« [A11Y] Observation -> RAWeb »),
+consigne-ticket.txt (« [A11Y] JIRA Task ») et raweb-1.1-criteria.txt (connaissance des deux, tirée des dépôts du SIP).
+Vérifications : 8 000 caractères au plus par consigne, aucun tiret long, et blocs partagés identiques mot pour mot
+d'une consigne à l'autre (CHOOSING RAWEB CRITERIA, ELEMENT NOTATION, SPECIAL CASES).
 
 Usage : python3 scripts/copilot.py            régénère les fichiers
         python3 scripts/copilot.py --check    vérifie qu'ils sont à jour (code retour 1 sinon)
@@ -82,7 +84,7 @@ def consigne_observations():
     lignes = []
     for f in d['familles']:
         for s in [x for x in d['symptomes'] if x['famille'] == f['id']]:
-            t = '- ' + s['controle'] + ' : ' + s['symptome']
+            t = '- ' + s['controle'] + ' : ' + s.get('symptome_court', s['symptome'])
             if s.get('selon'):
                 t += ' [' + ', '.join(x['element'] for x in s['selon']) + ']'
             lignes.append(t)
@@ -93,35 +95,34 @@ def consigne_observations():
     return t
 
 
-RECO = {'raam': 'Per platform, only what applies: iOS, Android, cross-platform (native traits, roles and properties, e.g. '
-                 'accessibilityTraits = .button, Role.Button, accessibilityRole="button").',
-        'raweb': 'Native HTML first (button, label, alt, lang), ARIA only when native HTML is not possible.'}
+CONSIGNES = ['consigne-observations-ruxaweb.txt', 'consigne-observation-raweb.txt', 'consigne-ticket.txt']
+BLOCS = ['CHOOSING RAWEB CRITERIA', 'ELEMENT NOTATION', 'SPECIAL CASES']
 
 
-def consigne_ticket(cle):
-    # Consigne complète de l'agent ticket, une par référentiel : liste des critères (intitulés officiels EN) par thème RUXAL.
-    lab = 'RAAM 1.1' if cle == 'raam' else 'RAWeb 1.1'
-    themes = [t['nom'] for t in charger('themes-ruxal.json')['themes']]
-    cs = charger('criteres-%s.json' % cle)['criteres']
-    blocs = []
-    for t in themes:
-        du = sorted([c for c in cs if c['theme_ruxal'] == t], key=lambda c: tri(c[cle]))
-        if du:
-            blocs.append('# ' + t + '\n' + '\n'.join('%s %s' % (c[cle], c['intitule_en']) for c in du))
-    v = {'SUPPORT': 'mobile app' if cle == 'raam' else 'website', 'REF': lab, 'URL': URL[cle], 'RECO': RECO[cle],
-         'CRITERES': '\n'.join(blocs)}
-    t = (SORTIE / 'modele-consigne-ticket.txt').read_text(encoding='utf-8')
-    for k, x in v.items():
-        t = t.replace('{{' + k + '}}', x)
-    if len(t) > LIMITE_INSTRUCTIONS:
-        sys.exit('consigne-ticket-%s.txt : %d caractères, au-delà de la limite de %d' % (cle, len(t), LIMITE_INSTRUCTIONS))
-    return t
+def bloc(t, titre):
+    i = t.find('\n' + titre + '\n')
+    return None if i < 0 else t[i + 1:].split('\n\n')[0]
+
+
+def verifier(textes):
+    # Chaque bloc partagé doit être identique dans toutes les consignes qui le contiennent.
+    for titre in BLOCS:
+        vus = {n: bloc(t, titre) for n, t in textes.items() if bloc(t, titre) is not None}
+        if len(set(vus.values())) > 1:
+            sys.exit('Bloc « %s » différent selon les consignes : %s' % (titre, ', '.join(vus)))
+    for n, t in textes.items():
+        if len(t) > LIMITE_INSTRUCTIONS:
+            sys.exit('%s : %d caractères, au-delà de la limite de %d' % (n, len(t), LIMITE_INSTRUCTIONS))
 
 
 def main():
     fichiers = {'criteres-raam-raweb.txt': criteres(), 'points-de-controle-ruxaweb.txt': points(),
-                'consigne-observations-ruxaweb.txt': consigne_observations(),
-                'consigne-ticket-mobile.txt': consigne_ticket('raam'), 'consigne-ticket-web.txt': consigne_ticket('raweb')}
+                'consigne-observations-ruxaweb.txt': consigne_observations()}
+    manuels = {n: (SORTIE / n).read_text(encoding='utf-8') for n in CONSIGNES + ['raweb-1.1-criteria.txt'] if n not in fichiers}
+    verifier({n: t for n, t in dict(fichiers, **manuels).items() if n in CONSIGNES})
+    for nom, t in manuels.items():
+        if '—' in t or '–' in t:
+            sys.exit(nom + ' : tiret long ou demi-cadratin interdit')
     for nom, t in fichiers.items():
         if '—' in t or '–' in t:
             sys.exit(nom + ' : tiret long ou demi-cadratin interdit')

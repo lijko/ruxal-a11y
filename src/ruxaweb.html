@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.13';
+  var VERSION = '2.14';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -956,7 +956,9 @@ RUXAWEB 2 : audit par observations.
       'Règles :\n' +
       '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
       '- élément : libellé entre guillemets puis type, par exemple "Payer" button ; sans libellé, le type seul ; dans un autre élément, du plus large au plus précis, séparés par une virgule, par exemple "Livraison" form, "Code postal" field ; un élément répété : son nom seul, par exemple Menu principal ; l\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut ; jamais le nom de l\'écran ; laisse vide si aucun\n' +
-      '- observation : une phrase claire en anglais (elle devient le « Actual behavior » du ticket Jira), fidèle aux notes, sans rien inventer\n' +
+      '- observation : une phrase factuelle, en anglais par défaut, en français seulement si je le demande (une note en français n\'est pas une demande de français) ; pour un NC, elle devient le « Actual behavior » du ticket Jira : l\'action de l\'utilisateur s\'il y en a une, puis ce qui est affiché, annoncé ou exposé et ce qui manque (nom, rôle, état, valeur) ; sans rien inventer\n' +
+      '- « Écran : », les noms des points de contrôle et « To clarify: » ne changent jamais : l\'outil les lit\n' +
+      '- cas particuliers : beaucoup de critères en excluent (composants désactivés et logos pour le contraste, éléments décoratifs) ; si une note peut en relever, n\'écris pas de ligne NC, pose la question sous « To clarify: »\n' +
       '- point de contrôle : recopie exactement un nom de la liste ci-dessous ; s\'il indique des types, ajoute le type entre parenthèses, par exemple Présence d\'un nom (lien) ; laisse vide si aucun ne convient\n' +
       '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
       '- un défaut par ligne ; même défaut sur plusieurs écrans : une ligne par écran, exactement la même, l\'outil les regroupe ; jamais de « | » dans un champ ; jamais de numéro de critère ni de gravité\n' +

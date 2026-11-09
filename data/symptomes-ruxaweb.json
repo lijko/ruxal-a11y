@@ -50,6 +50,7 @@
       "famille": "restitution",
       "controle": "Présence d'un nom",
       "symptome": "Élément restitué sans nom (seulement « bouton », « lien », « image »...)",
+      "symptome_court": "Élément restitué sans nom (seulement « bouton », « lien »...)",
       "selon": [
         {
           "element": "image porteuse d'information",
@@ -150,6 +151,7 @@
       "famille": "restitution",
       "controle": "Pertinence du nom",
       "symptome": "Nom restitué faux, vague ou incompréhensible hors contexte (« cliquez ici », « image123.png »)",
+      "symptome_court": "Nom faux, vague ou incompréhensible hors contexte (« cliquez ici »)",
       "selon": [
         {
           "element": "image porteuse d'information",
@@ -416,6 +418,7 @@
       "famille": "structure",
       "controle": "Titres",
       "symptome": "Titres absents, sautés, mal hiérarchisés, ou texte mis en forme comme un titre sans en être un",
+      "symptome_court": "Titres absents, sautés, mal hiérarchisés, ou faux titres",
       "criteres": [
         "9.1"
       ],
@@ -656,6 +659,7 @@
       "famille": "visuel",
       "controle": "Contrastes",
       "symptome": "Texte, icône, bordure de champ, indicateur de focus ou graphique trop peu contrasté avec son voisinage",
+      "symptome_court": "Élément trop peu contrasté avec son voisinage",
       "criteres": [],
       "note": "Texte : 3.2. Icône, bordure de champ, indicateur de focus ou graphique : 3.3.",
       "selon": [
@@ -891,6 +895,7 @@
       "famille": "medias",
       "controle": "Transcription et audiodescription",
       "symptome": "Audio ou vidéo sans transcription ni audiodescription, ou alternative incomplète",
+      "symptome_court": "Audio ou vidéo sans transcription ni audiodescription complète",
       "criteres": [
         "4.1",
         "4.2"
@@ -956,6 +961,7 @@
       "famille": "medias",
       "controle": "Médias non temporels",
       "symptome": "Carte interactive, visite virtuelle, animation ou objet embarqué sans alternative, ou alternative incomplète",
+      "symptome_court": "Carte interactive, animation ou objet embarqué sans alternative complète",
       "criteres": [
         "4.8",
         "4.9"
