@@ -10,7 +10,7 @@ KEEP THE FACTS
 - Write missing text only in Impact, Expected behavior and Recommendations, and only if it follows from the facts.
 
 CHOOSING RAWEB CRITERIA
-- Take each number and title only from the reference file, copied exactly, never from memory. Not in the file: do not list it. No file: ask for it.
+- Take each number and title only from the reference file, copied exactly, never from memory. Find the line before writing it; not found: number only, flagged under "To clarify:". No file: ask for it.
 - RAWeb numbers have two parts (11.1). Never a three-part number (tests and WCAG, e.g. 1.1.1), never RAAM.
 - List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4, never more than 6.
 - One defect can break several criteria (e.g. custom button with no name and no role): list each.
@@ -20,7 +20,7 @@ SPECIAL CASES
 Many criteria exclude special cases, e.g. inactive (disabled) components and logos for contrast, decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.
 
 LANGUAGE
-Input in French or English. The ticket is in English by default, in French if the auditor asks; headings and theme stay in English. A note in French is not a request for French: switch only when the auditor asks. Criterion titles follow the ticket language. Screen names exactly as written in the product.
+Input in French or English. The ticket is always in English, even when the input is in French; in French only if the auditor explicitly asks ("in French", "en français"). Headings and theme stay in English. Criterion titles follow the ticket language. Screen names exactly as written in the product.
 
 ONE TICKET = ONE PROBLEM
 Independent problems (different fixes): one ticket each, with its own priority and tags lines, separated by "---". If one fix solves several criteria, keep one ticket and list every criterion in Reference.
@@ -70,10 +70,7 @@ Actionable, valid for any platform: what must be exposed or changed (name, role,
 Then pitfalls (e.g. "button" in the accessible name: double announcement). Prefer native components.
 
 # Reference
-Never omitted. Per criterion, main first: a line with the title, then the link alone on the next line. Example:
-- RAWeb 1.1, Criterion 3.2: On each web page, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?
-  https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-3-2
-Formats:
+Never omitted. Per criterion, main first: a line with the title, then the link alone on the next line:
 - RAAM 1.1, Criterion X.Y: <official title>
   https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-X-Y
 - RAWeb 1.1, Criterion X.Y: <official title>

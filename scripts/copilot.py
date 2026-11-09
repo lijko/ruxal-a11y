@@ -7,9 +7,10 @@
 - points-de-controle-ruxaweb.txt : les points de contrôle de RUXAWEB, leurs types d'élément et leurs critères (référence ;
   ils ne servent plus qu'aux suggestions de la saisie, les agents donnent directement les numéros de critères).
 
-Fichiers écrits à la main, vérifiés seulement : consigne-observation.txt (« [A11Y] Observation », lignes pour RUXAWEB
-puis critères expliqués), consigne-ticket.txt (« [A11Y] JIRA Task ») et raweb-1.1-criteria.txt (connaissance des deux,
-tirée des dépôts du SIP). Vérifications : 8 000 caractères au plus par consigne, aucun tiret long, et blocs partagés
+Fichiers écrits à la main, vérifiés seulement : consigne-observation-ruxaweb.txt (« [A11Y] Observation -> RUXAWEB »,
+critères de RUXAWEB inclus, sans connaissance), consigne-observation-raweb.txt (« [A11Y] Observation -> RAWeb »),
+consigne-ticket.txt (« [A11Y] JIRA Task ») et raweb-1.1-criteria.txt (connaissance de ces deux derniers, tirée des
+dépôts du SIP). Vérifications : 8 000 caractères au plus par consigne, aucun tiret long, et blocs partagés
 identiques mot pour mot d'une consigne à l'autre (CHOOSING RAWEB CRITERIA, ELEMENT NOTATION, SPECIAL CASES).
 
 Usage : python3 scripts/copilot.py            régénère les fichiers
@@ -76,7 +77,7 @@ def points():
 LIMITE_INSTRUCTIONS = 8000  # champ Instructions d'Agent Builder (Microsoft 365 Copilot)
 
 
-CONSIGNES = ['consigne-observation.txt', 'consigne-ticket.txt']
+CONSIGNES = ['consigne-observation-ruxaweb.txt', 'consigne-observation-raweb.txt', 'consigne-ticket.txt']
 BLOCS = ['CHOOSING RAWEB CRITERIA', 'ELEMENT NOTATION', 'SPECIAL CASES']
 
 

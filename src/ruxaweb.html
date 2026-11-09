@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.17';
+  var VERSION = '2.18';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -912,7 +912,7 @@ RUXAWEB 2 : audit par observations.
   }
   function lireCollage(texte, o, eDefaut){
     var pistes = [], erreurs = [], e = eDefaut, fin = false;
-    var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; });
+    var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; else if(/^bp\d+$/.test(c.id)) refs[c.id] = c.id; });
     String(texte || '').split(/\r?\n/).forEach(function(brut, n){
       // Bloc de code de l'agent : les lignes ``` (avec ou sans nom de langage) sont ignorées.
       if(/^\s*```/.test(brut)) return;
@@ -932,8 +932,9 @@ RUXAWEB 2 : audit par observations.
       var tag = 'nc', mt = /^#?(c|nc|na|conforme|non conforme|non applicable)$/i.exec(champs[0] || '');
       if(mt){ var v = mt[1].toLowerCase(); tag = v === 'conforme' ? 'c' : v === 'non conforme' ? 'nc' : v === 'non applicable' ? 'na' : v; champs.shift(); }
       var crits = [], inconnus = [];
-      if(champs.length > 1 && /^(?:\d{1,2}\.\d{1,2}\s*(?:[,;]\s*|\s+|$))*$/.test(champs[champs.length - 1])){
-        champs.pop().split(/[,;\s]+/).filter(Boolean).forEach(function(r){ if(refs[r]) crits.push(refs[r]); else inconnus.push(r); });
+      // Dernier champ : numéros RAWeb (10.7) et bonnes pratiques (BP1), séparés par des virgules.
+      if(champs.length > 1 && /^(?:(?:\d{1,2}\.\d{1,2}|bp\d{1,2})\s*(?:[,;]\s*|\s+|$))*$/i.test(champs[champs.length - 1])){
+        champs.pop().split(/[,;\s]+/).filter(Boolean).forEach(function(r){ var k = refs[r] || refs[r.toLowerCase()]; if(k) crits.push(k); else inconnus.push(r); });
       }
       var point = null;
       if(!crits.length && champs.length > 1){ point = trouverPoint(champs[champs.length - 1], champs.slice(0, -1).join(' ')); if(point){ champs.pop(); crits = criteresSuggestion(point); } }
@@ -962,13 +963,13 @@ RUXAWEB 2 : audit par observations.
   // (docs/copilot/consigne-observation.txt), la liste des critères de RUXAWEB remplaçant le fichier de référence.
   function consigneIA(o){
     var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : '';
-    var liste = CRITERES.filter(function(c){ return c.ref; }).map(function(c){ return c.ref + ' ' + (c.libelle_en || c.libelle); }).join('\n');
+    var liste = CRITERES.filter(function(c){ return c.ref || /^bp\d+$/.test(c.id); }).map(function(c){ return (c.ref || c.id.toUpperCase()) + ' ' + (c.libelle_en || c.libelle); }).join('\n');
     return 'ROLE\nYou help a web accessibility auditor (RAWeb 1.1, the Luxembourg web accessibility framework, based on WCAG 2.1). The auditor gives raw notes, in French or English. For each observation you choose the RAWeb 1.1 criteria it breaks and return two blocks: the lines to paste into RUXAWEB, then the criteria explained.\n\n' +
-      'CHOOSING RAWEB CRITERIA\n- Take each number and title only from CRITERIA below (the criteria RUXAWEB records), copied exactly, never from memory.\n- List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4.\n- One defect can break several criteria (e.g. custom button with no name and no role): list each.\n- From a symptom ("the screen reader says \'button\' only"), go back to the cause and pick its criteria.\n- Many criteria exclude special cases, e.g. inactive (disabled) components and logos for contrast, decorative elements. If an observation may fall into one, write no line for it and ask the auditor.\n\n' +
+      'CHOOSING RAWEB CRITERIA\n- Take each number and title only from CRITERIA below (the criteria and good practices RUXAWEB records), copied exactly, never from memory. A defect matching none of them: no line, say so under To clarify.\n- List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4.\n- One defect can break several criteria (e.g. custom button with no name and no role): list each.\n- From a symptom ("the screen reader says \'button\' only"), go back to the cause and pick its criteria.\n- Many criteria exclude special cases, e.g. inactive (disabled) components and logos for contrast, decorative elements. If an observation may fall into one, write no line for it and ask the auditor.\n\n' +
       'ANSWER STRUCTURE (always, even for one short note)\nBlock 1 (the code block with the RUXAWEB lines, never skipped), then block 2 (Criteria:), then To clarify: if needed. Nothing before block 1, no citations or links.\n\n' +
       'LANGUAGE\nAlways write in English, including criterion titles, even when the notes are in French; in French only if the auditor explicitly asks. "Écran :", "Criteria:" and "To clarify:" never change. Keep screen names and on-screen labels exactly as written in the product.\n\n' +
       'BLOCK 1: RUXAWEB LINES\nOne code block (three backticks alone on the opening line) with one line per observation:\nstatus | element | observation | criteria\n' +
-      '- status: NC (problem), C (compliant) or NA (not applicable).\n- element: label in quotes, then type ("Pay" button, "Email" field, "Remember me" checkbox; types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card); inside another element, widest first, comma-separated ("Delivery" form, "Postal code" field); state in parentheses only if it must be triggered to see the defect; on every screen (header, footer, main navigation): name only, e.g. Main navigation; never the screen name; empty if none.\n- observation: one factual sentence (for NC, the "Actual behavior" of the Jira ticket: the user action if any, then what is displayed, announced or exposed and what is missing); never invent a fact.\n- criteria: RAWeb numbers only, comma-separated: 7.1, 7.3.\n' +
+      '- status: NC (problem), C (compliant) or NA (not applicable).\n- element: label in quotes, then type ("Pay" button, "Email" field, "Remember me" checkbox; types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card); inside another element, widest first, comma-separated ("Delivery" form, "Postal code" field); state in parentheses only if it must be triggered to see the defect; on every screen (header, footer, main navigation): name only, e.g. Main navigation; never the screen name; empty if none.\n- observation: one factual sentence (for NC, the "Actual behavior" of the Jira ticket: the user action if any, then what is displayed, announced or exposed and what is missing); never invent a fact.\n- criteria: RAWeb numbers and good practices (BP1), comma-separated: 7.1, 7.3.\n' +
       '- Group lines by screen, each group preceded by "Écran : <screen name>"' + (ecrans ? '. Screens of the audit: ' + ecrans : '') + '.\n- One NC line = one defect on one element. Same defect on several screens: one identical line per screen, so the tool merges them. No line break or | inside a field, no severity.\n\n' +
       'BLOCK 2: CRITERIA\nAfter the code block, the line "Criteria:", then for each line, in the same order: the element and observation in a few words, then one line per criterion: <number> <title> : <why it applies, one short sentence>. If useful, "Also check:" with criteria that depend on something you cannot see.\n\n' +
       'UNCLEAR NOTES\nToo vague or a possible special case: at the very end, "To clarify:" and one short question per note.\n\n' +

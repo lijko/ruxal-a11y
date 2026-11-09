@@ -623,17 +623,17 @@ def main():
         verifier('Coller (points de contrôle) : %d lignes, critères déduits' % len(attendus), all(bons) and len(pc) == len(attendus), [k['point'] for k, b in zip(pc, bons) if not b])
         verifier('Coller (points de contrôle) : type d\'élément gardé', any(k['point'] == 'nom-absent' and k['typeElement'] != '' for k in pc))
         verifier('Coller (points de contrôle) : type de contraste déduit des mots (case à cocher : 3.3 seul)', [k['criteres'] for k in pc[-3:-1]] == [['raweb-3-3'], ['raweb-3-3']], [k['criteres'] for k in pc[-3:]])
-        # Réponse entière de l'exemple de l'agent Copilot (bloc de code, puis « Criteria: »), avec une question finale :
-        # 2 pistes, critères lus en numéros, explications et question ignorées.
-        cons = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observation.txt').read_text(encoding='utf-8')
-        ex = cons.split('Answer:\n')[1].strip().replace('Écran : Cart\n', '')
+        # Réponse entière de l'exemple de l'agent Copilot (bloc de code, puis « Criteria: »), plus une ligne avec une bonne
+        # pratique et une question finale : 3 pistes, critères lus en numéros et codes BP, explications et question ignorées.
+        cons = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observation-ruxaweb.txt').read_text(encoding='utf-8')
+        ex = cons.split('Answer:\n')[1].strip().replace('Écran : Login\n', '').replace('\n```\nCriteria:', '\nNC | "Login" dialog | Focus does not return to the opener. | 12.8, BP3\n```\nCriteria:')
         avantC = len(page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats || []'))
         page.click('[data-action="coller-obs"]')
         page.fill('#coller-texte', ex + '\nTo clarify:\n- "page lente" : which element and what happens?')
         page.click('[data-action="coller-ok"]')
         page.wait_for_timeout(100)
         ajout = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats')[avantC:]
-        verifier('Agent Copilot : réponse entière collée (2 pistes, critères exacts, explications et question ignorées)', len(ajout) == 2 and [k['criteres'] for k in ajout] == [['raweb-10-7'], ['raweb-7-1', 'raweb-7-3']] and not any(k['propose'] for k in ajout), [(k['titre'][:30], k['criteres']) for k in ajout])
+        verifier('Agent Copilot : réponse entière collée (3 pistes, critères exacts, explications et question ignorées)', len(ajout) == 3 and [k['criteres'] for k in ajout] == [['raweb-3-3'], ['raweb-7-1', 'raweb-7-3'], ['raweb-12-8', 'bp3']] and not any(k['propose'] for k in ajout), [(k['titre'][:30], k['criteres']) for k in ajout])
         for k in ajout:
             page.locator('[data-action="ecarter"]').last.click()
         page.locator('[data-action="reprendre"]').first.click()
