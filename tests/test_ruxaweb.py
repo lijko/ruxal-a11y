@@ -601,7 +601,7 @@ def main():
         # Coller des observations : format lisible, changement d'écran, critères proposés si absents.
         page.click('[data-action="coller-obs"]')
         verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and 'status | element | observation | criteria' in page.input_value('#consigne-dlg') and '\n13.11 ' in page.input_value('#consigne-dlg'))
-        verifier('Consigne IA : anglais par défaut et cas particuliers', all(k in page.input_value('#consigne-dlg') for k in ('English by default', 'special cases')))
+        verifier('Consigne IA : anglais par défaut et cas particuliers', all(k in page.input_value('#consigne-dlg') for k in ('Always write in English', 'special cases')))
         noms = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].ecrans.map(function(e){return e.nom})')
         page.fill('#coller-texte', 'NC | Menu principal | Focus invisible dans le menu. | 10.7\n- C | | Les titres sont bien hiérarchisés. |\nÉcran : %s\nLe contraste du texte gris clair est trop faible\nNC | button "Payer" | Bouton sans nom. | 99.9' % noms[1])
         page.click('[data-action="coller-ok"]')

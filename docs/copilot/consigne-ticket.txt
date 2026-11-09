@@ -52,7 +52,7 @@ ELEMENT NOTATION
 - Label in quotes, then type: "Pay" button, "Email" field. No visible label: type only (list).
 - Inside another element: widest first, comma-separated: "Delivery" form, "Postal code" field.
 - State in parentheses only if it must be triggered to see the defect: "Submit" button (disabled). Otherwise, say it in the text.
-- Labels exactly as written in the product. Types: button, link, field, form, list, image, tab, dialog, card. No dots, nested brackets or |.
+- Labels exactly as written in the product. Types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card. No dots, nested brackets or |.
 
 BODY: these headings only, in this order, as Heading 1 (start the line with "# "), without a colon
 # Flow(s) / Screen(s) / Element(s) in concern
