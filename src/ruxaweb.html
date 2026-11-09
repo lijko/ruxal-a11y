@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.15';
+  var VERSION = '2.16';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -893,7 +893,7 @@ RUXAWEB 2 : audit par observations.
   }
 
   // ---------- Collage d'observations (écrites à la main ou converties par une IA) ----------
-  // Une ligne par observation : statut | élément | observation | point de contrôle. Seule l'observation est obligatoire.
+  // Une ligne par observation : statut | élément | observation | critères (numéros, ou nom d'un point de contrôle). Seule l'observation est obligatoire.
   // Une ligne « Écran : Nom » fait passer les lignes suivantes sur cet écran.
   // Type d'élément : d'abord le type écrit entre parenthèses, puis ses mots, puis ceux de l'élément et de l'observation.
   // Un point de contrôle sans critère propre (ex. Contrastes) dont le type reste inconnu propose tous ses critères,
@@ -914,9 +914,12 @@ RUXAWEB 2 : audit par observations.
     var pistes = [], erreurs = [], e = eDefaut, fin = false;
     var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; });
     String(texte || '').split(/\r?\n/).forEach(function(brut, n){
+      // Bloc de code de l'agent : les lignes ``` (avec ou sans nom de langage) sont ignorées.
+      if(/^\s*```/.test(brut)) return;
       var l = brut.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').replace(/`/g, '').trim();
-      // Questions de l'IA sur des notes trop vagues : tout ce qui suit « To clarify: » (ou « À préciser : ») est ignoré.
-      if(fin || /^(?:to clarify|à préciser|a preciser)\s*:/i.test(l)){ fin = true; return; }
+      // Après les lignes, l'agent explique les critères (« Criteria: ») et pose ses questions (« To clarify: ») : tout ce qui
+      // suit l'un de ces titres est ignoré, ce qui permet de coller toute la réponse.
+      if(fin || /^(?:to clarify|à préciser|a preciser|criteria|critères|criteres)\s*:/i.test(l.replace(/^[#*_\s]+/, '').replace(/[*_]/g, ''))){ fin = true; return; }
       if(!l || /^(statut\s*\|)/i.test(l)) return;
       var me = /^(?:#+\s*)?(?:écran|ecran|screen)\s*:\s*(.+)$/i.exec(l);
       if(me){
@@ -937,7 +940,7 @@ RUXAWEB 2 : audit par observations.
       var element = champs.length > 1 ? nomNotation(champs.shift(), o.ecrans) : '';
       var obs = champs.join(' | ').trim();
       if(!obs){ erreurs.push('ligne '+(n+1)+' : observation vide'); return; }
-      if(inconnus.length) erreurs.push('ligne '+(n+1)+' : critère'+(inconnus.length > 1 ? 's' : '')+' inconnu'+(inconnus.length > 1 ? 's' : '')+' '+inconnus.join(', '));
+      if(inconnus.length) erreurs.push('ligne '+(n+1)+' : critère'+(inconnus.length > 1 ? 's' : '')+' '+inconnus.join(', ')+' absent'+(inconnus.length > 1 ? 's' : '')+' de RUXAWEB (hors sélection ou inexistant), ignoré'+(inconnus.length > 1 ? 's' : ''));
       var propose = false;
       if(!crits.length && !point){ var sg = suggerer(obs + ' ' + element)[0]; if(sg){ point = sg; crits = criteresSuggestion(sg); propose = true; } }
       pistes.push({id:uid(), ecran:e.id, outil:'Collage', source:'collage', regle:'', type:tag === 'nc' ? 'violation' : 'note', tag:tag, titre:obs, element:element, nb:1, exemples:[], criteres:crits, propose:propose,
@@ -955,29 +958,28 @@ RUXAWEB 2 : audit par observations.
     });
     return {pistes:fusion, erreurs:erreurs, lues:pistes.length};
   }
-  // Consigne à donner à une IA (Copilot ou autre) pour convertir des notes libres au format du collage.
+  // Consigne à donner à une IA (Copilot ou autre) : même format que l'agent Copilot « [A11Y] Observation »
+  // (docs/copilot/consigne-observation.txt), la liste des critères de RUXAWEB remplaçant le fichier de référence.
   function consigneIA(o){
-    var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : 'les écrans de ton audit';
-    return 'Tu aides un auditeur d\'accessibilité web (RAWeb 1.1, Luxembourg). Transforme ses notes en lignes, une par observation, au format exact :\n' +
-      'statut | élément | observation | point de contrôle\n\n' +
-      'Règles :\n' +
-      '- statut : NC (problème), C (conforme) ou NA (non applicable)\n' +
-      '- élément : libellé entre guillemets puis type, par exemple "Payer" button ; sans libellé, le type seul ; dans un autre élément, du plus large au plus précis, séparés par une virgule, par exemple "Livraison" form, "Code postal" field ; un élément répété : son nom seul, par exemple Menu principal ; l\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut ; jamais le nom de l\'écran ; laisse vide si aucun\n' +
-      '- observation : une phrase factuelle, en anglais par défaut, en français seulement si je le demande (une note en français n\'est pas une demande de français) ; pour un NC, elle devient le « Actual behavior » du ticket Jira : l\'action de l\'utilisateur s\'il y en a une, puis ce qui est affiché, annoncé ou exposé et ce qui manque (nom, rôle, état, valeur) ; sans rien inventer\n' +
-      '- « Écran : », les noms des points de contrôle et « To clarify: » ne changent jamais : l\'outil les lit\n' +
-      '- cas particuliers : beaucoup de critères en excluent (composants désactivés et logos pour le contraste, éléments décoratifs) ; si une note peut en relever, n\'écris pas de ligne NC, pose la question sous « To clarify: »\n' +
-      '- point de contrôle : recopie exactement un nom de la liste ci-dessous ; s\'il indique des types, ajoute le type entre parenthèses, par exemple Présence d\'un nom (lien) ; laisse vide si aucun ne convient\n' +
-      '- regroupe les lignes par écran, chaque groupe précédé d\'une ligne « Écran : nom de l\'écran ». Écrans de l\'audit : ' + ecrans + '\n' +
-      '- un défaut par ligne ; même défaut sur plusieurs écrans : une ligne par écran, exactement la même, l\'outil les regroupe ; jamais de « | » dans un champ ; jamais de numéro de critère ni de gravité\n' +
-      '- rends seulement les lignes, sans commentaire, sans tableau ni mise en forme ; une note trop vague va après les lignes, sous « To clarify: », avec une question courte\n\n' +
-      'Exemple :\nÉcran : Accueil\nNC | Main navigation | The keyboard focus is not visible on the main navigation links. | Visibilité du focus\nNC | "En savoir plus" link | Several "En savoir plus" links have the same text and cannot be told apart out of context. | Pertinence du nom (lien)\n\n' +
-      'Points de contrôle :\n' + SYMPTOMES.map(function(x){ return '- ' + x.controle + ' : ' + x.symptome + (x.selon.length ? ' ; types : ' + x.selon.map(function(y){ return y.element; }).join(' / ') : ''); }).join('\n') +
-      '\n\nMes notes :\n[colle tes notes ici]';
+    var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : '';
+    var liste = CRITERES.filter(function(c){ return c.ref; }).map(function(c){ return c.ref + ' ' + (c.libelle_en || c.libelle); }).join('\n');
+    return 'ROLE\nYou help a web accessibility auditor (RAWeb 1.1, the Luxembourg web accessibility framework, based on WCAG 2.1). The auditor gives raw notes, in French or English. For each observation you choose the RAWeb 1.1 criteria it breaks and return two blocks: the lines to paste into RUXAWEB, then the criteria explained.\n\n' +
+      'CHOOSING RAWEB CRITERIA\n- Take each number and title only from CRITERIA below (the criteria RUXAWEB records), copied exactly, never from memory.\n- List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4.\n- One defect can break several criteria (e.g. custom button with no name and no role): list each.\n- From a symptom ("the screen reader says \'button\' only"), go back to the cause and pick its criteria.\n- Many criteria exclude special cases, e.g. inactive (disabled) components and logos for contrast, decorative elements. If an observation may fall into one, write no line for it and ask the auditor.\n\n' +
+      'LANGUAGE\nWrite in English by default, in French if the auditor asks. A note in French is not a request for French. "Écran :", "Criteria:" and "To clarify:" never change. Keep screen names and on-screen labels exactly as written in the product.\n\n' +
+      'BLOCK 1: RUXAWEB LINES\nOne code block (three backticks alone on the opening line) with one line per observation:\nstatus | element | observation | criteria\n' +
+      '- status: NC (problem), C (compliant) or NA (not applicable).\n- element: label in quotes, then type ("Pay" button, "Email" field); inside another element, widest first, comma-separated ("Delivery" form, "Postal code" field); state in parentheses only if it must be triggered to see the defect; on every screen (header, footer, main navigation): name only, e.g. Main navigation; never the screen name; empty if none.\n- observation: one factual sentence (for NC, the "Actual behavior" of the Jira ticket: the user action if any, then what is displayed, announced or exposed and what is missing); never invent a fact.\n- criteria: RAWeb numbers only, comma-separated: 7.1, 7.3.\n' +
+      '- Group lines by screen, each group preceded by "Écran : <screen name>"' + (ecrans ? '. Screens of the audit: ' + ecrans : '') + '.\n- One NC line = one defect on one element. Same defect on several screens: one identical line per screen, so the tool merges them. No line break or | inside a field, no severity.\n\n' +
+      'BLOCK 2: CRITERIA\nAfter the code block, the line "Criteria:", then for each line, in the same order: the element and observation in a few words, then one line per criterion: <number> <title> : <why it applies, one short sentence>. If useful, "Also check:" with criteria that depend on something you cannot see.\n\n' +
+      'UNCLEAR NOTES\nToo vague or a possible special case: at the very end, "To clarify:" and one short question per note.\n\n' +
+      'STYLE\nNo introduction, no conclusion, no em or en dashes.\n\n' +
+      'EXAMPLE\n```\nÉcran : Cart\nNC | Main navigation | The keyboard focus is not visible on the main navigation links. | 10.7\nNC | "Pay" button | The button is announced as plain text, without a button role, and cannot be reached with the keyboard. | 7.1, 7.3\n```\nCriteria:\nMain navigation, focus not visible:\n- 10.7 ... : no visible focus indicator on the links.\n\n' +
+      'CRITERIA\n' + liste + '\n\nNOTES\n[paste your notes here]';
   }
 
+  var URL_AGENTS = 'https://github.com/lijko/ruxaweb/tree/main/agents/copilot';
   function blocConsigne(o, id){
     return '<details class="consigne"><summary>Consigne pour une IA (Copilot ou autre)</summary>' +
-      '<p class="marge-v-8 doux petit">Copie cette consigne dans l\'IA, ajoute tes notes à la fin, puis colle ici les lignes qu\'elle rend. Vérifie toujours les critères proposés.</p>' +
+      '<p class="marge-v-8 doux petit">Copie cette consigne dans l\'IA, ajoute tes notes à la fin, puis colle ici sa réponse (le bloc de lignes suffit ; les explications qui suivent sont ignorées). Vérifie toujours les critères proposés. Avec Microsoft 365 Copilot, un agent prêt à installer est à télécharger : <a href="'+URL_AGENTS+'" target="_blank" rel="noopener">agents Copilot de RUXAWEB</a>.</p>' +
       '<label class="sr" for="'+id+'">Consigne</label><textarea id="'+id+'" rows="6" readonly>'+esc(consigneIA(o))+'</textarea>' +
       '<div class="ecart-haut-8"><button type="button" class="btn btn-s" data-action="copier-consigne" data-cible="'+id+'">'+ico('copier')+'Copier la consigne</button></div></details>';
   }
@@ -985,10 +987,10 @@ RUXAWEB 2 : audit par observations.
     ui.dlg = 'coller';
     var o = onglet(), e = ecranDe(o, state.ecranId);
     var html = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">Coller des observations</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
-      '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | point de contrôle</code>. Le dernier champ accepte aussi des numéros de critères (<code>10.7, 11.9</code>). Seule l\'observation est obligatoire ; sinon, l\'outil propose un point de contrôle d\'après les mots. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
-      '<p class="sans-marge doux petit">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | Visibilité du focus</code></p>' +
+      '<p class="sans-marge">Une ligne par observation : <code>statut | élément | observation | critères</code>, les critères en numéros RAWeb (<code>10.7, 11.9</code>). Le dernier champ accepte aussi le nom d\'un point de contrôle. Seule l\'observation est obligatoire ; sans critère, l\'outil en propose d\'après les mots. Tu peux coller toute la réponse de l\'agent Copilot : le bloc de code est lu, les explications qui suivent sont ignorées. Une ligne <code>Écran : nom</code> change d\'écran ; sinon les lignes vont sur <b>'+esc(e.nom)+'</b>.</p>' +
+      '<p class="sans-marge doux petit">Exemple : <code>NC | Menu principal | Focus invisible dans le menu. | 10.7</code></p>' +
       '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller<span class="oblig" aria-hidden="true">*</span></label>' +
-          '<textarea id="coller-texte" rows="8" aria-required="true" placeholder="NC | &quot;Payer&quot; button | Le bouton n\'a pas de nom. | Présence d\'un nom (bouton de formulaire)"></textarea></div>' +
+          '<textarea id="coller-texte" rows="8" aria-required="true" placeholder="NC | &quot;Payer&quot; button | Le bouton n\'a pas de nom. | 11.9"></textarea></div>' +
       blocConsigne(o, 'consigne-dlg') +
       '<div class="rangee entre"><span class="doux petit">Les lignes deviennent des pistes à vérifier : rien ne compte avant de les reprendre.</span>' +
           '<button type="button" class="btn btn-p" data-action="coller-ok">'+ico('valider')+'Ajouter aux pistes</button></div>';
@@ -1630,7 +1632,7 @@ RUXAWEB 2 : audit par observations.
       '<p class="sans-marge">Dans une observation, le champ Élément reçoit le libellé entre guillemets puis le type, par exemple <code>"Payer" button</code>. Sans libellé visible, le type seul : <code>list</code>. Dans un autre élément, du plus large au plus précis, séparés par une virgule : <code>"Livraison" form, "Code postal" field</code>. L\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut : <code>"Payer" button (disabled)</code> ; sinon, dis-le dans l\'observation. Pas de points, pas de crochets.</p>' +
       '<p class="sans-marge">L\'export Jira ajoute l\'écran devant : <code>Panier ["Payer" button]</code>. Un élément présent sur tous les écrans est noté <code>All screens [Menu principal]</code> ; sur quelques écrans, ils sont listés : <code>Panier, Paiement [Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
       '<section class="carte pile" aria-labelledby="t-ia"><h2 id="t-ia">Convertir des notes avec une IA</h2>' +
-          '<p class="sans-marge">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la Saisie). L\'outil les ajoute comme pistes à vérifier.</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
+          '<p class="sans-marge">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la Saisie) : une ligne par observation, avec les numéros des critères RAWeb. L\'outil les ajoute comme pistes à vérifier. Avec Microsoft 365 Copilot, installe plutôt l\'agent prêt à l\'emploi : <a href="'+URL_AGENTS+'" target="_blank" rel="noopener">agents Copilot de RUXAWEB</a> (guide d\'installation compris).</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
     groupesCriteres(officiel).forEach(function(g){
       html += '<section class="ref-groupe" aria-labelledby="g-'+g.cs[0].id+'"><h2 id="g-'+g.cs[0].id+'">'+esc(g.th)+' <span class="doux petit">('+g.cs.length+')</span></h2>' +
         g.cs.map(function(c){ return '<article class="carte pile ref-fiche"><h3 class="sans-marge">'+esc(refTxt(c))+' <span class="grav grav-'+c.niveau+'">'+GRAVITE[c.niveau]+'</span></h3>'+infoCritere(c, 'h4', true)+'</article>'; }).join('') + '</section>';

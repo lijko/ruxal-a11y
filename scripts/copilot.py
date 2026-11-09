@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Bertrand Kempf
 # SPDX-License-Identifier: EUPL-1.2
-"""Génère les fichiers de connaissances des agents Copilot (docs/copilot/) à partir de data/.
+"""Génère les fichiers de référence des agents Copilot (docs/copilot/) à partir de data/, et vérifie les consignes.
 
 - criteres-raam-raweb.txt : intitulés officiels EN et FR, thème RUXAL et lien de chaque critère (référence).
-- points-de-controle-ruxaweb.txt : les points de contrôle de RUXAWEB, leurs types d'élément et leurs critères
-  (référence ; facultatif comme connaissance de l'agent Observations).
-- consigne-observations-ruxaweb.txt : consigne de l'agent « [A11Y] Observation -> RUXAWEB », à partir de
-  modele-consigne-observations.txt (écrit à la main), liste des points de contrôle tirée de data/ (symptome_court si présent).
+- points-de-controle-ruxaweb.txt : les points de contrôle de RUXAWEB, leurs types d'élément et leurs critères (référence ;
+  ils ne servent plus qu'aux suggestions de la saisie, les agents donnent directement les numéros de critères).
 
-Fichiers écrits à la main, vérifiés seulement : consigne-observation-raweb.txt (« [A11Y] Observation -> RAWeb »),
-consigne-ticket.txt (« [A11Y] JIRA Task ») et raweb-1.1-criteria.txt (connaissance des deux, tirée des dépôts du SIP).
-Vérifications : 8 000 caractères au plus par consigne, aucun tiret long, et blocs partagés identiques mot pour mot
-d'une consigne à l'autre (CHOOSING RAWEB CRITERIA, ELEMENT NOTATION, SPECIAL CASES).
+Fichiers écrits à la main, vérifiés seulement : consigne-observation.txt (« [A11Y] Observation », lignes pour RUXAWEB
+puis critères expliqués), consigne-ticket.txt (« [A11Y] JIRA Task ») et raweb-1.1-criteria.txt (connaissance des deux,
+tirée des dépôts du SIP). Vérifications : 8 000 caractères au plus par consigne, aucun tiret long, et blocs partagés
+identiques mot pour mot d'une consigne à l'autre (CHOOSING RAWEB CRITERIA, ELEMENT NOTATION, SPECIAL CASES).
 
 Usage : python3 scripts/copilot.py            régénère les fichiers
         python3 scripts/copilot.py --check    vérifie qu'ils sont à jour (code retour 1 sinon)
@@ -78,24 +76,7 @@ def points():
 LIMITE_INSTRUCTIONS = 8000  # champ Instructions d'Agent Builder (Microsoft 365 Copilot)
 
 
-def consigne_observations():
-    # Consigne complète, liste des points de contrôle comprise : l'agent n'a besoin d'aucun fichier de connaissances.
-    d = charger('symptomes-ruxaweb.json')
-    lignes = []
-    for f in d['familles']:
-        for s in [x for x in d['symptomes'] if x['famille'] == f['id']]:
-            t = '- ' + s['controle'] + ' : ' + s.get('symptome_court', s['symptome'])
-            if s.get('selon'):
-                t += ' [' + ' / '.join(x['element'] for x in s['selon']) + ']'
-            lignes.append(t)
-    modele = (SORTIE / 'modele-consigne-observations.txt').read_text(encoding='utf-8')
-    t = modele.replace('{{POINTS}}', '\n'.join(lignes))
-    if len(t) > LIMITE_INSTRUCTIONS:
-        sys.exit('consigne-observations-ruxaweb.txt : %d caractères, au-delà de la limite de %d' % (len(t), LIMITE_INSTRUCTIONS))
-    return t
-
-
-CONSIGNES = ['consigne-observations-ruxaweb.txt', 'consigne-observation-raweb.txt', 'consigne-ticket.txt']
+CONSIGNES = ['consigne-observation.txt', 'consigne-ticket.txt']
 BLOCS = ['CHOOSING RAWEB CRITERIA', 'ELEMENT NOTATION', 'SPECIAL CASES']
 
 
@@ -116,8 +97,7 @@ def verifier(textes):
 
 
 def main():
-    fichiers = {'criteres-raam-raweb.txt': criteres(), 'points-de-controle-ruxaweb.txt': points(),
-                'consigne-observations-ruxaweb.txt': consigne_observations()}
+    fichiers = {'criteres-raam-raweb.txt': criteres(), 'points-de-controle-ruxaweb.txt': points()}
     manuels = {n: (SORTIE / n).read_text(encoding='utf-8') for n in CONSIGNES + ['raweb-1.1-criteria.txt'] if n not in fichiers}
     verifier({n: t for n, t in dict(fichiers, **manuels).items() if n in CONSIGNES})
     for nom, t in manuels.items():
