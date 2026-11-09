@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.12';
+  var VERSION = '2.13';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -657,7 +657,7 @@ RUXAWEB 2 : audit par observations.
   function charger(){
     try{ var s = JSON.parse(localStorage.getItem(CLE)); if(s && s.v === 2) return normaliser(s); }catch(e){}
     // Pas encore de projet en version 2 : reprise du projet laissé par une version 1.x dans ce navigateur.
-    try{ var a = JSON.parse(localStorage.getItem('atelier-ruxaweb-state')); if(a && Array.isArray(a.onglets) && a.onglets.length) return migrerV1(a); }catch(e){}
+    try{ var a = JSON.parse(localStorage.getItem('atelier-ruxaweb-state')); if(a && Array.isArray(a.onglets) && a.onglets.length) return normaliser(migrerV1(a)); }catch(e){}
     return etatVide();
   }
   // Sauvegardes 2.x antérieures : mêmes données, quelques noms changés. Tout passe ici, au chargement et à l'ouverture d'un fichier.
@@ -666,6 +666,12 @@ RUXAWEB 2 : audit par observations.
     delete st.ficheEcran; delete st.grilleFiltre;
     var toutes = (st.obsF || []).slice();
     (st.onglets || []).forEach(function(o){ toutes = toutes.concat(o.obs || []); });
+    var tousEcrans = [];
+    (st.onglets || []).forEach(function(o){
+      tousEcrans = tousEcrans.concat(o.ecrans || []);
+      (o.obs || []).forEach(function(x){ if(x.elementNom) x.elementNom = nomNotation(x.elementNom, o.ecrans); });
+    });
+    (st.obsF || []).forEach(function(x){ if(x.elementNom) x.elementNom = nomNotation(x.elementNom, tousEcrans); });
     toutes.forEach(function(x){
       if(x.etape === 'cloture'){ x.etape = ETAPE_GRILLE; if(x.texte === 'Défini dans la grille' || x.texte === 'Vérifié à la clôture') x.texte = ''; }
       if(x.partage) x.partage = x.partage.ecrans && x.partage.ecrans.length ? {ecrans:x.partage.ecrans} : null;
@@ -733,6 +739,26 @@ RUXAWEB 2 : audit par observations.
     var k = cleNom(n); if(!k) return '';
     var t = o.obs.filter(function(x){ return x.elementNom && cleNom(x.elementNom) === k; })[0];
     return t ? t.elementNom : String(n).replace(/\s+/g, ' ').trim();
+  }
+  // Ancienne notation (Écran[type "Libellé"].état) convertie en notation actuelle ("Libellé" type (état)).
+  // Le nom d'écran devant les crochets disparaît (l'outil l'ajoute) ; un autre préfixe (ex. bottom menu) devient le conteneur.
+  function nomNotation(n, ecrans){
+    n = String(n || '').replace(/\s+/g, ' ').trim();
+    var m = /^(.*?)\s*\[([^\]]*)\]\s*\.?\s*\(?([A-Za-z-]*)\)?\s*$/.exec(n);
+    if(!m) return n;
+    var avant = m[1].trim(), dedans = m[2].trim(), etat = m[3];
+    var t = /^([^"]*?)\s*"([^"]*)"\s*$/.exec(dedans);
+    if(t && t[1].trim()) dedans = '"' + t[2] + '" ' + t[1].trim();
+    var k = cleNom(avant), estEcran = !k || k === 'all screens' || (ecrans || []).some(function(e){ return cleNom(e.nom) === k; });
+    return (estEcran ? '' : avant + ', ') + dedans + (etat ? ' (' + etat + ')' : '');
+  }
+  // Compteur du menu : critères RAWeb non conformes, puis bonnes pratiques non suivies entre parenthèses.
+  function compteurNC(nc, bp){
+    if(!nc && !bp) return '';
+    var lu = [];
+    if(nc) lu.push(nc + (nc > 1 ? ' critères non conformes' : ' critère non conforme'));
+    if(bp) lu.push(bp + (bp > 1 ? ' bonnes pratiques non suivies' : ' bonne pratique non suivie'));
+    return '<span aria-hidden="true">' + (nc ? nc + ' NC' : '') + (bp ? (nc ? ' ' : '') + '(' + bp + ')' : '') + '</span><span class="sr">, ' + lu.join(', ') + '</span>';
   }
   function refTxt(c){ return c.horsRef ? 'Bonne pratique ' + c.id.replace(/\D/g, '') : 'RAWeb ' + c.ref; }
 
@@ -901,7 +927,7 @@ RUXAWEB 2 : audit par observations.
       }
       var point = null;
       if(!crits.length && champs.length > 1){ point = trouverPoint(champs[champs.length - 1]); if(point){ champs.pop(); crits = criteresSuggestion(point); } }
-      var element = champs.length > 1 ? champs.shift() : '';
+      var element = champs.length > 1 ? nomNotation(champs.shift(), o.ecrans) : '';
       var obs = champs.join(' | ').trim();
       if(!obs){ erreurs.push('ligne '+(n+1)+' : observation vide'); return; }
       if(inconnus.length) erreurs.push('ligne '+(n+1)+' : critère'+(inconnus.length > 1 ? 's' : '')+' inconnu'+(inconnus.length > 1 ? 's' : '')+' '+inconnus.join(', '));
@@ -1350,15 +1376,17 @@ RUXAWEB 2 : audit par observations.
     if(fo.length){
       html += '<div class="carte"><h2>Fonctions primaires</h2>' + fo.map(function(f){
         var fait = vue === 'audit' && (f.etapes || {})[state.etape];
-        var nf = obsF().filter(function(x){ return x.fonction === f.id && x.tag === 'nc' && x.criteres.length && !obsFRemplacee(x); }).length;
-        return '<button type="button" data-action="cible-fonction" data-id="'+f.id+'"'+(fC === f ? ' aria-current="true"' : '')+'><span>'+(fait ? '<span class="coche" aria-hidden="true">&#10003;</span>' : '')+esc(f.nom)+(fait ? '<span class="sr"> (étape faite)</span>' : '')+'</span><span class="petit">'+(nf ? nf+' NC' : '')+'</span></button>';
+        var ncF = obsF().filter(function(x){ return x.fonction === f.id && x.tag === 'nc' && x.criteres.length && !obsFRemplacee(x); });
+        var bpF = ncF.filter(function(x){ return x.criteres.every(function(id){ return (PAR_ID[id] || {}).horsRef; }); }).length;
+        return '<button type="button" data-action="cible-fonction" data-id="'+f.id+'"'+(fC === f ? ' aria-current="true"' : '')+'><span>'+(fait ? '<span class="coche" aria-hidden="true">&#10003;</span>' : '')+esc(f.nom)+(fait ? '<span class="sr"> (étape faite)</span>' : '')+'</span><span class="petit">'+compteurNC(ncF.length - bpF, bpF)+'</span></button>';
       }).join('') + '</div>';
     }
     html += '<div class="carte"><h2>Écrans</h2>';
     o.ecrans.forEach(function(x, i){
       var nc = RAWEB.filter(function(c){ return statutEcran(o, x, c).s === 'NC'; }).length;
+      var bp = CRITERES.filter(function(c){ return c.horsRef && statutEcran(o, x, c).s === 'NC'; }).length;
       var faitIci = vue === 'audit' && (x.etapes || {})[state.etape];
-      html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id && !fC ? ' aria-current="true"' : '')+'><span>'+(faitIci ? '<span class="coche" aria-hidden="true">&#10003;</span>' : '')+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+(faitIci ? '<span class="sr"> (étape faite)</span>' : '')+'</span><span class="petit">'+(nc ? nc+' NC' : '')+'</span></button>';
+      html += '<button type="button" data-action="ecran" data-id="'+x.id+'"'+(x.id === e.id && !fC ? ' aria-current="true"' : '')+'><span>'+(faitIci ? '<span class="coche" aria-hidden="true">&#10003;</span>' : '')+(o.type === 'scenario' ? (i+1)+'. ' : '')+esc(x.nom)+(faitIci ? '<span class="sr"> (étape faite)</span>' : '')+'</span><span class="petit">'+compteurNC(nc, bp)+'</span></button>';
     });
     html += '<button class="lien-action" type="button" data-action="configurer">Contenus et fonctions</button>' +
       '<button class="lien-action" type="button" data-action="vue" data-vue="preparer">Gérer les écrans</button></div>';
@@ -1841,7 +1869,7 @@ RUXAWEB 2 : audit par observations.
       return;
     }
     var x = {id:uid(), n:suivant(), ecran:e.id, etape:state.etape, texte:texte, attendu:brouillon.attendu.trim(), point:brouillon.point, criteres:brouillon.crits.slice(), tag:brouillon.tag, partage:null};
-    x.elementNom = nomExistant(o, brouillon.nomPartage);
+    x.elementNom = nomExistant(o, nomNotation(brouillon.nomPartage, o.ecrans));
     if(o.type === 'scenario' && brouillon.vers) x.vers = brouillon.vers;
     if(brouillon.ecransPartage.length) x.partage = {ecrans:brouillon.ecransPartage.slice()};
     if(brouillon.candidat){
@@ -2253,7 +2281,7 @@ RUXAWEB 2 : audit par observations.
           var s = JSON.parse(fr.result);
           if(s && s.v === 2 && Array.isArray(s.onglets)){ state = normaliser(s); state.vue = 'projet'; rendre(true); message('Sauvegarde ouverte.'); }
           else if(s && s.outil === 'RUXAWEB-etat' && s.state && Array.isArray(s.state.onglets)){
-            state = migrerV1(s.state); sauver(); rendre(true);
+            state = normaliser(migrerV1(s.state)); sauver(); rendre(true);
             message('Sauvegarde '+(s.outilVersion || '1.x')+' convertie : les statuts sont repris. Les critères ajoutés depuis restent à définir dans la grille.');
           }
           else message('Ce fichier n\'est pas une sauvegarde de RUXAWEB.', true);

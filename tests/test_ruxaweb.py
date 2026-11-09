@@ -163,6 +163,9 @@ def main():
         # Partout #nc : NC sur les écrans cochés.
         observer(page, 'Menu principal : focus invisible.', point='focus-invisible', partage=('Menu principal', None))
         verifier('Élément répété, #nc : NC sur les 3 écrans', [statut(page, i, 'raweb-10-7') for i in range(3)] == ['NC', 'NC', 'NC'])
+        vu = page.locator('[data-action="ecran"] .petit').first.inner_text()
+        lu = page.evaluate("Array.from(document.querySelectorAll('[data-action=\"ecran\"] .petit .sr')).map(function(x){ return x.textContent; }).join(' / ')")
+        verifier('Compteur du menu : « N NC » affiché, critères non conformes lus en clair', ' NC' in vu and 'non conforme' in lu, vu + ' | ' + lu)
         # Partout #c : conforme ici, à confirmer ailleurs.
         observer(page, 'Liens du pied de page explicites.', point='nom-non-pertinent', element=2, tag='c', partage=('Pied de page', None))
         verifier('Élément répété, #c : C ici, à confirmer ailleurs', [statut(page, i, 'raweb-6-1') for i in range(3)] == ['C', 'C ?', 'C ?'])
@@ -287,6 +290,17 @@ def main():
         page.set_input_files('#fichier-import', str(s))
         page.wait_for_timeout(300)
         verifier('Import v2 : onglet restauré', page.evaluate('RUXAWEB.state().onglets.length') == 1)
+        # Ancienne notation (Écran[type "Libellé"].état) convertie à l'ouverture.
+        vieux = json.loads(json.dumps(sauvegarde))
+        o0 = vieux['onglets'][0]; nomE = o0['ecrans'][0]['nom']
+        o0['obs'][0]['elementNom'] = nomE + '[button"Connexion"] disabled'
+        o0['obs'][1]['elementNom'] = 'bottom menu[switch "Dark mode"]'
+        fv = pathlib.Path(tempfile.mkdtemp()) / 'notation.json'
+        fv.write_text(json.dumps(vieux), encoding='utf-8')
+        page.set_input_files('#fichier-import', str(fv))
+        page.wait_for_timeout(300)
+        noms = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(0, 2).map(function(x){ return x.elementNom; })')
+        verifier('Ancienne notation convertie à l\'ouverture', noms == ['"Connexion" button (disabled)', 'bottom menu, "Dark mode" switch'], str(noms))
         ancien = pathlib.Path(tempfile.mkdtemp()) / 'ancien.json'
         ancien.write_text(json.dumps({'onglets': [], 'auditNom': 'ancien'}), encoding='utf-8')
         page.set_input_files('#fichier-import', str(ancien))
