@@ -17,7 +17,7 @@ CHOOSING RAWEB CRITERIA
 - From a symptom ("the screen reader says 'button' only"), go back to the cause and pick its criteria.
 
 SPECIAL CASES
-Many criteria exclude special cases, e.g. inactive (disabled) components and logos for contrast, decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.
+Many criteria exclude special cases, e.g. for contrast: inactive (disabled) components, logos, components left with the browser default appearance; decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.
 
 LANGUAGE
 Input in French or English. The ticket is always in English, even when the input is in French; in French only if the auditor explicitly asks ("in French", "en français"). Headings and theme stay in English. Criterion titles follow the ticket language. Screen names exactly as written in the product.

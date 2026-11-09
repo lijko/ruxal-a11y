@@ -627,6 +627,8 @@ def main():
         # pratique et une question finale : 3 pistes, critères lus en numéros et codes BP, explications et question ignorées.
         cons = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observation-ruxaweb.txt').read_text(encoding='utf-8')
         ex = cons.split('Answer:\n')[1].strip().replace('Écran : Login\n', '').replace('\n```\nCriteria:', '\nNC | "Login" dialog | Focus does not return to the opener. | 12.8, BP3\n```\nCriteria:')
+        # Titre « Criteria: » oublié par l'agent : seul le bloc de code est lu, les explications ne deviennent pas des pistes.
+        ex = ex.replace('\nCriteria:\n', '\n')
         avantC = len(page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats || []'))
         page.click('[data-action="coller-obs"]')
         page.fill('#coller-texte', ex + '\nTo clarify:\n- "page lente" : which element and what happens?')

@@ -577,7 +577,7 @@ RUXAWEB 2 : audit par observations.
   var URL_CRITERE = "https://accessibilite.public.lu/fr/raweb1.1/criteres.html#crit-";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.18';
+  var VERSION = '2.19';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -913,9 +913,12 @@ RUXAWEB 2 : audit par observations.
   function lireCollage(texte, o, eDefaut){
     var pistes = [], erreurs = [], e = eDefaut, fin = false;
     var refs = {}; CRITERES.forEach(function(c){ if(c.ref) refs[c.ref] = c.id; else if(/^bp\d+$/.test(c.id)) refs[c.id] = c.id; });
+    // Réponse d'un agent avec un bloc de code : seul le contenu du bloc est lu (les explications autour sont ignorées,
+    // même si l'agent oublie le titre « Criteria: »). Sans bloc de code, toutes les lignes sont lues.
+    var avecBloc = /^\s*```/m.test(String(texte || '')), dansBloc = false;
     String(texte || '').split(/\r?\n/).forEach(function(brut, n){
-      // Bloc de code de l'agent : les lignes ``` (avec ou sans nom de langage) sont ignorées.
-      if(/^\s*```/.test(brut)) return;
+      if(/^\s*```/.test(brut)){ dansBloc = !dansBloc; return; }
+      if(avecBloc && !dansBloc) return;
       var l = brut.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').replace(/`/g, '').trim();
       // Après les lignes, l'agent explique les critères (« Criteria: ») et pose ses questions (« To clarify: ») : tout ce qui
       // suit l'un de ces titres est ignoré, ce qui permet de coller toute la réponse.
@@ -924,7 +927,7 @@ RUXAWEB 2 : audit par observations.
       var me = /^(?:#+\s*)?(?:écran|ecran|screen)\s*:\s*(.+)$/i.exec(l);
       if(me){
         var nom = cleNom(me[1]), trouve = o.ecrans.filter(function(x){ return cleNom(x.nom) === nom; })[0];
-        if(trouve) e = trouve; else erreurs.push('ligne '+(n+1)+' : écran « '+me[1].trim()+' » inconnu');
+        if(trouve) e = trouve; else erreurs.push('ligne '+(n+1)+' : écran « '+me[1].trim()+' » inconnu, lignes suivantes ajoutées à « '+e.nom+' »');
         return;
       }
       var champs = l.split('|').map(function(x){ return x.trim(); });
@@ -965,7 +968,7 @@ RUXAWEB 2 : audit par observations.
     var ecrans = o && o.ecrans.length ? o.ecrans.map(function(x){ return x.nom; }).join(', ') : '';
     var liste = CRITERES.filter(function(c){ return c.ref || /^bp\d+$/.test(c.id); }).map(function(c){ return (c.ref || c.id.toUpperCase()) + ' ' + (c.libelle_en || c.libelle); }).join('\n');
     return 'ROLE\nYou help a web accessibility auditor (RAWeb 1.1, the Luxembourg web accessibility framework, based on WCAG 2.1). The auditor gives raw notes, in French or English. For each observation you choose the RAWeb 1.1 criteria it breaks and return two blocks: the lines to paste into RUXAWEB, then the criteria explained.\n\n' +
-      'CHOOSING RAWEB CRITERIA\n- Take each number and title only from CRITERIA below (the criteria and good practices RUXAWEB records), copied exactly, never from memory. A defect matching none of them: no line, say so under To clarify.\n- List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4.\n- One defect can break several criteria (e.g. custom button with no name and no role): list each.\n- From a symptom ("the screen reader says \'button\' only"), go back to the cause and pick its criteria.\n- Many criteria exclude special cases, e.g. inactive (disabled) components and logos for contrast, decorative elements. If an observation may fall into one, write no line for it and ask the auditor.\n\n' +
+      'CHOOSING RAWEB CRITERIA\n- Take each number and title only from CRITERIA below (the criteria and good practices RUXAWEB records), copied exactly, never from memory. A defect matching none of them: no line; under To clarify, say it is outside RUXAWEB.\n- List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4.\n- One defect can break several criteria (e.g. custom button with no name and no role): list each.\n- From a symptom ("the screen reader says \'button\' only"), go back to the cause and pick its criteria.\n- Many criteria exclude special cases, e.g. for contrast: inactive (disabled) components, logos, components left with the browser default appearance; decorative elements. If an observation may fall into one, write no line for it and ask the auditor.\n\n' +
       'ANSWER STRUCTURE (always, even for one short note)\nBlock 1 (the code block with the RUXAWEB lines, never skipped), then block 2 (Criteria:), then To clarify: if needed. Nothing before block 1, no citations or links.\n\n' +
       'LANGUAGE\nAlways write in English, including criterion titles, even when the notes are in French; in French only if the auditor explicitly asks. "Écran :", "Criteria:" and "To clarify:" never change. Keep screen names and on-screen labels exactly as written in the product.\n\n' +
       'BLOCK 1: RUXAWEB LINES\nOne code block (three backticks alone on the opening line) with one line per observation:\nstatus | element | observation | criteria\n' +
