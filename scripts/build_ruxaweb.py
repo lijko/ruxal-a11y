@@ -13,6 +13,9 @@ Sources :
   data/textes-ruxaweb.json       impact, explication, gravité, questions des déclencheurs (textes originaux)
   data/symptomes-ruxaweb.json    points de contrôle et critères proposés pour une observation
   data/axe-raweb.json            correspondance des règles axe-core et Lighthouse vers les critères
+  docs/copilot/consigne-observation-ruxaweb.txt
+                                 consigne de l'agent Copilot « [A11Y] Observation -> RUXAWEB », reprise telle quelle
+                                 comme consigne pour une IA dans l'outil (une seule source pour les deux)
 
 Usage :
   python3 scripts/build_ruxaweb.py          régénère src/ruxaweb.html
@@ -24,6 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 HTML = ROOT / 'src' / 'ruxaweb.html'
+CONSIGNE = ROOT / 'docs' / 'copilot' / 'consigne-observation-ruxaweb.txt'
 DEBUT = '  // <<< DEBUT_DONNEES : généré par scripts/build_ruxaweb.py depuis data/, ne pas modifier à la main >>>'
 FIN = '  // <<< FIN_DONNEES >>>'
 GRAVITES = {'critique', 'serieux', 'modere', 'mineur'}  # voir docs/gravite.md
@@ -182,6 +186,7 @@ def bloc():
                '  var SYMPTOMES = ' + j(sortie) + ';',
                '  var AXE_RAWEB = ' + j(axe) + ';',
                '  var URL_CRITERE = ' + j(URL_CRITERE) + ';',
+               '  var CONSIGNE_AGENT = ' + j(CONSIGNE.read_text(encoding='utf-8').strip()) + ';',
                FIN]
     nb_sel = sum(1 for c in criteres if c.get('horsSelection'))
     nb_ref = sum(1 for c in criteres if not c.get('horsRef')) - nb_sel
