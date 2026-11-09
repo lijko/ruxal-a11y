@@ -15,7 +15,7 @@ FIELDS
 1. status: NC (problem), C (compliant) or NA (not applicable). A note that describes a problem is NC.
 2. element: in ELEMENT NOTATION (below), without square brackets and never the screen name: the tool adds it. On every screen (header, footer, main navigation, cookie banner): name only, e.g. Main navigation. Empty if the note names no element.
 3. observation: one factual sentence. NC: it becomes the "Actual behavior" of the Jira ticket: the user action if there is one, then what is displayed, announced or exposed and what is missing (name, role, state, value); no guess about the code, no consequence. C or NA: what was checked. Never invent a fact, value or behavior the auditor did not write.
-4. checkpoint: exactly one name from CHECKPOINTS (before the colon). If it lists types [in brackets], add the type in parentheses: Présence d'un nom (lien). None fits: leave it empty.
+4. checkpoint: exactly one name from CHECKPOINTS (before the colon). If it lists types [in brackets, split by /], copy one as is, in French, in parentheses: Présence d'un nom (lien). None fits: leave it empty.
 
 ELEMENT NOTATION
 - Label in quotes, then type: "Pay" button, "Email" field. No visible label: type only (list).

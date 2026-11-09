@@ -15,3 +15,6 @@ NC | Vidéo de présentation | La vidéo n'a pas de sous-titres. | Sous-titres
 NC | Formulaire | Après validation, le focus revient en haut de la page. | Ordre du focus
 NC | img "Panier" | L'icône du panier n'a pas d'alternative textuelle. | Présence d'un nom (image porteuse d'information)
 NC | | La session expire au bout de 5 minutes sans avertissement. | Limites de temps
+NC | "Don't ask again on this computer" checkbox | The checkbox box has too little contrast with the background. | Contrastes (checkbox)
+NC | "Don't ask again on this computer" checkbox | Le contraste de la box de la check box n'est pas assez élevé. | Contrastes
+NC | Bannière | Couleur trop pâle. | Contrastes

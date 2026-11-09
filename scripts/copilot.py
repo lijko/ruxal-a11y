@@ -86,7 +86,7 @@ def consigne_observations():
         for s in [x for x in d['symptomes'] if x['famille'] == f['id']]:
             t = '- ' + s['controle'] + ' : ' + s.get('symptome_court', s['symptome'])
             if s.get('selon'):
-                t += ' [' + ', '.join(x['element'] for x in s['selon']) + ']'
+                t += ' [' + ' / '.join(x['element'] for x in s['selon']) + ']'
             lignes.append(t)
     modele = (SORTIE / 'modele-consigne-observations.txt').read_text(encoding='utf-8')
     t = modele.replace('{{POINTS}}', '\n'.join(lignes))

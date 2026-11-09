@@ -658,10 +658,10 @@
       "id": "contraste",
       "famille": "visuel",
       "controle": "Contrastes",
-      "symptome": "Texte, icône, bordure de champ, indicateur de focus ou graphique trop peu contrasté avec son voisinage",
-      "symptome_court": "Élément trop peu contrasté avec son voisinage",
+      "symptome": "Texte, composant d'interface (case à cocher, bouton, champ), icône, indicateur de focus ou graphique trop peu contrasté avec son voisinage",
+      "symptome_court": "Élément trop peu contrasté",
       "criteres": [],
-      "note": "Texte : 3.2. Icône, bordure de champ, indicateur de focus ou graphique : 3.3.",
+      "note": "Texte : 3.2. Composant d'interface (case à cocher, bordure de champ, bouton), icône, indicateur de focus ou graphique : 3.3.",
       "selon": [
         {
           "element": "texte",
@@ -670,28 +670,49 @@
           ],
           "mots": [
             "texte",
+            "text",
             "police",
+            "font",
             "paragraphe",
             "ecrit"
           ]
         },
         {
-          "element": "icône, bordure, focus ou graphique",
+          "element": "composant, icône, bordure, focus ou graphique",
           "criteres": [
             "3.3"
           ],
           "mots": [
+            "composant",
+            "component",
+            "case",
+            "checkbox",
+            "check box",
+            "box",
+            "radio",
+            "interrupteur",
+            "toggle",
+            "switch",
+            "bouton",
+            "button",
+            "champ",
+            "field",
             "icone",
+            "icon",
             "bordure",
+            "border",
             "focus",
             "graphique",
+            "chart",
             "contour",
+            "outline",
             "picto"
           ]
         }
       ],
       "mots": [
         "contraste",
+        "contrast",
         "peu lisible",
         "gris clair",
         "trop clair",

@@ -622,6 +622,7 @@ def main():
         bons = [k['point'] == a[0] and set('raweb-' + r.replace('.', '-') for r in a[1]) <= set(k['criteres']) for k, a in zip(pc, attendus)]
         verifier('Coller (points de contrôle) : %d lignes, critères déduits' % len(attendus), all(bons) and len(pc) == len(attendus), [k['point'] for k, b in zip(pc, bons) if not b])
         verifier('Coller (points de contrôle) : type d\'élément gardé', any(k['point'] == 'nom-absent' and k['typeElement'] != '' for k in pc))
+        verifier('Coller (points de contrôle) : type de contraste déduit des mots (case à cocher : 3.3 seul)', [k['criteres'] for k in pc[-3:-1]] == [['raweb-3-3'], ['raweb-3-3']], [k['criteres'] for k in pc[-3:]])
         # Exemple de la consigne de l'agent Copilot, avec une question finale : 3 pistes, la question ignorée.
         cons = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observations-ruxaweb.txt').read_text(encoding='utf-8')
         ex = cons.split('Output:\n')[1].split('\n\nCHECKPOINTS')[0].strip().replace('Écran : Cart\n', '').replace('Écran : Delivery\n', '')

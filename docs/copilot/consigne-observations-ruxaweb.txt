@@ -15,7 +15,7 @@ FIELDS
 1. status: NC (problem), C (compliant) or NA (not applicable). A note that describes a problem is NC.
 2. element: in ELEMENT NOTATION (below), without square brackets and never the screen name: the tool adds it. On every screen (header, footer, main navigation, cookie banner): name only, e.g. Main navigation. Empty if the note names no element.
 3. observation: one factual sentence. NC: it becomes the "Actual behavior" of the Jira ticket: the user action if there is one, then what is displayed, announced or exposed and what is missing (name, role, state, value); no guess about the code, no consequence. C or NA: what was checked. Never invent a fact, value or behavior the auditor did not write.
-4. checkpoint: exactly one name from CHECKPOINTS (before the colon). If it lists types [in brackets], add the type in parentheses: Présence d'un nom (lien). None fits: leave it empty.
+4. checkpoint: exactly one name from CHECKPOINTS (before the colon). If it lists types [in brackets, split by /], copy one as is, in French, in parentheses: Présence d'un nom (lien). None fits: leave it empty.
 
 ELEMENT NOTATION
 - Label in quotes, then type: "Pay" button, "Email" field. No visible label: type only (list).
@@ -44,26 +44,26 @@ NC | "Pay" button | The screen reader announces only "button", without the butto
 NC | "Delivery" form, "Postal code" field | The postal code field has no label. | Présence d'un nom (champ de formulaire)
 
 CHECKPOINTS (name : symptom [element types])
-- Présence d'un nom : Élément restitué sans nom (seulement « bouton », « lien »...) [image porteuse d'information, lien, champ de formulaire, bouton de formulaire, cadre, composant construit en script (bouton, onglet, menu)]
-- Pertinence du nom : Nom faux, vague ou incompréhensible hors contexte (« cliquez ici ») [image porteuse d'information, CAPTCHA, lien, champ de formulaire, bouton de formulaire, groupe de champs, composant construit en script (bouton, onglet, menu)]
+- Présence d'un nom : Élément restitué sans nom (seulement « bouton », « lien »...) [image porteuse d'information / lien / champ de formulaire / bouton de formulaire / cadre / composant construit en script (bouton, onglet, menu)]
+- Pertinence du nom : Nom faux, vague ou incompréhensible hors contexte (« cliquez ici ») [image porteuse d'information / CAPTCHA / lien / champ de formulaire / bouton de formulaire / groupe de champs / composant construit en script (bouton, onglet, menu)]
 - Éléments décoratifs ignorés : Image ou élément décoratif restitué par le lecteur d'écran
 - Contenus cachés : Contenu caché restitué, ou contenu visible ignoré par le lecteur d'écran
 - Rôle et état : Rôle ou état non restitué (bouton lu comme du texte, case cochée ou menu ouvert non annoncé)
 - Messages : Message de confirmation, de chargement ou d'erreur affiché mais non restitué [message d'erreur de formulaire]
-- Langue : Texte prononcé dans la mauvaise langue [écran entier, passage dans une autre langue]
+- Langue : Texte prononcé dans la mauvaise langue [écran entier / passage dans une autre langue]
 - Titre de l'écran : Titre de l'écran (onglet du navigateur) absent, identique partout ou peu clair
 - Titres : Titres absents, sautés, mal hiérarchisés, ou faux titres
 - Zones principales : En-tête, navigation, contenu principal ou pied absents ou mal déclarés
 - Listes : Liste visuelle non restituée comme une liste
 - Tableaux de données : En-têtes de tableau non restitués, ou cellule lue sans son en-tête
 - Validité du code : Code source invalide (balises mal fermées, identifiants en double)
-- Atteinte et activation : Élément impossible à atteindre ou à activer au clavier, ou au pointeur [lecteur média, contenu qui apparaît par la mise en forme seule]
+- Atteinte et activation : Élément impossible à atteindre ou à activer au clavier, ou au pointeur [lecteur média / contenu qui apparaît par la mise en forme seule]
 - Visibilité du focus : On ne voit pas où se trouve le focus
 - Ordre du focus : Ordre de tabulation illogique, ou focus perdu ou déplacé de façon inattendue après une action
 - Sortie au clavier : Focus bloqué dans un élément, impossible d'en sortir au clavier
 - Contournement des blocs : Aucun lien d'évitement, ou menus et blocs répétés impossibles à passer
 - Contenus additionnels : Infobulle, sous-menu ou contenu au survol ou au focus impossible à atteindre, à garder affiché ou à fermer
-- Contrastes : Élément trop peu contrasté avec son voisinage [texte, icône, bordure, focus ou graphique]
+- Contrastes : Élément trop peu contrasté [texte / composant, icône, bordure, focus ou graphique]
 - Information par la couleur : Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)
 - Information par la forme ou la position : Information donnée uniquement par la forme, la taille ou la position (« le bouton rond à droite »)
 - Description détaillée : Graphique, schéma ou carte sans description détaillée, ou description incomplète

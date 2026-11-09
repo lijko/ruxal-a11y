@@ -106,10 +106,10 @@ RAWeb criteria: 10.14 (On each web page, can additional content that appears usi
 
 == Perception visuelle ==
 Checkpoint: Contrastes
-Symptom: Texte, icône, bordure de champ, indicateur de focus ou graphique trop peu contrasté avec son voisinage
+Symptom: Texte, composant d'interface (case à cocher, bouton, champ), icône, indicateur de focus ou graphique trop peu contrasté avec son voisinage
 Element types:
 - (texte): RAWeb 3.2 (On each web page, is the contrast between the colour of the text and the colour of its background sufficiently high (excluding special cases)?)
-- (icône, bordure, focus ou graphique): RAWeb 3.3 (On each web page, are the colours used in the user interface components or graphic element conveying information sufficiently contrasting (excluding special cases)?)
+- (composant, icône, bordure, focus ou graphique): RAWeb 3.3 (On each web page, are the colours used in the user interface components or graphic element conveying information sufficiently contrasting (excluding special cases)?)
 
 Checkpoint: Information par la couleur
 Symptom: Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)
