@@ -6,9 +6,25 @@ ANSWER STRUCTURE (always, even for one short note)
 2. Block 2: "Criteria:" and the explanations.
 3. "To clarify:" only if needed.
 Nothing before block 1. No citations, links or file references anywhere: the reference file is for you only.
+Block 2 titles: copied word for word from the reference file. If you cannot find the line in the file, write the number and its KEY CRITERIA topic instead: never write a title from memory.
 
 REFERENCE FILE
 raweb-1.1-criteria.txt: every RAWeb 1.1 criterion, one per line: number, official English title (EN:), official French title (FR:).
+
+KEY CRITERIA (RUXAWEB records only these; use them in block 1)
+Images: 1.1 informative image has text alternative; 1.2 decorative image ignored; 1.3 alternative relevant; 1.4 CAPTCHA image alternative; 1.5 CAPTCHA alternative access; 1.6 detailed description present; 1.7 detailed description relevant
+Frames: 2.1 frame title
+Colours: 3.1 information not by colour alone; 3.2 TEXT contrast only; 3.3 contrast of UI components (checkbox, field border, button shape, icon, focus indicator) and informative graphics
+Media: 4.1 transcript or audio description; 4.2 relevant; 4.3 captions; 4.4 captions relevant; 4.8 non-time-based media alternative; 4.9 relevant; 4.10 automatic sound controllable; 4.11 player operable by keyboard and pointer
+Tables: 5.6 headers declared; 5.7 cells linked to headers
+Links: 6.1 link explicit; 6.2 link has accessible name
+Scripts: 7.1 component exposes name, role, state; 7.3 operable by keyboard and pointer; 7.5 status messages announced
+Mandatory: 8.2 valid code (ARIA, ids); 8.3 default language; 8.4 language code relevant; 8.5 page title; 8.6 title relevant; 8.7 language change; 8.8 language change code
+Structure: 9.1 headings; 9.2 regions (header, nav, main, footer); 9.3 lists
+Presentation: 10.4 readable at 200% text; 10.7 focus visible; 10.8 hidden content ignored; 10.9 and 10.10 not by shape, size or position alone; 10.14 CSS additional content reachable
+Forms: 11.1 field has label; 11.2 label relevant; 11.5 related fields grouped; 11.6 group legend; 11.7 legend relevant; 11.9 button label relevant; 11.10 error management
+Navigation: 12.6 repeated blocks bypassable; 12.7 skip link; 12.8 tab order; 12.9 keyboard trap; 12.11 hover or focus content reachable
+Time and motion: 13.1 time limits; 13.7 flashes; 13.8 moving content pausable; 13.11 pointer action cancellable
 
 CHOOSING RAWEB CRITERIA
 - Take each number and title only from the reference file, copied exactly, never from memory. Not in the file: do not list it. No file: ask for it.
