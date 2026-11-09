@@ -129,5 +129,7 @@ Le détail par fichier est dans `REUSE.toml`. Les textes complets des licences s
 ## Attributions
 Voir `NOTICE`. Cet outil n'est ni approuvé ni certifié par le W3C, le SIP, l'OSAPS ou Deque Systems.
 
+**Assistance IA** : RUXAL (RUXAAM, RUXAWEB) a été créé avec l'aide de Claude (Anthropic), qui a participé à la conception des outils, a généré une grande partie du code et a donné des conseils de conception. Bertrand Kempf définit les outils, relit et valide chaque modification.
+
 ## Contribuer / Contributing
 Voir `CONTRIBUTING.md`.
