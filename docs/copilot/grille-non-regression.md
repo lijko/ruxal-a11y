@@ -8,12 +8,12 @@ Les critères attendus sont ceux de RUXAWEB (agent Observation -> RUXAWEB). L'ag
 
 | # | Note à coller | Attendu |
 |---|---|---|
-| 1 | page Login : la case à cocher "Don't ask again on this computer", redessinée par le site, a un contour trop pâle par rapport au fond. | `Écran : Login` puis une ligne, élément `"Don't ask again on this computer" checkbox`, critère **3.3** (jamais 3.2) |
+| 1 | page Login : la case à cocher "Don't ask again on this computer", redessinée par le site, a un contour trop pâle par rapport au fond. | `Écran : Login` puis une ligne, élément `[checkbox "Don't ask again on this computer"]`, critère **3.3** (jamais 3.2) |
 | 2 | page Login : la case à cocher "Don't ask again on this computer" (case native du navigateur) est peu contrastée. | **Aucune ligne** : sous « To clarify: », question sur le cas particulier (apparence par défaut du navigateur) |
 | 3 | Pied de page : texte gris clair sur fond blanc, difficile à lire. | Une ligne, élément `Footer`, critère **3.2** |
-| 4 | page Cart : le bouton Pay est une div cliquable, annoncée comme du texte, impossible à atteindre au clavier. | Une ligne, élément `"Pay" button`, critères **7.1, 7.3** |
+| 4 | page Cart : le bouton Pay est une div cliquable, annoncée comme du texte, impossible à atteindre au clavier. | Une ligne, élément `[button "Pay"]`, critères **7.1, 7.3** |
 | 5 | Le focus clavier n'est pas visible dans le menu principal. | Une ligne, élément `Main navigation`, critère **10.7**, sans ligne « Écran : » |
-| 6 | Formulaire Contact : le champ Email n'a pas d'étiquette, seulement un placeholder qui disparaît à la saisie. | Une ligne, élément `"Contact" form, "Email" field`, critère **11.1** |
+| 6 | Formulaire Contact : le champ Email n'a pas d'étiquette, seulement un placeholder qui disparaît à la saisie. | Une ligne, élément `Contact form[field "Email"]`, critère **11.1** |
 | 7 | Les liens "En savoir plus" de la page d'accueil sont tous identiques hors contexte. | Une ligne, élément `"En savoir plus" link`, critère **6.1** |
 | 8 | Modale de connexion : Échap ne la ferme pas et à la fermeture le focus part en haut de la page. | **Deux lignes** (deux défauts) : **BP2** et **BP3** (12.8 accepté en plus pour la seconde) |
 | 9 | Après envoi du formulaire, le message d'erreur "Mot de passe incorrect" s'affiche mais n'est pas lu par le lecteur d'écran. | Une ligne, critère **11.10** en tête (7.5 accepté en plus) |
@@ -39,7 +39,7 @@ Passer les cas 1, 3, 4, 11 et 12.
 ## Agent [A11Y] JIRA Task
 
 Passer les cas 1 et 4, en précisant l'application (par exemple « application Phoenix, site web »).
-- Titre : `[A11Y] | Phoenix | Colors & contrast | Login ["Don't ask again on this computer" checkbox]: ...` (cas 1), `Interactive components` (cas 4).
+- Titre : `[A11Y] | Phoenix | Colors & contrast | Login[checkbox "Don't ask again on this computer"]: ...` (cas 1), `Interactive components` (cas 4).
 - Rubriques en titre 1, dans l'ordre : Flow(s) / Screen(s) / Element(s) in concern, Actual behavior / Impact, Expected behavior, Recommendations, Reference.
 - Reference : `RAWeb 1.1, Criterion 3.3: <intitulé officiel>` puis le lien `...#crit-3-3` ; intitulé vérifié dans le fichier.
 - Puis « Suggested priority: » et « Suggested tags: » (design pour le cas 1, code pour le cas 4).

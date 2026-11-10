@@ -71,8 +71,8 @@ Symptom: En-têtes de tableau non restitués, ou cellule lue sans son en-tête
 RAWeb criteria: 5.6 (For each data table, are each column header and each row header correctly declared?), 5.7 (For each data table, is the appropriate technique used to associate each cell with its headers (excluding special cases)?)
 
 Checkpoint: Validité du code
-Symptom: Code source invalide (balises mal fermées, identifiants en double)
-RAWeb criteria: 8.2 (For each web page, is the generated source code valid for the specified document type?)
+Symptom: Code source invalide (type de document absent, balises mal fermées, identifiants en double)
+RAWeb criteria: 8.1 (Has each web page a defined document type?), 8.2 (For each web page, is the generated source code valid for the specified document type?)
 
 == Clavier et focus ==
 Checkpoint: Atteinte et activation

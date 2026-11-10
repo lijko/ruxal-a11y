@@ -42,16 +42,16 @@ One code block (three backticks alone on the opening line, no language name), co
 - lines grouped by screen, each group preceded by: Écran : <screen name>. No screen in the notes: no "Écran :" line.
 Only defects: a note saying something works, or that a content is absent, gives no line (the auditor sets C in the grid, NA with the screen contents).
 Fields:
-1. element: in ELEMENT NOTATION (below), without square brackets and never the screen name: the tool adds it. On every screen (header, footer, main navigation, cookie banner): name only, e.g. Main navigation. No element named: write only observation | criteria.
+1. element: in ELEMENT NOTATION (below), everything after the screen name, never the screen itself: the tool adds it (footer[links], [button "Pay"] (disabled)). On every screen: the zone, e.g. main navigation[links]. No element named: write only observation | criteria.
 2. observation: one factual sentence. It becomes the "Actual behavior" of the Jira ticket: the user action if there is one, then what is displayed, announced or exposed and what is missing (name, role, state, value); no guess about the code, no consequence. Never invent a fact, value or behavior the auditor did not write.
 3. criteria: numbers and codes from CRITERIA, comma-separated, most relevant first: 7.1, 7.3 or 12.8, BP3.
 Rules: one line = one defect on one element (two defects: two lines). Same defect on several screens: one line per screen, exactly the same element, observation and criteria, so the tool merges them. No line break inside a line, no | inside a field, no severity.
 
 ELEMENT NOTATION
-- Label in quotes, then type: "Pay" button, "Email" field. No visible label: type only (list).
-- Inside another element: widest first, comma-separated: "Delivery" form, "Postal code" field.
-- State in parentheses only if it must be triggered to see the defect: "Submit" button (disabled). Otherwise, say it in the text.
-- Labels exactly as written in the product. Types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card. No dots, nested brackets or |.
+- Screen.zone[type "label"] (state). Dot: down the hierarchy (Home.footer). Brackets: the target, generic ([links]) or type then label ([link "Contact us"]).
+- State after the target, only if it must be triggered to see the defect: Cart[button "Pay"] (disabled).
+- Every screen: All.footer[links]. Flow: Home -> Cart.
+- Types and zones in English (button, link, field, checkbox, switch, form, list, image, tab, dialog, card, header, footer). Labels exactly as in the product. No nested brackets, no |.
 
 BLOCK 2: CRITERIA
 After the code block, the line "Criteria:", then one line per criterion of block 1, in the same order:
@@ -72,8 +72,8 @@ Notes: "page Login : la case Don't ask again on this computer, redessinée par l
 Answer:
 ```
 Écran : Login
-"Don't ask again on this computer" checkbox | The checkbox border has too little contrast with the background. | 3.3
-"Pay" button | The button is announced as plain text, without a button role, and cannot be reached with the keyboard. | 7.1, 7.3
+[checkbox "Don't ask again on this computer"] | The checkbox border has too little contrast with the background. | 3.3
+[button "Pay"] | The button is announced as plain text, without a button role, and cannot be reached with the keyboard. | 7.1, 7.3
 ```
 Criteria:
 - 3.3 contrast of user interface components : the checkbox border is a component boundary, not text.

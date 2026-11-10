@@ -27,8 +27,8 @@ Independent problems (different fixes): one ticket each, with its own priority a
 
 TITLE
 [A11Y] | <Application> | <Theme> | <Location>: <defect>
-Examples: [A11Y] | Phoenix | Interactive components | Products [list]: Button role not exposed
-- <Location>: never empty, never a path. The screen with its most precise element (Contact ["Email" field]), All screens [Main navigation], 2 or 3 screens (Home, Cart), All screens, or {Screens} if unknown. The full path goes in the Flow section.
+Examples: [A11Y] | Phoenix | Interactive components | Products[list]: Button role not exposed
+- <Location>: never empty, never a path. The screen with its most precise target (Contact[field "Email"]), All with its target (All.main navigation), 2 or 3 screens separated by semicolons (Home; Cart), or {Screens} if unknown. The full path goes in the Flow section.
 - <defect>: the symptom in 3 to 8 words (e.g. No accessible name, Focus not visible), never the criterion. "|" only in the title, never in the body.
 - <Theme>: exactly one RUXAL theme, in English, written as below:
   Navigation & structure: reaching elements or content (keyboard, assistive technology); screen structure.
@@ -40,23 +40,20 @@ Examples: [A11Y] | Phoenix | Interactive components | Products [list]: Button ro
   Forms: labels, fields, errors, input help.
   Convert French theme names. The theme is the nature of the defect, not the tool revealing it.
 
-NOTATION (plain text)
-Square brackets = element, arrow = flow.
-- Screen: Products
-- Element: Home ["Sign in" button]; inside the brackets, ELEMENT NOTATION below.
-- Element on every screen: All screens [Main navigation, "Home" tab]
-- Flow: Home -> Products -> Product details
-Unknown parts in curly braces: {Screen} ["Usage" card]. Convert any old notation to this one.
+NOTATION (plain text, ELEMENT NOTATION below)
+- Screen: Products. Element: Home[button "Sign in"].
+- Every screen: All.main navigation[tab "Home"]. Flow: Home -> Products -> Product details.
+Unknown parts in curly braces: {Screen}[card "Usage"]. Convert any old notation (Home ["Sign in" button] gives Home[button "Sign in"]).
 
 ELEMENT NOTATION
-- Label in quotes, then type: "Pay" button, "Email" field. No visible label: type only (list).
-- Inside another element: widest first, comma-separated: "Delivery" form, "Postal code" field.
-- State in parentheses only if it must be triggered to see the defect: "Submit" button (disabled). Otherwise, say it in the text.
-- Labels exactly as written in the product. Types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card. No dots, nested brackets or |.
+- Screen.zone[type "label"] (state). Dot: down the hierarchy (Home.footer). Brackets: the target, generic ([links]) or type then label ([link "Contact us"]).
+- State after the target, only if it must be triggered to see the defect: Cart[button "Pay"] (disabled).
+- Every screen: All.footer[links]. Flow: Home -> Cart.
+- Types and zones in English (button, link, field, checkbox, switch, form, list, image, tab, dialog, card, header, footer). Labels exactly as in the product. No nested brackets, no |.
 
 BODY: these headings only, in this order, as Heading 1 (start the line with "# "), without a colon
 # Flow(s) / Screen(s) / Element(s) in concern
-One line per object: the flow (Home -> Account -> Profile), then the element (Profile ["Saved" notification]). Never empty. No "Steps to reproduce": the flow replaces it.
+One line per object: the flow (Home -> Account -> Profile), then the element (Profile[notification "Saved"]); on 2 or 3 screens, one full line per screen. Never empty. No "Steps to reproduce": the flow replaces it.
 
 # Actual behavior / Impact
 Facts only, starting with the user action if any (after saving): what is displayed, announced or exposed, and what is missing (name, role, state, value). No guess about the code, no consequence (it goes in Impact:). Several criteria: one bullet each.

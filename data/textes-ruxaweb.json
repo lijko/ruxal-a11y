@@ -201,6 +201,12 @@
       "impact": "RAWeb 7.5 (WCAG 4.1.3) : un message de statut non restitué (« Article ajouté au panier », « 3 résultats », « Enregistrement en cours ») laisse l'utilisateur de lecteur d'écran sans retour : il ne sait pas si son action a réussi et la répète, ou abandonne.",
       "explication": "Déclenche les actions qui affichent un message sans déplacer le focus : ajout au panier, filtre ou recherche qui met à jour un nombre de résultats, enregistrement, chargement, erreur générale. Au lecteur d'écran, le message doit être lu automatiquement, sans que tu aies à le chercher, et sans que le focus bouge. Dans le code, la zone du message porte un rôle de statut ou d'alerte, présent avant l'apparition du message."
     },
+    "raweb-8-1": {
+      "raweb": "8.1",
+      "gravite": "mineur",
+      "impact": "RAWeb 8.1 (WCAG 4.1.1) : sans type de document valide en tête du code, le navigateur passe en mode de compatibilité : l'affichage et la lecture du code peuvent différer d'un navigateur à l'autre, ce qui peut fausser ce que restituent les technologies d'assistance.",
+      "explication": "Dans le code source de l'écran (affichage du code source ou inspecteur), vérifie que la toute première ligne déclare un type de document valide (pour une page HTML actuelle : DOCTYPE html), placé avant la balise html."
+    },
     "raweb-8-2": {
       "raweb": "8.2",
       "gravite": "serieux",

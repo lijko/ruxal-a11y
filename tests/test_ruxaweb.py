@@ -315,7 +315,7 @@ def main():
         page.set_input_files('#fichier-import', str(fv))
         page.wait_for_timeout(300)
         noms = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(0, 2).map(function(x){ return x.elementNom; })')
-        verifier('Ancienne notation convertie à l\'ouverture', noms == ['"Connexion" button (disabled)', 'bottom menu, "Dark mode" switch'], str(noms))
+        verifier('Ancienne notation convertie à l\'ouverture', noms == ['[button "Connexion"] (disabled)', 'bottom menu[switch "Dark mode"]'], str(noms))
         ancien = pathlib.Path(tempfile.mkdtemp()) / 'ancien.json'
         ancien.write_text(json.dumps({'onglets': [], 'auditNom': 'ancien'}), encoding='utf-8')
         page.set_input_files('#fichier-import', str(ancien))
@@ -522,7 +522,7 @@ def main():
         verifier('Référentiel : une fiche par critère et bonne pratique (62)', nb == 62, nb)
         txt = page.locator('main').inner_text()
         verifier('Référentiel : consigne, impact, gravité, étape', all(k in txt for k in ('Comment vérifier', 'Impact', 'gravité', 'étape 2 Code et outils')))
-        verifier('Référentiel : section Noter les éléments', 'Noter les éléments' in txt and '[Menu principal]' in txt)
+        verifier('Référentiel : section Noter les éléments', 'Noter les éléments' in txt and 'Écran.zone[type "libellé"] (état)' in txt and 'All.footer[links]' in txt)
         verifier('Référentiel : bouton PDF par impression', page.locator('[data-action="imprimer-ref"]').count() == 1)
         verifier('Référentiel : bouton du haut marqué page courante', page.get_attribute('#btn-ref', 'aria-current') == 'page')
         page.click('[data-action="theming"][data-v="ruxal"]')
@@ -533,7 +533,10 @@ def main():
         page.emulate_media(media='screen')
         page.locator('[data-action="ouvrir"]').first.click()
         aller_audit(page)
-        verifier('Observation : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
+        verifier('Observation : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text().lower() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element apercu-ticket')
+        page.fill('#obs-partage-nom', 'pied de page[lien "écrivez-nous"] (désactivé)')
+        verifier('Élément : aperçu du ticket en direct, écran ajouté et traduit en anglais (libellé intact)', page.locator('#apercu-ticket code').first.inner_text().endswith('.footer[link "écrivez-nous"] (disabled)'), page.inner_text('#apercu-ticket'))
+        page.fill('#obs-partage-nom', '')
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 62)
 
@@ -601,7 +604,7 @@ def main():
         orig = obsR[-1]
         # Dupliquer : copie à compléter, même élément, sans texte ni critère.
         page.click('[data-action="dupliquer-obs"]')
-        verifier('Dupliquer : copie avec le même élément, texte et critères vides', 'copie' in page.inner_text('#form-obs-titre') and page.input_value('#obs-partage-nom') == '"Close" button' and page.input_value('#obs-texte') == '' and page.locator('.crit-retenus').count() == 0)
+        verifier('Dupliquer : copie avec le même élément, texte et critères vides', 'copie' in page.inner_text('#form-obs-titre') and page.input_value('#obs-partage-nom') == '[button "Close"]' and page.input_value('#obs-texte') == '' and page.locator('.crit-retenus').count() == 0, (page.inner_text('#form-obs-titre'), page.input_value('#obs-partage-nom'), page.input_value('#obs-texte'), page.locator('.crit-retenus').count()))
         page.fill('#obs-texte', 'Bouton Fermer trop petit.')
         page.click('[data-action="enregistrer-nouvelle"]')
         obsD = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
@@ -861,10 +864,12 @@ def main():
         page.click('[data-action="enregistrer-nouvelle"]')
         jf = telecharger(page, 'export-jira')
         lignesF = [r for r in csv.reader(io.StringIO(jf.read_text(encoding='utf-8-sig')))][1:]
-        tf = [r for r in lignesF if '[Navigation]' in r[0]]
+        tf = [r for r in lignesF if 'All.Navigation' in r[0]]
+        tm = [r for r in lignesF if '; ' in r[0].split(' | ')[3]]
+        verifier('Jira : plusieurs écrans, titre avec « ; », une ligne par écran dans le corps', len(tm) >= 1 and all(any(l.startswith(x) for l in tm[0][1].split('\n')) for x in [x.strip() for x in tm[0][0].split(' | ')[3].split(':')[0].split(';')]), [r[0] for r in tm])
         verifier('Jira : tags indicatifs design ou code dans les labels', all(('design' in r or 'code' in r) for r in lignesF[1:]) and len(lignesF[0]) == 10, lignesF[0])
-        verifier('Jira : fonction primaire notée All screens [..], thème anglais', len(tf) == 1 and 'All screens [Navigation]: ' in tf[0][0] and '| Navigation & structure |' in tf[0][0], [r[0] for r in lignesF])
-        verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation' in tf[0][1] and ' : ' in tf[0][1].split('\n')[1], [r[0] for r in lignesF])
+        verifier('Jira : fonction primaire notée All.Navigation, thème anglais', len(tf) == 1 and 'All.Navigation: ' in tf[0][0] and '| Navigation & structure |' in tf[0][0], [r[0] for r in lignesF])
+        verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation' in tf[0][1] and any(l.startswith('Screens: ') and ' : ' in l for l in tf[0][1].split('\n')), [r[0] for r in lignesF])
         aller_audit(page)
         page.click('#liste-etapes [data-vue="resume"]')
         verifier('Résumé : état des fonctions primaires', 'Fonctions primaires' in page.inner_text('main') and '1 NC (10.7)' in page.inner_text('main'), page.inner_text('main')[:300])
