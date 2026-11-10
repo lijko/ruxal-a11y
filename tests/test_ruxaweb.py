@@ -362,10 +362,13 @@ def main():
         # Contenus de l'écran, à tout moment, dans une fenêtre (depuis la ligne de l'écran).
         aller_audit(page)
         page.click('.tete-ecran [data-action="configurer"]')
-        verifier('Ce que contient l\'écran : un écran à la fois, sans fonctions primaires', page.locator('#dlg .dlg-tete').count() == 1 and page.locator('#dlg [data-action="contenu"]').count() == 8 and page.locator('#dlg [data-fonction-ecran]').count() == 0 and page.locator('#dlg [data-action="config-ecran"]').count() >= 2)
-        page.locator('#dlg [data-action="config-ecran"]').nth(1).click()
-        verifier('Ce que contient l\'écran : changer d\'écran, focus gardé', page.locator('#dlg [data-action="config-ecran"]').nth(1).get_attribute('aria-pressed') == 'true' and page.evaluate('document.activeElement.dataset.action === "config-ecran"'))
-        page.locator('#dlg [data-action="config-ecran"]').nth(0).click()
+        nom_ecran = page.locator('.tete-ecran h2.titre-ecran').inner_text().strip()
+        verifier('Ce que contient l\'écran : l\'écran en cours seulement, nommé dans le titre', page.inner_text('#dlg-titre') == 'Ce que contient ' + nom_ecran and page.locator('#dlg [data-action="contenu"]').count() == 8 and page.locator('#dlg [data-action="config-ecran"], #dlg [data-fonction-ecran]').count() == 0)
+        verifier('Ce que contient l\'écran : consigne « Active ce que l\'écran contient »', 'Active ce que l\'écran contient' in page.inner_text('#dlg'))
+        sw_c = page.locator('#dlg [data-action="contenu"][data-d="captcha"]')
+        desc = page.locator('#' + sw_c.get_attribute('aria-describedby')).inner_text()
+        verifier('Ce que contient l\'écran : description et critères visibles, liés à l\'interrupteur', page.locator('#' + sw_c.get_attribute('aria-labelledby')).inner_text() == 'CAPTCHA' and 'Critères 1.4, 1.5' in desc, desc)
+        verifier('Préparer : même consigne et descriptions sans info-bulle', 'title=' not in page.evaluate("(document.querySelector('.contenus-table') || {outerHTML:''}).outerHTML"))
         sw = page.locator('#dlg [data-action="contenu"][data-d="formulaire"]').first
         etat = sw.get_attribute('aria-checked')
         sw.click()
