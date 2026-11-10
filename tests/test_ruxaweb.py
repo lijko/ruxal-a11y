@@ -81,7 +81,7 @@ def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit
         for i, cb in enumerate(cases):
             if quels is None or i in quels:
                 cb.check()
-    page.click('#form-obs button[type=submit]')
+    page.click('[data-action="enregistrer-nouvelle"]')
 
 
 def aller_etape(page, etape):
@@ -193,7 +193,7 @@ def main():
         observer(page, 'Page chargée lentement.', tag='c')
         verifier('Note libre enregistrée sans critère', page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0].criteres.length') == 0 and page.evaluate('RUXAWEB.state().onglets[0].obs.length') == avant + 1)
         page.fill('#obs-texte', '')
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         verifier('Observation vide : message', 'Écris l\'observation' in page.locator('#statut').inner_text())
 
         # Retest (#nt).
@@ -388,7 +388,7 @@ def main():
         chercher(page, 'ordre-focus')
         page.select_option('#obs-vers', index=1)
         page.click('[data-action="tag"][data-tag="nc"]')
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         verifier('Scénario : transition affichée Écran -> Écran', ' -> ' in page.locator('#t-obs').locator('xpath=..').inner_text())
         page.click('[data-action="vue"][data-vue="ux"]')
         verifier('Scénario : onglet POUR/UX avec 8 questions', page.locator('[data-action="heur"][data-v="succes"]').count() == 8)
@@ -443,7 +443,7 @@ def main():
         verifier('Étape 2 : la piste image-alt (1.1)', page.locator('[data-action="reprendre"]').count() == 1)
         page.locator('[data-action="reprendre"]').first.click()
         verifier('Reprendre : observation préremplie', 'Images must have alternative text' in page.input_value('#obs-texte'))
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         derniere = page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0]')
         verifier('Reprendre : observation #nc avec sa source', derniere['tag'] == 'nc' and derniere.get('source', {}).get('regle') == 'image-alt', derniere)
         verifier('Reprendre : 1.1 NC', statut(page, 1, 'raweb-1-1') == 'NC')
@@ -559,20 +559,54 @@ def main():
         aller_audit(page)
         page.fill('#obs-texte', 'Un seul facteur pour montrer l\'état actif.')
         page.click('[data-action="tag"][data-tag="nc"]')
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         note = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs.slice(-1)[0]')
         verifier('Note enregistrée sans critère', note['criteres'] == [])
         page.click('[data-action="modif-obs"][data-id="%s"]' % note['id'])
-        verifier('Modifier : observation chargée, titre et boutons', page.input_value('#obs-texte').startswith('Un seul facteur') and page.inner_text('#form-obs-titre') == 'Modifier l\'observation' and page.locator('[data-action="annuler-modif"]').count() == 1)
+        verifier('Modifier : observation chargée, titre et boutons', page.input_value('#obs-texte').startswith('Un seul facteur') and page.inner_text('#form-obs-titre') == 'Modifier l\'observation' and page.locator('[data-action="dupliquer-obs"]').count() == 1 and page.locator('[data-action="nouvelle-obs"]').count() == 1)
         chercher(page, crit='raweb-3-1')
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         obs = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
         modif = [x for x in obs if x['id'] == note['id']]
         verifier('Modifier : même observation, critère ajouté, pas de doublon', len(modif) == 1 and modif[0]['criteres'] == ['raweb-3-1'] and modif[0]['n'] == note['n'] and len(obs) == len([x for x in obs if x['id'] != note['id']]) + 1)
         verifier('Modifier : formulaire revenu en saisie', 'Nouvelle observation' in page.inner_text('#form-obs-titre') and page.input_value('#obs-texte') == '')
         page.click('[data-action="modif-obs"][data-id="%s"]' % note['id'])
-        page.click('[data-action="annuler-modif"]')
-        verifier('Modifier : annuler', 'Nouvelle observation' in page.inner_text('#form-obs-titre'))
+        page.click('[data-action="nouvelle-obs"]')
+        verifier('Nouvelle observation sans modification : formulaire vidé sans question', 'Nouvelle observation' in page.inner_text('#form-obs-titre') and page.locator('#quitter-obs').count() == 0 and page.input_value('#obs-texte') == '')
+        # Enregistrer : on reste sur l'observation, qui passe en modification (un second Enregistrer ne crée pas de doublon).
+        nb0 = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs.length')
+        page.fill('#obs-texte', 'Bouton Fermer sans nom accessible.')
+        page.fill('#obs-partage-nom', '"Close" button')
+        chercher(page, crit='raweb-7-1')
+        page.click('#form-obs button[type=submit]')
+        verifier('Enregistrer : reste sur l\'observation, en modification, heure affichée', page.input_value('#obs-texte').startswith('Bouton Fermer') and page.inner_text('#form-obs-titre') == 'Modifier l\'observation' and 'Enregistrée à' in page.inner_text('#obs-info'))
+        page.click('#form-obs button[type=submit]')
+        obsR = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
+        verifier('Enregistrer deux fois : une seule observation', len(obsR) == nb0 + 1)
+        orig = obsR[-1]
+        # Dupliquer : copie à compléter, même élément, sans texte ni critère.
+        page.click('[data-action="dupliquer-obs"]')
+        verifier('Dupliquer : copie avec le même élément, texte et critères vides', 'copie' in page.inner_text('#form-obs-titre') and page.input_value('#obs-partage-nom') == '"Close" button' and page.input_value('#obs-texte') == '' and page.locator('.crit-retenus').count() == 0)
+        page.fill('#obs-texte', 'Bouton Fermer trop petit.')
+        page.click('[data-action="enregistrer-nouvelle"]')
+        obsD = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
+        verifier('Dupliquer puis enregistrer : nouvelle observation, même élément, original intact', len(obsD) == nb0 + 2 and obsD[-1]['elementNom'] == orig['elementNom'] and obsD[-1]['id'] != orig['id'] and [x for x in obsD if x['id'] == orig['id']][0]['texte'] == orig['texte'])
+        # Modifications non enregistrées : question avant de quitter (Annuler, Ne pas enregistrer, Enregistrer).
+        page.click('[data-action="modif-obs"][data-id="%s"]' % orig['id'])
+        page.fill('#obs-texte', 'Texte modifié non enregistré.')
+        page.click('[data-action="nouvelle-obs"]')
+        verifier('Quitter avec des modifications : question posée, focus dessus', page.locator('#quitter-obs').count() == 1 and page.evaluate("document.activeElement.id") == 'quitter-obs')
+        page.click('[data-action="quitter-obs"][data-choix="annuler"]')
+        verifier('Annuler : on reste, texte gardé', page.input_value('#obs-texte') == 'Texte modifié non enregistré.' and page.locator('#quitter-obs').count() == 0)
+        page.click('[data-action="nouvelle-obs"]')
+        page.click('[data-action="quitter-obs"][data-choix="abandon"]')
+        verifier('Ne pas enregistrer : formulaire vidé, observation inchangée', page.input_value('#obs-texte') == '' and [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == orig['id']][0]['texte'] == orig['texte'])
+        page.click('[data-action="modif-obs"][data-id="%s"]' % orig['id'])
+        page.fill('#obs-texte', 'Bouton Fermer sans nom, lu « bouton ».')
+        page.click('[data-action="dupliquer-obs"]')
+        page.click('[data-action="quitter-obs"][data-choix="enregistrer"]')
+        verifier('Enregistrer puis dupliquer : modification gardée, copie ouverte', [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == orig['id']][0]['texte'].startswith('Bouton Fermer sans nom, lu') and 'copie' in page.inner_text('#form-obs-titre'))
+        page.click('[data-action="nouvelle-obs"]')
 
         # Suggestions pendant la frappe.
         aller_audit(page)
@@ -657,7 +691,7 @@ def main():
         verifier('Reprendre une piste regroupée : autres écrans cochés', page.locator('[data-ecran-partage="%s"]:checked' % ids[1]).count() == 1)
         # Une observation partagée se modifie depuis n'importe lequel de ses écrans, sans perdre ses écrans.
         page.fill('#obs-texte', 'Focus lost in the menu.')
-        page.click('button:has-text("Enregistrer")')
+        page.click('[data-action="enregistrer-nouvelle"]')
         page.wait_for_timeout(100)
         xs = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs')
         xp = xs[-1]
@@ -665,7 +699,7 @@ def main():
         verifier('Observation partagée : Modifier sur un autre écran, Supprimer seulement sur son écran', page.locator('[data-action="modif-obs"][data-id="%s"]' % xp['id']).count() == 1 and page.locator('[data-action="suppr-obs"][data-id="%s"]' % xp['id']).count() == 0)
         page.locator('[data-action="modif-obs"][data-id="%s"]' % xp['id']).click()
         page.fill('#obs-partage-nom', 'Main navigation')
-        page.click('button:has-text("Enregistrer")')
+        page.click('[data-action="enregistrer-nouvelle"]')
         page.wait_for_timeout(100)
         xa = [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == xp['id']][0]
         verifier('Observation partagée modifiée ailleurs : mêmes écrans, élément changé', xa['ecran'] == xp['ecran'] and sorted(xa['partage']['ecrans']) == sorted(xp['partage']['ecrans']) and xa['elementNom'] == 'Main navigation', xa)
@@ -715,7 +749,7 @@ def main():
 
         # Fonctions primaires : configurateur au niveau du projet, testées avant les écrans, observations communes.
         page.click('[data-action="projet"]')
-        verifier('Page Projet : 8 fonctions préréglées', page.locator('[data-action="fonction-presente"]').count() >= 8 and 'Navigation principale' in page.inner_text('.liste-fonctions'))
+        verifier('Page Projet : 7 fonctions préréglées (En-tête, Navigation regroupée, plus de Formulaire type)', page.locator('[data-action="fonction-presente"]').count() >= 7 and 'En-tête' in page.inner_text('.liste-fonctions') and 'fil d\'Ariane' in page.inner_text('.liste-fonctions') and 'Formulaire type' not in page.inner_text('.liste-fonctions') and 'Retour ou fil' not in page.inner_text('.liste-fonctions'))
         page.click('[data-action="fonction-presente"][data-id="nav"]')
         page.fill('#fonction-nouvelle', 'Bandeau cookies')
         page.click('[data-action="fonction-ajout"]')
@@ -733,11 +767,11 @@ def main():
         verifier('Nouvel onglet : fonctions actives sur tous ses écrans', page.locator('[data-fonction-ecran="nav"]:checked').count() == 3)
         page.locator('[data-fonction-ecran="nav"]').nth(2).uncheck()
         page.click('main [data-action="vue"][data-vue="audit"]')
-        verifier('Étape d\'abord : la fonction primaire passe avant les écrans', page.inner_text('h2.titre-ecran') == 'Navigation principale' and page.locator('.ecrans [data-action="cible-fonction"][aria-current="true"]').count() == 1)
+        verifier('Étape d\'abord : la fonction primaire passe avant les écrans', page.inner_text('h2.titre-ecran') == 'Navigation' and page.locator('.ecrans [data-action="cible-fonction"][aria-current="true"]').count() == 1)
         verifier('Fonction : pas de bloc Où, recap sur la fonction', page.locator('#obs-partage-nom').count() == 0)
         page.fill('#obs-texte', 'Focus invisible dans la navigation principale.')
         chercher(page, 'focus-invisible')
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         st = lambda i: statut(page, i, 'raweb-10-7')
         verifier('Fonction NC : NC sur les écrans cochés, pas sur les autres', [st(0), st(1), st(2)] == ['NC', 'NC', 'NT'], [st(0), st(1), st(2)])
         page.click('[data-action="projet"]')
@@ -766,13 +800,13 @@ def main():
         page.click('.ecrans [data-action="cible-fonction"][data-id="nav"]')
         page.fill('#obs-texte', 'Focus toujours invisible sur le lien Contact du menu.')
         chercher(page, 'focus-invisible')
-        page.click('#form-obs button[type=submit]')
+        page.click('[data-action="enregistrer-nouvelle"]')
         jf = telecharger(page, 'export-jira')
         lignesF = [r for r in csv.reader(io.StringIO(jf.read_text(encoding='utf-8-sig')))][1:]
-        tf = [r for r in lignesF if '[Navigation principale]' in r[0]]
+        tf = [r for r in lignesF if '[Navigation]' in r[0]]
         verifier('Jira : tags indicatifs design ou code dans les labels', all(('design' in r or 'code' in r) for r in lignesF[1:]) and len(lignesF[0]) == 10, lignesF[0])
-        verifier('Jira : fonction primaire notée All screens [..], thème anglais', len(tf) == 1 and 'All screens [Navigation principale]: ' in tf[0][0] and '| Navigation & structure |' in tf[0][0], [r[0] for r in lignesF])
-        verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation principale' in tf[0][1] and ' : ' in tf[0][1].split('\n')[1], [r[0] for r in lignesF])
+        verifier('Jira : fonction primaire notée All screens [..], thème anglais', len(tf) == 1 and 'All screens [Navigation]: ' in tf[0][0] and '| Navigation & structure |' in tf[0][0], [r[0] for r in lignesF])
+        verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation' in tf[0][1] and ' : ' in tf[0][1].split('\n')[1], [r[0] for r in lignesF])
         aller_audit(page)
         if page.locator('#liste-etapes').is_hidden():
             page.click('[data-action="etapes-bascule"]')
