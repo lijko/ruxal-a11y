@@ -749,7 +749,7 @@ def main():
 
         # Fonctions primaires : configurateur au niveau du projet, testées avant les écrans, observations communes.
         page.click('[data-action="projet"]')
-        verifier('Page Projet : 7 fonctions préréglées (En-tête, Navigation regroupée, plus de Formulaire type)', page.locator('[data-action="fonction-presente"]').count() >= 7 and 'En-tête' in page.inner_text('.liste-fonctions') and 'fil d\'Ariane' in page.inner_text('.liste-fonctions') and 'Formulaire type' not in page.inner_text('.liste-fonctions') and 'Retour ou fil' not in page.inner_text('.liste-fonctions'))
+        verifier('Page Projet : 7 fonctions préréglées (En-tête, Navigation avec le burger, Fil d\'Ariane à part, plus de Menu ni de Formulaire type)', page.locator('[data-action="fonction-presente"]').count() >= 7 and all(n in page.inner_text('.liste-fonctions') for n in ('En-tête', 'navigation principale, menu burger', 'Fil d\'Ariane', 'Fenêtre modale (ouverture, fermeture)')) and not any(n in page.inner_text('.liste-fonctions') for n in ('Formulaire type', 'Retour ou fil', 'Menu ou menu burger')))
         page.click('[data-action="fonction-presente"][data-id="nav"]')
         page.fill('#fonction-nouvelle', 'Bandeau cookies')
         page.click('[data-action="fonction-ajout"]')

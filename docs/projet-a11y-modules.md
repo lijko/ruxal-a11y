@@ -44,15 +44,16 @@ Les fonctions primaires appartiennent au **projet**, pas à un onglet : c'est le
 - Au niveau du projet : la liste des fonctions et leur état (observations, statuts).
 - Dans chaque onglet : les écrans où chaque fonction apparaît.
 
-Liste préréglée, modifiable :
-- navigation principale ;
-- menu ou menu burger ;
+Liste préréglée, modifiable (RUXAWEB 2.23) :
+- en-tête ;
+- navigation (navigation principale, menu burger) ;
+- fil d'Ariane ;
 - recherche ;
-- formulaire type (connexion, contact) ;
-- fenêtre modale et sa fermeture ;
-- retour ou fil d'Ariane ;
+- fenêtre modale (ouverture, fermeture) ;
 - notifications et messages ;
 - pied de page.
+
+Règle : une fonction ne regroupe que des éléments présents sur les mêmes écrans, puisque ses observations valent sur tous ses écrans (le fil d'Ariane, souvent absent de l'accueil, est donc à part). Pas de « formulaire type » : chaque formulaire s'audite sur son écran ; un formulaire réellement répété (newsletter) s'ajoute à la main. Les projets enregistrés avec l'ancienne liste sont migrés à l'ouverture (fonction ancienne gardée comme fonction ajoutée si elle a servi).
 
 Pour chaque fonction, le testeur indique si elle existe et, dans chaque onglet, sur quels écrans elle apparaît. Chaque fonction présente devient un **élément répété** préparé d'avance : ses observations valent sur tous les écrans cochés, dans tous les onglets, sans ressaisie (même règle qu'aujourd'hui : un NC vaut NC sur ces écrans, un C y reste à confirmer).
 
