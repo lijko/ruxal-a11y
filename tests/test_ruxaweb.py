@@ -149,6 +149,9 @@ def main():
         # Menu de gauche : stylo « Modifier les écrans » sur le titre de la liste ; « Ce que contient l'écran » dans la ligne de l'écran.
         stylo = page.locator('.ecrans .titre-liste [data-vue="preparer"]')
         verifier('Écrans : stylo sur le titre de la liste, libellé et bulle', stylo.count() == 1 and stylo.get_attribute('aria-label') == 'Modifier les écrans' and stylo.get_attribute('data-bulle') == 'Modifier les écrans')
+        centres = page.evaluate("""Array.prototype.map.call(document.querySelectorAll('.btn-icone'), function(b){ var r = b.getBoundingClientRect(), i = b.querySelector('svg').getBoundingClientRect();
+          return Math.round(Math.abs((i.left + i.right) / 2 - (r.left + r.right) / 2) + Math.abs((i.top + i.bottom) / 2 - (r.top + r.bottom) / 2)); })""")
+        verifier('Boutons icône : icône centrée dans le bouton (étapes, stylo)', len(centres) == 2 and max(centres) == 0, centres)
         verifier('Écrans : plus de liens sous la liste', page.locator('.ecrans [data-action="configurer"]').count() == 0)
         verifier('Ligne de l\'écran : « Ce que contient l\'écran » en lien, avec le nom et le badge', page.locator('.tete-ecran > span:first-child .ref-btn[data-action="configurer"]').inner_text().strip() == 'Ce que contient l\'écran')
 
