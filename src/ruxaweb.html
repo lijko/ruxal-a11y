@@ -114,7 +114,7 @@ RUXAWEB 2 : audit par observations.
   .barre .tags .tag{min-height:34px;font-weight:700;padding:0 14px}
 
   /* ---------- Onglets ---------- */
-  /* Ligne des onglets : les onglets défilent à l'horizontale ; la bascule du panneau des étapes reste fixe à droite, alignée sur le bord du panneau. */
+  /* Ligne des onglets : les onglets défilent à l'horizontale. */
   .ligne-onglets{max-width:var(--largeur);margin:0 auto;padding:0 var(--gouttiere) 12px;display:flex;align-items:center;gap:12px}
   nav.onglets{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;align-items:stretch}
   .onglet-tab{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:1px;text-align:left;padding:7px 14px;min-height:52px;min-width:120px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer}
@@ -212,12 +212,11 @@ RUXAWEB 2 : audit par observations.
   .menu-liste{max-width:calc(100vw - 32px)}
   .menu-liste button{text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer;white-space:nowrap}
   .menu-liste button:hover{background:var(--accent-soft)}
-  dialog{border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;max-width:760px;width:calc(100% - 32px);background:var(--surface-raised);color:var(--ink);box-shadow:var(--shadow-pop)}
+  dialog{border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;max-width:760px;width:calc(100% - 32px);background:var(--surface-raised);color:var(--ink);box-shadow:var(--shadow-pop);overflow:hidden}
   dialog::backdrop{background:rgba(10,15,20,.55)}
-  /* Fenêtre : seul le corps défile ; l'en-tête (titre et Fermer) reste visible. La marge de défilement garde
-     l'élément qui reçoit le focus sous l'en-tête, jamais derrière (WCAG 2.2, 2.4.11 Focus non masqué). */
+  /* Fenêtre : seul le corps défile ; l'en-tête (titre et Fermer) et le pied (action principale, s'il y en a un) restent visibles.
+     Les marges de défilement gardent l'élément qui reçoit le focus entre les deux, jamais derrière (WCAG 2.2, 2.4.11 Focus non masqué). */
   .dlg{padding:0 24px 24px;display:flex;flex-direction:column;gap:14px;max-height:min(82vh, calc(100dvh - 48px));overflow:auto;scroll-padding-top:88px;scroll-padding-bottom:88px;overscroll-behavior:contain}
-  dialog{overflow:hidden} /* seul le corps défile : l'en-tête et le pied de la fenêtre restent visibles */
   .dlg-pied{position:sticky;bottom:-24px;z-index:1;margin:0 -24px -24px;padding:12px 24px 16px;background:var(--surface-raised);border-top:1px solid var(--border-soft)}
   .dlg-tete{position:sticky;top:0;z-index:1;margin:0 -24px;padding:20px 24px 12px;background:var(--surface-raised);border-bottom:1px solid var(--border-soft)}
   @media (max-width:640px){
@@ -246,8 +245,6 @@ RUXAWEB 2 : audit par observations.
   .btn-bascule:hover::after,.btn-bascule:focus-visible::after{display:block}
   .btn-bascule.sans-bulle::after{display:none}
   .btn-bascule .ico{width:20px;height:20px}
-  .emplacement-etapes{display:inline-flex}
-  .emplacement-etapes:empty{display:none}
   .btn-bascule[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
   /* Ouverture : apparition douce du panneau, sans déplacer le contenu. */
   @keyframes panneau-entree{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
@@ -284,7 +281,6 @@ RUXAWEB 2 : audit par observations.
   .titre-onglet{gap:12px}
   .titre-onglet h1{margin-right:4px}
   .info-court{display:none}
-  .rappel-import p{margin:0}
   /* Bandeau de l'onglet (titre, Observation / Grille, compteur, bouton des étapes) et ligne de l'écran collants sous l'en-tête.
      Après défilement, l'en-tête se replie (classe entete-compacte, posée par le script) : ses commandes restent dans la page et focalisables,
      et il se redéploie dès que le focus y entre ou qu'on revient en haut. Pas de collant ni de repli si la fenêtre est basse (zoom). */
@@ -529,7 +525,6 @@ RUXAWEB 2 : audit par observations.
   </div>
   <div class="ligne-onglets">
     <nav class="onglets" id="onglet-nav" aria-label="Onglets de l'audit"></nav>
-    <button type="button" class="btn btn-s btn-bascule" id="btn-etapes" data-action="panneau-bascule" aria-controls="panneau-etapes" aria-expanded="true" hidden></button>
   </div>
 </header>
 <div class="page">
@@ -1188,21 +1183,18 @@ RUXAWEB 2 : audit par observations.
     document.querySelectorAll('#audit-support .tag').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-support') === state.support)); });
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
     var vues = {projet:vueProjet, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, resume:vueResume, referentiel:vueReferentiel};
-    var bEtapes = document.getElementById('btn-etapes'), focusEtapes = document.activeElement === bEtapes;
-    document.querySelector('.ligne-onglets').appendChild(bEtapes);
+    var focusEtapes = !!document.activeElement && document.activeElement.id === 'btn-etapes';
     $main.innerHTML = (vues[state.vue] || vueProjet)(o);
-    var place = $main.querySelector('.emplacement-etapes'); if(place) place.appendChild(bEtapes);
-    if(focusEtapes) bEtapes.focus({preventScroll:true});
+    if(focusEtapes) document.getElementById('btn-etapes').focus({preventScroll:true});
     ($main.querySelector('.centre') || $main).appendChild($pied);
     grilleRoving();
     // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
     var tab = $main.querySelector('.tableau'); if(tab) tab.classList.toggle('large', tab.scrollWidth > tab.clientWidth + 1);
     // Panneau des étapes masquable pendant l'audit : fermé, il disparaît et le contenu prend toute la largeur.
-    // Un seul bouton, dans la ligne des onglets (en-tête collant), l'affiche ou le masque. Projet et Référentiel l'affichent toujours.
+    // Un seul bouton, à droite du bandeau de l'onglet (boutonEtapes), l'affiche ou le masque. Projet et Référentiel l'affichent toujours, sans bouton.
     var ferme = panneauFerme(o);
     $etapes.classList.toggle('ferme', ferme);
     $etapes.innerHTML = ferme ? '' : vuePanneauEtapes(o);
-    majBoutonEtapes(o, ferme);
     calerEntete();
     focusPanneauEtapes();
     document.title = (o && state.vue !== 'projet' && state.vue !== 'referentiel' ? o.nom + ' · ' : '') + 'Projet A11Y - ' + (state.auditNom || 'sans nom') + ' · RUXAWEB';
@@ -1219,18 +1211,13 @@ RUXAWEB 2 : audit par observations.
   window.addEventListener('resize', function(){ focusPanneauEtapes(); });
   function titrePanneau(o){ return '<h2 id="panneau-etapes-titre" class="sr">'+(o && o.type === 'scenario' ? 'Étapes du scénario' : 'Étapes de l\'audit')+'</h2>'; }
   function panneauFerme(o){ return !!state.panneauReduit && !!o && state.vue !== 'projet' && state.vue !== 'referentiel'; }
-  function majBoutonEtapes(o, ferme){
-    var b = document.getElementById('btn-etapes');
-    var dansOnglet = !!o && state.vue !== 'projet' && state.vue !== 'referentiel';
-    b.hidden = !dansOnglet;
-    if(!dansOnglet) return;
+  // Bouton des étapes, à droite du bandeau de chaque vue d'un onglet. Panneau fermé, le libellé lu rappelle l'étape en cours.
+  function boutonEtapes(o){
+    var ferme = panneauFerme(o), bulle = ferme ? 'Voir les étapes' : 'Masquer les étapes';
     var et = state.vue === 'audit' && ETAPE[state.etape] ? (ETAPE[state.etape].i + 1)+'/'+ETAPES.length+' '+(ETAPE[state.etape].court || ETAPE[state.etape].nom)
       : ({preparer:'Préparer les écrans', ux:'Lecture POUR/UX', grille:'Compléter la grille', resume:'Résumé et exports'})[state.vue] || '';
-    var bulle = ferme ? 'Voir les étapes' : 'Masquer les étapes';
-    b.setAttribute('aria-expanded', String(!ferme));
-    b.setAttribute('aria-label', bulle + (ferme && et ? ' (étape '+et+')' : ''));
-    b.setAttribute('data-bulle', bulle); b.removeAttribute('title');
-    b.innerHTML = ico('panneau');
+    return '<button type="button" class="btn btn-s btn-bascule" id="btn-etapes" data-action="panneau-bascule" aria-controls="panneau-etapes" aria-expanded="'+!ferme+'"' +
+      ' aria-label="'+esc(bulle + (ferme && et ? ' (étape '+et+')' : ''))+'" data-bulle="'+bulle+'">'+ico('panneau')+'</button>';
   }
   function vuePanneauEtapes(o){
     var html = '<ol class="liste-etapes" id="liste-etapes">';
@@ -1402,7 +1389,7 @@ RUXAWEB 2 : audit par observations.
   }
   function vuePreparer(o){
     var mini = o.type === 'scenario' ? 2 : 3;
-    var html = '<div class="rangee entre titre-onglet"><h1>Écrans de l\'onglet</h1><span class="emplacement-etapes"></span></div><section class="carte pile" aria-label="Onglet"><div class="grille2">' +
+    var html = '<div class="rangee entre titre-onglet"><h1>Écrans de l\'onglet</h1>'+boutonEtapes(o)+'</div><section class="carte pile" aria-label="Onglet"><div class="grille2">' +
       '<div class="champ"><label class="lbl" for="onglet-nom">Nom de l\'onglet<span class="oblig" aria-hidden="true">*</span></label>' +
           '<input type="text" id="onglet-nom" value="'+esc(o.nom)+'" autocomplete="off" aria-required="true"></div>' +
       '<fieldset class="groupe-nu champ"><legend class="lbl">Type</legend><div class="rangee">' +
@@ -1478,7 +1465,7 @@ RUXAWEB 2 : audit par observations.
   }
   function cadreOnglet(o, vue, info, contenu){
     var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
-    var html = '<div class="rangee entre titre-onglet"><span class="rangee"><h1>'+esc(o.nom)+'</h1>'+bascule(vue)+info+'</span><span class="emplacement-etapes"></span></div>';
+    var html = '<div class="rangee entre titre-onglet"><span class="rangee"><h1>'+esc(o.nom)+'</h1>'+bascule(vue)+info+'</span>'+boutonEtapes(o)+'</div>';
     var fC = vue === 'audit' ? fonctionCourante(o) : null;
     html += '<div class="audit"><nav class="ecrans" aria-label="Écrans et éléments partagés">';
     var fo = fonctionsOnglet(o);
@@ -1547,7 +1534,7 @@ RUXAWEB 2 : audit par observations.
     if(et.id === 'vide'){
       var att = pistesEnAttente(o, e).length;
       // Une seule ligne : le bouton d'import est déjà dans la ligne de l'écran, juste au-dessus.
-      html += '<section class="carte rappel-import" aria-labelledby="t-import-vide"><p class="doux petit"><b id="t-import-vide">Import automatique</b> : ' +
+      html += '<section class="carte" aria-labelledby="t-import-vide"><p class="sans-marge doux petit"><b id="t-import-vide">Import automatique</b> : ' +
           (att ? pluriel(att, 'piste axe ou Lighthouse en attente', 'pistes axe ou Lighthouse en attente')+', elles apparaîtront à l\'étape où chaque critère se vérifie.' : 'lance axe ou Lighthouse pendant ton tour à vide, puis importe le rapport avec le bouton ci-dessus. Les pistes apparaîtront à l\'étape où chaque critère se vérifie.')+'</p></section>';
     }
     html += formulaireObs(o, e, et);
@@ -1884,7 +1871,7 @@ RUXAWEB 2 : audit par observations.
   }
   function vueUx(o){
     var r = scoreUx(o);
-    var html = '<div class="rangee entre titre-onglet"><h1>Lecture POUR/UX du parcours</h1><span class="rangee"><span class="doux">Score '+(r.pct != null ? r.pct+' %' : 'non calculé')+' · hors taux</span><span class="emplacement-etapes"></span></span></div>';
+    var html = '<div class="rangee entre titre-onglet"><h1>Lecture POUR/UX du parcours</h1><span class="rangee"><span class="doux">Score '+(r.pct != null ? r.pct+' %' : 'non calculé')+' · hors taux</span>'+boutonEtapes(o)+'</span></div>';
     html += '<section class="carte">' + HEURISTIQUES.map(function(h){
       var cur = (o.heuristiques || {})[h.id] || {};
       return '<div class="retour-ligne obs"><div class="souple-320 corps"><span id="heur-'+h.id+'">'+esc(h.texte)+'</span>' +
@@ -1899,7 +1886,7 @@ RUXAWEB 2 : audit par observations.
 
   function vueResume(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
-    var html = '<div class="rangee entre titre-onglet"><h1>Résumé : '+esc(o.nom)+'</h1><span class="emplacement-etapes"></span></div><section class="carte pile" aria-label="Taux"><div class="taux">' +
+    var html = '<div class="rangee entre titre-onglet"><h1>Résumé : '+esc(o.nom)+'</h1>'+boutonEtapes(o)+'</div><section class="carte pile" aria-label="Taux"><div class="taux">' +
       '<div><div class="lbl">Taux sélection SIP</div>'+(t.complet ? (function(){ var nv = niveauTaux(t.pct); return '<div class="val niv-'+nv.cle+'">'+t.pct+' %</div><div class="niveau niv-'+nv.cle+'">'+nv.lib+'</div>'; })() : '<div class="val"><span class="taille-15 pastille s-NT">incomplet</span></div>') +
           '<div class="doux petit">'+t.C+' conformes sur '+t.total+' applicables · '+SELECTION.length+' critères</div></div>' +
       (o.type === 'scenario' ? '' : '<div><div class="lbl">Taux élargi</div>' +
@@ -2622,11 +2609,13 @@ RUXAWEB 2 : audit par observations.
   })();
 
   // Bulle du bouton des étapes : Échap la ferme jusqu'à ce que le pointeur ou le focus quitte le bouton (WCAG 1.4.13).
-  (function(){
+  document.addEventListener('keydown', function(ev){
     var x = document.getElementById('btn-etapes');
-    document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && (x.matches(':hover') || document.activeElement === x)) x.classList.add('sans-bulle'); });
-    ['mouseleave', 'blur'].forEach(function(t){ x.addEventListener(t, function(){ x.classList.remove('sans-bulle'); }); });
-  })();
+    if(ev.key === 'Escape' && x && (x.matches(':hover') || document.activeElement === x)) x.classList.add('sans-bulle');
+  });
+  ['mouseleave', 'blur'].forEach(function(t){
+    document.addEventListener(t, function(ev){ if(ev.target.id === 'btn-etapes') ev.target.classList.remove('sans-bulle'); }, true);
+  });
 
   // Repli de l'en-tête au défilement : deux états francs, sans animation. Seuils écartés (160 / 24 px) pour éviter le va-et-vient
   // quand la hauteur de l'en-tête change. Le focus dans l'en-tête le redéploie, et il reste déployé tant que le focus y est.

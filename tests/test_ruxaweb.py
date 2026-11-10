@@ -31,7 +31,7 @@ def verifier(nom, condition, detail=''):
 
 
 def aller_audit(page):
-    """Vue Saisie de l'onglet en cours, depuis n'importe quelle vue (onglet courant dans la ligne des onglets)."""
+    """Vue Observation de l'onglet en cours, depuis n'importe quelle vue (onglet courant dans la ligne des onglets)."""
     page.click('#onglet-nav .onglet-tab[aria-current="page"]')
 
 
@@ -517,7 +517,7 @@ def main():
         page.emulate_media(media='screen')
         page.locator('[data-action="ouvrir"]').first.click()
         aller_audit(page)
-        verifier('Saisie : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
+        verifier('Observation : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 62)
 
@@ -608,7 +608,7 @@ def main():
         verifier('Enregistrer puis dupliquer : modification gardée, copie ouverte', [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == orig['id']][0]['texte'].startswith('Bouton Fermer sans nom, lu') and 'copie' in page.inner_text('#form-obs-titre'))
         page.click('[data-action="nouvelle-obs"]')
 
-        # Panneau des étapes masquable : un seul bouton, dans la ligne des onglets, toujours au même endroit.
+        # Panneau des étapes masquable : un seul bouton, dans le bandeau de l'onglet, toujours au même endroit.
         lm = page.evaluate("document.getElementById('main').getBoundingClientRect().width")
         pos = page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()")
         verifier('Bouton du panneau : visible dans le bandeau de l\'onglet, panneau ouvert', page.locator('#btn-etapes').is_visible() and page.get_attribute('#btn-etapes', 'aria-expanded') == 'true' and page.locator('#panneau-etapes [data-action="panneau-bascule"]').count() == 0)
@@ -647,7 +647,7 @@ def main():
         verifier('Retirer un critère : il passe en « Retiré », avec Remettre', page.locator('[data-action="retirer-crit"][data-retirer="raweb-10-7"]').count() == 0 and page.locator('[data-action="remettre-crit"][data-retirer="raweb-10-7"]').count() == 1)
         page.click('[data-action="remettre-crit"][data-retirer="raweb-10-7"]')
         verifier('Remettre un critère retiré', page.locator('[data-action="retirer-crit"][data-retirer="raweb-10-7"]').count() == 1 and 'Visibilité du focus' in page.inner_text('.crit-retenus'))
-        verifier('Saisie : recherche repliée (correction) et renvoi vers la grille', page.evaluate("document.getElementById('det-ajout').open") is False and 'Va dans la grille' in page.inner_text('#form-obs'))
+        verifier('Observation : recherche repliée (correction) et renvoi vers la grille', page.evaluate("document.getElementById('det-ajout').open") is False and 'Va dans la grille' in page.inner_text('#form-obs'))
         verifier('Recherche : une seule ligne par critère (pas de doublon)', page.evaluate("(function(){var v=[].map.call(document.querySelectorAll('#liste-criteres option'),function(o){return o.getAttribute('data-crit')});return v.length===new Set(v).size && v.length>50})()"))
         verifier('Formulaire : plus de champ Point de contrôle ni de résultat, deux questions, aide NC', page.locator('#obs-point').count() == 0 and page.locator('#form-obs h3.sous-titre-form').count() == 2 and 'non conformes' in page.inner_text('#aide-resultat'))
         page.click('#form-obs details summary')
