@@ -65,14 +65,13 @@ def chercher(page, point=None, element=None, crit=None):
         page.wait_for_timeout(50)
 
 
-def observer(page, texte, point=None, element=None, tag='nc', partage=None, crit=None):
+def observer(page, texte, point=None, element=None, partage=None, crit=None):
     aller_audit(page)
     page.fill('#obs-texte', texte)
     if point:
         chercher(page, point, element)
     if crit:
         chercher(page, crit=crit)
-    page.click('[data-action="tag"][data-tag="%s"]' % tag)
     if partage:
         nom, quels = partage
         if nom:
@@ -166,9 +165,9 @@ def main():
         vu = page.locator('[data-action="ecran"] .petit').first.inner_text()
         lu = page.evaluate("Array.from(document.querySelectorAll('[data-action=\"ecran\"] .petit .sr')).map(function(x){ return x.textContent; }).join(' / ')")
         verifier('Compteur du menu : « N NC » affiché, critères non conformes lus en clair', ' NC' in vu and 'non conforme' in lu, vu + ' | ' + lu)
-        # Partout #c : conforme ici, à confirmer ailleurs.
-        observer(page, 'Liens du pied de page explicites.', point='nom-non-pertinent', element=2, tag='c', partage=('Pied de page', None))
-        verifier('Élément répété, #c : C ici, à confirmer ailleurs', [statut(page, i, 'raweb-6-1') for i in range(3)] == ['C', 'C ?', 'C ?'])
+        # Une observation décrit un défaut : pas de choix de résultat dans le formulaire (C dans la grille, NA par le contenu de l'écran).
+        aller_audit(page)
+        verifier('Observation : pas de boutons C / NC / NA', page.locator('#form-obs [data-action="tag"]').count() == 0)
         # Sans écran coché, l'observation reste propre à l'écran ; sur un écran sans formulaire, le critère reste NA.
         observer(page, 'Étiquette du champ e-mail absente.', point='etiquette')
         verifier('Sans autre écran coché : 11.1 NC sur cet écran seulement', [statut(page, i, 'raweb-11-1') for i in range(3)] == ['NC', 'NA', 'NA'])
@@ -190,7 +189,7 @@ def main():
 
         # Note libre : aucun statut.
         avant = page.evaluate('RUXAWEB.state().onglets[0].obs.length')
-        observer(page, 'Page chargée lentement.', tag='c')
+        observer(page, 'Page chargée lentement.')
         verifier('Note libre enregistrée sans critère', page.evaluate('RUXAWEB.state().onglets[0].obs.slice(-1)[0].criteres.length') == 0 and page.evaluate('RUXAWEB.state().onglets[0].obs.length') == avant + 1)
         page.fill('#obs-texte', '')
         page.click('[data-action="enregistrer-nouvelle"]')
@@ -211,6 +210,10 @@ def main():
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : colonne Résultat (et non Onglet)', 'Résultat' in page.locator('thead').inner_text() and 'Onglet' not in page.locator('thead').inner_text())
         verifier('Grille : les cases d\'écran sont des boutons', page.locator('td.statut [data-action="cellule"]').count() > 0)
+        page.click('[data-action="grille-filtre"][data-v="definir"]')
+        verifier('Grille : filtre NA proposé', page.locator('[data-action="grille-filtre"][data-v="na"]').count() == 1)
+        page.click('[data-action="grille-filtre"][data-v="na"]')
+        verifier('Grille : filtre NA, chaque ligne a un NA', page.locator('tbody tr:not(.theme)').count() > 0 and all(page.locator('tbody tr:not(.theme)').nth(i).locator('.s-NA').count() > 0 for i in range(page.locator('tbody tr:not(.theme)').count())))
         page.click('[data-action="grille-filtre"][data-v="definir"]')
         verifier('Grille : filtre À définir, chaque ligne a encore un NT', all(page.locator('tbody tr:not(.theme)').nth(i).locator('.s-NT, .s-AC').count() > 0 for i in range(page.locator('tbody tr:not(.theme)').count())))
         nt = page.locator('td.statut [data-action="cellule"]:has(.s-NT)').first
@@ -353,7 +356,10 @@ def main():
         verifier('Clavier : retour sur la case à la fermeture', page.evaluate('document.activeElement.classList.contains("cel-btn")'))
         # Contenus et fonctions, à tout moment, dans une fenêtre.
         page.click('[data-action="configurer"]')
-        verifier('Configuration : fenêtre avec en-tête fixe et interrupteurs', page.locator('#dlg .dlg-tete').count() == 1 and page.locator('#dlg [data-action="contenu"]').count() > 0)
+        verifier('Contenus de l\'écran : un écran à la fois, sans fonctions primaires', page.locator('#dlg .dlg-tete').count() == 1 and page.locator('#dlg [data-action="contenu"]').count() == 8 and page.locator('#dlg [data-fonction-ecran]').count() == 0 and page.locator('#dlg [data-action="config-ecran"]').count() >= 2)
+        page.locator('#dlg [data-action="config-ecran"]').nth(1).click()
+        verifier('Contenus de l\'écran : changer d\'écran, focus gardé', page.locator('#dlg [data-action="config-ecran"]').nth(1).get_attribute('aria-pressed') == 'true' and page.evaluate('document.activeElement.dataset.action === "config-ecran"'))
+        page.locator('#dlg [data-action="config-ecran"]').nth(0).click()
         sw = page.locator('#dlg [data-action="contenu"][data-d="formulaire"]').first
         etat = sw.get_attribute('aria-checked')
         sw.click()
@@ -387,7 +393,6 @@ def main():
         page.fill('#obs-texte', 'Le focus reste sur le bouton Continuer après le passage à l\'étape suivante.')
         chercher(page, 'ordre-focus')
         page.select_option('#obs-vers', index=1)
-        page.click('[data-action="tag"][data-tag="nc"]')
         page.click('[data-action="enregistrer-nouvelle"]')
         verifier('Scénario : transition affichée Écran -> Écran', ' -> ' in page.locator('#t-obs').locator('xpath=..').inner_text())
         page.click('[data-action="vue"][data-vue="ux"]')
@@ -512,10 +517,6 @@ def main():
         page.emulate_media(media='screen')
         page.locator('[data-action="ouvrir"]').first.click()
         aller_audit(page)
-        page.click('[data-action="tag"][data-tag="c"]')
-        verifier('Résultat : aide qui suit le choix (C)', 'restent à confirmer' in page.inner_text('#aide-resultat') and page.get_attribute('[data-action="tag"][data-tag="c"]', 'aria-describedby') == 'aide-resultat')
-        page.click('[data-action="tag"][data-tag="nc"]')
-        verifier('Résultat : aide qui suit le choix (NC)', 'non conformes' in page.inner_text('#aide-resultat'))
         verifier('Saisie : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 61)
@@ -558,7 +559,6 @@ def main():
         # Modifier une observation : une note devient non conforme avec un critère.
         aller_audit(page)
         page.fill('#obs-texte', 'Un seul facteur pour montrer l\'état actif.')
-        page.click('[data-action="tag"][data-tag="nc"]')
         page.click('[data-action="enregistrer-nouvelle"]')
         note = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs.slice(-1)[0]')
         verifier('Note enregistrée sans critère', note['criteres'] == [])
@@ -621,7 +621,7 @@ def main():
         verifier('Remettre un critère retiré', page.locator('[data-action="retirer-crit"][data-retirer="raweb-10-7"]').count() == 1 and 'Visibilité du focus' in page.inner_text('.crit-retenus'))
         verifier('Saisie : recherche repliée (correction) et renvoi vers la grille', page.evaluate("document.getElementById('det-ajout').open") is False and 'Va dans la grille' in page.inner_text('#form-obs'))
         verifier('Recherche : une seule ligne par critère (pas de doublon)', page.evaluate("(function(){var v=[].map.call(document.querySelectorAll('#liste-criteres option'),function(o){return o.getAttribute('data-crit')});return v.length===new Set(v).size && v.length>50})()"))
-        verifier('Formulaire : plus de champ Point de contrôle, trois questions, bouton qui dit le résultat', page.locator('#obs-point').count() == 0 and page.locator('#form-obs h3.sous-titre-form').count() == 3 and 'Enregistrer : non conforme' in page.inner_text('#form-obs button[type=submit]'))
+        verifier('Formulaire : plus de champ Point de contrôle ni de résultat, deux questions, aide NC', page.locator('#obs-point').count() == 0 and page.locator('#form-obs h3.sous-titre-form').count() == 2 and 'non conformes' in page.inner_text('#aide-resultat'))
         page.click('#form-obs details summary')
         verifier('Attendu : aide sur le ticket Jira', 'Expected behavior' in page.inner_text('#aide-attendu'))
         verifier('Champs obligatoires : Observation marquée, Attendu facultatif', page.get_attribute('#obs-texte', 'aria-required') == 'true' and page.locator('label[for="obs-texte"] .oblig').count() == 1 and 'facultatif' in page.inner_text('label[for="obs-attendu"]') and page.locator('label[for="obs-attendu"] .oblig').count() == 0)
@@ -634,19 +634,19 @@ def main():
 
         # Coller des observations : format lisible, changement d'écran, critères proposés si absents.
         page.click('[data-action="coller-obs"]')
-        verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and 'status | element | observation | criteria' in page.input_value('#consigne-dlg') and '13.11 pointer action can be cancelled' in page.input_value('#consigne-dlg') and 'SCREENS OF THIS AUDIT' in page.input_value('#consigne-dlg'))
+        verifier('Coller : fenêtre avec consigne pour une IA', page.locator('#dlg #coller-texte').count() == 1 and 'RAWeb 1.1' in page.input_value('#consigne-dlg') and 'element | observation | criteria' in page.input_value('#consigne-dlg') and 'status |' not in page.input_value('#consigne-dlg') and '13.11 pointer action can be cancelled' in page.input_value('#consigne-dlg') and 'SCREENS OF THIS AUDIT' in page.input_value('#consigne-dlg'))
         cons_agent = (pathlib.Path(__file__).parent.parent / 'docs' / 'copilot' / 'consigne-observation-ruxaweb.txt').read_text(encoding='utf-8').strip()
         verifier('Consigne IA : identique à celle de l\'agent Copilot RUXAWEB', page.input_value('#consigne-dlg').startswith(cons_agent))
         verifier('Consigne IA : anglais par défaut et cas particuliers', all(k in page.input_value('#consigne-dlg') for k in ('Always write in English', 'special cases')))
         noms = page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].ecrans.map(function(e){return e.nom})')
-        page.fill('#coller-texte', 'NC | Menu principal | Focus invisible dans le menu. | 10.7\n- C | | Les titres sont bien hiérarchisés. |\nÉcran : %s\nLe contraste du texte gris clair est trop faible\nNC | button "Payer" | Bouton sans nom. | 99.9' % noms[1])
+        page.fill('#coller-texte', 'NC | Menu principal | Focus invisible dans le menu. | 10.7\n- C | | Les titres sont bien hiérarchisés. |\nÉcran : %s\nLe contraste du texte gris clair est trop faible\nbutton "Payer" | Bouton sans nom. | 99.9' % noms[1])
         page.click('[data-action="coller-ok"]')
         page.wait_for_timeout(100)
         pistes = [k for k in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats') if k.get('source') == 'collage']
-        verifier('Coller : 4 pistes lues', len(pistes) == 4, [p['titre'] for p in pistes])
+        verifier('Coller : 3 pistes lues (ligne C écartée, signalée)', len(pistes) == 3 and 'C ignoré' in page.inner_text('#statut'), [p['titre'] for p in pistes])
         verifier('Coller : statut, élément, critère lus', pistes[0]['tag'] == 'nc' and pistes[0]['element'] == 'Menu principal' and pistes[0]['criteres'] == ['raweb-10-7'])
-        verifier('Coller : ligne C sans critère', pistes[1]['tag'] == 'c' and pistes[1]['titre'].startswith('Les titres'))
-        verifier('Coller : « Écran : » change d\'écran, critère proposé par mots-clés', pistes[2]['ecran'] != pistes[0]['ecran'] and pistes[2]['propose'] and 'raweb-3-2' in pistes[2]['criteres'], pistes[2])
+        verifier('Coller : ligne sans statut (format actuel) lue comme un défaut', pistes[2]['tag'] == 'nc' and pistes[2]['element'] == 'button "Payer"')
+        verifier('Coller : « Écran : » change d\'écran, critère proposé par mots-clés', pistes[1]['ecran'] != pistes[0]['ecran'] and pistes[1]['propose'] and 'raweb-3-2' in pistes[1]['criteres'], pistes[1])
         verifier('Coller : critère inconnu signalé', '99.9' in page.inner_text('#statut'))
         # Lignes rendues par une IA avec la consigne : point de contrôle (et type) à la place des critères.
         page.click('[data-action="coller-obs"]')
