@@ -84,10 +84,8 @@ def observer(page, texte, point=None, element=None, partage=None, crit=None):
 
 
 def aller_etape(page, etape):
-    """Étape du protocole, par la liste des étapes (dépliée au besoin)."""
+    """Étape du protocole, par la liste des étapes du panneau."""
     aller_audit(page)
-    if page.locator('#liste-etapes').is_hidden():
-        page.click('[data-action="etapes-bascule"]')
     page.click('#liste-etapes [data-etape="%s"]' % etape)
 
 
@@ -141,18 +139,18 @@ def main():
         verifier('Contenu des écrans : interrupteur activé', sw.get_attribute('role') == 'switch' and sw.get_attribute('aria-checked') == 'true')
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         verifier('Audit : formulaire d\'observation', page.locator('#form-obs').count() == 1)
-        verifier('Parcours replié pendant l\'audit, étape en cours visible', page.locator('#liste-etapes').is_hidden() and 'Tour à vide' in page.locator('#panneau-etapes .en-cours').inner_text())
-        page.click('[data-action="etapes-bascule"]')
-        bas = page.locator('[data-action="etapes-bascule"]')
-        verifier('Parcours déplié au clic, état annoncé, focus gardé', page.locator('#liste-etapes').is_visible() and bas.get_attribute('aria-expanded') == 'true' and page.evaluate('document.activeElement.dataset.action') == 'etapes-bascule')
-        verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#liste-etapes .ici').inner_text())
-        page.click('[data-action="etapes-bascule"]')
-        verifier('Parcours replié de nouveau', page.locator('#liste-etapes').is_hidden())
-        page.click('.nav-etapes [aria-label^="Suivante"]')
-        verifier('Parcours replié : Suivante mène à l\'étape 1', 'Usage standard' in page.locator('#panneau-etapes .en-cours').inner_text())
-        page.click('.nav-etapes [aria-label^="Précédente"]')
-        verifier('Parcours replié : Précédente revient au tour à vide', 'Tour à vide' in page.locator('#panneau-etapes .en-cours').inner_text())
-        page.click('[data-action="etapes-bascule"]')
+        # Panneau des étapes : la liste seule, à partir de « Avant », toujours affichée ; on change d'étape en cliquant dessus.
+        verifier('Panneau des étapes : la liste seule, toujours affichée', page.locator('#liste-etapes').is_visible() and page.locator('#panneau-etapes .phase').first.text_content().strip() == 'Avant' and page.locator('#panneau-etapes .points, #panneau-etapes [data-action="etapes-bascule"]').count() == 0)
+        verifier('Aide : étape Tour à vide en cours', 'Tour à vide' in page.locator('#liste-etapes [aria-current="step"]').inner_text())
+        page.click('#liste-etapes [data-etape="1"]')
+        verifier('Liste des étapes : clic sur l\'étape 1', 'Usage standard' in page.locator('#liste-etapes [aria-current="step"]').inner_text())
+        page.click('#liste-etapes [data-etape="vide"]')
+        verifier('Liste des étapes : retour au tour à vide', 'Tour à vide' in page.locator('#liste-etapes [aria-current="step"]').inner_text())
+        # Menu de gauche : stylo « Modifier les écrans » sur le titre de la liste ; « Ce que contient l'écran » dans la ligne de l'écran.
+        stylo = page.locator('.ecrans .titre-liste [data-vue="preparer"]')
+        verifier('Écrans : stylo sur le titre de la liste, libellé et bulle', stylo.count() == 1 and stylo.get_attribute('aria-label') == 'Modifier les écrans' and stylo.get_attribute('data-bulle') == 'Modifier les écrans')
+        verifier('Écrans : plus de liens sous la liste', page.locator('.ecrans [data-action="configurer"]').count() == 0)
+        verifier('Ligne de l\'écran : « Ce que contient l\'écran »', page.locator('.tete-ecran [data-action="configurer"]').inner_text().strip() == 'Ce que contient l\'écran')
 
         page.click('[data-action="vue"][data-vue="grille"]')
         groupes = page.locator('tr.theme').all_inner_texts()
@@ -358,11 +356,12 @@ def main():
         page.keyboard.press('Escape')
         page.wait_for_timeout(100)
         verifier('Clavier : retour sur la case à la fermeture', page.evaluate('document.activeElement.classList.contains("cel-btn")'))
-        # Contenus et fonctions, à tout moment, dans une fenêtre.
-        page.click('[data-action="configurer"]')
-        verifier('Contenus de l\'écran : un écran à la fois, sans fonctions primaires', page.locator('#dlg .dlg-tete').count() == 1 and page.locator('#dlg [data-action="contenu"]').count() == 8 and page.locator('#dlg [data-fonction-ecran]').count() == 0 and page.locator('#dlg [data-action="config-ecran"]').count() >= 2)
+        # Contenus de l'écran, à tout moment, dans une fenêtre (depuis la ligne de l'écran).
+        aller_audit(page)
+        page.click('.tete-ecran [data-action="configurer"]')
+        verifier('Ce que contient l\'écran : un écran à la fois, sans fonctions primaires', page.locator('#dlg .dlg-tete').count() == 1 and page.locator('#dlg [data-action="contenu"]').count() == 8 and page.locator('#dlg [data-fonction-ecran]').count() == 0 and page.locator('#dlg [data-action="config-ecran"]').count() >= 2)
         page.locator('#dlg [data-action="config-ecran"]').nth(1).click()
-        verifier('Contenus de l\'écran : changer d\'écran, focus gardé', page.locator('#dlg [data-action="config-ecran"]').nth(1).get_attribute('aria-pressed') == 'true' and page.evaluate('document.activeElement.dataset.action === "config-ecran"'))
+        verifier('Ce que contient l\'écran : changer d\'écran, focus gardé', page.locator('#dlg [data-action="config-ecran"]').nth(1).get_attribute('aria-pressed') == 'true' and page.evaluate('document.activeElement.dataset.action === "config-ecran"'))
         page.locator('#dlg [data-action="config-ecran"]').nth(0).click()
         sw = page.locator('#dlg [data-action="contenu"][data-d="formulaire"]').first
         etat = sw.get_attribute('aria-checked')
@@ -372,7 +371,7 @@ def main():
         sw2.click()
         page.keyboard.press('Escape')
         page.wait_for_timeout(100)
-        verifier('État d\'interface jamais enregistré', page.evaluate('["ficheEcran","grilleFiltre","confirmation"].every(function(k){ return !(k in RUXAWEB.state()); })'))
+        verifier('État d\'interface jamais enregistré', page.evaluate('["ficheEcran","grilleFiltre","confirmation","panneauReduit","parcoursOuvert"].every(function(k){ return !(k in RUXAWEB.state()); })'))
         # Sauvegarde 2.0 ou 2.1 : statuts de clôture et nom de partage normalisés à l'ouverture.
         v20 = pathlib.Path(tempfile.mkdtemp()) / 'v20.json'
         v20.write_text(json.dumps({'v': 2, 'auditNom': 'v20', 'support': 'desktop', 'vue': 'cloture', 'compteur': 2, 'exportesJira': [], 'grilleFiltre': 'definir',
@@ -530,7 +529,7 @@ def main():
         page.click('[data-action="nouvel-onglet"]')
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         def en_cours():
-            return page.locator('#panneau-etapes .en-cours').inner_text(), page.locator('.ecrans [aria-current="true"]').inner_text()
+            return page.locator('#liste-etapes [aria-current="step"]').inner_text(), page.locator('.ecrans [aria-current="true"]').inner_text()
         verifier('Étape d\'abord : départ Tour à vide sur le premier écran', 'Tour à vide' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
         verifier('Étape d\'abord : bouton vers l\'écran suivant', 'Valider puis passer à : Écran avec formulaire' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
@@ -544,7 +543,6 @@ def main():
         verifier('Étape d\'abord : bouton vers l\'étape suivante', 'Valider puis passer à : étape Usage standard' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
         verifier('Étape d\'abord : étape suivante sur le premier écran', 'Usage standard' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
-        page.click('[data-action="etapes-bascule"]')
         verifier('Étape d\'abord : Tour à vide fait (3/3 validés)', '3/3 validés' in page.locator('#liste-etapes').inner_text() and '(fait)' in page.locator('#liste-etapes [data-etape="vide"]').inner_text())
 
         page.click('[data-action="vue"][data-vue="grille"]')
@@ -851,8 +849,6 @@ def main():
         verifier('Jira : fonction primaire notée All screens [..], thème anglais', len(tf) == 1 and 'All screens [Navigation]: ' in tf[0][0] and '| Navigation & structure |' in tf[0][0], [r[0] for r in lignesF])
         verifier('Jira : un ticket pour la fonction, avec ses écrans des deux onglets', len(tf) == 1 and 'Navigation' in tf[0][1] and ' : ' in tf[0][1].split('\n')[1], [r[0] for r in lignesF])
         aller_audit(page)
-        if page.locator('#liste-etapes').is_hidden():
-            page.click('[data-action="etapes-bascule"]')
         page.click('#liste-etapes [data-vue="resume"]')
         verifier('Résumé : état des fonctions primaires', 'Fonctions primaires' in page.inner_text('main') and '1 NC (10.7)' in page.inner_text('main'), page.inner_text('main')[:300])
 
