@@ -608,6 +608,20 @@ def main():
         verifier('Enregistrer puis dupliquer : modification gardée, copie ouverte', [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == orig['id']][0]['texte'].startswith('Bouton Fermer sans nom, lu') and 'copie' in page.inner_text('#form-obs-titre'))
         page.click('[data-action="nouvelle-obs"]')
 
+        # Panneau des étapes masquable : fermé, il disparaît, le contenu prend toute la largeur, un bouton le rouvre.
+        lm = page.evaluate("document.getElementById('main').getBoundingClientRect().width")
+        page.click('#panneau-etapes [data-action="panneau-bascule"]')
+        verifier('Panneau masqué : disparu, contenu élargi, bouton Étapes focalisé avec l\'étape en cours', page.locator('#panneau-etapes').is_hidden() and page.evaluate("document.getElementById('main').getBoundingClientRect().width") > lm + 200 and page.evaluate("document.activeElement.closest('.rouvrir-etapes') !== null") and page.get_attribute('.rouvrir-etapes [data-action="panneau-bascule"]', 'aria-expanded') == 'false' and '/' in page.inner_text('.rouvrir-etapes'))
+        page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
+        verifier('Panneau masqué : le reste pendant l\'audit (grille)', page.locator('.rouvrir-etapes').count() == 1)
+        page.click('#btn-ref')
+        verifier('Référentiel : panneau toujours affiché, sans bouton Masquer', page.locator('#panneau-etapes').is_visible() and page.locator('#panneau-etapes [data-action="panneau-bascule"]').count() == 0)
+        page.click('#onglet-nav .onglet-tab[data-id="%s"]' % page.evaluate('RUXAWEB.state().ongletId'))
+        aller_audit(page)
+        page.click('.rouvrir-etapes [data-action="panneau-bascule"]')
+        verifier('Panneau rouvert : focus sur Masquer le panneau', page.locator('#panneau-etapes').is_visible() and page.locator('.rouvrir-etapes').count() == 0 and page.evaluate("document.activeElement.textContent").strip() == 'Masquer le panneau')
+        verifier('Formulaire : « Qu\'as-tu observé ? », un seul bouton Enregistrer, aide sans critère', "Qu'as-tu observé ?" in page.text_content('#form-obs h3.sous-titre-form') and page.inner_text('#form-obs button[type=submit]').strip() == 'Enregistrer' and page.locator('#aide-sans-critere').count() == 1)
+
         # Suggestions pendant la frappe.
         aller_audit(page)
         page.fill('#obs-texte', 'On ne voit pas le focus quand je tabule dans le menu')
