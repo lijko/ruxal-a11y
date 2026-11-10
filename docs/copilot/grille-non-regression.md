@@ -43,3 +43,8 @@ Passer les cas 1 et 4, en précisant l'application (par exemple « application P
 - Rubriques en titre 1, dans l'ordre : Flow(s) / Screen(s) / Element(s) in concern, Actual behavior / Impact, Expected behavior, Recommendations, Reference.
 - Reference : `RAWeb 1.1, Criterion 3.3: <intitulé officiel>` puis le lien `...#crit-3-3` ; intitulé vérifié dans le fichier.
 - Puis « Suggested priority: » et « Suggested tags: » (design pour le cas 1, code pour le cas 4).
+
+Cas sans contexte : coller seulement « Le cadre de focus n'est pas assez épais ni assez contrasté. »
+- Critères choisis malgré tout (**10.7**, et 3.3 accepté), avec leur intitulé : jamais `<X.Y>` ni `{Criterion X.Y}`.
+- Application, écran et élément manquants écrits `{Application}`, `{Screen}`, `{Element}` (jamais un emplacement vide ni un élément inventé), repris sous « To clarify: » avec l'hypothèse « site web ».
+- « Suggested tags: » `design` ou `design, code`, jamais « both ».
