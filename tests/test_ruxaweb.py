@@ -112,6 +112,7 @@ def main():
         erreurs = []
         page.on('pageerror', lambda e: erreurs.append(str(e)))
         page.goto(URL)
+        verifier('En-tête : version de l\'outil affichée depuis la constante', page.inner_text('#version') == page.evaluate('RUXAWEB.version'), page.inner_text('#version'))
         verifier('Ouverture : page Projet', page.locator('h1').inner_text().startswith('Projet A11Y') and page.locator('#t-nouveau').count() == 1 and page.locator('#t-fonctions').count() == 1)
         verifier('Panneau des étapes présent, déplié sur le tableau de bord, titre masqué', page.locator('#panneau-etapes .liste-etapes li').count() >= 9 and page.locator('#liste-etapes').is_visible() and 'Étapes' in page.locator('#panneau-etapes-titre').inner_text() and 'sr' in (page.get_attribute('#panneau-etapes-titre', 'class') or ''))
         txt = page.content().lower()

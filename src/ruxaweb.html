@@ -497,7 +497,7 @@ RUXAWEB 2 : audit par observations.
 <a class="lien-evitement" href="#main">Aller au contenu</a>
 <header class="barre">
   <div class="barre-in">
-    <button class="marque" type="button" data-action="projet"><span class="marque-nom">RUXAWEB</span><small>Atelier d'audit · RAWeb 1.1 · 2.3</small></button>
+    <button class="marque" type="button" data-action="projet"><span class="marque-nom">RUXAWEB</span><small>Atelier d'audit · RAWeb 1.1 · <span id="version"></span></small></button>
     <div class="projet-champ">
       <span class="prefixe-projet" aria-hidden="true">Projet A11Y -</span>
       <label class="sr" for="audit-nom">Nom du projet (Projet A11Y)</label>
@@ -2584,6 +2584,7 @@ RUXAWEB 2 : audit par observations.
   }
 
   // ---------- Démarrage ----------
+  document.getElementById('version').textContent = VERSION;
   // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : le panneau des étapes, la colonne des écrans et l'en-tête de la grille se calent toujours dessous.
   // --barre-h : hauteur de l'en-tête ; --tete-h : en-tête plus bandeau de l'onglet quand celui-ci est collant (sous ce total : ligne de l'écran, colonnes, en-tête de la grille).
   // --bandeau-ext : largeur dont le bandeau dépasse à droite pour couvrir le panneau des étapes ouvert (même ligne que le contenu).
