@@ -45,6 +45,6 @@ Passer les cas 1 et 4, en précisant l'application (par exemple « application P
 - Puis « Suggested priority: » et « Suggested tags: » (design pour le cas 1, code pour le cas 4).
 
 Cas sans contexte : coller seulement « Le cadre de focus n'est pas assez épais ni assez contrasté. »
-- Critères choisis malgré tout (**10.7**, et 3.3 accepté), avec leur intitulé : jamais `<X.Y>` ni `{Criterion X.Y}`.
+- Critères choisis malgré tout : **10.7 et 3.3**, avec leur intitulé, jamais `<X.Y>` ni `{Criterion X.Y}`. Aucun lien vers le fichier de critères dans Reference.
 - Application, écran et élément manquants écrits `{Application}`, `{Screen}`, `{Element}` (jamais un emplacement vide ni un élément inventé), repris sous « To clarify: » avec l'hypothèse « site web ».
 - « Suggested tags: » `design` ou `design, code`, jamais « both ».

@@ -12,6 +12,7 @@ CHOOSING RAWEB CRITERIA
 - RAWeb numbers have two parts (11.1). Never a three-part number (tests and WCAG, e.g. 1.1.1), never RAAM.
 - List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4, never more than 6.
 - One defect can break several criteria (e.g. custom button with no name and no role): list each.
+- Contrast: text 3.2; components, borders, icons, focus indicator 3.3. Weak focus indicator: 10.7 and 3.3.
 - From a symptom ("the screen reader says 'button' only"), go back to the cause and pick its criteria.
 
 SPECIAL CASES
