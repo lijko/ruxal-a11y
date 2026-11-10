@@ -172,7 +172,7 @@
             "raam-2-1": {
               "statut": "NC",
               "commentaire": "Les promotions actives ne sont signalées que par la couleur rouge du libellé.",
-              "element": "Accueil[link \"Promotions\"]"
+              "element": "[link \"Promotions\"]"
             }
           },
           "ec_958lvng": {
@@ -307,7 +307,7 @@
             "raam-11-9": {
               "statut": "NC",
               "commentaire": "L'écran reste bloqué en portrait : en paysage, le formulaire est tronqué.",
-              "element": "Connexion"
+              "element": ""
             }
           },
           "ec_rusbz9r": {
@@ -442,7 +442,7 @@
             "raam-10-1": {
               "statut": "NC",
               "commentaire": "Après enregistrement, le focus revient en haut de l'écran au lieu du message de confirmation.",
-              "element": "Profil[button \"Enregistrer\"]"
+              "element": "[button \"Enregistrer\"]"
             }
           }
         },

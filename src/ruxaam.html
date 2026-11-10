@@ -562,6 +562,7 @@ Details : README.md
   .presence-actions{margin-top:10px; display:flex; justify-content:flex-end;}
   .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
   .element-label-row{justify-content:flex-start !important; gap:8px;}
+  .apercu-element{margin:4px 0 0; font-size:13px;}
   .element-input{font:inherit; font-size:14px; color:var(--ink); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 10px; width:100%; max-width:480px;}
   .aide-table{border-collapse:collapse; width:100%; font-size:13px; margin:0 0 10px;}
   .aide-table th, .aide-table td{padding:6px 10px; border-top:1px solid var(--border); text-align:left;}
@@ -1180,7 +1181,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   // Numéro de version de l'outil (affiché sur l'écran Aide, repris dans les exports JSON), à incrémenter à
   // chaque évolution notable, indépendamment de "version" dans buildFullStatePayload (qui est un numéro de
   // format de fichier, pas de l'outil).
-  var APP_VERSION = '1.31';
+  var APP_VERSION = '1.32';
   // Noms anglais des thèmes RUXAL, utilisés dans le titre des tickets Jira (l'interface garde les noms français).
   var THEME_EN = {'Navigation & structure':'Navigation & structure', 'Composants interactifs':'Interactive components', 'Images & médias':'Images & media',
     'Couleurs & contrastes':'Colors & contrast', 'Contenu & lisibilité':'Content & readability', 'Fondations techniques':'Technical foundations', 'Formulaires':'Forms'};
@@ -1188,6 +1189,84 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   var TAG_DESIGN = ['2.1','2.2','2.3','8.6','9.1','11.7'];
   var TAG_CODE = ['1.1','4.5','5.1','5.2','5.4','6.1','6.2','8.1','9.2','10.1','10.2','10.3','11.12','12.3'];
   function tagsJira(c){ return TAG_DESIGN.indexOf(c.raam) > -1 ? ['design'] : TAG_CODE.indexOf(c.raam) > -1 ? ['code'] : ['design', 'code']; }
+  // Clé de comparaison d'un nom (casse, espaces et accents ignorés).
+  function cleNom(n){ return String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+  // ---------- Notation des éléments ----------
+  // Écran.zone[type "libellé"] (état) : le point descend dans la hiérarchie (écran, zone, sous-zone), les crochets visent l'élément,
+  // générique ([liens]) ou précis ([lien "écrivez-nous"]), l'état suit entre parenthèses. All : tous les écrans. -> : un parcours.
+  // Le champ « Élément concerné » contient ce qui suit l'écran (footer[liens], [bouton "Payer"] (désactivé)) : l'outil ajoute l'écran.
+  // Anciennes notations converties : Écran[type "Libellé"].état (écran retiré, état entre parenthèses), "Libellé" type (état)
+  // devenu [type "Libellé"] (état), type "Libellé" devenu [type "Libellé"], « conteneur, élément » devenu conteneur[élément], le nom de
+  // l'écran seul devenu vide. Plusieurs éléments dans un champ, ou un parcours (->) : laissé tel quel.
+  function normaliserElement(n, ecrans){
+    n = String(n || '').replace(/\s+/g, ' ').trim();
+    if(!n || n.indexOf(';') > -1 || n.indexOf('->') > -1 || (n.match(/\[/g) || []).length > 1) return n;
+    if((ecrans || []).some(function(e){ return cleNom(e.nom) === cleNom(n); })) return '';
+    var etat = '', m;
+    if((m = /^(.*\S)\s*\(([^()"]*)\)$/.exec(n))){ n = m[1]; etat = m[2].trim(); }
+    else if((m = /^(.*\])\s*\.?\s*([A-Za-zÀ-ÿ-]+)$/.exec(n))){ n = m[1]; etat = m[2]; }
+    var res;
+    if(n.indexOf('[') > -1){
+      m = /^(.*?)\s*\[\s*([^\]]*?)\s*\]$/.exec(n);
+      if(!m) return n + (etat ? ' (' + etat + ')' : '');
+      var avant = m[1].trim(), dedans = m[2].replace(/^([^"]*[^\s"])"/, '$1 "'), t = /^"([^"]*)"\s*(.+)$/.exec(dedans);
+      if(t) dedans = t[2].trim() + ' "' + t[1] + '"';
+      var tete = avant.split('.')[0].trim(), k = cleNom(tete);
+      if(!k || k === 'all' || k === 'all screens' || k === 'tous' || (ecrans || []).some(function(e){ return cleNom(e.nom) === k; })) avant = avant.slice(tete.length).replace(/^\s*\.\s*/, '');
+      res = avant + '[' + dedans + ']';
+    } else {
+      var parts = n.match(/(?:"[^"]*"|[^,])+/g).map(function(x){ return x.trim(); }).filter(Boolean);
+      var dernier = parts.pop(), cible = /^"([^"]*)"\s+(.+)$/.exec(dernier), typeLib = /^([^"]+?)\s*"([^"]*)"$/.exec(dernier);
+      var zones = parts.map(function(z){ return z.replace(/"/g, '').replace(/\s+/g, ' ').trim(); });
+      if(cible) dernier = '[' + cible[2].trim() + ' "' + cible[1] + '"]';
+      else if(typeLib) dernier = '[' + typeLib[1].trim() + ' "' + typeLib[2] + '"]';
+      else if(zones.length || estType(dernier)) dernier = '[' + dernier + ']';
+      res = zones.join('.') + (zones.length && dernier.charAt(0) !== '[' ? '.' : '') + dernier;
+    }
+    return res + (etat ? ' (' + etat + ')' : '');
+  }
+  // Type d'élément connu (lien, button, liste…) : un mot seul de ce genre est une cible ([list]), tout autre mot une zone (Footer).
+  var TYPES_ELEMENT = ['button','buttons','link','links','field','fields','checkbox','checkboxes','radio button','radio buttons','switch','switches','form','forms','list','lists','image','images','tab','tabs','dialog','dialogs','card','cards','heading','headings','table','tables','icon','icons','video','videos','carousel'];
+  function estType(mot){ var k = cleNom(enAnglais(mot)); return TYPES_ELEMENT.indexOf(k) > -1; }
+  // Notation complète : le lieu (écran, All) puis le champ Élément ; un point devant une zone, rien devant un ciblage ou un état.
+  // Un parcours (->) saisi dans le champ part tel quel, sans écran devant.
+  function notationComplete(lieu, el){ return !el ? lieu : el.indexOf('->') > -1 ? el : lieu + (/^[\[(]/.test(el) ? '' : '.') + el; }
+  // Sortie Jira en anglais : zones, types et états traduits ; les libellés entre guillemets, jamais.
+  var VOCABULAIRE_EN = [['cases à cocher','checkboxes'],['case à cocher','checkbox'],['boutons radio','radio buttons'],['bouton radio','radio button'],
+    ['navigation principale','main navigation'],['menu principal','main menu'],['fenêtres modales','dialogs'],['fenêtre modale','dialog'],['modales','dialogs'],['modale','dialog'],['pied de page','footer'],['en-tête','header'],
+    ["fil d'ariane",'breadcrumb'],['notifications et messages','notifications and messages'],["messages d'erreur",'error messages'],["message d'erreur",'error message'],
+    ['liens','links'],['lien','link'],['boutons','buttons'],['bouton','button'],['champs','fields'],['champ','field'],['interrupteurs','switches'],['interrupteur','switch'],
+    ['formulaires','forms'],['formulaire','form'],['listes','lists'],['liste','list'],['onglets','tabs'],['onglet','tab'],['cartes','cards'],['carte','card'],
+    ['titres','headings'],['titre','heading'],['tableaux','tables'],['tableau','table'],['icônes','icons'],['icône','icon'],['textes','texts'],['texte','text'],
+    ['vidéos','videos'],['vidéo','video'],['carrousel','carousel'],['recherche','search'],['bannière','banner'],
+    ['désactivés','disabled'],['désactivées','disabled'],['désactivée','disabled'],['désactivé','disabled'],['ouverte','open'],['ouvert','open'],['fermée','closed'],['fermé','closed'],
+    ['dépliée','expanded'],['déplié','expanded'],['repliée','collapsed'],['replié','collapsed'],['sélectionnée','selected'],['sélectionné','selected'],
+    ['cochée','checked'],['coché','checked'],['en erreur','error'],['obligatoire','required'],['au survol','hover'],['survol','hover']];
+  // Un parcours (->) n'enchaîne que des noms d'écrans : rien à traduire.
+  function enAnglais(n){
+    if(String(n || '').indexOf('->') > -1) return String(n);
+    return String(n || '').split(/("[^"]*")/).map(function(bout, i){
+      if(i % 2) return bout;
+      VOCABULAIRE_EN.forEach(function(v){
+        bout = bout.replace(new RegExp('(^|[^a-zà-ÿ])' + v[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![a-zà-ÿ])', 'gi'), function(t, avant){ return avant + v[1]; });
+      });
+      return bout;
+    }).join('');
+  }
+  // Anciennes sauvegardes : l'élément noté avec l'écran (Accueil ["Connexion" button]) devient ce qui suit l'écran ([button "Connexion"]).
+  function migrerElements(st){
+    if(!st || !Array.isArray(st.onglets)) return;
+    st.onglets.forEach(function(o){
+      Object.keys(o.resultats || {}).forEach(function(eid){
+        Object.keys(o.resultats[eid] || {}).forEach(function(cid){ var r = o.resultats[eid][cid]; if(r && r.element) r.element = normaliserElement(r.element, o.ecrans || []); });
+      });
+    });
+  }
+  // Aperçu sous un champ « Élément concerné » : la ligne du ticket (écran ajouté, notation convertie et traduite comme à l'export).
+  function apercuElement(nomEcran, val, ecrans){
+    var el = normaliserElement(val, ecrans);
+    return el ? 'Dans le ticket : <code>' + escapeHtml(notationComplete(nomEcran, enAnglais(el))) + '</code>' : '';
+  }
   function tousEcrans(){ var l = []; state.onglets.forEach(function(o){ o.ecrans.forEach(function(e){ if(l.indexOf(e.nom) === -1) l.push(e.nom); }); }); return l; }
 
   // <<< DEBUT_DONNEES : généré par scripts/build_ruxaam.py depuis data/, ne pas modifier à la main >>>
@@ -1357,6 +1436,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   if(!state.exportesJira || typeof state.exportesJira !== 'object') state.exportesJira = {};
   if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
   migrerPresences(state);
+  migrerElements(state);
 
   function saveState(){
     try{ localStorage.setItem('atelier-ruxal-state', JSON.stringify(state)); }catch(e){ /* stockage indisponible : on continue sans persistance */ }
@@ -1426,7 +1506,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     var r = o.resultats[ecranId] && o.resultats[ecranId][critereId];
     return r ? (r.commentaire||'') : '';
   }
-  // Élément concerné (notation « Écran ["Libellé" type] », voir l'Aide) : une ligne, propre à un critère et à un écran.
+  // Élément concerné : ce qui suit l'écran, en notation Écran.zone[type "libellé"] (état) (voir l'Aide) ; une ligne, propre à un critère et à un écran.
   function getElementCritere(o, ecranId, critereId){
     var r = o.resultats[ecranId] && o.resultats[ecranId][critereId];
     return r ? (r.element||'') : '';
@@ -1818,20 +1898,18 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   }
   function renderAideNotation(){
     return '<h3 id="aide-notation" tabindex="-1" style="margin:18px 0 6px;">Noter les éléments</h3>' + boutonRetourChamp() +
-      '<p class="muted" style="margin:0 0 8px;">Une notation simple pour désigner ce qui est en cause : <b>crochets = élément, flèche = parcours</b>. Elle sert dans le champ « Élément concerné » et dans tes commentaires ; l\'export Jira la reprend telle quelle.</p>' +
+      '<p class="muted" style="margin:0 0 8px;">Une notation simple pour désigner ce qui est en cause : <b>le point descend dans la hiérarchie, les crochets visent l\'élément, la flèche enchaîne un parcours</b>. Le champ « Élément concerné » reçoit ce qui suit l\'écran : l\'outil ajoute l\'écran, et l\'aperçu sous le champ montre la ligne du ticket.</p>' +
       '<table class="aide-table"><caption class="sr-only">Notation des écrans, éléments et parcours</caption><thead><tr><th scope="col">Ce que tu désignes</th><th scope="col">Notation</th><th scope="col">Exemple</th></tr></thead><tbody>' +
-      [['Un écran','Écran','Produits'],['Un élément','Écran ["Libellé" type]','Accueil ["Connexion" button]'],['Un élément dans un autre','Écran ["Libellé" type, "Libellé" type]','Contact ["Nous écrire" form, "Email" field]'],['Un élément sur tous les écrans','All screens ["Libellé" type]','All screens [Main navigation, "Accueil" tab]'],['Un élément dans un état','Écran ["Libellé" type] (état)','Accueil ["Valider" button] (disabled)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
+      [['Un écran','Écran','Produits'],['Tous les éléments d\'un type','Écran[type]','Accueil[liens]'],['Un élément précis','Écran[type "libellé"]','Accueil[bouton "Connexion"]'],['Une zone','Écran.zone','Accueil.footer'],['Un élément dans une zone','Écran.zone[type "libellé"]','Contact.formulaire[champ "Email"]'],['Sur tous les écrans','All.zone[type]','All.footer[liens]'],['Un élément dans un état','Écran[type "libellé"] (état)','Accueil[bouton "Valider"] (désactivé)'],['Un parcours','Écran -> Écran','Accueil -> Produits -> Détail produit']].map(function(r){
         return '<tr><th scope="row">'+escapeHtml(r[0])+'</th><td><code>'+escapeHtml(r[1])+'</code></td><td><code>'+escapeHtml(r[2])+'</code></td></tr>';
       }).join('') + '</tbody></table>' +
       '<ul class="aide-liste">' +
-        '<li>La notation sert à retrouver l\'élément, pas à le décrire : un seul crochet, en mots ordinaires.</li>' +
-        '<li>Libellé entre guillemets, type en clair, du plus large au plus précis, séparés par une virgule. Pas de points ni de crochets imbriqués.</li>' +
-        '<li>Élément présent sur tous les écrans (navigation, header, footer) : All screens à la place du nom d\'écran. Un défaut d\'écran présent partout : All screens seul.</li>' +
-        '<li>L\'état seulement s\'il faut le provoquer pour voir le défaut (disabled, selected, expanded, error). Sinon, dis-le dans le commentaire.</li>' +
-        '<li>Types courants : header, button, link, field, form, list, image, tab, checkbox, dialog, card.</li>' +
-        '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt; ["Consommation" card]</code>.</li>' +
+        '<li>Dans le champ, sans l\'écran : <code>footer[liens]</code>, <code>[bouton "Fermer"]</code>. L\'état entre parenthèses, seulement s\'il faut le provoquer pour voir le défaut.</li>' +
+        '<li>Les crochets visent l\'élément : de façon générique, le type seul au pluriel (<code>[liens]</code>), ou précise, le type puis le libellé entre guillemets. Pas de crochets imbriqués.</li>' +
+        '<li>Sur plusieurs écrans, le titre du ticket les sépare par un point-virgule et le corps donne une ligne complète par écran ; sur tous les écrans de l\'audit : <code>All</code>.</li>' +
+        '<li>Français ou anglais : l\'export Jira traduit en anglais les zones, types et états connus (lien, bouton, champ, case à cocher, formulaire, liste, onglet, fenêtre modale, pied de page, en-tête, désactivé, ouvert, coché…). Les libellés entre guillemets ne sont jamais traduits.</li>' +
+        '<li>Écran ou élément inconnu : des chevrons, par exemple <code>&lt;Écran&gt;[carte "Consommation"]</code>.</li>' +
         '<li>N\'utilise pas le caractère | (il sert de séparateur dans le titre du ticket).</li>' +
-        '<li>Types et états en anglais, noms d\'écrans et libellés comme dans l\'application.</li>' +
       '</ul>' + boutonRetourChamp();
   }
 
@@ -2814,7 +2892,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       return '<div class="nc-followup-ecran">' +
         '<div class="comment-label-row element-label-row"><label class="comment-label" for="'+elId+'">Élément concerné'+(multi ? ' ('+escapeHtml(e.nom)+')' : '')+'</label>' +
           '<button type="button" class="icon-btn" data-action="aide-notation" data-focus="'+elId+'" aria-label="Aide : comment noter l\'élément" title="Aide : comment noter l\'élément">'+ICON_AIDE+'</button></div>' +
-        '<input type="text" class="element-input" id="'+elId+'" name="'+elId+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="set-element-critere" data-crit="'+c.id+'" data-ecran="'+e.id+'" value="'+escapeHtml(getElementCritere(o, e.id, c.id))+'" placeholder="Ex. '+(multi ? escapeHtml(e.nom) : 'Accueil')+' [&quot;Fermer&quot; button]">' +
+        '<input type="text" class="element-input" id="'+elId+'" name="'+elId+'-'+AUTOFILL_GUARD+'" autocomplete="off" data-action="set-element-critere" data-crit="'+c.id+'" data-ecran="'+e.id+'" value="'+escapeHtml(getElementCritere(o, e.id, c.id))+'" placeholder="Ex. [bouton &quot;Fermer&quot;]" aria-describedby="apercu-'+elId+'">' +
+        '<p class="muted apercu-element" id="apercu-'+elId+'">'+apercuElement(e.nom, getElementCritere(o, e.id, c.id), o.ecrans)+'</p>' +
         '<div class="comment-label-row"><label class="comment-label" for="comment-'+o.id+'-'+c.id+'-'+e.id+'">'+labelTxt+'</label>' +
           commentaireToolbarHtml(c.id, e.id) +
         '</div>' +
@@ -2999,6 +3078,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       if(typeof state.filtreRetest !== 'boolean') state.filtreRetest = false;
       if(['ios','android','cross'].indexOf(state.plateforme) === -1) state.plateforme = '';
       migrerPresences(state);
+      migrerElements(state);
       confirmDeleteId = null; resetArmed = false;
       state.view = 'dashboard';
       saveState();
@@ -3094,20 +3174,20 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       var c = it.c;
       var theme = THEME_EN[c.theme_ruxal] || c.theme_ruxal;
       var multi = it.concernes.length > 1;
-      var ecransNoms = [], objets = [], touches = [], elems = [];
+      var objets = [], touches = [], elems = [];
       var propre = function(t){ return String(t||'').replace(/\s+/g,' ').replace(/\|/g,'/').trim(); };
       it.concernes.forEach(function(x){ x.ecrans.forEach(function(e){
-        var el = propre(getElementCritere(x.o, e.id, c.id));
-        var nom = el || e.nom;
-        if(ecransNoms.indexOf(nom) === -1){ ecransNoms.push(nom); objets.push(el || (e.nom+' [<element>]')); }
+        var el = enAnglais(normaliserElement(propre(getElementCritere(x.o, e.id, c.id)), x.o.ecrans));
+        var ligne = el ? notationComplete(e.nom, el) : e.nom+'[<element>]';
+        if(objets.indexOf(ligne) === -1) objets.push(ligne);
         if(touches.indexOf(e.nom) === -1) touches.push(e.nom);
         elems.push(el);
       }); });
-      // Emplacement du titre : un élément répété identique partout, sinon « All screens » si tous les écrans de l'audit
-      // sont touchés, sinon les écrans (ou éléments) concernés.
-      var lieu = ecransNoms.join(', ');
-      if(elems.length > 1 && elems[0] && elems.every(function(v){ return v === elems[0]; })) lieu = elems[0];
-      else if(touches.length > 1 && tousEcrans().every(function(n){ return touches.indexOf(n) > -1; })) lieu = 'All screens';
+      // Emplacement du titre (notation Écran.zone[type "libellé"]) : tous les écrans de l'audit touchés, All (avec l'élément
+      // s'il est le même partout) ; un seul écran, sa ligne ; sinon les écrans séparés par « ; » (le corps en donne une ligne chacun).
+      var memeEl = elems[0] && elems.every(function(v){ return v === elems[0]; }) ? elems[0] : '';
+      var lieu = touches.length > 1 && tousEcrans().every(function(n){ return touches.indexOf(n) > -1; }) ? notationComplete('All', memeEl)
+        : (objets.length === 1 ? objets[0] : touches.join('; '));
       var commentaires = it.concernes.map(function(x){
         var t = commentaireCritereTexte(x.o, c);
         return t ? (multi ? x.o.nom+' : '+t : t) : '';
@@ -3119,8 +3199,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       if(!defaut || defaut.split(/\s+/).length > 8) defaut = '<defect>';
       var summary = '[A11Y] | '+state.auditNom+' | '+theme+' | '+lieu+': '+defaut;
       if(summary.length > 250) summary = summary.slice(0, 247).trim() + '...';
-      // Notation de la skill : crochets = élément, flèche = flow. L'outil connaît les écrans, pas les éléments :
-      // l'élément reste à compléter (<...>), jamais entre crochets. Pas de référence WCAG dans le ticket.
+      // Notation : le point descend dans la hiérarchie, les crochets visent l'élément, la flèche enchaîne un parcours.
+      // Élément non saisi : à compléter (<element>). Pas de référence WCAG dans le ticket.
       var flowsTxt = [];
       it.concernes.forEach(function(x){
         if(x.o.scenario === 'flow' && x.o.ecrans.length > 1) flowsTxt.push(x.o.ecrans.map(function(e){ return e.nom; }).join(' -> '));
@@ -3132,7 +3212,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         : ['- RAAM 1.1, Criterion '+c.raam+': '+c.libelle_en, '  '+refUrl];
       var desc = [
         'h1. Flow(s) / Screen(s) / Element(s) in concern'
-      ].concat(flowsTxt, objets.length ? objets : ['<Screen> [<element>]'], [
+      ].concat(flowsTxt, objets.length ? objets : ['<Screen>[<element>]'], [
         '',
         'h1. Actual behavior / Impact',
         commentaires.length ? commentaires.join('\n') : '<to be completed>',
@@ -3784,6 +3864,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     if(!o) return;
     if(action==='set-element-critere'){
       setElementCritere(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.value);
+      var ap = document.getElementById('apercu-'+el.id), ec = o.ecrans.find(function(x){ return x.id === el.getAttribute('data-ecran'); });
+      if(ap && ec) ap.innerHTML = apercuElement(ec.nom, el.value, o.ecrans);
     } else if(action==='set-commentaire-critere'){
       setCommentaireCritere(o, el.getAttribute('data-ecran'), el.getAttribute('data-crit'), el.value);
     } else if(action==='set-commentaire-heur'){

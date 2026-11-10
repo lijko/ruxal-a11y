@@ -92,7 +92,7 @@
      ],
      "tag": "nc",
      "partage": null,
-     "elementNom": "input \"E-mail\""
+     "elementNom": "[input \"E-mail\"]"
     },
     {
      "id": "mvz3473b4u398",
@@ -539,7 +539,7 @@
     "bp2"
    ],
    "tag": "nc",
-   "elementNom": "Fenêtre modale",
+   "elementNom": "[Fenêtre modale]",
    "partage": null
   }
  ],

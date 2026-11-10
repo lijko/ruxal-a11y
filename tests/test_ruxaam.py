@@ -108,9 +108,9 @@ def main():
         verifier('Référentiel : consignes génériques (aucun raccourci ni menu de lecteur d\'écran)', not any(x in page.locator('.crit-explication').all_inner_texts().__str__() for x in ('Insert+', 'rotor', 'NVDA', 'VoiceOver', 'TalkBack', 'Colour Contrast')))
         page.click('#btnAide')
         aide = page.locator('#main').inner_text()
-        verifier('Aide : version 1.31', 'version 1.31' in aide)
+        verifier('Aide : version 1.32', 'version 1.32' in aide)
         verifier('Aide : section « Protocole de test »', 'Protocole de test' in aide and '4. Navigation alternative' in aide)
-        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran ["Libellé" type]' in aide)
+        verifier('Aide : section « Noter les éléments »', 'Noter les éléments' in aide and 'Écran.zone[type "libellé"]' in aide and 'All.footer[liens]' in aide)
         verifier('Aide : déclencheurs à jour', 'limite de session' in aide and 'lien coloré' not in aide)
         verifier('Aide : mémoire des exports Jira documentée', 'tout réexporter' in aide and 'pas réexporté automatiquement' in aide)
 
@@ -156,10 +156,11 @@ def main():
         verifier('NC : champ « Ticket Jira » absent', page.locator('[data-action="set-ticket-jira"]').count() == 0)
         champ = page.locator('[data-action="set-element-critere"][data-crit="raam-5-1"]').first
         verifier('NC : champ « Élément concerné »', champ.count() == 1)
-        champ.fill('Accueil[button "Valider"] | (disabled)')
+        champ.fill('[bouton "Oui | Non"] (désactivé)')
+        verifier('Élément : aperçu du ticket sous le champ, écran ajouté et traduit', 'Accueil[button "Oui | Non"] (disabled)' in page.locator('.apercu-element').first.inner_text(), page.locator('.apercu-element').first.inner_text())
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
-        verifier('Jira : élément concerné repris, | remplacé par /', f and 'Accueil[button ""Valider""] / (disabled)' in f, f and f[:300])
-        verifier('Jira : titre avec thème anglais et « Emplacement: défaut »', f and '| Interactive components | ' in f and '| Composants interactifs |' not in f and '| Interactive components | All screens: <defect>' in f, f and f[:300])
+        verifier('Jira : élément repris avec l\'écran, traduit, | remplacé par /', f and 'Accueil[button ""Oui / Non""] (disabled)' in f, f and f[:300])
+        verifier('Jira : titre avec thème anglais et « Emplacement: défaut »', f and '| Interactive components | ' in f and '| Composants interactifs |' not in f and '| Interactive components | All: <defect>' in f, f and f[:300])
         verifier('Jira : intitulé officiel anglais dans la référence', f and 'RAAM 1.1, Criterion 5.1: Is each user interface component, if necessary, compatible with assistive technologies (excluding special cases)?' in f)
         verifier('Jira sans plateforme : iOS et Android', f and '- iOS: <to be completed>' in f and '- Android: <to be completed>' in f)
         verifier('Jira sans plateforme : 9 colonnes (dont 2 pour les tags)', f and f.splitlines()[0].count(',') == 8, f and f.splitlines()[0])
@@ -219,7 +220,7 @@ def main():
                          'ecrans': [{'id': 'ec_1', 'nom': 'Accueil', 'commentaire': 'ancien'}], 'vue': 'audit', 'theming': 'sip',
                          'vueAudit': 'raam', 'heuristiques': {}, 'commentaireOnglet': '', 'valide': False,
                          'resultats': {'ec_1': {'raam-1-8': {'statut': 'NC', 'commentaire': ''}, 'raam-7-2': {'statut': 'C', 'commentaire': ''},
-                                                'raam-1-1': {'statut': 'NC', 'commentaire': ''}, 'raam-9-1': {'statut': 'C', 'commentaire': ''},
+                                                'raam-1-1': {'statut': 'NC', 'commentaire': '', 'element': 'Accueil ["Connexion" button] (disabled)'}, 'raam-9-1': {'statut': 'C', 'commentaire': ''},
                                                 'raam-11-2': {'statut': 'C', 'commentaire': ''}}}}]}}
         with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False, encoding='utf-8') as t:
             json.dump(ancienne, t)
@@ -234,6 +235,7 @@ def main():
         verifier('Import 1.21 : limite de session déduite du 11.2', etat.get('limiteSession') is True)
         verifier('Import 1.21 : critères évalués toujours visibles', page.locator('.crit-row', has=page.locator('[data-crit="raam-9-1"]')).count() == 1 and page.locator('.crit-row', has=page.locator('[data-crit="raam-11-2"]')).count() == 1)
         verifier('Import 1.21 : mémoire Jira vide', etat.get('exportesJira') == {})
+        verifier('Import 1.21 : élément converti à la nouvelle notation, sans l\'écran', etat['onglets'][0]['resultats']['ec_1']['raam-1-1'].get('element') == '[button "Connexion"] (disabled)', etat['onglets'][0]['resultats']['ec_1']['raam-1-1'].get('element'))
         f = telechargement(page, lambda: exporter(page, 'Tickets Jira (CSV)'))
         verifier('Import 1.21 : ancien « Ticket Jira » sans effet', f and 'RAAM-1.1' in f)
 

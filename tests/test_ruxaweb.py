@@ -695,7 +695,7 @@ def main():
         pistes = [k for k in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].candidats') if k.get('source') == 'collage']
         verifier('Coller : 3 pistes lues (ligne C écartée, signalée)', len(pistes) == 3 and 'C ignoré' in page.inner_text('#statut'), [p['titre'] for p in pistes])
         verifier('Coller : statut, élément, critère lus', pistes[0]['tag'] == 'nc' and pistes[0]['element'] == 'Menu principal' and pistes[0]['criteres'] == ['raweb-10-7'])
-        verifier('Coller : ligne sans statut (format actuel) lue comme un défaut', pistes[2]['tag'] == 'nc' and pistes[2]['element'] == 'button "Payer"')
+        verifier('Coller : ligne sans statut (format actuel) lue comme un défaut', pistes[2]['tag'] == 'nc' and pistes[2]['element'] == '[button "Payer"]', pistes[2]['element'])
         verifier('Coller : « Écran : » change d\'écran, critère proposé par mots-clés', pistes[1]['ecran'] != pistes[0]['ecran'] and pistes[1]['propose'] and 'raweb-3-2' in pistes[1]['criteres'], pistes[1])
         verifier('Coller : critère inconnu signalé', '99.9' in page.inner_text('#statut'))
         # Lignes rendues par une IA avec la consigne : point de contrôle (et type) à la place des critères.
