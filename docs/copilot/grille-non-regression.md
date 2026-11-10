@@ -27,7 +27,7 @@ Les critères attendus sont ceux de RUXAWEB (agent Observation -> RUXAWEB). L'ag
 - Le bloc de lignes est un bloc de code, en premier, jamais omis.
 - Lignes au format `élément | observation | critères` (ou `observation | critères` sans élément), sans statut en tête.
 - Observations en anglais (sauf cas 13), sans citations ni liens vers le fichier.
-- Critères en numéros seuls dans les lignes, uniquement parmi les 58 de RUXAWEB et BP1 à BP3.
+- Critères en numéros seuls dans les lignes, uniquement parmi les 59 de RUXAWEB et BP1 à BP3.
 - Coller la réponse entière dans RUXAWEB (Saisie, « Coller des observations ») : autant de pistes que de lignes, aucune piste créée par les explications.
 
 ## Agent [A11Y] Observation -> RAWeb

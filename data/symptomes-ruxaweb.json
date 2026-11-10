@@ -1,5 +1,5 @@
 {
-  "note": "Table symptôme vers critères de RUXAWEB, pour l'audit par observations (docs/audit-par-observations.md). Le testeur choisit un point de contrôle ; le tag de l'observation (#c, #nc, #na, #nt) donne le statut ; l'outil propose les critères, selon le type d'élément quand il y a lieu. Textes originaux. Brouillon du 27 octobre 2026, couvre les 58 critères RAWeb de RUXAWEB 1.7, non encore utilisé par l'outil.",
+  "note": "Table symptôme vers critères de RUXAWEB, pour l'audit par observations (docs/audit-par-observations.md). Le testeur choisit un point de contrôle ; le tag de l'observation (#c, #nc, #na, #nt) donne le statut ; l'outil propose les critères, selon le type d'élément quand il y a lieu. Textes originaux. Créée le 27 octobre 2026 ; couvre les 59 critères RAWeb de RUXAWEB 2.27.",
   "licence": "CC BY 4.0, Bertrand Kempf",
   "regles": [
     "Chaque critère RAWeb de l'outil (sélection du SIP et critères hors sélection) est atteignable par au moins un point de contrôle (vérifié par tests/test_symptomes_ruxaweb.py).",
