@@ -740,13 +740,15 @@ def main():
         page.locator('[data-action="ouvrir"]').first.click()
 
         # L'en-tête défile avec la page ; le panneau des étapes glisse avec le contenu, sans saut, puis colle sous le bandeau.
-        hauts = []
+        hauts, dessous = [], []
         for y in range(0, 400, 10):
             page.evaluate('window.scrollTo(0, %d)' % y)
             hauts.append(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top"))
+            dessous.append(round(hauts[-1] - page.evaluate("document.querySelector('.titre-onglet').getBoundingClientRect().bottom")))
         ecarts = [a - b for a, b in zip(hauts, hauts[1:])]
         cale = round(hauts[-1] - float(page.evaluate("parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tete-h'))")))
         verifier('Défilement : panneau des étapes sans saut, collé sous le bandeau', all(-0.5 <= e <= 10.5 for e in ecarts) and cale == 24, (max(ecarts), cale))
+        verifier('Défilement : le haut du panneau des étapes ne passe jamais sous le bandeau', min(dessous) >= 0, min(dessous))
         bandeau = page.evaluate("document.querySelector('.titre-onglet').getBoundingClientRect().top")
         entete = page.evaluate("document.querySelector('header.barre').getBoundingClientRect().bottom")
         verifier('Défilement : l\'en-tête part avec la page, le bandeau de l\'onglet colle en haut', round(bandeau) == 0 and entete <= 0, (bandeau, entete))
