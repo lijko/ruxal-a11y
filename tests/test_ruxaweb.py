@@ -150,7 +150,7 @@ def main():
         stylo = page.locator('.ecrans .titre-liste [data-vue="preparer"]')
         verifier('Écrans : stylo sur le titre de la liste, libellé et bulle', stylo.count() == 1 and stylo.get_attribute('aria-label') == 'Modifier les écrans' and stylo.get_attribute('data-bulle') == 'Modifier les écrans')
         verifier('Écrans : plus de liens sous la liste', page.locator('.ecrans [data-action="configurer"]').count() == 0)
-        verifier('Ligne de l\'écran : « Ce que contient l\'écran »', page.locator('.tete-ecran [data-action="configurer"]').inner_text().strip() == 'Ce que contient l\'écran')
+        verifier('Ligne de l\'écran : « Ce que contient l\'écran » en lien, avec le nom et le badge', page.locator('.tete-ecran > span:first-child .ref-btn[data-action="configurer"]').inner_text().strip() == 'Ce que contient l\'écran')
 
         page.click('[data-action="vue"][data-vue="grille"]')
         groupes = page.locator('tr.theme').all_inner_texts()
@@ -626,6 +626,10 @@ def main():
         aller_audit(page)
         page.click('#btn-etapes')
         verifier('Panneau rouvert : focus gardé sur le bouton', page.locator('#panneau-etapes').is_visible() and page.evaluate("document.activeElement.id") == 'btn-etapes' and page.get_attribute('#btn-etapes', 'aria-label') == 'Masquer les étapes' and page.get_attribute('#btn-etapes', 'data-bulle') == 'Masquer les étapes' and page.get_attribute('#btn-etapes', 'title') is None)
+        # Deuxième cycle : l'animation d'ouverture est rejouée, le bouton ne doit pas bouger pour autant.
+        page.click('#btn-etapes'); page.click('#btn-etapes')
+        rouvert_pos = page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()")
+        verifier('Bouton du panneau : même position à chaque réouverture, pendant l\'animation du panneau', rouvert_pos == pos, (pos, rouvert_pos))
         # Bandeau : « Observation » au lieu de « Saisie », compteur collé à la bascule, bulle au survol fermée par Échap.
         verifier('Bascule de vue : Observation et Grille', page.locator('.titre-onglet [data-vue="audit"]').inner_text().strip() == 'Observation')
         bx = page.evaluate("(function(){var a=document.querySelector('.titre-onglet .tags').getBoundingClientRect(),i=document.querySelector('.titre-onglet .tags + .doux');return i ? Math.round(i.getBoundingClientRect().left - a.right) : -1;})()")
