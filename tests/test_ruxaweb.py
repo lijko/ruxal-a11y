@@ -744,13 +744,25 @@ def main():
             page.wait_for_timeout(80)
             tops[nom] = round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
         verifier('Panneau des étapes collé sous l\'en-tête jusqu\'en bas de page, sur toutes les vues', all(v >= 16 for v in tops.values()), tops)
-        # Défilement : colonnes latérales immobiles (même position, même hauteur) du haut au bas de la page.
+        # Défilement : colonnes latérales immobiles (même position, même hauteur) du haut au bas de la page,
+        # à part un seul déplacement quand l'en-tête se replie (2.28) ; en bas de page, les deux colonnes sont alignées.
         page.locator('#onglet-nav .onglet-tab').nth(1).click()
         pos = set()
         for y in range(0, page.evaluate('document.body.scrollHeight'), 80):
             page.evaluate('window.scrollTo(0, %d)' % y)
             pos.add(page.evaluate('(function(){var a=document.getElementById("panneau-etapes").getBoundingClientRect(),e=document.querySelector("nav.ecrans").getBoundingClientRect();return [Math.round(a.top),Math.round(a.height),Math.round(e.top),Math.round(e.height)].join(",")})()'))
-        verifier('Défilement : panneau des étapes et colonne des écrans sans saut', len([x for x in pos if not x.startswith('-')]) >= 1 and len(set(x for x in pos)) <= 2, pos)
+        bas = page.evaluate('(function(){var a=document.getElementById("panneau-etapes").getBoundingClientRect(),e=document.querySelector("nav.ecrans").getBoundingClientRect();return [Math.round(a.top),Math.round(e.top)];})()')
+        verifier('Défilement : panneau des étapes et colonne des écrans sans saut', len([x for x in pos if not x.startswith('-')]) >= 1 and len(pos) <= 3 and bas[0] == bas[1], (pos, bas))
+        # En-tête replié au défilement, redéployé en haut de page et quand le focus y entre ; bandeau de l'onglet collant dessous.
+        page.evaluate('window.scrollTo(0, 600)'); page.wait_for_timeout(120)
+        replie = page.evaluate("document.documentElement.classList.contains('entete-compacte')")
+        bandeau = round(page.evaluate("document.querySelector('.titre-onglet').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
+        court = page.locator('.titre-onglet .info-long:visible').count() == 0
+        page.focus('#audit-nom'); page.wait_for_timeout(120)
+        ouvert_focus = not page.evaluate("document.documentElement.classList.contains('entete-compacte')")
+        page.locator('main h1').first.focus(); page.evaluate('window.scrollTo(0, 0)'); page.wait_for_timeout(120)
+        ouvert_haut = not page.evaluate("document.documentElement.classList.contains('entete-compacte')")
+        verifier('En-tête replié au défilement, bandeau collant, redéployé au focus et en haut', replie and bandeau == 0 and court and ouvert_focus and ouvert_haut, (replie, bandeau, court, ouvert_focus, ouvert_haut))
         page.evaluate('window.scrollTo(0, 0)')
         page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
         page.click('#btn-ref')
