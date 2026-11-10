@@ -74,7 +74,7 @@ RUXAWEB 2 : audit par observations.
   /* ---------- Base ---------- */
   *{box-sizing:border-box}
   [hidden]{display:none!important}
-  html{scroll-padding-top:calc(var(--tete-h, var(--barre-h, 130px)) + 72px)} /* le focus ne passe pas sous l'en-tête, le bandeau de l'onglet, la ligne de l'écran ni l'en-tête collant de la grille */
+  html{scroll-padding-top:calc(var(--tete-h, 0px) + 72px)} /* le focus ne passe pas sous le bandeau de l'onglet, la ligne de l'écran ni l'en-tête collant de la grille */
   body{margin:0;background:var(--surface-alt);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
   a{color:var(--accent);text-underline-offset:3px}
   button,input,select,textarea{font:inherit;color:inherit}
@@ -100,7 +100,7 @@ RUXAWEB 2 : audit par observations.
   .espace{flex:1}
 
   /* ---------- En-tête ---------- */
-  header.barre{position:sticky;top:0;z-index:10;background:var(--surface-raised);border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border-soft)}
+  header.barre{background:var(--surface-raised);border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border-soft)}
   .barre-in{max-width:var(--largeur);margin:0 auto;padding:12px var(--gouttiere) 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
   .marque{display:flex;flex-direction:column;align-items:flex-start;background:none;border:0;padding:2px 0;cursor:pointer;text-align:left;line-height:1.15}
   .marque-nom{font-weight:800;font-size:19px;letter-spacing:.01em}
@@ -127,7 +127,7 @@ RUXAWEB 2 : audit par observations.
   .onglet-tab.ajout:hover{color:var(--accent)}
 
   /* ---------- Mise en page ---------- */
-  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere);min-height:calc(100vh - var(--barre-h, 130px));display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+  .page{max-width:var(--largeur);margin:0 auto;padding:24px var(--gouttiere);min-height:100vh;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
   main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
   main:focus{outline:none}
   /* Mentions : à la fin de la colonne centrale, pour que les colonnes latérales collantes gardent toute leur hauteur jusqu'en bas. */
@@ -233,19 +233,21 @@ RUXAWEB 2 : audit par observations.
   .btn-haut:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ---------- Panneau des étapes ---------- */
-  aside.panneau-etapes{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--barre-h, 130px) + 24px);min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+  aside.panneau-etapes{flex:1 1 280px;max-width:330px;position:sticky;top:calc(var(--tete-h, 0px) + 24px);min-height:220px;overflow-y:auto;background:var(--surface-raised);box-shadow:var(--shadow);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
   aside.panneau-etapes h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
   aside.panneau-etapes p{font-size:14.5px}
   aside.panneau-etapes:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  /* Bascule du panneau des étapes : icône panneau seule, à droite du bandeau de l'onglet, toujours au même endroit, teintée panneau ouvert.
-     Bulle « Voir les étapes » / « Masquer les étapes » au survol et au focus clavier (WCAG 1.4.13) : on peut la survoler sans qu'elle disparaisse
+  /* Bascule du panneau des étapes : bouton icône sans bordure ni fond, à droite du bandeau de l'onglet, toujours au même endroit.
+     Deux icônes : panneau avec chevron vers la gauche (afficher), vers la droite (masquer) ; icône teintée panneau ouvert. Cible de 36 px (WCAG 2.5.8 : 24 px).
+     Bulle « Afficher les étapes » / « Masquer les étapes » au survol et au focus clavier (WCAG 1.4.13) : on peut la survoler sans qu'elle disparaisse
      (pas d'espace vide entre le bouton et la bulle), elle reste tant que le pointeur ou le focus est là, Échap la ferme. */
-  .btn-bascule{flex:none;min-height:44px;width:44px;padding:0;position:relative}
+  .btn.btn-bascule{flex:none;min-height:36px;width:36px;padding:0;position:relative;border:0;background:transparent;color:var(--ink-soft)}
+  .btn.btn-bascule:hover{background:var(--surface-sunk);color:var(--ink)}
   .btn-bascule::after{content:attr(data-bulle);display:none;position:absolute;top:100%;right:0;z-index:20;white-space:nowrap;border-top:6px solid transparent;background-clip:padding-box;background-color:var(--ink);color:var(--surface);font-size:13px;font-weight:600;line-height:1.3;padding:5px 10px;border-radius:6px}
   .btn-bascule:hover::after,.btn-bascule:focus-visible::after{display:block}
   .btn-bascule.sans-bulle::after{display:none}
   .btn-bascule .ico{width:20px;height:20px}
-  .btn-bascule[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .btn.btn-bascule[aria-expanded="true"]{color:var(--accent)}
   /* Ouverture : apparition douce du panneau, sans déplacer le contenu. */
   @keyframes panneau-entree{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
   aside.panneau-etapes.entree{animation:panneau-entree .18s ease-out}
@@ -280,19 +282,12 @@ RUXAWEB 2 : audit par observations.
   /* ---------- Onglet : cadre Observation / Grille ---------- */
   .titre-onglet{gap:12px}
   .titre-onglet h1{margin-right:4px}
-  .info-court{display:none}
-  /* Bandeau de l'onglet (titre, Observation / Grille, compteur, bouton des étapes) et ligne de l'écran collants sous l'en-tête.
-     Après défilement, l'en-tête se replie (classe entete-compacte, posée par le script) : ses commandes restent dans la page et focalisables,
-     et il se redéploie dès que le focus y entre ou qu'on revient en haut. Pas de collant ni de repli si la fenêtre est basse (zoom). */
+  /* L'en-tête défile avec la page ; le bandeau de l'onglet (titre, Observation / Grille, compteur, bouton des étapes) colle en haut,
+     la ligne de l'écran juste dessous. Ni l'un ni l'autre ne colle si la fenêtre est étroite ou basse (zoom).
+     Panneau des étapes ouvert : le bandeau s'étend au-dessus de lui (--bandeau-ext), le bouton des étapes reste au bord droit de la page. */
   @media (min-width:901px) and (min-height:601px){
-    /* Panneau des étapes ouvert : le bandeau s'étend au-dessus de lui (--bandeau-ext), le bouton des étapes reste au bord droit de la page. */
-    .titre-onglet{position:sticky;top:var(--barre-h, 130px);z-index:9;background:var(--surface-alt);padding:8px 0;margin-right:calc(-1 * var(--bandeau-ext, 0px))}
-    .tete-ecran{position:sticky;top:var(--tete-h, var(--barre-h, 130px));z-index:8;background:var(--surface-alt);padding:8px 0}
-    html.entete-compacte header.barre .barre-in,html.entete-compacte header.barre .ligne-onglets{max-height:0;padding-top:0;padding-bottom:0;overflow:hidden}
-    html.entete-compacte .titre-onglet{border-bottom:1px solid var(--border);box-shadow:0 6px 12px -8px rgba(0,0,0,.35)}
-    html.entete-compacte .titre-onglet h1{font-size:18px}
-    html.entete-compacte .info-long{display:none}
-    html.entete-compacte .info-court{display:inline}
+    .titre-onglet{position:sticky;top:0;z-index:9;background:var(--surface-alt);padding:8px 0;margin-right:calc(-1 * var(--bandeau-ext, 0px))}
+    .tete-ecran{position:sticky;top:var(--tete-h, 0px);z-index:8;background:var(--surface-alt);padding:8px 0}
   }
   .audit{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
   .centre{flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px}
@@ -480,14 +475,14 @@ RUXAWEB 2 : audit par observations.
     aside.panneau-etapes{position:static;max-width:none;max-height:none;flex-basis:100%;order:-1}
     .projet-champ{border-left:0;padding-left:0;flex-basis:100%}
   }
-  /* Écran large : la page défile ; l'en-tête, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
+  /* Écran large : la page défile ; le bandeau de l'onglet, la colonne des écrans, le panneau des étapes et l'en-tête de la grille restent visibles. */
   @media (min-width:901px){
-    /* Colonnes latérales collantes, sur toute la hauteur disponible sous l'en-tête (24 px de marge en haut et en bas). */
-    .ecrans,aside.panneau-etapes{position:sticky;top:calc(var(--tete-h, var(--barre-h, 130px)) + 24px);height:calc(100vh - var(--tete-h, var(--barre-h, 130px)) - 48px);overflow-y:auto}
+    /* Colonnes latérales collantes, sur toute la hauteur disponible sous le bandeau (24 px de marge en haut et en bas). */
+    .ecrans,aside.panneau-etapes{position:sticky;top:calc(var(--tete-h, 0px) + 24px);height:calc(100vh - var(--tete-h, 0px) - 48px);overflow-y:auto}
     .ecrans > .carte:last-child{flex:1 0 auto}
     .tableau{overflow:visible}
     .tableau.large{overflow-x:auto}
-    thead th{top:var(--tete-h, var(--barre-h, 130px));z-index:2}
+    thead th{top:var(--tete-h, 0px);z-index:2}
     .contenus-table thead th{position:static}
   }
   @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto!important} }
@@ -613,7 +608,7 @@ RUXAWEB 2 : audit par observations.
   var CONSIGNE_AGENT = "ROLE\nYou help a web accessibility auditor using RUXAWEB, a quick audit tool on RAWeb 1.1 (Luxembourg web accessibility framework, based on WCAG 2.1). RUXAWEB records only the criteria and good practices listed in CRITERIA below. The auditor gives raw notes in French or English. For each defect you choose the criteria it breaks in that list and return two blocks: the lines to paste into RUXAWEB, then a short explanation.\n\nANSWER STRUCTURE (always, even for one short note)\n1. Block 1: the code block with the RUXAWEB lines. Never skip it.\n2. Block 2: \"Criteria:\" and the short explanations.\n3. \"To clarify:\" only if needed.\nNothing before block 1. No citations, links or file references.\n\nCRITERIA (only these: number and topic)\nImages: 1.1 informative image has a text alternative; 1.2 decorative image ignored by assistive technologies; 1.3 text alternative relevant; 1.4 CAPTCHA image alternative; 1.5 CAPTCHA has an alternative access; 1.6 detailed description present; 1.7 detailed description relevant\nFrames: 2.1 frame has a title\nColours: 3.1 information not given by colour alone; 3.2 TEXT contrast with its background, text only; 3.3 contrast of user interface components (checkbox, radio button, field border, button shape, icon, focus indicator) and of graphics conveying information\nMedia: 4.1 transcript or audio description; 4.2 transcript or audio description relevant; 4.3 captions; 4.4 captions relevant; 4.8 non-time-based media alternative; 4.9 that alternative relevant; 4.10 automatic sound can be stopped; 4.11 media player operable by keyboard and pointer\nTables: 5.6 data table headers declared; 5.7 cells associated with their headers\nLinks: 6.1 link explicit, purpose clear; 6.2 link has an accessible name\nScripts: 7.1 custom component exposes its name, role and state to assistive technologies; 7.3 custom component operable by keyboard and pointer; 7.5 status messages announced\nMandatory elements: 8.1 doctype present; 8.2 valid code (ARIA attributes, roles, duplicate ids); 8.3 default page language present; 8.4 default language code relevant; 8.5 page title present; 8.6 page title relevant; 8.7 language changes indicated; 8.8 language change code valid\nStructure: 9.1 headings structure the information; 9.2 page regions (header, navigation, main, footer); 9.3 lists correctly structured\nPresentation: 10.4 text readable at 200% font size; 10.7 keyboard focus visible; 10.8 hidden content ignored by assistive technologies; 10.9 information not by shape, size or position alone; 10.10 same, implemented appropriately; 10.14 CSS additional content reachable by keyboard and pointer\nForms: 11.1 field has a label; 11.2 label relevant; 11.5 related fields grouped; 11.6 group has a legend; 11.7 legend relevant; 11.9 button label relevant; 11.10 errors and required formats handled\nNavigation: 12.6 repeated blocks can be reached or skipped; 12.7 skip link to main content; 12.8 consistent tab order; 12.9 no keyboard trap; 12.11 content shown on hover or focus reachable by keyboard\nTime and motion: 13.1 time limits controllable; 13.7 flashes and brightness changes; 13.8 moving or blinking content controllable; 13.11 pointer action can be cancelled\nGood practices (not RAWeb): BP1 target size at least 24 by 24 CSS px or enough spacing; BP2 modal closes with a visible button and the Escape key; BP3 focus returns to the opener when a modal closes\n\nCHOOSING CRITERIA\n- Use only numbers and codes from CRITERIA, never another RAWeb number, never a three-part WCAG number.\n- List the criteria the observation breaks, most relevant first, usually 1 to 3.\n- One defect can break several criteria (e.g. custom button with no name and no role: 7.1; not reachable by keyboard: 7.3): list each.\n- From a symptom (\"the screen reader says 'button' only\"), go back to the cause.\n- A defect matching nothing in CRITERIA: no line; under \"To clarify:\", say it is outside RUXAWEB and suggest the \"Observation -> RAWeb\" agent.\n\nSPECIAL CASES\nMany criteria exclude special cases, e.g. for contrast: inactive (disabled) components, logos, components left with the browser default appearance; decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.\n\nLANGUAGE\nAlways write in English, even when the notes are in French. Write in French only if the auditor explicitly asks (\"in French\", \"en français\"). \"Écran :\", \"Criteria:\" and \"To clarify:\" never change: the tool reads them. Screen names exactly as the auditor wrote them (RUXAWEB matches them); on-screen labels exactly as in the product.\n\nBLOCK 1: RUXAWEB LINES\nOne code block (three backticks alone on the opening line, no language name), containing only:\n- one line per defect: element | observation | criteria\n- lines grouped by screen, each group preceded by: Écran : <screen name>. No screen in the notes: no \"Écran :\" line.\nOnly defects: a note saying something works, or that a content is absent, gives no line (the auditor sets C in the grid, NA with the screen contents).\nFields:\n1. element: in ELEMENT NOTATION (below), without square brackets and never the screen name: the tool adds it. On every screen (header, footer, main navigation, cookie banner): name only, e.g. Main navigation. No element named: write only observation | criteria.\n2. observation: one factual sentence. It becomes the \"Actual behavior\" of the Jira ticket: the user action if there is one, then what is displayed, announced or exposed and what is missing (name, role, state, value); no guess about the code, no consequence. Never invent a fact, value or behavior the auditor did not write.\n3. criteria: numbers and codes from CRITERIA, comma-separated, most relevant first: 7.1, 7.3 or 12.8, BP3.\nRules: one line = one defect on one element (two defects: two lines). Same defect on several screens: one line per screen, exactly the same element, observation and criteria, so the tool merges them. No line break inside a line, no | inside a field, no severity.\n\nELEMENT NOTATION\n- Label in quotes, then type: \"Pay\" button, \"Email\" field. No visible label: type only (list).\n- Inside another element: widest first, comma-separated: \"Delivery\" form, \"Postal code\" field.\n- State in parentheses only if it must be triggered to see the defect: \"Submit\" button (disabled). Otherwise, say it in the text.\n- Labels exactly as written in the product. Types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card. No dots, nested brackets or |.\n\nBLOCK 2: CRITERIA\nAfter the code block, the line \"Criteria:\", then one line per criterion of block 1, in the same order:\n<number> <topic from CRITERIA> : <why it applies to this observation, one short sentence>\nIf useful, \"Also check:\" with criteria from CRITERIA that depend on something you cannot see, same format. Do not put them in block 1. No fix advice unless asked.\n\nOPTION\n\"lines only\": block 1 only.\n\nUNCLEAR NOTES\nToo vague (no element, no symptom) or a possible special case: no line for it; at the very end, \"To clarify:\" and one short question per note.\n\nSTYLE\nNo introduction, no conclusion. No em or en dashes: use a comma or a colon.\n\nEXAMPLE\nNotes: \"page Login : la case Don't ask again on this computer, redessinée par le site, a un contour trop pâle ; bouton Pay = div cliquable, annoncé comme du texte, pas atteignable au clavier.\"\nAnswer:\n```\nÉcran : Login\n\"Don't ask again on this computer\" checkbox | The checkbox border has too little contrast with the background. | 3.3\n\"Pay\" button | The button is announced as plain text, without a button role, and cannot be reached with the keyboard. | 7.1, 7.3\n```\nCriteria:\n- 3.3 contrast of user interface components : the checkbox border is a component boundary, not text.\n- 7.1 custom component exposes its name, role and state : no button role is exposed.\n- 7.3 custom component operable by keyboard and pointer : the button cannot be reached by keyboard.";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.29';
+  var VERSION = '2.30';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -699,7 +694,7 @@ RUXAWEB 2 : audit par observations.
   // Sauvegardes 2.x antérieures : mêmes données, quelques noms changés. Tout passe ici, au chargement et à l'ouverture d'un fichier.
   function normaliser(st){
     if(st.vue === 'accueil' || st.vue === 'cloture') st.vue = 'projet';
-    delete st.ficheEcran; delete st.grilleFiltre;
+    delete st.ficheEcran; delete st.grilleFiltre; delete st.panneauReduit;
     var toutes = (st.obsF || []).slice();
     (st.onglets || []).forEach(function(o){ toutes = toutes.concat(o.obs || []); });
     var tousEcrans = [];
@@ -752,7 +747,9 @@ RUXAWEB 2 : audit par observations.
   function ecranDe(o, id){ return o.ecrans.filter(function(e){ return e.id === id; })[0] || null; }
   // Icônes (boutons et panneau des étapes) : décoratives, le libellé porte le sens.
   var ICO = {
-    'panneau':'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M15 4v16"/>',
+    // panneau-ouvrir, panneau-fermer : icônes Lucide « panel-right-open » et « panel-right-close », https://lucide.dev, licence ISC, © Lucide Contributors.
+    'panneau-ouvrir':'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/><path d="m10 15-3-3 3-3"/>',
+    'panneau-fermer':'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/><path d="m8 9 3 3-3 3"/>',
     "fichier": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>",
     "livre": "<path d=\"M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z\"/><path d=\"M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z\"/>",
     "import": "<path d=\"M12 3v12M7 10l5 5 5-5M4 21h16\"/>",
@@ -1165,7 +1162,7 @@ RUXAWEB 2 : audit par observations.
   // État d'interface passager : jamais enregistré (ni dans le navigateur, ni dans les sauvegardes).
   // confirmation : action en attente de second clic ; saisieNc : ligne de la fiche où l'on écrit un NC ;
   // dlg : fenêtre ouverte (fiche, coller, config) ; menuOnglet : carte d'onglet dont le menu d'actions est ouvert ; ficheEcran : écran mis en avant dans la fiche ; derniereCase : case de la grille qui garde le focus ; grilleFiltre : tous | definir | na.
-  var ui = {confirmation:null, saisieNc:null, ficheEcran:null, derniereCase:null, grilleFiltre:'tous', dlg:null, menuOnglet:null, ecranConfig:null};
+  var ui = {confirmation:null, saisieNc:null, ficheEcran:null, derniereCase:null, grilleFiltre:'tous', dlg:null, menuOnglet:null, ecranConfig:null, panneauReduit:false};
 
   function rendre(focus){
     var o = onglet();
@@ -1210,14 +1207,15 @@ RUXAWEB 2 : audit par observations.
   }
   window.addEventListener('resize', function(){ focusPanneauEtapes(); });
   function titrePanneau(o){ return '<h2 id="panneau-etapes-titre" class="sr">'+(o && o.type === 'scenario' ? 'Étapes du scénario' : 'Étapes de l\'audit')+'</h2>'; }
-  function panneauFerme(o){ return !!state.panneauReduit && !!o && state.vue !== 'projet' && state.vue !== 'referentiel'; }
+  // Affichage seulement (hors sauvegarde) : le panneau des étapes s'ouvre à chaque nouvel audit, nouvel onglet ou sauvegarde ouverte.
+  function panneauFerme(o){ return ui.panneauReduit && !!o && state.vue !== 'projet' && state.vue !== 'referentiel'; }
   // Bouton des étapes, à droite du bandeau de chaque vue d'un onglet. Panneau fermé, le libellé lu rappelle l'étape en cours.
   function boutonEtapes(o){
-    var ferme = panneauFerme(o), bulle = ferme ? 'Voir les étapes' : 'Masquer les étapes';
+    var ferme = panneauFerme(o), bulle = ferme ? 'Afficher les étapes' : 'Masquer les étapes';
     var et = state.vue === 'audit' && ETAPE[state.etape] ? (ETAPE[state.etape].i + 1)+'/'+ETAPES.length+' '+(ETAPE[state.etape].court || ETAPE[state.etape].nom)
       : ({preparer:'Préparer les écrans', ux:'Lecture POUR/UX', grille:'Compléter la grille', resume:'Résumé et exports'})[state.vue] || '';
     return '<button type="button" class="btn btn-s btn-bascule" id="btn-etapes" data-action="panneau-bascule" aria-controls="panneau-etapes" aria-expanded="'+!ferme+'"' +
-      ' aria-label="'+esc(bulle + (ferme && et ? ' (étape '+et+')' : ''))+'" data-bulle="'+bulle+'">'+ico('panneau')+'</button>';
+      ' aria-label="'+esc(bulle + (ferme && et ? ' (étape '+et+')' : ''))+'" data-bulle="'+bulle+'">'+ico(ferme ? 'panneau-ouvrir' : 'panneau-fermer')+'</button>';
   }
   function vuePanneauEtapes(o){
     var html = '<ol class="liste-etapes" id="liste-etapes">';
@@ -1795,7 +1793,7 @@ RUXAWEB 2 : audit par observations.
   function infoGrille(o){ return taux(o, SELECTION).complet ? infoOnglet(o) : ''; }
   function infoOnglet(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB), n = criteresADefinir(o).length;
-    return '<span class="doux">'+(t.complet ? 'Sélection SIP <b class="niv-'+niveauTaux(t.pct).cle+'">'+t.pct+' % ('+niveauTaux(t.pct).lib.toLowerCase()+')</b>'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %') : '<span class="info-long">'+n+' critère'+(n > 1 ? 's' : '')+' à définir sur l\'ensemble des écrans</span><span class="info-court">'+n+' sur l\'ensemble</span>')+'</span>';
+    return '<span class="doux">'+(t.complet ? 'Sélection SIP <b class="niv-'+niveauTaux(t.pct).cle+'">'+t.pct+' % ('+niveauTaux(t.pct).lib.toLowerCase()+')</b>'+(o.type === 'scenario' ? '' : ' · élargi '+te.pct+' %') : n+' critère'+(n > 1 ? 's' : '')+' à définir sur l\'ensemble des écrans')+'</span>';
   }
 
   function aDefinir(o){
@@ -1973,6 +1971,7 @@ RUXAWEB 2 : audit par observations.
     var o = {id:uid(), nom:(sc ? 'Scénario ' : 'Audit ')+n, type:sc ? 'scenario' : 'rapide', ecrans:['Accueil','Écran avec formulaire','Écran au contenu particulier'].map(function(nom){ return {id:uid(), nom:nom, contenus:{}, etapes:{}}; }), obs:[], valide:false};
     o.fonctionsEcrans = {}; fonctions().forEach(function(f){ if(f.presente) o.fonctionsEcrans[f.id] = o.ecrans.map(function(x){ return x.id; }); });
     state.onglets.push(o); state.ongletId = o.id; state.ecranId = o.ecrans[0].id; state.etape = 'vide'; state.vue = 'preparer';
+    ui.panneauReduit = false;
   }
   // nouvelle : formulaire vidé après l'enregistrement ; sinon l'observation reste chargée, en modification.
   function enregistrerObs(nouvelle){
@@ -2029,7 +2028,7 @@ RUXAWEB 2 : audit par observations.
     'panneau-bascule': function(b, o, a){
       // La page reste à la même hauteur de défilement : seul le panneau apparaît ou disparaît.
       var y = window.scrollY;
-      state.panneauReduit = !state.panneauReduit; rendre();
+      ui.panneauReduit = !ui.panneauReduit; rendre();
       window.scrollTo(0, y);
       if(!panneauFerme(o)){ $etapes.classList.remove('entree'); void $etapes.offsetWidth; $etapes.classList.add('entree'); }
       // Le bouton ne change pas de place : le focus y reste.
@@ -2292,7 +2291,7 @@ RUXAWEB 2 : audit par observations.
     'import-json': function(b, o, a){ document.getElementById('fichier-import').click(); },
     'reinit': function(b, o, a){
       if(ui.confirmation !== 'reinit'){ ui.confirmation = 'reinit'; b.textContent = 'Confirmer : tout effacer'; return ARRET; }
-      ui.confirmation = null; state = etatVide(); viderBrouillon(); rendre(true); message('Nouvel audit. Pense à sauvegarder le précédent si besoin.');
+      ui.confirmation = null; ui.panneauReduit = false; state = etatVide(); viderBrouillon(); rendre(true); message('Nouvel audit. Pense à sauvegarder le précédent si besoin.');
     }
   };
 
@@ -2425,9 +2424,9 @@ RUXAWEB 2 : audit par observations.
       fr.onload = function(){
         try{
           var s = JSON.parse(fr.result);
-          if(s && s.v === 2 && Array.isArray(s.onglets)){ state = normaliser(s); state.vue = 'projet'; rendre(true); message('Sauvegarde ouverte.'); }
+          if(s && s.v === 2 && Array.isArray(s.onglets)){ state = normaliser(s); state.vue = 'projet'; ui.panneauReduit = false; rendre(true); message('Sauvegarde ouverte.'); }
           else if(s && s.outil === 'RUXAWEB-etat' && s.state && Array.isArray(s.state.onglets)){
-            state = normaliser(migrerV1(s.state)); sauver(); rendre(true);
+            state = normaliser(migrerV1(s.state)); ui.panneauReduit = false; sauver(); rendre(true);
             message('Sauvegarde '+(s.outilVersion || '1.x')+' convertie : les statuts sont repris. Les critères ajoutés depuis restent à définir dans la grille.');
           }
           else message('Ce fichier n\'est pas une sauvegarde de RUXAWEB.', true);
@@ -2585,29 +2584,20 @@ RUXAWEB 2 : audit par observations.
 
   // ---------- Démarrage ----------
   document.getElementById('version').textContent = VERSION;
-  // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : le panneau des étapes, la colonne des écrans et l'en-tête de la grille se calent toujours dessous.
-  // --barre-h : hauteur de l'en-tête ; --tete-h : en-tête plus bandeau de l'onglet quand celui-ci est collant (sous ce total : ligne de l'écran, colonnes, en-tête de la grille).
+  // --tete-h : hauteur du bandeau de l'onglet quand il colle (sous lui : ligne de l'écran, colonnes, en-tête de la grille).
   // --bandeau-ext : largeur dont le bandeau dépasse à droite pour couvrir le panneau des étapes ouvert (même ligne que le contenu).
   function calerEntete(){
-    var racine = document.documentElement.style, bh = document.querySelector('header.barre').offsetHeight, t = $main.querySelector('.titre-onglet');
+    var racine = document.documentElement.style, t = $main.querySelector('.titre-onglet');
     var collant = t && getComputedStyle(t).position === 'sticky', ext = 0;
     if(collant && !$etapes.classList.contains('ferme') && $etapes.offsetParent){
       var m = $main.getBoundingClientRect(), a = $etapes.getBoundingClientRect();
       if(a.left >= m.right) ext = a.right - m.right;
     }
     racine.setProperty('--bandeau-ext', ext + 'px');
-    racine.setProperty('--barre-h', bh + 'px');
-    racine.setProperty('--tete-h', (bh + (collant ? t.offsetHeight : 0)) + 'px');
+    racine.setProperty('--tete-h', (collant ? t.offsetHeight : 0) + 'px');
   }
-  (function(){
-    var barre = document.querySelector('header.barre');
-    function caler(){
-      calerEntete();
-      focusPanneauEtapes();
-    }
-    caler();
-    if(window.ResizeObserver) new ResizeObserver(caler).observe(barre); else window.addEventListener('resize', caler);
-  })();
+  // Largeur ou hauteur de la fenêtre changée : le bandeau se recale (collant ou non, largeur au-dessus du panneau).
+  window.addEventListener('resize', calerEntete);
 
   // Bulle du bouton des étapes : Échap la ferme jusqu'à ce que le pointeur ou le focus quitte le bouton (WCAG 1.4.13).
   document.addEventListener('keydown', function(ev){
@@ -2617,26 +2607,6 @@ RUXAWEB 2 : audit par observations.
   ['mouseleave', 'blur'].forEach(function(t){
     document.addEventListener(t, function(ev){ if(ev.target.id === 'btn-etapes') ev.target.classList.remove('sans-bulle'); }, true);
   });
-
-  // Repli de l'en-tête au défilement : deux états francs, sans animation. Seuils écartés (160 / 24 px) pour éviter le va-et-vient
-  // quand la hauteur de l'en-tête change. Le focus dans l'en-tête le redéploie, et il reste déployé tant que le focus y est.
-  (function(){
-    var racine = document.documentElement, barre = document.querySelector('header.barre');
-    var large = window.matchMedia('(min-width:901px) and (min-height:601px)');
-    var focusDedans = false, prevu = false;
-    function maj(){
-      prevu = false;
-      var avant = racine.classList.contains('entete-compacte'), apres = avant;
-      if(!large.matches || focusDedans) apres = false;
-      else if(window.scrollY > 160) apres = true;
-      else if(window.scrollY < 24) apres = false;
-      if(apres !== avant){ racine.classList.toggle('entete-compacte', apres); calerEntete(); }
-    }
-    window.addEventListener('scroll', function(){ if(!prevu){ prevu = true; requestAnimationFrame(maj); } }, {passive:true});
-    if(large.addEventListener) large.addEventListener('change', maj); else large.addListener(maj);
-    barre.addEventListener('focusin', function(){ focusDedans = true; maj(); });
-    barre.addEventListener('focusout', function(ev){ if(!barre.contains(ev.relatedTarget)) focusDedans = false; });
-  })();
 
   // Haut de page : visible après un écran de défilement ; le focus revient sur le titre de la page.
   (function(){

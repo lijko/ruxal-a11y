@@ -739,42 +739,33 @@ def main():
         verifier('Icônes : décoratives, sur Fichier et Référentiel', page.locator('#btn-menu svg[aria-hidden="true"]').count() == 1 and page.locator('#btn-ref svg[aria-hidden="true"]').count() == 1)
         page.locator('[data-action="ouvrir"]').first.click()
 
-        # Le panneau Parcours ne bouge pas au début du défilement.
+        # L'en-tête défile avec la page ; le panneau des étapes glisse avec le contenu, sans saut, puis colle sous le bandeau.
         hauts = []
-        for y in (0, 30, 120):
+        for y in range(0, 400, 10):
             page.evaluate('window.scrollTo(0, %d)' % y)
-            page.wait_for_timeout(50)
-            hauts.append(round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top")))
+            hauts.append(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top"))
+        ecarts = [a - b for a, b in zip(hauts, hauts[1:])]
+        cale = round(hauts[-1] - float(page.evaluate("parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tete-h'))")))
+        verifier('Défilement : panneau des étapes sans saut, collé sous le bandeau', all(-0.5 <= e <= 10.5 for e in ecarts) and cale == 24, (max(ecarts), cale))
+        bandeau = page.evaluate("document.querySelector('.titre-onglet').getBoundingClientRect().top")
+        entete = page.evaluate("document.querySelector('header.barre').getBoundingClientRect().bottom")
+        verifier('Défilement : l\'en-tête part avec la page, le bandeau de l\'onglet colle en haut', round(bandeau) == 0 and entete <= 0, (bandeau, entete))
         page.evaluate('window.scrollTo(0, 0)')
-        verifier('Parcours fixe au défilement, sans saut', len(set(hauts)) == 1, hauts)
-        # Jusqu'en bas de page, sur chaque vue, le panneau des étapes reste sous l'en-tête.
+        # Jusqu'en bas de page, sur chaque vue, le panneau des étapes reste sous le bandeau de l'onglet.
         tops = {}
         for nom, aller in (('saisie', lambda: aller_audit(page)), ('grille', lambda: page.click('[data-action="vue"][data-vue="grille"]')),
                            ('projet', lambda: page.click('[data-action="projet"]')), ('referentiel', lambda: page.click('#btn-ref'))):
             aller()
             page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
             page.wait_for_timeout(80)
-            tops[nom] = round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
-        verifier('Panneau des étapes collé sous l\'en-tête jusqu\'en bas de page, sur toutes les vues', all(v >= 16 for v in tops.values()), tops)
-        # Défilement : colonnes latérales immobiles (même position, même hauteur) du haut au bas de la page,
-        # à part un seul déplacement quand l'en-tête se replie (2.28) ; en bas de page, les deux colonnes sont alignées.
+            tops[nom] = round(page.evaluate("document.getElementById('panneau-etapes').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tete-h'))"))
+        verifier('Panneau des étapes collé sous le bandeau jusqu\'en bas de page, sur toutes les vues', all(v >= 16 for v in tops.values()), tops)
+        # En bas de page, les deux colonnes latérales sont alignées.
         page.locator('#onglet-nav .onglet-tab').nth(1).click()
-        pos = set()
-        for y in range(0, page.evaluate('document.body.scrollHeight'), 80):
-            page.evaluate('window.scrollTo(0, %d)' % y)
-            pos.add(page.evaluate('(function(){var a=document.getElementById("panneau-etapes").getBoundingClientRect(),e=document.querySelector("nav.ecrans").getBoundingClientRect();return [Math.round(a.top),Math.round(a.height),Math.round(e.top),Math.round(e.height)].join(",")})()'))
+        page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
         bas = page.evaluate('(function(){var a=document.getElementById("panneau-etapes").getBoundingClientRect(),e=document.querySelector("nav.ecrans").getBoundingClientRect();return [Math.round(a.top),Math.round(e.top)];})()')
-        verifier('Défilement : panneau des étapes et colonne des écrans sans saut', len([x for x in pos if not x.startswith('-')]) >= 1 and len(pos) <= 3 and bas[0] == bas[1], (pos, bas))
-        # En-tête replié au défilement, redéployé en haut de page et quand le focus y entre ; bandeau de l'onglet collant dessous.
-        page.evaluate('window.scrollTo(0, 600)'); page.wait_for_timeout(120)
-        replie = page.evaluate("document.documentElement.classList.contains('entete-compacte')")
-        bandeau = round(page.evaluate("document.querySelector('.titre-onglet').getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barre-h'))"))
-        court = page.locator('.titre-onglet .info-long:visible').count() == 0
-        page.focus('#audit-nom'); page.wait_for_timeout(120)
-        ouvert_focus = not page.evaluate("document.documentElement.classList.contains('entete-compacte')")
-        page.locator('main h1').first.focus(); page.evaluate('window.scrollTo(0, 0)'); page.wait_for_timeout(120)
-        ouvert_haut = not page.evaluate("document.documentElement.classList.contains('entete-compacte')")
-        verifier('En-tête replié au défilement, bandeau collant, redéployé au focus et en haut', replie and bandeau == 0 and court and ouvert_focus and ouvert_haut, (replie, bandeau, court, ouvert_focus, ouvert_haut))
+        verifier('Défilement : panneau des étapes et colonne des écrans alignés', bas[0] == bas[1], bas)
+        page.evaluate('window.scrollTo(0, 0)')
         page.evaluate('window.scrollTo(0, 0)')
         page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
         page.click('#btn-ref')
@@ -803,8 +794,14 @@ def main():
         verifier('Supprimer une fonction : confirmation demandée', 'Confirmer' in page.inner_text('[data-action="suppr-fonction"][data-id="%s"]' % fj))
         page.click('[data-action="suppr-fonction"][data-id="%s"]' % fj)
         verifier('Supprimer une fonction : retirée du projet et des onglets', 'Fonction jetable' not in page.inner_text('.liste-fonctions') and page.evaluate('RUXAWEB.state().onglets.every(function(o){ return !o.fonctionsEcrans || !("%s" in o.fonctionsEcrans); })' % fj))
+        # Panneau masqué dans un onglet : un nouvel onglet l'ouvre quand même, et le réglage ne part pas dans la sauvegarde.
+        page.locator('#onglet-nav .onglet-tab').nth(1).click()
+        if page.get_attribute('#btn-etapes', 'aria-expanded') == 'true': page.click('#btn-etapes')
+        verifier('Panneau masqué : réglage d\'affichage, hors sauvegarde', not page.evaluate('"panneauReduit" in RUXAWEB.state()'))
+        page.click('[data-action="projet"]')
         page.click('[data-action="nouvel-onglet"]')
         oidF = page.evaluate('RUXAWEB.state().ongletId')
+        verifier('Nouvel onglet : panneau des étapes ouvert par défaut', page.locator('#panneau-etapes').is_visible())
         verifier('Nouvel onglet : fonctions actives sur tous ses écrans', page.locator('[data-fonction-ecran="nav"]:checked').count() == 3)
         page.locator('[data-fonction-ecran="nav"]').nth(2).uncheck()
         page.click('main [data-action="vue"][data-vue="audit"]')

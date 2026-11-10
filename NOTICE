@@ -36,3 +36,7 @@ Le projet reproduit ou référence les œuvres ci-dessous, qui restent sous leur
    Source : https://github.com/dequelabs/axe-core/blob/develop/doc/issue_impact.md (dépôt axe-core, licence MPL-2.0)
    Les quatre niveaux de gravité de RUXAL (Critique, Sérieux, Modéré, Mineur) reprennent l'échelle d'impact d'axe-core (critical, serious, moderate, minor). Seuls les noms des niveaux sont repris ; les définitions sont formulées par RUXAL. Aucun code d'axe-core n'est embarqué.
    Cette gravité n'est pas normative : voir docs/gravite.md. RUXAL n'est ni approuvé ni certifié par Deque Systems.
+
+7. Icônes Lucide « panel-right-open » et « panel-right-close », © Lucide Contributors
+   Source : https://lucide.dev (dépôt https://github.com/lucide-icons/lucide), licence ISC.
+   Reprises sans modification dans src/ruxaweb.html (bouton du panneau des étapes), avec la mention de la source à côté de leur tracé. Les autres icônes sont originales.
