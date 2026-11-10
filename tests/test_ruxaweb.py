@@ -349,7 +349,8 @@ def main():
         # Grille au clavier : un seul arrêt Tab, puis les flèches.
         page.click('[data-action="vue"][data-vue="grille"]')
         verifier('Clavier : une seule case dans l\'ordre de tabulation', page.locator('.cel-btn[tabindex="0"]').count() == 1)
-        verifier('Grille : pas de compteur en double dans l\'en-tête', 'à définir sur l\'ensemble' not in page.locator('.titre-onglet').inner_text())
+        verifier('Compteurs en NT : badge de l\'écran et onglet, plus de « à définir »', 'à définir' not in page.locator('header.barre').inner_text() and 'à définir' not in page.locator('main').inner_text(), [x for x in page.locator('main').inner_text().split('\n') if 'définir' in x][:3])
+        verifier('Grille : pas de compteur en double dans l\'en-tête', 'NT sur l\'ensemble' not in page.locator('.titre-onglet').inner_text())
         verifier('Grille : un tbody par thème', page.locator('table tbody').count() == page.locator('tr.theme').count() and page.locator('th[scope="rowgroup"]').count() > 0)
         page.locator('.cel-btn[tabindex="0"]').focus()
         d0 = page.evaluate('[document.activeElement.dataset.id, document.activeElement.dataset.ecran]')
