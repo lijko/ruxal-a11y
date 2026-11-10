@@ -216,12 +216,15 @@ RUXAWEB 2 : audit par observations.
   dialog::backdrop{background:rgba(10,15,20,.55)}
   /* Fenêtre : seul le corps défile ; l'en-tête (titre et Fermer) reste visible. La marge de défilement garde
      l'élément qui reçoit le focus sous l'en-tête, jamais derrière (WCAG 2.2, 2.4.11 Focus non masqué). */
-  .dlg{padding:0 24px 24px;display:flex;flex-direction:column;gap:14px;max-height:82vh;overflow:auto;scroll-padding-top:88px;overscroll-behavior:contain}
+  .dlg{padding:0 24px 24px;display:flex;flex-direction:column;gap:14px;max-height:min(82vh, calc(100dvh - 48px));overflow:auto;scroll-padding-top:88px;scroll-padding-bottom:88px;overscroll-behavior:contain}
+  dialog{overflow:hidden} /* seul le corps défile : l'en-tête et le pied de la fenêtre restent visibles */
+  .dlg-pied{position:sticky;bottom:-24px;z-index:1;margin:0 -24px -24px;padding:12px 24px 16px;background:var(--surface-raised);border-top:1px solid var(--border-soft)}
   .dlg-tete{position:sticky;top:0;z-index:1;margin:0 -24px;padding:20px 24px 12px;background:var(--surface-raised);border-bottom:1px solid var(--border-soft)}
   @media (max-width:640px){
     dialog{width:100%;max-width:none;height:100dvh;max-height:none;margin:0;border-radius:0;border:0}
     .dlg{max-height:100dvh;height:100%;padding:0 16px 16px}
     .dlg-tete{margin:0 -16px;padding:14px 16px 10px}
+    .dlg-pied{margin:0 -16px -16px;padding:10px 16px 14px;bottom:-16px}
   }
   .dlg h2{font-size:19px}
   #statut{position:fixed;right:24px;bottom:24px;background:var(--ink);color:var(--surface);padding:12px 16px;border-radius:var(--radius);max-width:min(440px,calc(100% - 48px));z-index:40;font-weight:600;font-size:14px;box-shadow:var(--shadow-pop)}
@@ -235,10 +238,16 @@ RUXAWEB 2 : audit par observations.
   aside.panneau-etapes h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
   aside.panneau-etapes p{font-size:14.5px}
   aside.panneau-etapes:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  /* Bascule du panneau : icône seule (liste + chevron), même taille ouverte ou fermée, pour ne pas décaler la mise en page. */
-  /* Bascule du panneau des étapes : un seul bouton, toujours au même endroit ; seul le chevron change de sens. */
-  .btn-bascule{flex:none;min-height:34px;width:46px;padding:0;gap:2px}
-  .btn-bascule .ico-chevron{width:14px;height:14px}
+  /* Bascule du panneau des étapes : icône panneau seule, à droite du bandeau de l'onglet, toujours au même endroit, teintée panneau ouvert.
+     Bulle « Voir les étapes » / « Masquer les étapes » au survol et au focus clavier (WCAG 1.4.13) : on peut la survoler sans qu'elle disparaisse
+     (pas d'espace vide entre le bouton et la bulle), elle reste tant que le pointeur ou le focus est là, Échap la ferme. */
+  .btn-bascule{flex:none;min-height:44px;width:44px;padding:0;position:relative}
+  .btn-bascule::after{content:attr(data-bulle);display:none;position:absolute;top:100%;right:0;z-index:20;white-space:nowrap;border-top:6px solid transparent;background-clip:padding-box;background-color:var(--ink);color:var(--surface);font-size:13px;font-weight:600;line-height:1.3;padding:5px 10px;border-radius:6px}
+  .btn-bascule:hover::after,.btn-bascule:focus-visible::after{display:block}
+  .btn-bascule.sans-bulle::after{display:none}
+  .btn-bascule .ico{width:20px;height:20px}
+  .emplacement-etapes{display:inline-flex}
+  .emplacement-etapes:empty{display:none}
   .btn-bascule[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
   /* Ouverture : apparition douce du panneau, sans déplacer le contenu. */
   @keyframes panneau-entree{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
@@ -271,16 +280,17 @@ RUXAWEB 2 : audit par observations.
   .liste-etapes .ici .rond{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-fill-ink);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 5px var(--accent-fill)}
   @media (prefers-reduced-motion: no-preference){ .liste-etapes .ici .rond{transition:box-shadow .2s} }
 
-  /* ---------- Onglet : cadre Saisie / Grille ---------- */
+  /* ---------- Onglet : cadre Observation / Grille ---------- */
   .titre-onglet{gap:12px}
   .titre-onglet h1{margin-right:4px}
   .info-court{display:none}
   .rappel-import p{margin:0}
-  /* Bandeau de l'onglet (titre, Saisie / Grille, compteur) et ligne de l'écran collants sous l'en-tête.
+  /* Bandeau de l'onglet (titre, Observation / Grille, compteur, bouton des étapes) et ligne de l'écran collants sous l'en-tête.
      Après défilement, l'en-tête se replie (classe entete-compacte, posée par le script) : ses commandes restent dans la page et focalisables,
      et il se redéploie dès que le focus y entre ou qu'on revient en haut. Pas de collant ni de repli si la fenêtre est basse (zoom). */
   @media (min-width:901px) and (min-height:601px){
-    .titre-onglet{position:sticky;top:var(--barre-h, 130px);z-index:9;background:var(--surface-alt);padding:8px 0}
+    /* Panneau des étapes ouvert : le bandeau s'étend au-dessus de lui (--bandeau-ext), le bouton des étapes reste au bord droit de la page. */
+    .titre-onglet{position:sticky;top:var(--barre-h, 130px);z-index:9;background:var(--surface-alt);padding:8px 0;margin-right:calc(-1 * var(--bandeau-ext, 0px))}
     .tete-ecran{position:sticky;top:var(--tete-h, var(--barre-h, 130px));z-index:8;background:var(--surface-alt);padding:8px 0}
     html.entete-compacte header.barre .barre-in,html.entete-compacte header.barre .ligne-onglets{max-height:0;padding-top:0;padding-bottom:0;overflow:hidden}
     html.entete-compacte .titre-onglet{border-bottom:1px solid var(--border);box-shadow:0 6px 12px -8px rgba(0,0,0,.35)}
@@ -608,7 +618,7 @@ RUXAWEB 2 : audit par observations.
   var CONSIGNE_AGENT = "ROLE\nYou help a web accessibility auditor using RUXAWEB, a quick audit tool on RAWeb 1.1 (Luxembourg web accessibility framework, based on WCAG 2.1). RUXAWEB records only the criteria and good practices listed in CRITERIA below. The auditor gives raw notes in French or English. For each defect you choose the criteria it breaks in that list and return two blocks: the lines to paste into RUXAWEB, then a short explanation.\n\nANSWER STRUCTURE (always, even for one short note)\n1. Block 1: the code block with the RUXAWEB lines. Never skip it.\n2. Block 2: \"Criteria:\" and the short explanations.\n3. \"To clarify:\" only if needed.\nNothing before block 1. No citations, links or file references.\n\nCRITERIA (only these: number and topic)\nImages: 1.1 informative image has a text alternative; 1.2 decorative image ignored by assistive technologies; 1.3 text alternative relevant; 1.4 CAPTCHA image alternative; 1.5 CAPTCHA has an alternative access; 1.6 detailed description present; 1.7 detailed description relevant\nFrames: 2.1 frame has a title\nColours: 3.1 information not given by colour alone; 3.2 TEXT contrast with its background, text only; 3.3 contrast of user interface components (checkbox, radio button, field border, button shape, icon, focus indicator) and of graphics conveying information\nMedia: 4.1 transcript or audio description; 4.2 transcript or audio description relevant; 4.3 captions; 4.4 captions relevant; 4.8 non-time-based media alternative; 4.9 that alternative relevant; 4.10 automatic sound can be stopped; 4.11 media player operable by keyboard and pointer\nTables: 5.6 data table headers declared; 5.7 cells associated with their headers\nLinks: 6.1 link explicit, purpose clear; 6.2 link has an accessible name\nScripts: 7.1 custom component exposes its name, role and state to assistive technologies; 7.3 custom component operable by keyboard and pointer; 7.5 status messages announced\nMandatory elements: 8.1 doctype present; 8.2 valid code (ARIA attributes, roles, duplicate ids); 8.3 default page language present; 8.4 default language code relevant; 8.5 page title present; 8.6 page title relevant; 8.7 language changes indicated; 8.8 language change code valid\nStructure: 9.1 headings structure the information; 9.2 page regions (header, navigation, main, footer); 9.3 lists correctly structured\nPresentation: 10.4 text readable at 200% font size; 10.7 keyboard focus visible; 10.8 hidden content ignored by assistive technologies; 10.9 information not by shape, size or position alone; 10.10 same, implemented appropriately; 10.14 CSS additional content reachable by keyboard and pointer\nForms: 11.1 field has a label; 11.2 label relevant; 11.5 related fields grouped; 11.6 group has a legend; 11.7 legend relevant; 11.9 button label relevant; 11.10 errors and required formats handled\nNavigation: 12.6 repeated blocks can be reached or skipped; 12.7 skip link to main content; 12.8 consistent tab order; 12.9 no keyboard trap; 12.11 content shown on hover or focus reachable by keyboard\nTime and motion: 13.1 time limits controllable; 13.7 flashes and brightness changes; 13.8 moving or blinking content controllable; 13.11 pointer action can be cancelled\nGood practices (not RAWeb): BP1 target size at least 24 by 24 CSS px or enough spacing; BP2 modal closes with a visible button and the Escape key; BP3 focus returns to the opener when a modal closes\n\nCHOOSING CRITERIA\n- Use only numbers and codes from CRITERIA, never another RAWeb number, never a three-part WCAG number.\n- List the criteria the observation breaks, most relevant first, usually 1 to 3.\n- One defect can break several criteria (e.g. custom button with no name and no role: 7.1; not reachable by keyboard: 7.3): list each.\n- From a symptom (\"the screen reader says 'button' only\"), go back to the cause.\n- A defect matching nothing in CRITERIA: no line; under \"To clarify:\", say it is outside RUXAWEB and suggest the \"Observation -> RAWeb\" agent.\n\nSPECIAL CASES\nMany criteria exclude special cases, e.g. for contrast: inactive (disabled) components, logos, components left with the browser default appearance; decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.\n\nLANGUAGE\nAlways write in English, even when the notes are in French. Write in French only if the auditor explicitly asks (\"in French\", \"en français\"). \"Écran :\", \"Criteria:\" and \"To clarify:\" never change: the tool reads them. Screen names exactly as the auditor wrote them (RUXAWEB matches them); on-screen labels exactly as in the product.\n\nBLOCK 1: RUXAWEB LINES\nOne code block (three backticks alone on the opening line, no language name), containing only:\n- one line per defect: element | observation | criteria\n- lines grouped by screen, each group preceded by: Écran : <screen name>. No screen in the notes: no \"Écran :\" line.\nOnly defects: a note saying something works, or that a content is absent, gives no line (the auditor sets C in the grid, NA with the screen contents).\nFields:\n1. element: in ELEMENT NOTATION (below), without square brackets and never the screen name: the tool adds it. On every screen (header, footer, main navigation, cookie banner): name only, e.g. Main navigation. No element named: write only observation | criteria.\n2. observation: one factual sentence. It becomes the \"Actual behavior\" of the Jira ticket: the user action if there is one, then what is displayed, announced or exposed and what is missing (name, role, state, value); no guess about the code, no consequence. Never invent a fact, value or behavior the auditor did not write.\n3. criteria: numbers and codes from CRITERIA, comma-separated, most relevant first: 7.1, 7.3 or 12.8, BP3.\nRules: one line = one defect on one element (two defects: two lines). Same defect on several screens: one line per screen, exactly the same element, observation and criteria, so the tool merges them. No line break inside a line, no | inside a field, no severity.\n\nELEMENT NOTATION\n- Label in quotes, then type: \"Pay\" button, \"Email\" field. No visible label: type only (list).\n- Inside another element: widest first, comma-separated: \"Delivery\" form, \"Postal code\" field.\n- State in parentheses only if it must be triggered to see the defect: \"Submit\" button (disabled). Otherwise, say it in the text.\n- Labels exactly as written in the product. Types: button, link, field, checkbox, radio button, switch, form, list, image, tab, dialog, card. No dots, nested brackets or |.\n\nBLOCK 2: CRITERIA\nAfter the code block, the line \"Criteria:\", then one line per criterion of block 1, in the same order:\n<number> <topic from CRITERIA> : <why it applies to this observation, one short sentence>\nIf useful, \"Also check:\" with criteria from CRITERIA that depend on something you cannot see, same format. Do not put them in block 1. No fix advice unless asked.\n\nOPTION\n\"lines only\": block 1 only.\n\nUNCLEAR NOTES\nToo vague (no element, no symptom) or a possible special case: no line for it; at the very end, \"To clarify:\" and one short question per note.\n\nSTYLE\nNo introduction, no conclusion. No em or en dashes: use a comma or a colon.\n\nEXAMPLE\nNotes: \"page Login : la case Don't ask again on this computer, redessinée par le site, a un contour trop pâle ; bouton Pay = div cliquable, annoncé comme du texte, pas atteignable au clavier.\"\nAnswer:\n```\nÉcran : Login\n\"Don't ask again on this computer\" checkbox | The checkbox border has too little contrast with the background. | 3.3\n\"Pay\" button | The button is announced as plain text, without a button role, and cannot be reached with the keyboard. | 7.1, 7.3\n```\nCriteria:\n- 3.3 contrast of user interface components : the checkbox border is a component boundary, not text.\n- 7.1 custom component exposes its name, role and state : no button role is exposed.\n- 7.3 custom component operable by keyboard and pointer : the button cannot be reached by keyboard.";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.28';
+  var VERSION = '2.29';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -747,8 +757,7 @@ RUXAWEB 2 : audit par observations.
   function ecranDe(o, id){ return o.ecrans.filter(function(e){ return e.id === id; })[0] || null; }
   // Icônes (boutons et panneau des étapes) : décoratives, le libellé porte le sens.
   var ICO = {
-    'panneau-ouvrir':'<path d="M15 6l-6 6 6 6"/>', 'panneau-fermer':'<path d="M9 6l6 6-6 6"/>',
-    'liste-etapes':'<path d="M10 6h10M10 12h10M10 18h10"/><circle cx="5" cy="6" r="1.2" fill="currentColor"/><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="5" cy="18" r="1.2" fill="currentColor"/>',
+    'panneau':'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M15 4v16"/>',
     "fichier": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>",
     "livre": "<path d=\"M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z\"/><path d=\"M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z\"/>",
     "import": "<path d=\"M12 3v12M7 10l5 5 5-5M4 21h16\"/>",
@@ -1048,8 +1057,8 @@ RUXAWEB 2 : audit par observations.
       '<div class="champ"><label class="lbl" for="coller-texte">Lignes à coller<span class="oblig" aria-hidden="true">*</span></label>' +
           '<textarea id="coller-texte" rows="8" aria-required="true" placeholder="&quot;Payer&quot; button | Le bouton n\'a pas de nom. | 11.9"></textarea></div>' +
       blocConsigne(o, 'consigne-dlg') +
-      '<div class="rangee entre"><span class="doux petit">Les lignes deviennent des pistes à vérifier : rien ne compte avant de les reprendre.</span>' +
-          '<button type="button" class="btn btn-p" data-action="coller-ok">'+ico('valider')+'Ajouter aux pistes</button></div>';
+      '<div class="rangee entre dlg-pied"><span class="doux petit">Chaque ligne devient une piste à vérifier avant de compter.</span>' +
+          '<button type="button" class="btn btn-p" data-action="coller-ok">'+ico('import')+'Importer les observations</button></div>';
     document.getElementById('dlg-corps').innerHTML = html;
     var d = document.getElementById('dlg'); if(!d.open) d.showModal();
     document.getElementById('coller-texte').focus();
@@ -1179,7 +1188,11 @@ RUXAWEB 2 : audit par observations.
     document.querySelectorAll('#audit-support .tag').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-support') === state.support)); });
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
     var vues = {projet:vueProjet, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, resume:vueResume, referentiel:vueReferentiel};
+    var bEtapes = document.getElementById('btn-etapes'), focusEtapes = document.activeElement === bEtapes;
+    document.querySelector('.ligne-onglets').appendChild(bEtapes);
     $main.innerHTML = (vues[state.vue] || vueProjet)(o);
+    var place = $main.querySelector('.emplacement-etapes'); if(place) place.appendChild(bEtapes);
+    if(focusEtapes) bEtapes.focus({preventScroll:true});
     ($main.querySelector('.centre') || $main).appendChild($pied);
     grilleRoving();
     // Grille trop large pour la page (beaucoup d'écrans) : elle défile à l'horizontale dans son cadre.
@@ -1213,10 +1226,11 @@ RUXAWEB 2 : audit par observations.
     if(!dansOnglet) return;
     var et = state.vue === 'audit' && ETAPE[state.etape] ? (ETAPE[state.etape].i + 1)+'/'+ETAPES.length+' '+(ETAPE[state.etape].court || ETAPE[state.etape].nom)
       : ({preparer:'Préparer les écrans', ux:'Lecture POUR/UX', grille:'Compléter la grille', resume:'Résumé et exports'})[state.vue] || '';
-    var lib = ferme ? 'Afficher le panneau des étapes'+(et ? ' (étape '+et+')' : '') : 'Masquer le panneau des étapes';
+    var bulle = ferme ? 'Voir les étapes' : 'Masquer les étapes';
     b.setAttribute('aria-expanded', String(!ferme));
-    b.setAttribute('aria-label', lib); b.title = lib;
-    b.innerHTML = ico(ferme ? 'panneau-ouvrir' : 'panneau-fermer').replace('class="ico"', 'class="ico ico-chevron"') + ico('liste-etapes');
+    b.setAttribute('aria-label', bulle + (ferme && et ? ' (étape '+et+')' : ''));
+    b.setAttribute('data-bulle', bulle); b.removeAttribute('title');
+    b.innerHTML = ico('panneau');
   }
   function vuePanneauEtapes(o){
     var html = '<ol class="liste-etapes" id="liste-etapes">';
@@ -1288,7 +1302,7 @@ RUXAWEB 2 : audit par observations.
   }
 
   function bascule(vue){
-    return '<div class="tags" role="group" aria-label="Vue de l\'onglet">' + [['audit','Saisie'],['grille','Grille']].map(function(v){
+    return '<div class="tags" role="group" aria-label="Vue de l\'onglet">' + [['audit','Observation'],['grille','Grille']].map(function(v){
       return '<button type="button" class="tag-80 tag" data-action="vue" data-vue="'+v[0]+'" aria-pressed="'+(vue === v[0])+'">'+v[1]+'</button>';
     }).join('') + '</div>';
   }
@@ -1388,7 +1402,7 @@ RUXAWEB 2 : audit par observations.
   }
   function vuePreparer(o){
     var mini = o.type === 'scenario' ? 2 : 3;
-    var html = '<h1>Écrans de l\'onglet</h1><section class="carte pile" aria-label="Onglet"><div class="grille2">' +
+    var html = '<div class="rangee entre titre-onglet"><h1>Écrans de l\'onglet</h1><span class="emplacement-etapes"></span></div><section class="carte pile" aria-label="Onglet"><div class="grille2">' +
       '<div class="champ"><label class="lbl" for="onglet-nom">Nom de l\'onglet<span class="oblig" aria-hidden="true">*</span></label>' +
           '<input type="text" id="onglet-nom" value="'+esc(o.nom)+'" autocomplete="off" aria-required="true"></div>' +
       '<fieldset class="groupe-nu champ"><legend class="lbl">Type</legend><div class="rangee">' +
@@ -1438,8 +1452,8 @@ RUXAWEB 2 : audit par observations.
     return l.filter(function(id, i){ return l.indexOf(id) === i; });
   }
 
-  // ---------- Rendu : étapes de test (vue Saisie) ----------
-  // Cadre commun aux vues Saisie et Grille : titre de l'onglet, puis les écrans (colonne qui reste visible) et le contenu.
+  // ---------- Rendu : étapes de test (vue Observation) ----------
+  // Cadre commun aux vues Observation et Grille : titre de l'onglet, puis les écrans (colonne qui reste visible) et le contenu.
   // Ordre « étape d'abord » : une étape se fait sur tous les écrans de l'onglet avant de passer à la suivante.
   // À chaque étape, les fonctions primaires passent en premier, puis les écrans : ce sont les « cibles » de l'étape.
   function cibles(o){
@@ -1464,7 +1478,7 @@ RUXAWEB 2 : audit par observations.
   }
   function cadreOnglet(o, vue, info, contenu){
     var e = ecranDe(o, state.ecranId) || o.ecrans[0]; state.ecranId = e.id;
-    var html = '<div class="rangee entre titre-onglet"><span class="rangee"><h1>'+esc(o.nom)+'</h1>'+bascule(vue)+'</span><span class="rangee">'+info+'</span></div>';
+    var html = '<div class="rangee entre titre-onglet"><span class="rangee"><h1>'+esc(o.nom)+'</h1>'+bascule(vue)+info+'</span><span class="emplacement-etapes"></span></div>';
     var fC = vue === 'audit' ? fonctionCourante(o) : null;
     html += '<div class="audit"><nav class="ecrans" aria-label="Écrans et éléments partagés">';
     var fo = fonctionsOnglet(o);
@@ -1719,7 +1733,7 @@ RUXAWEB 2 : audit par observations.
       '<p class="sans-marge">Dans une observation, le champ Élément reçoit le libellé entre guillemets puis le type, par exemple <code>"Payer" button</code>. Sans libellé visible, le type seul : <code>list</code>. Dans un autre élément, du plus large au plus précis, séparés par une virgule : <code>"Livraison" form, "Code postal" field</code>. L\'état entre parenthèses seulement s\'il faut le provoquer pour voir le défaut : <code>"Payer" button (disabled)</code> ; sinon, dis-le dans l\'observation. Pas de points, pas de crochets.</p>' +
       '<p class="sans-marge">L\'export Jira ajoute l\'écran devant : <code>Panier ["Payer" button]</code>. Un élément présent sur tous les écrans est noté <code>All screens [Menu principal]</code> ; sur quelques écrans, ils sont listés : <code>Panier, Paiement [Menu principal]</code>. Un passage d\'un écran à l\'autre, dans un scénario, est noté <code>Panier -> Paiement</code>.</p></section>' +
       '<section class="carte pile" aria-labelledby="t-ia"><h2 id="t-ia">Convertir des notes avec une IA</h2>' +
-          '<p class="sans-marge">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la Saisie) : une ligne par observation, avec les numéros des critères RAWeb. L\'outil les ajoute comme pistes à vérifier. Avec Microsoft 365 Copilot, installe plutôt l\'agent prêt à l\'emploi : <a href="'+URL_AGENTS+'" target="_blank" rel="noopener">agents Copilot de RUXAWEB</a> (guide d\'installation compris).</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
+          '<p class="sans-marge">Tu peux écrire tes observations librement, puis les faire convertir par une IA au format du bouton « Coller des observations » (dans la vue Observation) : une ligne par observation, avec les numéros des critères RAWeb. L\'outil les ajoute comme pistes à vérifier. Avec Microsoft 365 Copilot, installe plutôt l\'agent prêt à l\'emploi : <a href="'+URL_AGENTS+'" target="_blank" rel="noopener">agents Copilot de RUXAWEB</a> (guide d\'installation compris).</p>' + blocConsigne(onglet(), 'consigne-ref') + '</section>';
     groupesCriteres(officiel).forEach(function(g){
       html += '<section class="ref-groupe" aria-labelledby="g-'+g.cs[0].id+'"><h2 id="g-'+g.cs[0].id+'">'+esc(g.th)+' <span class="doux petit">('+g.cs.length+')</span></h2>' +
         g.cs.map(function(c){ return '<article class="carte pile ref-fiche"><h3 class="sans-marge">'+esc(refTxt(c))+' <span class="grav grav-'+c.niveau+'">'+GRAVITE[c.niveau]+'</span></h3>'+infoCritere(c, 'h4', true)+'</article>'; }).join('') + '</section>';
@@ -1731,7 +1745,7 @@ RUXAWEB 2 : audit par observations.
     return o.obs.filter(function(x){ return x.tag !== 'nt' && !estStatutGrille(x) && x.criteres.indexOf(c.id) > -1 && concerne(x, e.id, c); }).length;
   }
   // Grille : le lieu des statuts. Une case s'ouvre sur la fiche du critère, avec C / NC / NA par écran.
-  // Les NC des observations de la Saisie s'y reportent ; la colonne Résultat donne le statut retenu pour l'onglet.
+  // Les NC des observations (vue Observation) s'y reportent ; la colonne Résultat donne le statut retenu pour l'onglet.
   function vueGrille(o){
     var html = '<h2 class="sr">Grille des critères</h2>';
     var officiel = state.theming !== 'ruxal', filtre = ui.grilleFiltre === 'definir' || ui.grilleFiltre === 'na' ? ui.grilleFiltre : '';
@@ -1870,7 +1884,7 @@ RUXAWEB 2 : audit par observations.
   }
   function vueUx(o){
     var r = scoreUx(o);
-    var html = '<div class="rangee entre"><h1>Lecture POUR/UX du parcours</h1><span class="doux">Score '+(r.pct != null ? r.pct+' %' : 'non calculé')+' · hors taux</span></div>';
+    var html = '<div class="rangee entre titre-onglet"><h1>Lecture POUR/UX du parcours</h1><span class="rangee"><span class="doux">Score '+(r.pct != null ? r.pct+' %' : 'non calculé')+' · hors taux</span><span class="emplacement-etapes"></span></span></div>';
     html += '<section class="carte">' + HEURISTIQUES.map(function(h){
       var cur = (o.heuristiques || {})[h.id] || {};
       return '<div class="retour-ligne obs"><div class="souple-320 corps"><span id="heur-'+h.id+'">'+esc(h.texte)+'</span>' +
@@ -1885,7 +1899,7 @@ RUXAWEB 2 : audit par observations.
 
   function vueResume(o){
     var t = taux(o, SELECTION), te = taux(o, RAWEB);
-    var html = '<h1>Résumé : '+esc(o.nom)+'</h1><section class="carte pile" aria-label="Taux"><div class="taux">' +
+    var html = '<div class="rangee entre titre-onglet"><h1>Résumé : '+esc(o.nom)+'</h1><span class="emplacement-etapes"></span></div><section class="carte pile" aria-label="Taux"><div class="taux">' +
       '<div><div class="lbl">Taux sélection SIP</div>'+(t.complet ? (function(){ var nv = niveauTaux(t.pct); return '<div class="val niv-'+nv.cle+'">'+t.pct+' %</div><div class="niveau niv-'+nv.cle+'">'+nv.lib+'</div>'; })() : '<div class="val"><span class="taille-15 pastille s-NT">incomplet</span></div>') +
           '<div class="doux petit">'+t.C+' conformes sur '+t.total+' applicables · '+SELECTION.length+' critères</div></div>' +
       (o.type === 'scenario' ? '' : '<div><div class="lbl">Taux élargi</div>' +
@@ -2585,11 +2599,17 @@ RUXAWEB 2 : audit par observations.
   // ---------- Démarrage ----------
   // La hauteur de l'en-tête change avec la largeur (onglets, retour à la ligne) : le panneau des étapes, la colonne des écrans et l'en-tête de la grille se calent toujours dessous.
   // --barre-h : hauteur de l'en-tête ; --tete-h : en-tête plus bandeau de l'onglet quand celui-ci est collant (sous ce total : ligne de l'écran, colonnes, en-tête de la grille).
+  // --bandeau-ext : largeur dont le bandeau dépasse à droite pour couvrir le panneau des étapes ouvert (même ligne que le contenu).
   function calerEntete(){
-    var bh = document.querySelector('header.barre').offsetHeight, t = $main.querySelector('.titre-onglet');
-    var th = t && getComputedStyle(t).position === 'sticky' ? t.offsetHeight : 0;
-    document.documentElement.style.setProperty('--barre-h', bh + 'px');
-    document.documentElement.style.setProperty('--tete-h', (bh + th) + 'px');
+    var racine = document.documentElement.style, bh = document.querySelector('header.barre').offsetHeight, t = $main.querySelector('.titre-onglet');
+    var collant = t && getComputedStyle(t).position === 'sticky', ext = 0;
+    if(collant && !$etapes.classList.contains('ferme') && $etapes.offsetParent){
+      var m = $main.getBoundingClientRect(), a = $etapes.getBoundingClientRect();
+      if(a.left >= m.right) ext = a.right - m.right;
+    }
+    racine.setProperty('--bandeau-ext', ext + 'px');
+    racine.setProperty('--barre-h', bh + 'px');
+    racine.setProperty('--tete-h', (bh + (collant ? t.offsetHeight : 0)) + 'px');
   }
   (function(){
     var barre = document.querySelector('header.barre');
@@ -2599,6 +2619,13 @@ RUXAWEB 2 : audit par observations.
     }
     caler();
     if(window.ResizeObserver) new ResizeObserver(caler).observe(barre); else window.addEventListener('resize', caler);
+  })();
+
+  // Bulle du bouton des étapes : Échap la ferme jusqu'à ce que le pointeur ou le focus quitte le bouton (WCAG 1.4.13).
+  (function(){
+    var x = document.getElementById('btn-etapes');
+    document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && (x.matches(':hover') || document.activeElement === x)) x.classList.add('sans-bulle'); });
+    ['mouseleave', 'blur'].forEach(function(t){ x.addEventListener(t, function(){ x.classList.remove('sans-bulle'); }); });
   })();
 
   // Repli de l'en-tête au défilement : deux états francs, sans animation. Seuils écartés (160 / 24 px) pour éviter le va-et-vient

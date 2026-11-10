@@ -611,10 +611,11 @@ def main():
         # Panneau des étapes masquable : un seul bouton, dans la ligne des onglets, toujours au même endroit.
         lm = page.evaluate("document.getElementById('main').getBoundingClientRect().width")
         pos = page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()")
-        verifier('Bouton du panneau : visible dans la ligne des onglets, panneau ouvert', page.locator('#btn-etapes').is_visible() and page.get_attribute('#btn-etapes', 'aria-expanded') == 'true' and page.locator('#panneau-etapes [data-action="panneau-bascule"]').count() == 0)
+        verifier('Bouton du panneau : visible dans le bandeau de l\'onglet, panneau ouvert', page.locator('#btn-etapes').is_visible() and page.get_attribute('#btn-etapes', 'aria-expanded') == 'true' and page.locator('#panneau-etapes [data-action="panneau-bascule"]').count() == 0)
         page.click('#btn-etapes')
         verifier('Panneau masqué : disparu, contenu élargi, focus gardé, libellé avec l\'étape en cours', page.locator('#panneau-etapes').is_hidden() and page.evaluate("document.getElementById('main').getBoundingClientRect().width") > lm + 200 and page.evaluate("document.activeElement.id") == 'btn-etapes' and page.get_attribute('#btn-etapes', 'aria-expanded') == 'false' and '/' in page.get_attribute('#btn-etapes', 'aria-label'))
-        verifier('Bouton du panneau : même position ouvert ou fermé', page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()") == pos)
+        apres_pos = page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()")
+        verifier('Bouton du panneau : même position ouvert ou fermé', apres_pos == pos, (pos, apres_pos, page.evaluate("window.scrollY")))
         page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
         verifier('Panneau masqué : le reste pendant l\'audit (grille)', page.locator('#panneau-etapes').is_hidden() and page.get_attribute('#btn-etapes', 'aria-expanded') == 'false')
         page.click('#btn-ref')
@@ -622,7 +623,17 @@ def main():
         page.click('#onglet-nav .onglet-tab[data-id="%s"]' % page.evaluate('RUXAWEB.state().ongletId'))
         aller_audit(page)
         page.click('#btn-etapes')
-        verifier('Panneau rouvert : focus gardé sur le bouton', page.locator('#panneau-etapes').is_visible() and page.evaluate("document.activeElement.id") == 'btn-etapes' and page.get_attribute('#btn-etapes', 'aria-label') == 'Masquer le panneau des étapes')
+        verifier('Panneau rouvert : focus gardé sur le bouton', page.locator('#panneau-etapes').is_visible() and page.evaluate("document.activeElement.id") == 'btn-etapes' and page.get_attribute('#btn-etapes', 'aria-label') == 'Masquer les étapes' and page.get_attribute('#btn-etapes', 'data-bulle') == 'Masquer les étapes' and page.get_attribute('#btn-etapes', 'title') is None)
+        # Bandeau : « Observation » au lieu de « Saisie », compteur collé à la bascule, bulle au survol fermée par Échap.
+        verifier('Bascule de vue : Observation et Grille', page.locator('.titre-onglet [data-vue="audit"]').inner_text().strip() == 'Observation')
+        bx = page.evaluate("(function(){var a=document.querySelector('.titre-onglet .tags').getBoundingClientRect(),i=document.querySelector('.titre-onglet .tags + .doux');return i ? Math.round(i.getBoundingClientRect().left - a.right) : -1;})()")
+        verifier('Compteur juste à droite de la bascule', 0 <= bx <= 24, bx)
+        page.hover('#btn-etapes'); page.wait_for_timeout(50)
+        bulle = page.evaluate("getComputedStyle(document.getElementById('btn-etapes'), '::after').display")
+        page.keyboard.press('Escape'); page.wait_for_timeout(50)
+        apres = page.evaluate("getComputedStyle(document.getElementById('btn-etapes'), '::after').display")
+        verifier('Bulle du bouton des étapes : au survol, fermée par Échap', bulle == 'block' and apres == 'none', (bulle, apres))
+        page.mouse.move(0, 0)
         verifier('Formulaire : « Qu\'as-tu observé ? », un seul bouton Enregistrer, aide sans critère', "Qu'as-tu observé ?" in page.text_content('#form-obs h3.sous-titre-form') and page.inner_text('#form-obs button[type=submit]').strip() == 'Enregistrer' and page.locator('#aide-sans-critere').count() == 1)
 
         # Suggestions pendant la frappe.

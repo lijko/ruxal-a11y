@@ -18,7 +18,7 @@ Dans les deux modules, le testeur travaille sur trois volets qui aboutissent tou
 2. **Observations** : saisies, collées ou converties par une IA, rattachées aux critères par un point de contrôle ;
 3. **Grille des critères** : lecture de tous les statuts, et pose directe de C ou NA (NC demande une phrase).
 
-L'import et les observations restent dans la vue **Saisie** : une piste n'a de sens qu'à côté du formulaire qui la reprend. La grille reste une vue à part.
+L'import et les observations restent dans la vue **Observation** : une piste n'a de sens qu'à côté du formulaire qui la reprend. La grille reste une vue à part.
 
 ## 1. En-tête et page Projet
 Le tableau de bord devient la **page Projet** (premier onglet de la barre, « Projet ») : onglets avec leur état et leur suppression, création d'un onglet par module (« + Nouvel onglet » y mène), et activation des fonctions primaires. La page des écrans de chaque onglet ne garde que les cases « sur quels écrans » de chaque fonction active.
