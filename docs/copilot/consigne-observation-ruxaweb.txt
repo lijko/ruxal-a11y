@@ -15,7 +15,7 @@ Media: 4.1 transcript or audio description; 4.2 transcript or audio description 
 Tables: 5.6 data table headers declared; 5.7 cells associated with their headers
 Links: 6.1 link explicit, purpose clear; 6.2 link has an accessible name
 Scripts: 7.1 custom component exposes its name, role and state to assistive technologies; 7.3 custom component operable by keyboard and pointer; 7.5 status messages announced
-Mandatory elements: 8.2 valid code (ARIA attributes, roles, duplicate ids); 8.3 default page language present; 8.4 default language code relevant; 8.5 page title present; 8.6 page title relevant; 8.7 language changes indicated; 8.8 language change code valid
+Mandatory elements: 8.1 doctype present; 8.2 valid code (ARIA attributes, roles, duplicate ids); 8.3 default page language present; 8.4 default language code relevant; 8.5 page title present; 8.6 page title relevant; 8.7 language changes indicated; 8.8 language change code valid
 Structure: 9.1 headings structure the information; 9.2 page regions (header, navigation, main, footer); 9.3 lists correctly structured
 Presentation: 10.4 text readable at 200% font size; 10.7 keyboard focus visible; 10.8 hidden content ignored by assistive technologies; 10.9 information not by shape, size or position alone; 10.10 same, implemented appropriately; 10.14 CSS additional content reachable by keyboard and pointer
 Forms: 11.1 field has a label; 11.2 label relevant; 11.5 related fields grouped; 11.6 group has a legend; 11.7 legend relevant; 11.9 button label relevant; 11.10 errors and required formats handled

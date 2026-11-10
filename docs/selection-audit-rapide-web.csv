@@ -25,6 +25,7 @@
 7.1;Scripts;Chaque script est-il, si nécessaire, compatible avec les technologies d’assistance ?;A;hors sélection (ajout RUXAWEB, taux élargi);Composants interactifs;cœur;;3a Lecteur d'écran : contenus et structure;Critique
 7.3;Scripts;Chaque script est-il contrôlable par le clavier et par tout dispositif de pointage (hors cas particuliers) ?;A;manuel;Navigation & structure;cœur;;4 Navigation au clavier;Critique
 7.5;Scripts;Dans chaque page web, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?;AA;hors sélection (ajout RUXAWEB, taux élargi);Composants interactifs;cœur;;3a Lecteur d'écran : contenus et structure;Sérieux
+8.1;Éléments obligatoires;Chaque page web est-elle définie par un type de document ?;A;grille d'exemple du SIP;Fondations techniques;cœur;;2 Code et outils;Mineur
 8.2;Éléments obligatoires;Pour chaque page web, le code source généré est-il valide selon le type de document spécifié ?;A;Axe;Fondations techniques;cœur;;2 Code et outils;Sérieux
 8.3;Éléments obligatoires;Dans chaque page web, la langue par défaut est-elle présente ?;A;Axe;Fondations techniques;cœur;;2 Code et outils;Sérieux
 8.4;Éléments obligatoires;Pour chaque page web ayant une langue par défaut, le code de langue est-il pertinent ?;A;manuel et Axe;Fondations techniques;cœur;;2 Code et outils;Sérieux

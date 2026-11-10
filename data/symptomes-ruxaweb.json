@@ -490,13 +490,16 @@
       "id": "code-invalide",
       "famille": "structure",
       "controle": "Validité du code",
-      "symptome": "Code source invalide (balises mal fermées, identifiants en double)",
+      "symptome": "Code source invalide (type de document absent, balises mal fermées, identifiants en double)",
       "criteres": [
+        "8.1",
         "8.2"
       ],
       "mots": [
         "code invalide",
         "validite du code",
+        "doctype",
+        "type de document",
         "id en double",
         "identifiant en double",
         "doublon d id",

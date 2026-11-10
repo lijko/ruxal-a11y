@@ -48,9 +48,9 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 ### RUXAWEB 2.0 (web, RAWeb 1.1)
 `src/ruxaweb.html` : audit par observations. L'auditeur note ce qu'il constate, la grille des critères se remplit. Spécification : [`docs/audit-par-observations.md`](docs/audit-par-observations.md).
 
-- **Critères** : les **52 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html), intitulés officiels non modifiés, dont 24 « si présent ». Aucune adaptation : le taux reste lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
+- **Critères** : les **53 critères du RAWeb 1.1** retenus par la [méthode de contrôle simplifié v1.2.1 du SIP](https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) et sa grille d'exemple (qui ajoute le 8.1), intitulés officiels non modifiés, dont 24 « si présent ». Aucune adaptation : le taux reste lisible à côté d'un audit simplifié du SIP (même sélection, même formule), sans en être un résultat officiel. Traçabilité : `docs/selection-audit-rapide-web.csv`.
 - **6 critères hors sélection** : 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, critères officiels absents de la méthode du SIP, ajoutés parce qu'ils couvrent des défauts fréquents. Champ `hors_selection` de `data/criteres-raweb.json`.
-- **Deux taux**, même formule : le **taux sélection SIP** (52 critères), taux principal, et le **taux élargi** (58 critères).
+- **Deux taux**, même formule : le **taux sélection SIP** (53 critères), taux principal, et le **taux élargi** (59 critères).
 - **3 bonnes pratiques hors RAWeb** (hors taux) : taille des cibles (WCAG 2.2, 2.5.8), fermeture d'une fenêtre modale au clavier, retour du focus à sa fermeture.
 - **On note des observations, la grille se remplit** : chaque observation décrit un défaut (NC) et porte un ou plusieurs critères, proposés à partir d'un point de contrôle (`data/symptomes-ruxaweb.json`). Sans critère, c'est une note libre. Le C se pose dans la grille, le NA par les interrupteurs « Contenus de l'écran » (un écran à la fois). Un critère sans observation reste NT ; le pire statut l'emporte. La grille filtre les critères À définir (NT) ou NA.
 - **Écrans** : une page du site, ou un état de page (fenêtre modale ouverte, étape d'un formulaire). L'audit simple porte sur 3 à 5 écrans (accueil, écran avec formulaire, écran au contenu particulier), comme l'audit simplifié du SIP. Fonctions primaires : configurateur au niveau du projet, voir `docs/projet-a11y-modules.md`.
@@ -70,7 +70,7 @@ RUXAAM 1.27 : **52 critères RAAM** (dont 20 « si présent ») et **3 bonnes pr
 - **Gravités** : base de discussion, alignées sur les critères équivalents de RUXAAM quand il y en a.
 - **RUXAAM** garde pour le moment la saisie critère par critère.
 
-**EN**: `src/ruxaweb.html` is an observation-based audit tool for the web: the auditor records observations, and the RAWeb 1.1 criteria grid (52 criteria of the SIP simplified audit method, plus 6) fills itself. Guided screen-by-screen flow, two compliance rates, axe and Lighthouse report import.
+**EN**: `src/ruxaweb.html` is an observation-based audit tool for the web: the auditor records observations, and the RAWeb 1.1 criteria grid (53 criteria of the SIP simplified audit method, plus 6) fills itself. Guided screen-by-screen flow, two compliance rates, axe and Lighthouse report import.
 
 ## Données et génération / Data and build
 Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'éditent pas dans le HTML : la source de vérité est dans `data/`.
@@ -82,7 +82,7 @@ Chaque outil reste **un seul fichier HTML autonome**, mais ses critères ne s'é
 | `data/themes-ruxal.json` | ordre, noms, descriptions (FR, EN) et critères RAAM et RAWeb des 7 thèmes RUXAL | CC BY 4.0 |
 | `docs/modele-donnees-ruxaweb.md` | modèle de données de RUXAWEB (projet, onglet, écran, observation) et ses règles | CC BY 4.0 |
 | `data/textes-ruxal.json` | gravité (non normative, voir `docs/gravite.md`), texte d'impact et consigne de test de chaque critère ; libellés des 6 déclencheurs | CC BY 4.0 |
-| `data/criteres-raweb.json` | RUXAWEB : 52 critères officiels du RAWeb 1.1 (audit simplifié du SIP), plus 6 critères hors sélection (3.3, 7.1, 7.5, 9.3, 10.4, 13.11), comptés dans le taux élargi seulement (intitulés non modifiés) ; 24 « si présent » ; étape de test | CC BY 3.0 LU |
+| `data/criteres-raweb.json` | RUXAWEB : 53 critères officiels du RAWeb 1.1 (audit simplifié du SIP), plus 6 critères hors sélection (3.3, 7.1, 7.5, 9.3, 10.4, 13.11), comptés dans le taux élargi seulement (intitulés non modifiés) ; 24 « si présent » ; étape de test | CC BY 3.0 LU |
 | `data/bonnes-pratiques-web.json` | RUXAWEB : 3 bonnes pratiques hors RAWeb (hors taux) | CC BY 4.0 |
 | `data/textes-ruxaweb.json` | RUXAWEB : gravité, impact et consigne de test de chaque critère ; 8 déclencheurs | CC BY 4.0 |
 

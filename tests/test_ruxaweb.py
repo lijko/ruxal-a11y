@@ -265,7 +265,7 @@ def main():
         x = telecharger(page, 'export-xlsx')
         ws = openpyxl.load_workbook(x).active
         lignes = list(ws.iter_rows(values_only=True))
-        verifier('Excel : une ligne par critère', len(lignes) == 1 + 61, len(lignes))
+        verifier('Excel : une ligne par critère', len(lignes) == 1 + 62, len(lignes))
         verifier('Excel : numéro gardé en texte', any(r[1] == '10.10' for r in lignes))
         verifier('Excel : 10.7 NC', any(r[1] == '10.7' and r[6] == 'NC' for r in lignes))
         j = telecharger(page, 'export-jira')
@@ -503,7 +503,7 @@ def main():
         # Référentiel : toutes les fiches, avec gravité, étape, consigne, et la notation des éléments.
         page.click('#btn-ref')
         nb = page.evaluate('RUXAWEB.state() && document.querySelectorAll(".ref-fiche").length')
-        verifier('Référentiel : une fiche par critère et bonne pratique (61)', nb == 61, nb)
+        verifier('Référentiel : une fiche par critère et bonne pratique (62)', nb == 62, nb)
         txt = page.locator('main').inner_text()
         verifier('Référentiel : consigne, impact, gravité, étape', all(k in txt for k in ('Comment vérifier', 'Impact', 'gravité', 'étape 2 Code et outils')))
         verifier('Référentiel : section Noter les éléments', 'Noter les éléments' in txt and '[Menu principal]' in txt)
@@ -519,7 +519,7 @@ def main():
         aller_audit(page)
         verifier('Saisie : rappel de notation sous Élément', 'sans l\'écran' in page.locator('#aide-element').inner_text() and page.get_attribute('#obs-partage-nom', 'aria-describedby') == 'aide-element')
         page.click('[data-action="vue"][data-vue="grille"]')
-        verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 61)
+        verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 62)
 
         # Ordre « étape d'abord » : une étape sur tous les écrans, puis l'étape suivante.
         page.click('[data-action="projet"]')
@@ -608,18 +608,21 @@ def main():
         verifier('Enregistrer puis dupliquer : modification gardée, copie ouverte', [x for x in page.evaluate('RUXAWEB.state().onglets.filter(function(o){return o.id===RUXAWEB.state().ongletId})[0].obs') if x['id'] == orig['id']][0]['texte'].startswith('Bouton Fermer sans nom, lu') and 'copie' in page.inner_text('#form-obs-titre'))
         page.click('[data-action="nouvelle-obs"]')
 
-        # Panneau des étapes masquable : fermé, il disparaît, le contenu prend toute la largeur, un bouton le rouvre.
+        # Panneau des étapes masquable : un seul bouton, dans la ligne des onglets, toujours au même endroit.
         lm = page.evaluate("document.getElementById('main').getBoundingClientRect().width")
-        page.click('#panneau-etapes [data-action="panneau-bascule"]')
-        verifier('Panneau masqué : disparu, contenu élargi, bouton Étapes focalisé avec l\'étape en cours', page.locator('#panneau-etapes').is_hidden() and page.evaluate("document.getElementById('main').getBoundingClientRect().width") > lm + 200 and page.evaluate("document.activeElement.closest('.rouvrir-etapes') !== null") and page.get_attribute('.rouvrir-etapes [data-action="panneau-bascule"]', 'aria-expanded') == 'false' and '/' in page.inner_text('.rouvrir-etapes'))
+        pos = page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()")
+        verifier('Bouton du panneau : visible dans la ligne des onglets, panneau ouvert', page.locator('#btn-etapes').is_visible() and page.get_attribute('#btn-etapes', 'aria-expanded') == 'true' and page.locator('#panneau-etapes [data-action="panneau-bascule"]').count() == 0)
+        page.click('#btn-etapes')
+        verifier('Panneau masqué : disparu, contenu élargi, focus gardé, libellé avec l\'étape en cours', page.locator('#panneau-etapes').is_hidden() and page.evaluate("document.getElementById('main').getBoundingClientRect().width") > lm + 200 and page.evaluate("document.activeElement.id") == 'btn-etapes' and page.get_attribute('#btn-etapes', 'aria-expanded') == 'false' and '/' in page.get_attribute('#btn-etapes', 'aria-label'))
+        verifier('Bouton du panneau : même position ouvert ou fermé', page.evaluate("(function(){var r=document.getElementById('btn-etapes').getBoundingClientRect();return [r.x,r.y];})()") == pos)
         page.click('[data-action="vue"][data-vue="grille"]') if page.locator('[data-action="vue"][data-vue="grille"]').count() else None
-        verifier('Panneau masqué : le reste pendant l\'audit (grille)', page.locator('.rouvrir-etapes').count() == 1)
+        verifier('Panneau masqué : le reste pendant l\'audit (grille)', page.locator('#panneau-etapes').is_hidden() and page.get_attribute('#btn-etapes', 'aria-expanded') == 'false')
         page.click('#btn-ref')
-        verifier('Référentiel : panneau toujours affiché, sans bouton Masquer', page.locator('#panneau-etapes').is_visible() and page.locator('#panneau-etapes [data-action="panneau-bascule"]').count() == 0)
+        verifier('Référentiel : panneau toujours affiché, sans bouton', page.locator('#panneau-etapes').is_visible() and page.locator('#btn-etapes').is_hidden())
         page.click('#onglet-nav .onglet-tab[data-id="%s"]' % page.evaluate('RUXAWEB.state().ongletId'))
         aller_audit(page)
-        page.click('.rouvrir-etapes [data-action="panneau-bascule"]')
-        verifier('Panneau rouvert : focus sur Masquer le panneau', page.locator('#panneau-etapes').is_visible() and page.locator('.rouvrir-etapes').count() == 0 and page.evaluate("document.activeElement.textContent").strip() == 'Masquer le panneau')
+        page.click('#btn-etapes')
+        verifier('Panneau rouvert : focus gardé sur le bouton', page.locator('#panneau-etapes').is_visible() and page.evaluate("document.activeElement.id") == 'btn-etapes' and page.get_attribute('#btn-etapes', 'aria-label') == 'Masquer le panneau des étapes')
         verifier('Formulaire : « Qu\'as-tu observé ? », un seul bouton Enregistrer, aide sans critère', "Qu'as-tu observé ?" in page.text_content('#form-obs h3.sous-titre-form') and page.inner_text('#form-obs button[type=submit]').strip() == 'Enregistrer' and page.locator('#aide-sans-critere').count() == 1)
 
         # Suggestions pendant la frappe.

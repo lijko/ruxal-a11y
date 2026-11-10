@@ -317,7 +317,7 @@ FR: L’application ne perturbe pas les fonctionnalités d’accessibilité de l
 Theme: Fondations techniques
 https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-12-3
 
-== RAWeb 1.1 (58 criteria) ==
+== RAWeb 1.1 (59 criteria) ==
 RAWeb 1.1, Criterion 1.1
 EN: Does each image conveying information have a text alternative?
 FR: Chaque image porteuse d’information a-t-elle une alternative textuelle ?
@@ -473,6 +473,12 @@ EN: On each web page, are status messages correctly rendered (by assistive techn
 FR: Dans chaque page web, les messages de statut sont-ils correctement restitués par les technologies d’assistance ?
 Theme: Composants interactifs
 https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-7-5
+
+RAWeb 1.1, Criterion 8.1
+EN: Has each web page a defined document type?
+FR: Chaque page web est-elle définie par un type de document ?
+Theme: Fondations techniques
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-8-1
 
 RAWeb 1.1, Criterion 8.2
 EN: For each web page, is the generated source code valid for the specified document type?

@@ -72,7 +72,7 @@ Le tag qualifie l'**observation**, pas le critère : une observation `#nc` rend 
 ## 3. Rattachement aux critères
 Trois sources, toutes soumises à la validation du testeur :
 1. **Référence saisie** par le testeur (`RAWeb 11.1`).
-2. **Suggestion par symptôme**, sans IA : le testeur choisit un symptôme en langage de terrain (« non restitué », « nom incorrect », « focus perdu », « contraste faible », « non atteignable au clavier »...), l'outil propose les critères correspondants. La table symptôme vers critères est une donnée de RUXAL, maintenue par référentiel : `data/symptomes-ruxaweb.json` pour le web (39 points de contrôle, les 58 critères RAWeb de l'outil couverts, contrôle par `tests/test_symptomes_ruxaweb.py`). Chaque entrée a un intitulé neutre (« Présence d'un nom ») et un symptôme ; le même point sert pour un `#c` comme pour un `#nc`. Un même symptôme peut mener à des critères différents selon le type d'élément.
+2. **Suggestion par symptôme**, sans IA : le testeur choisit un symptôme en langage de terrain (« non restitué », « nom incorrect », « focus perdu », « contraste faible », « non atteignable au clavier »...), l'outil propose les critères correspondants. La table symptôme vers critères est une donnée de RUXAL, maintenue par référentiel : `data/symptomes-ruxaweb.json` pour le web (39 points de contrôle, les 59 critères RAWeb de l'outil couverts, contrôle par `tests/test_symptomes_ruxaweb.py`). Chaque entrée a un intitulé neutre (« Présence d'un nom ») et un symptôme ; le même point sert pour un `#c` comme pour un `#nc`. Un même symptôme peut mener à des critères différents selon le type d'élément.
 3. **Import d'un rapport automatique** (section 5).
 
 ## 4. Calcul des statuts
