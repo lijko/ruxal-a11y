@@ -291,7 +291,7 @@ def main():
         x = telecharger(page, 'export-xlsx')
         ws = openpyxl.load_workbook(x).active
         lignes = list(ws.iter_rows(values_only=True))
-        verifier('Excel : une ligne par critère', len(lignes) == 1 + 62, len(lignes))
+        verifier('Excel : une ligne par critère', len(lignes) == 1 + 63, len(lignes))
         verifier('Excel : numéro gardé en texte', any(r[1] == '10.10' for r in lignes))
         verifier('Excel : 10.7 NC', any(r[1] == '10.7' and r[6] == 'NC' for r in lignes))
         j = telecharger(page, 'export-jira')
@@ -534,7 +534,7 @@ def main():
         # Référentiel : toutes les fiches, avec gravité, étape, consigne, et la notation des éléments.
         page.click('#btn-ref')
         nb = page.evaluate('RUXAWEB.state() && document.querySelectorAll(".ref-fiche").length')
-        verifier('Référentiel : une fiche par critère et bonne pratique (62)', nb == 62, nb)
+        verifier('Référentiel : une fiche par critère et bonne pratique (63)', nb == 63, nb)
         txt = page.locator('main').inner_text()
         verifier('Référentiel : consigne, impact, gravité, étape', all(k in txt for k in ('Comment vérifier', 'Impact', 'gravité', 'étape 2 Code et outils')))
         verifier('Référentiel : section Noter les éléments', 'Noter les éléments' in txt and 'Écran.zone[type "libellé"] (état)' in txt and 'All.footer[links]' in txt)
@@ -553,7 +553,7 @@ def main():
         verifier('Élément : aperçu du ticket en direct, écran ajouté et traduit en anglais (libellé intact)', page.locator('#apercu-ticket code').first.inner_text().endswith('.footer[link "écrivez-nous"] (disabled)'), page.inner_text('#apercu-ticket'))
         page.fill('#obs-partage-nom', '')
         page.click('[data-action="vue"][data-vue="grille"]')
-        verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 62)
+        verifier('Grille : gravité affichée par critère', page.locator('tbody .grav').count() == 63)
 
         # Ordre « étape d'abord » : une étape sur tous les écrans, puis l'étape suivante.
         page.click('[data-action="projet"]')

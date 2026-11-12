@@ -273,6 +273,12 @@
       "impact": "RAWeb 10.4 (WCAG 1.4.4) : quand le texte est agrandi, un contenu tronqué, superposé ou qui sort de son cadre devient illisible ou masque des boutons : les personnes malvoyantes qui agrandissent le texte perdent l'information ou ne peuvent plus agir.",
       "explication": "Agrandis le texte jusqu'à 200 % : avec le zoom du navigateur, puis avec le réglage de la taille du texte seule quand il existe. Parcours tout l'écran : aucun texte ne doit être coupé, superposé à un autre ou masqué, et toutes les fonctions doivent rester disponibles. Un défilement horizontal reste acceptable pour les tableaux et les contenus qui en ont besoin."
     },
+    "raweb-10-6": {
+      "raweb": "10.6",
+      "gravite": "serieux",
+      "impact": "RAWeb 10.6 (WCAG 1.4.1) : un lien sans repère visuel (ni soulignement, ni icône, ni couleur assez différente) se confond avec le texte ; beaucoup d'utilisateurs, en particulier ceux qui perçoivent mal les couleurs, ne savent pas qu'il est cliquable.",
+      "explication": "Repère les liens placés au milieu ou à côté de texte non cliquable. Chacun doit se distinguer du texte sans dépendre de la seule couleur : soulignement, icône ou bordure, ou bien une couleur contrastée d'au moins 3:1 avec le texte voisin, avec en plus un repère autre que la couleur au survol et au focus. Un lien de la même couleur que le texte, sans autre repère, est non conforme."
+    },
     "raweb-10-7": {
       "raweb": "10.7",
       "gravite": "serieux",

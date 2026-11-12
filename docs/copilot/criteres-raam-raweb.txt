@@ -317,7 +317,7 @@ FR: L’application ne perturbe pas les fonctionnalités d’accessibilité de l
 Theme: Fondations techniques
 https://accessibilite.public.lu/en/raam1.1/referentiel-technique.html#criterion-12-3
 
-== RAWeb 1.1 (59 criteria) ==
+== RAWeb 1.1 (60 criteria) ==
 RAWeb 1.1, Criterion 1.1
 EN: Does each image conveying information have a text alternative?
 FR: Chaque image porteuse d’information a-t-elle une alternative textuelle ?
@@ -545,6 +545,12 @@ EN: On each web page, is the text still readable when the font size is increased
 FR: Dans chaque page web, le texte reste-t-il lisible lorsque la taille des caractères est augmentée jusqu’à 200 %, au moins (hors cas particuliers) ?
 Theme: Contenu & lisibilité
 https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-4
+
+RAWeb 1.1, Criterion 10.6
+EN: On each web page, is each link whose nature is not obvious visible in relation to the surrounding text?
+FR: Dans chaque page web, chaque lien dont la nature n’est pas évidente est-il visible par rapport au texte environnant ?
+Theme: Couleurs & contrastes
+https://accessibilite.public.lu/en/raweb1.1/criteres.html#crit-10-6
 
 RAWeb 1.1, Criterion 10.7
 EN: On each web page, for each element receiving keyboard focus, is the focus visible?

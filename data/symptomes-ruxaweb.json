@@ -572,7 +572,14 @@
         "ne vois pas ou",
         "indicateur de focus",
         "outline",
-        "focus"
+        "le focus",
+        "focus ne",
+        "focus n",
+        "focus is",
+        "focus not",
+        "no focus",
+        "focus indicator",
+        "focus ring"
       ]
     },
     {
@@ -677,7 +684,14 @@
             "police",
             "font",
             "paragraphe",
-            "ecrit"
+            "ecrit",
+            "placeholder",
+            "libelle",
+            "label",
+            "lettre",
+            "caractere",
+            "valeur saisie",
+            "intitule"
           ]
         },
         {
@@ -704,12 +718,14 @@
             "icon",
             "bordure",
             "border",
-            "focus",
             "graphique",
             "chart",
             "contour",
             "outline",
-            "picto"
+            "picto",
+            "indicateur de focus",
+            "focus indicator",
+            "etat de focus"
           ]
         }
       ],
@@ -743,6 +759,50 @@
         "la couleur",
         "seul facteur",
         "un seul indicateur"
+      ]
+    },
+    {
+      "id": "lien-non-distingue",
+      "famille": "visuel",
+      "controle": "Liens visibles dans le texte",
+      "symptome": "Lien impossible à distinguer du texte qui l'entoure (ni soulignement, ni icône, ni couleur assez contrastée)",
+      "symptome_court": "Lien qui ressemble à du texte",
+      "criteres": [
+        "10.6"
+      ],
+      "note": "Lien signalé seulement par la couleur, ou de la même couleur que le texte : 10.6. Une information donnée par la couleur seule ailleurs que sur un lien : 3.1.",
+      "selon": [],
+      "mots": [
+        "pas souligne",
+        "non souligne",
+        "sans soulignement",
+        "ressemble a du texte",
+        "ressemblent a du texte",
+        "affiche comme du texte",
+        "affiches comme du texte",
+        "affichee comme du texte",
+        "affichees comme du texte",
+        "comme du texte normal",
+        "se confond avec le texte",
+        "se confondent avec le texte",
+        "pas d indicateur visuel",
+        "aucun indicateur visuel",
+        "pas identifiable comme lien",
+        "pas identifiables comme liens",
+        "not underlined",
+        "no underline",
+        "without underline",
+        "displayed as text",
+        "displayed as plain text",
+        "look like text",
+        "looks like text",
+        "look like plain text",
+        "looks like plain text",
+        "no visual indicator",
+        "not distinguishable",
+        "indistinguishable from",
+        "blend with the text",
+        "blends with the text"
       ]
     },
     {
@@ -839,10 +899,18 @@
       "mots": [
         "etiquette",
         "label",
-        "placeholder",
         "champ sans",
         "intitule du champ",
-        "nom du champ"
+        "nom du champ",
+        "placeholder comme etiquette",
+        "placeholder seul",
+        "seulement un placeholder",
+        "placeholder only",
+        "placeholder as label",
+        "placeholder instead of",
+        "pas de label",
+        "no label",
+        "missing label"
       ]
     },
     {

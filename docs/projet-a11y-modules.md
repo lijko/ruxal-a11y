@@ -31,7 +31,7 @@ Le tableau de bord devient la **page Projet** (premier onglet de la barre, « Pr
 ### Modes
 | Mode | Écrans | Critères | Scores | État |
 |---|---|---|---|---|
-| **Simple** | 3 à 5 | sélection de l'audit simplifié du SIP (53), 6 critères hors sélection, 3 bonnes pratiques | taux sélection SIP (principal), taux élargi | à construire à partir de l'audit rapide actuel |
+| **Simple** | 3 à 5 | sélection de l'audit simplifié du SIP (53), 7 critères hors sélection, 3 bonnes pratiques | taux sélection SIP (principal), taux élargi | à construire à partir de l'audit rapide actuel |
 | **Complet** | selon l'échantillon du RAWeb | les 136 critères du RAWeb 1.1 (17 thématiques) | taux RAWeb | affiché « à venir », non développé |
 
 - Le choix du mode se fait à la création de l'onglet. Le mode Complet est visible mais désactivé, avec la mention « à venir : audit complet en vue d'une déclaration d'accessibilité ».

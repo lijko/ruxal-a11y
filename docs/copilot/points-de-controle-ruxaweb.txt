@@ -115,6 +115,10 @@ Checkpoint: Information par la couleur
 Symptom: Information donnée uniquement par la couleur (champ en erreur en rouge, lien distingué par sa seule couleur)
 RAWeb criteria: 3.1 (On each web page, the information must not be provided by colour alone. Is this rule respected?)
 
+Checkpoint: Liens visibles dans le texte
+Symptom: Lien impossible à distinguer du texte qui l'entoure (ni soulignement, ni icône, ni couleur assez contrastée)
+RAWeb criteria: 10.6 (On each web page, is each link whose nature is not obvious visible in relation to the surrounding text?)
+
 Checkpoint: Information par la forme ou la position
 Symptom: Information donnée uniquement par la forme, la taille ou la position (« le bouton rond à droite »)
 RAWeb criteria: 10.9 (On each web page, information must not be conveyed solely by shape, size or location. Is this rule respected?), 10.10 (On each web page, information must not be conveyed by shape, size or location only. Is this rule implemented appropriately?)

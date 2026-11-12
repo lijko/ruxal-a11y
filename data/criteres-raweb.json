@@ -1,7 +1,7 @@
 {
   "source": "RAWeb 1.1, Service information et presse (SIP), Luxembourg, https://accessibilite.public.lu/fr/raweb1.1/",
   "depot": "https://github.com/accessibility-luxembourg/ReferentielAccessibiliteWeb",
-  "selection": "Méthode de contrôle simplifié de l'accessibilité v1.2.1 du SIP (https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) : union des 47 critères testés manuellement et des 19 critères testés avec Axe, soit 52 critères distincts, plus le 8.1 (type de document), présent dans la grille d'exemple du SIP : 53 critères. Champ audit_simplifie : manière dont la méthode du SIP teste le critère. Ajouts RUXAWEB (hors sélection du SIP) : critères 3.3, 7.1, 7.5, 9.3, 10.4 et 13.11, marqués hors_selection. Ils n'entrent pas dans le taux « sélection SIP », calculé sur la même sélection que l'audit simplifié du SIP, mais comptent dans le taux élargi.",
+  "selection": "Méthode de contrôle simplifié de l'accessibilité v1.2.1 du SIP (https://accessibilite.public.lu/fr/monitoring/controle-simplifie.html) : union des 47 critères testés manuellement et des 19 critères testés avec Axe, soit 52 critères distincts, plus le 8.1 (type de document), présent dans la grille d'exemple du SIP : 53 critères. Champ audit_simplifie : manière dont la méthode du SIP teste le critère. Ajouts RUXAWEB (hors sélection du SIP) : critères 3.3, 7.1, 7.5, 9.3, 10.4, 10.6 et 13.11, marqués hors_selection. Ils n'entrent pas dans le taux « sélection SIP », calculé sur la même sélection que l'audit simplifié du SIP, mais comptent dans le taux élargi.",
   "licence": "CC BY 3.0 LU",
   "note": "Intitulés, niveaux et références WCAG / EN 301 549 repris du dépôt officiel (fr/json/criteres.json, fr/niveaux.json), nettoyés des liens de glossaire, sans autre modification. Les champs theme_ruxal, statut, declencheur et etape sont ajoutés par RUXAL : un critère « si présent » ne s'applique que si la page contient le contenu nommé par son déclencheur (liste fermée, voir data/textes-ruxaweb.json). Champ etape : étape du protocole de test RUXAWEB où le critère se constate le plus facilement (1, 2, 3a, 3b ou 4). Champ intitule_en : intitulé officiel anglais (en/json/criteres.json du même dépôt), ajouté par scripts/intitules_en.py pour les exports en anglais.",
   "criteres": [
@@ -751,6 +751,25 @@
       "statut": "cœur",
       "etape": "1",
       "intitule_en": "On each web page, is the text still readable when the font size is increased by at least 200% (excluding special cases)?"
+    },
+    {
+      "raweb": "10.6",
+      "theme_raweb_numero": 10,
+      "theme_raweb": "Présentation de l’information",
+      "intitule": "Dans chaque page web, chaque lien dont la nature n’est pas évidente est-il visible par rapport au texte environnant ?",
+      "niveau": "A",
+      "wcag": [
+        "1.4.1 Use of Color (A)"
+      ],
+      "en301549": [
+        "9.1.4.1 Use of Color"
+      ],
+      "audit_simplifie": "",
+      "hors_selection": true,
+      "theme_ruxal": "Couleurs & contrastes",
+      "statut": "cœur",
+      "etape": "1",
+      "intitule_en": "On each web page, is each link whose nature is not obvious visible in relation to the surrounding text?"
     },
     {
       "raweb": "10.7",
