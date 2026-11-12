@@ -177,6 +177,7 @@ RUXAWEB 2 : audit par observations.
   .tag-c[aria-pressed="true"]{background:var(--c-conforme);color:var(--surface)}
   .tag-nc[aria-pressed="true"]{background:var(--c-nc);color:var(--surface)}
   .tag-na[aria-pressed="true"]{background:var(--c-na);color:var(--surface)}
+  .tag-nt[aria-pressed="true"]{background:var(--c-nt);color:var(--surface)}
   .tag:focus-visible{outline-offset:-3px}
 
   /* ---------- Interrupteurs ---------- */
@@ -296,7 +297,10 @@ RUXAWEB 2 : audit par observations.
   .ecrans .carte > button:hover{background:var(--surface-alt)}
   .ecrans .carte > button[aria-current="true"]{background:var(--accent-fill);color:var(--accent-fill-ink);font-weight:700}
   .ecrans .carte > p{padding:4px 8px 8px;font-size:13px;color:var(--ink-soft)}
-  .elt{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 8px;font-size:14px}
+  /* Éléments répétés : mêmes marges et même colonne de droite que les entrées Écrans, pour que tout s'aligne. */
+  .elt{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;min-height:40px;line-height:1.3;font-size:14px}
+  .elt > span:first-child{min-width:0;overflow-wrap:anywhere}
+  .elt .petit{flex:none;white-space:nowrap;font-weight:700;font-size:12px}
   h2.titre-ecran{font-size:21px}
   .tete-ecran{align-items:flex-start}
   .pile-ecran{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
@@ -322,6 +326,12 @@ RUXAWEB 2 : audit par observations.
   .obs .pastille{min-width:52px;margin-top:1px}
   .obs .corps{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
   .obs .texte{overflow-wrap:anywhere}
+  /* Fiche d'un critère : les observations d'un écran, sous son nom. */
+  .obs-ecran{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .obs-ecran li{display:flex;gap:8px;align-items:baseline;font-size:13.5px;line-height:1.4}
+  .obs-ecran .pastille{flex:none;min-width:40px;font-size:11px}
+  .obs-ecran .texte{overflow-wrap:anywhere}
+  .obs-ecran li.ancienne{color:var(--ink-soft)}
   .obs.invalide .texte{text-decoration:line-through;color:var(--ink-soft)}
   .obs > .rangee,.obs > .btn{flex:none}
 
@@ -612,7 +622,7 @@ RUXAWEB 2 : audit par observations.
   var CONSIGNE_AGENT = "ROLE\nYou help a web accessibility auditor using RUXAWEB, a quick audit tool on RAWeb 1.1 (Luxembourg web accessibility framework, based on WCAG 2.1). RUXAWEB records only the criteria and good practices listed in CRITERIA below. The auditor gives raw notes in French or English. For each defect you choose the criteria it breaks in that list and return two blocks: the lines to paste into RUXAWEB, then a short explanation.\n\nANSWER STRUCTURE (always, even for one short note)\n1. Block 1: the code block with the RUXAWEB lines. Never skip it.\n2. Block 2: \"Criteria:\" and the short explanations.\n3. \"To clarify:\" only if needed.\nNothing before block 1. No citations, links or file references.\n\nCRITERIA (only these: number and topic)\nImages: 1.1 informative image has a text alternative; 1.2 decorative image ignored by assistive technologies; 1.3 text alternative relevant; 1.4 CAPTCHA image alternative; 1.5 CAPTCHA has an alternative access; 1.6 detailed description present; 1.7 detailed description relevant\nFrames: 2.1 frame has a title\nColours: 3.1 information not given by colour alone; 3.2 TEXT contrast with its background, text only; 3.3 contrast of user interface components (checkbox, radio button, field border, button shape, icon, focus indicator) and of graphics conveying information\nMedia: 4.1 transcript or audio description; 4.2 transcript or audio description relevant; 4.3 captions; 4.4 captions relevant; 4.8 non-time-based media alternative; 4.9 that alternative relevant; 4.10 automatic sound can be stopped; 4.11 media player operable by keyboard and pointer\nTables: 5.6 data table headers declared; 5.7 cells associated with their headers\nLinks: 6.1 link explicit, purpose clear; 6.2 link has an accessible name\nScripts: 7.1 custom component exposes its name, role and state to assistive technologies; 7.3 custom component operable by keyboard and pointer; 7.5 status messages announced\nMandatory elements: 8.1 doctype present; 8.2 valid code (ARIA attributes, roles, duplicate ids); 8.3 default page language present; 8.4 default language code relevant; 8.5 page title present; 8.6 page title relevant; 8.7 language changes indicated; 8.8 language change code valid\nStructure: 9.1 headings structure the information; 9.2 page regions (header, navigation, main, footer); 9.3 lists correctly structured\nPresentation: 10.4 text readable at 200% font size; 10.7 keyboard focus visible; 10.8 hidden content ignored by assistive technologies; 10.9 information not by shape, size or position alone; 10.10 same, implemented appropriately; 10.14 CSS additional content reachable by keyboard and pointer\nForms: 11.1 field has a label; 11.2 label relevant; 11.5 related fields grouped; 11.6 group has a legend; 11.7 legend relevant; 11.9 button label relevant; 11.10 errors and required formats handled\nNavigation: 12.6 repeated blocks can be reached or skipped; 12.7 skip link to main content; 12.8 consistent tab order; 12.9 no keyboard trap; 12.11 content shown on hover or focus reachable by keyboard\nTime and motion: 13.1 time limits controllable; 13.7 flashes and brightness changes; 13.8 moving or blinking content controllable; 13.11 pointer action can be cancelled\nGood practices (not RAWeb): BP1 target size at least 24 by 24 CSS px or enough spacing; BP2 modal closes with a visible button and the Escape key; BP3 focus returns to the opener when a modal closes\n\nCHOOSING CRITERIA\n- Use only numbers and codes from CRITERIA, never another RAWeb number, never a three-part WCAG number.\n- List the criteria the observation breaks, most relevant first, usually 1 to 3.\n- One defect can break several criteria (e.g. custom button with no name and no role: 7.1; not reachable by keyboard: 7.3): list each.\n- From a symptom (\"the screen reader says 'button' only\"), go back to the cause.\n- A defect matching nothing in CRITERIA: no line; under \"To clarify:\", say it is outside RUXAWEB and suggest the \"Observation -> RAWeb\" agent.\n\nSPECIAL CASES\nMany criteria exclude special cases, e.g. for contrast: inactive (disabled) components, logos, components left with the browser default appearance; decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.\n\nLANGUAGE\nAlways write in English, even when the notes are in French. Write in French only if the auditor explicitly asks (\"in French\", \"en français\"). \"Écran :\", \"Criteria:\" and \"To clarify:\" never change: the tool reads them. Screen names exactly as the auditor wrote them (RUXAWEB matches them); on-screen labels exactly as in the product.\n\nBLOCK 1: RUXAWEB LINES\nOne code block (three backticks alone on the opening line, no language name), containing only:\n- one line per defect: element | observation | criteria\n- lines grouped by screen, each group preceded by: Écran : <screen name>. No screen in the notes: no \"Écran :\" line.\nOnly defects: a note saying something works, or that a content is absent, gives no line (the auditor sets C in the grid, NA with the screen contents).\nFields:\n1. element: in ELEMENT NOTATION (below), everything after the screen name, never the screen itself: the tool adds it (footer[links], [button \"Pay\"] (disabled)). On every screen: the zone, e.g. main navigation[links]. No element named: write only observation | criteria.\n2. observation: one factual sentence. It becomes the \"Actual behavior\" of the Jira ticket: the user action if there is one, then what is displayed, announced or exposed and what is missing (name, role, state, value); no guess about the code, no consequence. Never invent a fact, value or behavior the auditor did not write.\n3. criteria: numbers and codes from CRITERIA, comma-separated, most relevant first: 7.1, 7.3 or 12.8, BP3.\nRules: one line = one defect on one element (two defects: two lines). Same defect on several screens: one line per screen, exactly the same element, observation and criteria, so the tool merges them. No line break inside a line, no | inside a field, no severity.\n\nELEMENT NOTATION\n- Screen.zone[type \"label\"] (state). Dot: down the hierarchy (Home.footer). Brackets: the target, generic ([links]) or type then label ([link \"Contact us\"]).\n- State after the target, only if it must be triggered to see the defect: Cart[button \"Pay\"] (disabled).\n- Every screen: All.footer[links]. Flow: Home -> Cart.\n- Types and zones in English (button, link, field, checkbox, switch, form, list, image, tab, dialog, card, header, footer). Labels exactly as in the product. No nested brackets, no |.\n\nBLOCK 2: CRITERIA\nAfter the code block, the line \"Criteria:\", then one line per criterion of block 1, in the same order:\n<number> <topic from CRITERIA> : <why it applies to this observation, one short sentence>\nIf useful, \"Also check:\" with criteria from CRITERIA that depend on something you cannot see, same format. Do not put them in block 1. No fix advice unless asked.\n\nOPTION\n\"lines only\": block 1 only.\n\nUNCLEAR NOTES\nToo vague (no element, no symptom) or a possible special case: no line for it; at the very end, \"To clarify:\" and one short question per note.\n\nSTYLE\nNo introduction, no conclusion. No em or en dashes: use a comma or a colon.\n\nEXAMPLE\nNotes: \"page Login : la case Don't ask again on this computer, redessinée par le site, a un contour trop pâle ; bouton Pay = div cliquable, annoncé comme du texte, pas atteignable au clavier.\"\nAnswer:\n```\nÉcran : Login\n[checkbox \"Don't ask again on this computer\"] | The checkbox border has too little contrast with the background. | 3.3\n[button \"Pay\"] | The button is announced as plain text, without a button role, and cannot be reached with the keyboard. | 7.1, 7.3\n```\nCriteria:\n- 3.3 contrast of user interface components : the checkbox border is a component boundary, not text.\n- 7.1 custom component exposes its name, role and state : no button role is exposed.\n- 7.3 custom component operable by keyboard and pointer : the button cannot be reached by keyboard.";
   // <<< FIN_DONNEES >>>
 
-  var VERSION = '2.41';
+  var VERSION = '2.44';
   var CLE = 'atelier-ruxaweb2';
 
   // ---------- Référentiel ----------
@@ -1232,7 +1242,7 @@ RUXAWEB 2 : audit par observations.
   // État d'interface passager : jamais enregistré (ni dans le navigateur, ni dans les sauvegardes).
   // confirmation : action en attente de second clic ; saisieNc : ligne de la fiche où l'on écrit un NC ;
   // dlg : fenêtre ouverte (fiche, coller, config) ; menuOnglet : carte d'onglet dont le menu d'actions est ouvert ; ficheEcran : écran mis en avant dans la fiche ; derniereCase : case de la grille qui garde le focus ; grilleFiltre : tous | definir (NT) | nc | na.
-  var ui = {confirmation:null, saisieNc:null, ficheEcran:null, derniereCase:null, grilleFiltre:'tous', dlg:null, menuOnglet:null, panneauReduit:false};
+  var ui = {confirmation:null, saisieNc:null, critere:null, retourVue:null, ficheEcran:null, derniereCase:null, grilleFiltre:'tous', dlg:null, menuOnglet:null, panneauReduit:false};
 
   function rendre(focus){
     var o = onglet();
@@ -1249,7 +1259,9 @@ RUXAWEB 2 : audit par observations.
     var bRef = document.getElementById('btn-ref'); if(state.vue === 'referentiel') bRef.setAttribute('aria-current', 'page'); else bRef.removeAttribute('aria-current');
     document.querySelectorAll('#audit-support .tag').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-support') === state.support)); });
     if(state.vue === 'ux' && o && o.type !== 'scenario') state.vue = 'audit';
-    var vues = {projet:vueProjet, preparer:vuePreparer, audit:vueAudit, grille:vueGrille, ux:vueUx, resume:vueResume, referentiel:vueReferentiel};
+    // La fiche d'un critère est une vue de la grille : elle se ferme dès qu'on quitte la grille ou l'onglet.
+    if(ui.critere && (state.vue !== 'grille' || !o || ui.critereOnglet !== o.id)) ui.critere = null;
+    var vues = {projet:vueProjet, preparer:vuePreparer, audit:vueAudit, grille:function(x){ return ui.critere ? vueCritere(x) : vueGrille(x); }, ux:vueUx, resume:vueResume, referentiel:vueReferentiel};
     var focusEtapes = !!document.activeElement && document.activeElement.id === 'btn-etapes';
     $main.innerHTML = (vues[state.vue] || vueProjet)(o);
     if(focusEtapes) document.getElementById('btn-etapes').focus({preventScroll:true});
@@ -1530,7 +1542,7 @@ RUXAWEB 2 : audit par observations.
     var libelles = {};
     o.obs.forEach(function(x){ if(x.elementNom){ var k = cleNom(x.elementNom); libelles[k] = libelles[k] || x.elementNom; var l = elts[k] = elts[k] || []; [x.ecran].concat(x.partage ? x.partage.ecrans : []).forEach(function(id){ if(l.indexOf(id) === -1) l.push(id); }); } });
     var noms = Object.keys(elts).filter(function(n){ return elts[n].length > 1; });
-    html += '<div class="carte"><h2>Éléments répétés</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(libelles[n])+'</span><span class="doux petit">'+elts[n].length+' écrans</span></div>'; }).join('')
+    html += '<div class="carte"><h2>Éléments répétés</h2>' + (noms.length ? noms.map(function(n){ return '<div class="elt"><span>'+esc(libelles[n])+'</span><span class="doux petit">'+elts[n].length+'<span class="sr"> écrans</span></span></div>'; }).join('')
       : '<p class="marge-4-8 doux petit">Un élément observé sur plusieurs écrans apparaît ici.</p>') + '</div>';
     return html + '</nav><div class="centre">' + contenu + '</div></div>';
   }
@@ -1880,35 +1892,66 @@ RUXAWEB 2 : audit par observations.
   function ecransModifiables(o, c){
     return o.ecrans.filter(function(e){ var r = statutEcran(o, e, c); return !r.cfg && (!!obsGrille(o, e.id, c.id) || r.s === 'NT' || r.s === 'AC'); });
   }
-  // Statut d'un critère sur chaque écran, à poser sans observation (C, NA) ou avec une courte observation (NC).
-  // Un statut venu d'une observation de l'audit n'est pas modifiable ici : on le retest.
+  // Statut d'un critère sur chaque écran : C, NA sans observation, NC avec une courte observation, NT pour le remettre à tester.
+  // Un statut venu d'une observation de l'audit ne se change pas ici : NT le remet à tester, puis on choisit le nouveau statut.
   function ligneStatut(c, eid, nom, note, sel, modifiable, extra){
     var cle = eid+'|'+c.id;
     return '<div class="centre-v obs'+(ui.ficheEcran === eid ? ' cible-fiche' : '')+(eid === 'tous' ? ' ligne-tous' : '')+'" data-bloc-ecran="'+eid+'"><div class="corps"><span><b>'+esc(nom)+'</b>'+(note ? ' <span class="doux petit">('+esc(note)+')</span>' : '')+'</span>' +
+        (extra || '') +
         (ui.saisieNc === cle ? '<div class="rangee"><label class="sr" for="statut-txt">Observation de non-conformité, '+esc(nom)+'</label>' +
             '<input class="souple-240" type="text" id="statut-txt" aria-required="true" placeholder="Observation (obligatoire pour un NC)" autocomplete="off">' +
-            '<button type="button" class="btn btn-s btn-p" data-action="statut-nc-ok" data-ecran="'+eid+'" data-crit="'+c.id+'">Enregistrer</button></div>' : '') + (extra || '') + '</div>' +
+            '<button type="button" class="btn btn-s btn-p" data-action="statut-nc-ok" data-ecran="'+eid+'" data-crit="'+c.id+'">Enregistrer</button></div>' : '') + '</div>' +
       '<div class="tags" role="group" aria-label="Statut, '+esc(nom)+'">' +
-        [['c','C','statut'],['nc','NC','statut-nc'],['na','NA','statut']].map(function(t){
+        [['c','C','statut'],['nc','NC','statut-nc'],['na','NA','statut'],['nt','NT','statut-nt']].map(function(t){
           var on = sel === t[1] || (t[0] === 'nc' && ui.saisieNc === cle);
-          return '<button type="button" class="tag tag-'+t[0]+'" data-action="'+t[2]+'" data-tag="'+t[0]+'" data-ecran="'+eid+'" data-crit="'+c.id+'" aria-pressed="'+on+'"'+(modifiable ? '' : ' disabled')+'>'+t[1]+'</button>';
+          var actif = modifiable || t[0] === 'nt';
+          return '<button type="button" class="tag tag-'+t[0]+'" data-action="'+t[2]+'" data-tag="'+t[0]+'" data-ecran="'+eid+'" data-crit="'+c.id+'" aria-pressed="'+on+'"'+(actif ? '' : ' disabled')+'>'+t[1]+'</button>';
         }).join('') + '</div></div>';
+  }
+  // Observations d'un écran pour un critère (audit, fonctions primaires), affichées sous son nom.
+  // Celles d'avant le dernier retest restent visibles, en retrait : c'est l'historique.
+  function obsDeLEcran(o, e, c){
+    var dernierNt = dernierRetest(o, e.id, c.id), l = [];
+    o.obs.forEach(function(x){
+      if(x.criteres.indexOf(c.id) === -1 || !concerne(x, e.id, c)) return;
+      if(estStatutGrille(x) && !x.texte) return;
+      l.push({x:x, origine:'', ancienne:x.tag !== 'nt' && x.n <= dernierNt});
+    });
+    obsF().forEach(function(x){
+      var f = fonctionDe(x.fonction);
+      if(x.criteres.indexOf(c.id) === -1 || !f || !f.presente || ecransFonction(o, x.fonction).indexOf(e.id) === -1) return;
+      l.push({x:x, origine:f.nom, ancienne:x.tag !== 'nt' && (x.n <= dernierNt || x.n <= dernierRetestF(x.fonction, c.id))});
+    });
+    if(!l.length) return '';
+    l.sort(function(a, b){ return a.x.n - b.x.n; });
+    return '<ul class="obs-ecran">' + l.map(function(it){
+      var x = it.x, t = x.tag.toUpperCase();
+      return '<li'+(it.ancienne ? ' class="ancienne"' : '')+'><span class="pastille s-'+t+'">'+t+'</span><span class="texte">' +
+        (it.origine ? '<span class="doux">'+esc(it.origine)+' · </span>' : '') + esc(x.tag === 'nt' ? (x.texte || 'Remis à tester') : texteObs(x)) +
+        (x.elementNom ? ' <span class="doux">· '+esc(x.elementNom)+'</span>' : '') +
+        (it.ancienne ? ' <span class="doux">(avant retest)</span>' : '') + '</span></li>';
+    }).join('') + '</ul>';
   }
   function blocStatuts(o, c){
     var mods = ecransModifiables(o, c);
-    var sels = mods.map(function(e){ var r = statutEcran(o, e, c).s; return r === 'AC' || r === 'NT' ? '' : r; });
-    var selTous = sels.length && sels.every(function(x){ return x && x === sels[0]; }) ? sels[0] : '';
+    var sels = mods.map(function(e){ var r = statutEcran(o, e, c).s; return r === 'AC' ? 'NT' : r; });
+    var selTous = sels.length && sels.every(function(x){ return x === sels[0]; }) ? sels[0] : '';
     var fixes = o.ecrans.filter(function(e){ return !statutEcran(o, e, c).cfg && mods.indexOf(e) === -1; });
     var html = mods.length > 1 ? ligneStatut(c, 'tous', 'Tous les écrans', fixes.length ? 'sauf '+fixes.map(function(e){ return e.nom; }).join(', ')+', défini par une observation' : '', selTous, true) : '';
     html += o.ecrans.map(function(e){
       var r = statutEcran(o, e, c); if(r.cfg) return '';
-      var clo = obsGrille(o, e.id, c.id);
-      var modifiable = !!clo || r.s === 'NT' || r.s === 'AC';
-      var sel = r.s === 'AC' || r.s === 'NT' ? '' : r.s;
-      var note = r.s === 'AC' ? 'conforme sur un autre écran, à confirmer ici' : (!modifiable ? 'défini par une observation' : (clo && clo.tag === 'nc' ? clo.texte : ''));
-      return ligneStatut(c, e.id, e.nom, note, sel, modifiable, !modifiable && r.s !== 'NT' ? '<button type="button" class="btn btn-s" data-action="retest" data-ecran="'+e.id+'" data-crit="'+c.id+'">Retester (#nt)</button>' : '');
+      var modifiable = !!obsGrille(o, e.id, c.id) || r.s === 'NT' || r.s === 'AC';
+      var note = r.s === 'AC' ? 'conforme sur un autre écran, à confirmer ici' : '';
+      return ligneStatut(c, e.id, e.nom, note, r.s === 'AC' ? 'NT' : r.s, modifiable, obsDeLEcran(o, e, c));
     }).join('');
     return {html:html};
+  }
+  // Remet un critère à tester sur un écran : retire le statut posé dans la grille ; s'il vient d'une observation, ajoute un retest.
+  function remettreNT(o, eid, c){
+    retirerStatut(o, eid, c.id);
+    var r = statutEcran(o, ecranDe(o, eid), c).s;
+    if(r !== 'NT' && r !== 'AC') o.obs.push({id:uid(), n:suivant(), ecran:eid, etape:'', texte:'Retest après correction', attendu:'', point:'', criteres:[c.id], tag:'nt', partage:null});
+    o.valide = false;
   }
   function vueUx(o){
     var r = scoreUx(o);
@@ -1957,19 +2000,25 @@ RUXAWEB 2 : audit par observations.
       '<'+niv+' class="marge-haut-4 lbl">Impact</'+niv+'><p class="sans-marge">'+esc(c.impact)+'</p>' +
       (c.ref ? '<p class="sans-marge"><a href="'+URL_CRITERE+c.ref.replace('.', '-')+'" target="_blank" rel="noopener">Critère officiel sur le site du SIP</a></p>' : '');
   }
-  function ouvrirCritere(id){
-    var o = onglet(), c = PAR_ID[id]; if(!c) return;
-    ui.dlg = 'fiche';
-    var obs = o ? o.obs.filter(function(x){ return x.criteres.indexOf(id) > -1; }) : [];
-    var html = '<div class="rangee entre dlg-tete"><h2 id="dlg-titre">'+esc(refTxt(c))+'</h2><button type="button" class="btn btn-s" data-action="fermer-dlg">Fermer</button></div>' +
-      infoCritere(c, 'h3');
-    if(o){
-      var bst = blocStatuts(o, c);
-      html += '<h3 class="marge-haut-4 lbl">Statut par écran</h3><p class="sans-marge doux petit">C et NA se posent sans observation ; NC demande une phrase. « Tous les écrans » donne le même statut partout.</p>' + bst.html;
-      html += '<h3 class="marge-haut-4 lbl">Observations ('+obs.length+')</h3>' + (obs.length ? obs.map(function(x){ return '<div class="petit">'+esc((ecranDe(o, x.ecran) || {}).nom)+' · '+(x.tag === 'nt' ? 'retest' : '#'+x.tag)+' · '+esc(texteObs(x))+'</div>'; }).join('') : '<p class="sans-marge doux petit">Aucune.</p>');
-    }
-    document.getElementById('dlg-corps').innerHTML = html;
-    var d = document.getElementById('dlg'); if(!d.open) d.showModal();
+  // Fiche d'un critère : une vue de la grille, avec le même bandeau d'onglet et le même panneau des écrans que les autres vues.
+  function vueCritere(o){
+    var c = PAR_ID[ui.critere];
+    var retour = ui.retourVue === 'resume' ? 'Retour au résumé' : 'Retour à la grille';
+    var html = '<div class="rangee"><button type="button" class="btn btn-s" data-action="fiche-retour">'+retour+'</button></div>' +
+      '<section class="carte pile" aria-labelledby="fiche-titre"><h2 id="fiche-titre" class="titre-ecran" tabindex="-1">'+esc(refTxt(c))+'</h2>' + infoCritere(c, 'h3') + '</section>' +
+      '<section class="carte" aria-labelledby="t-statuts"><h2 id="t-statuts">Statut par écran</h2>' +
+        '<p class="sans-marge doux petit">C et NA se posent sans observation ; NC demande une phrase ; NT remet l\'écran à tester. Un statut venu d\'une observation se change en repassant par NT.</p>' +
+        blocStatuts(o, c).html + '</section>';
+    return cadreOnglet(o, 'grille', infoGrille(o), html);
+  }
+  function ouvrirCritere(o, id, eid){
+    if(!PAR_ID[id]) return;
+    if(!ui.critere) ui.retourVue = state.vue;
+    ui.critere = id; ui.critereOnglet = o.id; ui.ficheEcran = eid || null; ui.saisieNc = null;
+    state.vue = 'grille'; rendre();
+    var bl = eid && $main.querySelector('[data-bloc-ecran="'+eid+'"]');
+    if(bl){ bl.scrollIntoView({block:'center'}); var f = bl.querySelector('button:not([disabled])'); if(f) f.focus(); }
+    else { window.scrollTo(0, 0); document.getElementById('fiche-titre').focus(); }
   }
 
   // ---------- Messages, focus et enregistrement des observations ----------
@@ -2100,7 +2149,7 @@ RUXAWEB 2 : audit par observations.
       }
       state.vue = deja || o.obs.length ? 'audit' : 'preparer'; rendre(true);
     },
-    'vue': function(b, o, a){ var v = b.getAttribute('data-vue'); if(v === 'grille') ui.grilleFiltre = 'tous'; if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit simple')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return ARRET; } if(v === 'audit' && state.vue === 'preparer'){ var pc = cibles(o).filter(function(x){ return !cibleFaite(x, state.etape); })[0]; if(pc) allerCible(pc); } state.vue = v; rendre(true); },
+    'vue': function(b, o, a){ var v = b.getAttribute('data-vue'), depuisFiche = !!ui.critere; ui.critere = null; ui.ficheEcran = null; if(v === 'grille' && !depuisFiche) ui.grilleFiltre = 'tous'; if(v === 'audit' && o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ message((o.type === 'scenario' ? 'Un scénario' : 'Un audit simple')+' demande '+(o.type === 'scenario' ? 2 : 3)+' écrans au moins.', true); return ARRET; } if(v === 'audit' && state.vue === 'preparer'){ var pc = cibles(o).filter(function(x){ return !cibleFaite(x, state.etape); })[0]; if(pc) allerCible(pc); } state.vue = v; rendre(true); },
     'etape': function(b, o, a){ if(o.ecrans.length < (o.type === 'scenario' ? 2 : 3)){ state.vue = 'preparer'; rendre(true); return ARRET; } state.etape = b.getAttribute('data-etape'); state.vue = 'audit'; rendre(true); },
     'ecran': function(b, o, a){ if(brouillon.modif) viderBrouillon(); state.fonctionId = null; state.ecranId = b.getAttribute('data-id'); rendre(true); },
     'cible-fonction': function(b, o, a){ if(brouillon.modif) viderBrouillon(); state.fonctionId = b.getAttribute('data-id'); state.vue = 'audit'; rendre(true); },
@@ -2225,18 +2274,22 @@ RUXAWEB 2 : audit par observations.
       var bc = document.querySelector((fen ? '#dlg ' : '')+'[data-action="contenu"][data-ecran="'+ec.id+'"][data-d="'+d+'"]'); if(bc) bc.focus();
     },
     'configurer': function(b, o, a){ ouvrirConfiguration(); },
-    'critere': function(b, o, a){ ui.ficheEcran = null; ouvrirCritere(b.getAttribute('data-id')); },
-    'cellule': function(b, o, a){
-      ui.ficheEcran = b.getAttribute('data-ecran'); ouvrirCritere(b.getAttribute('data-id'));
-      var bl = document.querySelector('#dlg [data-bloc-ecran="'+ui.ficheEcran+'"]');
-      if(bl){ bl.scrollIntoView({block:'start'}); var f = bl.querySelector('button:not([disabled])'); if(f) f.focus(); }
+    'critere': function(b, o, a){ ouvrirCritere(o, b.getAttribute('data-id')); },
+    'cellule': function(b, o, a){ ouvrirCritere(o, b.getAttribute('data-id'), b.getAttribute('data-ecran')); },
+    'fiche-retour': function(b, o, a){
+      ui.critere = null; ui.ficheEcran = null; ui.saisieNc = null; state.vue = ui.retourVue || 'grille'; rendre();
+      var bc = state.vue === 'grille' && ui.derniereCase && $main.querySelector('.cel-btn[data-id="'+ui.derniereCase.id+'"][data-ecran="'+ui.derniereCase.e+'"]');
+      if(bc) bc.focus(); else { var h = $main.querySelector('h1'); if(h){ h.setAttribute('tabindex', '-1'); h.focus(); } }
     },
     'grille-filtre': function(b, o, a){ ui.grilleFiltre = b.getAttribute('data-v'); rendre(); var bf = document.querySelector('[data-action="grille-filtre"][data-v="'+ui.grilleFiltre+'"]'); if(bf) bf.focus(); },
     'grille-definir': function(b, o, a){ ui.grilleFiltre = 'definir'; state.vue = 'grille'; rendre(true); },
     'fermer-dlg': function(b, o, a){ ui.ficheEcran = null; document.getElementById('dlg').close(); },
-    'retest': function(b, o, a){
-      o.obs.push({id:uid(), n:suivant(), ecran:b.getAttribute('data-ecran'), etape:'', texte:'Retest après correction', attendu:'', point:'', criteres:[b.getAttribute('data-crit')], tag:'nt', partage:null});
-      o.valide = false; rendre(); ouvrirCritere(b.getAttribute('data-crit')); message('Critère remis à NT sur cet écran. Les observations précédentes restent en historique.');
+    'statut-nt': function(b, o, a){
+      var eid = b.getAttribute('data-ecran'), c = PAR_ID[b.getAttribute('data-crit')];
+      (eid === 'tous' ? ecransModifiables(o, c).map(function(e){ return e.id; }) : [eid]).forEach(function(id){ remettreNT(o, id, c); });
+      ui.saisieNc = null; rendre();
+      var bn = document.querySelector('[data-action="statut-nt"][data-ecran="'+eid+'"][data-crit="'+c.id+'"]'); if(bn) bn.focus();
+      message(eid === 'tous' ? 'Critère remis à NT sur les écrans.' : 'Critère remis à NT sur cet écran. Les observations précédentes restent en historique.');
     },
     'statut': function(b, o, a){
       var eid = b.getAttribute('data-ecran'), cid0 = b.getAttribute('data-crit');
@@ -2250,6 +2303,7 @@ RUXAWEB 2 : audit par observations.
       var eidN = b.getAttribute('data-ecran'), cidN = b.getAttribute('data-crit');
       poserStatut(o, eidN === 'tous' ? ecransModifiables(o, PAR_ID[cidN]).map(function(e){ return e.id; }) : eidN, cidN, 'nc', tx);
       ui.saisieNc = null; rendre();
+      var bk = document.querySelector('[data-action="statut-nc"][data-ecran="'+eidN+'"][data-crit="'+cidN+'"]'); if(bk) bk.focus();
     },
     'valider': function(b, o, a){
       var n = aDefinir(o).length;
@@ -2337,7 +2391,6 @@ RUXAWEB 2 : audit par observations.
     if(ui.menuOnglet && !ev.target.closest('.tuile-menu')){ fermerMenuOnglet(false); }
     if(!b) return;
     var a = b.getAttribute('data-action'), o = onglet();
-    var dansFiche = !!b.closest('#dlg') && ['statut','statut-nc','statut-nc-ok'].indexOf(a) > -1;
     // Un choix dans le menu Fichier le referme (sauf la première demande de « Nouvel audit », qui attend sa ui.confirmation).
     if(b.closest('#menu-fichier') && !(a === 'reinit' && ui.confirmation !== 'reinit')){
       menu.hidden = true; var bm = document.getElementById('btn-menu'); bm.setAttribute('aria-expanded','false');
@@ -2348,11 +2401,6 @@ RUXAWEB 2 : audit par observations.
     lireBrouillon();
     var action = ACTIONS[a];
     if(action && action(b, o, a) === ARRET) return;
-    if(dansFiche && document.getElementById('dlg').open){
-      var cidF = b.getAttribute('data-crit'); ouvrirCritere(cidF);
-      var cibleF = a === 'statut' ? document.querySelector('#dlg [data-action="statut"][data-ecran="'+b.getAttribute('data-ecran')+'"][data-tag="'+b.getAttribute('data-tag')+'"]') : (a === 'statut-nc' ? document.querySelector('#dlg #statut-txt') : document.getElementById('dlg-titre'));
-      if(cibleF){ if(cibleF.id === 'dlg-titre') cibleF.setAttribute('tabindex', '-1'); cibleF.focus(); }
-    }
   });
   document.querySelectorAll('[data-ico]').forEach(function(sp){ sp.outerHTML = ico(sp.getAttribute('data-ico')); });
   // Fiche refermée : son contenu est vidé, pour qu'aucun bouton caché ne reste dans la page.
