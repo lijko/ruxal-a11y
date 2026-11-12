@@ -574,8 +574,13 @@ def main():
         verifier('Étape d\'abord : bouton vers l\'étape suivante', 'Valider puis passer à : étape Usage standard' in page.locator('[data-action="etape-faite"]').inner_text())
         page.click('[data-action="etape-faite"]')
         verifier('Étape d\'abord : étape suivante sur le premier écran', 'Usage standard' in en_cours()[0] and 'Accueil' in en_cours()[1], en_cours())
-        verifier('Étape d\'abord : Tour à vide fait (3/3 validés)', '3/3 validés' in page.locator('#liste-etapes').inner_text() and '(fait)' in page.locator('#liste-etapes [data-etape="vide"]').inner_text())
+        verifier('Étape d\'abord : Tour à vide fait (3/3 faits)', '3/3 faits' in page.locator('#liste-etapes').inner_text() and '(fait)' in page.locator('#liste-etapes [data-etape="vide"]').inner_text())
+        verifier('Panneau : titre avec le nombre d\'écrans', 'ÉTAPES, SUR 3 ÉCRANS' in page.locator('#liste-etapes').inner_text().upper(), page.locator('#liste-etapes .phase').all_inner_texts())
 
+        page.click('[data-action="vue"][data-vue="grille"]')
+        verifier('Grille par la bascule : l\'étape en cours reste mise en avant', page.locator('#liste-etapes [data-etape="1"][aria-current="step"]').count() == 1 and page.locator('#liste-etapes [data-action="grille-definir"][aria-current="step"]').count() == 0)
+        page.click('#liste-etapes [data-action="grille-definir"]')
+        verifier('Grille par l\'étape : « Compléter la grille » mise en avant', page.locator('#liste-etapes [data-action="grille-definir"][aria-current="step"]').count() == 1 and page.locator('#liste-etapes [data-etape="1"][aria-current="step"]').count() == 0)
         page.click('[data-action="vue"][data-vue="grille"]')
         # Grille : un critère se pose conforme sans observation, depuis sa fiche.
         ligne = page.locator('tbody tr', has=page.locator('td.statut .s-NT')).first
