@@ -33,7 +33,7 @@ FIN = '  // <<< FIN_DONNEES >>>'
 GRAVITES = {'critique', 'serieux', 'modere', 'mineur'}  # voir docs/gravite.md
 # Liste fermée des déclencheurs des critères « si présent » (questions posées pour chaque page).
 DECLENCHEURS = ['captcha', 'image-complexe', 'media-temporel', 'media-non-temporel', 'tableau-donnees', 'cadre',
-                'formulaire', 'changement-langue']
+                'formulaire', 'changement-langue', 'contenu-additionnel', 'mouvement', 'limite-temps']
 # Protocole de test RUXAWEB en 4 étapes (champ etape : étape principale, ou sous-étape 3a / 3b du lecteur d'écran).
 ETAPES = {'1': 'Usage standard', '2': 'Code et outils', '3': "Lecteur d'écran", '4': 'Navigation au clavier'}
 ETAPES_VALIDES = {'1', '2', '3a', '3b', '4'}

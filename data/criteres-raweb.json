@@ -865,8 +865,9 @@
       ],
       "audit_simplifie": "manuel",
       "theme_ruxal": "Navigation & structure",
-      "statut": "cœur",
+      "statut": "si présent",
       "etape": "4",
+      "declencheur": "contenu-additionnel",
       "intitule_en": "On each web page, can additional content that appears using CSS styles only be made visible using the keyboard and any pointing device?"
     },
     {
@@ -1118,8 +1119,9 @@
       ],
       "audit_simplifie": "manuel",
       "theme_ruxal": "Composants interactifs",
-      "statut": "cœur",
+      "statut": "si présent",
       "etape": "4",
+      "declencheur": "contenu-additionnel",
       "intitule_en": "On each web page, is the additional content that appears when hovering, focusing or activating a user interface component accessible by keyboard if necessary?"
     },
     {
@@ -1138,8 +1140,9 @@
       ],
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Composants interactifs",
-      "statut": "cœur",
+      "statut": "si présent",
       "etape": "1",
+      "declencheur": "limite-temps",
       "intitule_en": "For each web page, does the user have control over each time limit modifying the content (excluding special cases)?"
     },
     {
@@ -1156,8 +1159,9 @@
       ],
       "audit_simplifie": "manuel",
       "theme_ruxal": "Contenu & lisibilité",
-      "statut": "cœur",
+      "statut": "si présent",
       "etape": "1",
+      "declencheur": "mouvement",
       "intitule_en": "On each web page, are sudden changes in brightness or blinking used correctly?"
     },
     {
@@ -1176,8 +1180,9 @@
       ],
       "audit_simplifie": "manuel et Axe",
       "theme_ruxal": "Contenu & lisibilité",
-      "statut": "cœur",
+      "statut": "si présent",
       "etape": "1",
+      "declencheur": "mouvement",
       "intitule_en": "On each web page, is every moving or blinking content controllable by the user (excluding special cases)?"
     },
     {
