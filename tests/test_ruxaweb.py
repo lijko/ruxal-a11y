@@ -133,20 +133,10 @@ def main():
             page.locator('[data-action="suppr-ecran"]').last.click()
             page.locator('[data-action="suppr-ecran"]').last.click()
         verifier('Audit simple : retour à 3 écrans', page.locator('[data-ecran-nom]').count() == 3)
-        # Contenus : tout est activé au départ (un oubli laisse à tester, jamais NA), 11 contenus par écran.
-        sws = page.locator('[data-action="contenu"]')
-        verifier('Contenu des écrans : 11 contenus, tous activés au départ', sws.count() == 33 and page.locator('[data-action="contenu"][aria-checked="false"]').count() == 0, sws.count())
-        verifier('Contenu des écrans : consigne « Tout est activé au départ »', 'Tout est activé au départ' in page.inner_text('#t-contenus + p'))
-        verifier('Contenu des écrans : nouveaux contenus (survol, mouvement, limite de temps)', all(page.locator('[data-action="contenu"][data-d="'+d+'"]').count() == 3 for d in ('contenu-additionnel', 'mouvement', 'limite-temps')))
-        # Scénario de test : écran 1 avec formulaire seulement ; les autres sans aucun des contenus d'avant la 2.52.
-        for d in ('captcha', 'image-complexe', 'media-temporel', 'media-non-temporel', 'tableau-donnees', 'cadre', 'formulaire', 'changement-langue'):
-            for i in range(3):
-                if d == 'formulaire' and i == 0:
-                    continue
-                page.click('[data-action="contenu"][data-d="'+d+'"] >> nth='+str(i))
+        # Écran 1 : formulaire présent ; les autres sans formulaire.
+        page.click('[data-action="contenu"][data-d="formulaire"] >> nth=0')
         sw = page.locator('[data-action="contenu"][data-d="formulaire"]').first
         verifier('Contenu des écrans : interrupteur activé', sw.get_attribute('role') == 'switch' and sw.get_attribute('aria-checked') == 'true')
-        verifier('Contenu des écrans : désactivé enregistré comme absent', page.evaluate('RUXAWEB.state().onglets[0].ecrans[1].contenus.formulaire') is False)
         page.click('[data-action="vue"][data-vue="audit"] >> nth=-1')
         verifier('Audit : formulaire d\'observation', page.locator('#form-obs').count() == 1)
         # Panneau des étapes : la liste seule, à partir de « Avant », toujours affichée ; on change d'étape en cliquant dessus.
@@ -395,8 +385,8 @@ def main():
         aller_audit(page)
         page.click('.tete-ecran [data-action="configurer"]')
         nom_ecran = page.locator('.tete-ecran h2.titre-ecran').inner_text().strip()
-        verifier('Ce que contient l\'écran : l\'écran en cours seulement, nommé dans le titre', page.inner_text('#dlg-titre') == 'Ce que contient ' + nom_ecran and page.locator('#dlg [data-action="contenu"]').count() == 11 and page.locator('#dlg [data-action="config-ecran"], #dlg [data-fonction-ecran]').count() == 0)
-        verifier('Ce que contient l\'écran : consigne « Tout est activé au départ »', 'Tout est activé au départ' in page.inner_text('#dlg'))
+        verifier('Ce que contient l\'écran : l\'écran en cours seulement, nommé dans le titre', page.inner_text('#dlg-titre') == 'Ce que contient ' + nom_ecran and page.locator('#dlg [data-action="contenu"]').count() == 8 and page.locator('#dlg [data-action="config-ecran"], #dlg [data-fonction-ecran]').count() == 0)
+        verifier('Ce que contient l\'écran : consigne « Active ce que l\'écran contient »', 'Active ce que l\'écran contient' in page.inner_text('#dlg'))
         sw_c = page.locator('#dlg [data-action="contenu"][data-d="captcha"]')
         desc = page.locator('#' + sw_c.get_attribute('aria-describedby')).inner_text()
         verifier('Ce que contient l\'écran : description et critères visibles, liés à l\'interrupteur', page.locator('#' + sw_c.get_attribute('aria-labelledby')).inner_text() == 'CAPTCHA' and 'Critères 1.4, 1.5' in desc, desc)
@@ -422,16 +412,6 @@ def main():
         verifier('Sauvegarde 2.0 : statut de clôture devenu statut de grille, sans texte figé', ob[0]['etape'] == 'grille' and ob[0]['texte'] == '')
         verifier('Sauvegarde 2.0 : partage sans nom en double', ob[1]['partage'] == {'ecrans': ['eb']})
         verifier('Sauvegarde 2.0 : état d\'interface retiré', 'grilleFiltre' not in page.evaluate('RUXAWEB.state()') and page.evaluate('RUXAWEB.state().vue') == 'projet')
-        ct = page.evaluate('RUXAWEB.state().onglets[0].ecrans[0].contenus')
-        verifier('Sauvegarde d\'avant 2.52 : contenus non activés restés absents', all(ct.get(k) is False for k in ('captcha', 'formulaire', 'changement-langue')) and page.evaluate('RUXAWEB.state().contenusV') == 2, ct)
-        verifier('Sauvegarde d\'avant 2.52 : nouveaux contenus présents (critères toujours à tester)', all(k not in ct for k in ('contenu-additionnel', 'mouvement', 'limite-temps')))
-        v252 = pathlib.Path(tempfile.mkdtemp()) / 'v252.json'
-        v252.write_text(json.dumps({'v': 2, 'contenusV': 2, 'auditNom': 'v252', 'support': 'desktop', 'vue': 'projet', 'compteur': 0, 'exportesJira': [],
-            'onglets': [{'id': 'oa', 'nom': 'A', 'type': 'rapide', 'valide': False, 'ecrans': [{'id': 'ea', 'nom': 'A', 'contenus': {'cadre': False}, 'etapes': {}}], 'obs': []}]}), encoding='utf-8')
-        page.set_input_files('#fichier-import', str(v252))
-        page.wait_for_timeout(300)
-        ct = page.evaluate('RUXAWEB.state().onglets[0].ecrans[0].contenus')
-        verifier('Sauvegarde 2.52 : contenus non renseignés présents, absents explicites gardés', ct == {'cadre': False}, ct)
         page.set_input_files('#fichier-import', str(s))  # retour au projet de test
         page.wait_for_timeout(300)
 

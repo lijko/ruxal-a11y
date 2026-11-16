@@ -42,21 +42,6 @@
       "id": "changement-langue",
       "libelle": "Autre langue",
       "question": "Cet écran contient-il un passage dans une autre langue que celle de la page ?"
-    },
-    {
-      "id": "contenu-additionnel",
-      "libelle": "Contenu au survol ou au focus",
-      "question": "Cet écran contient-il un contenu qui apparaît au survol, au focus ou à l'activation (infobulle, menu déroulant, sous-menu) ?"
-    },
-    {
-      "id": "mouvement",
-      "libelle": "Contenu en mouvement ou clignotant",
-      "question": "Cet écran contient-il un contenu en mouvement, clignotant ou un flash (carrousel, animation, vidéo de fond) ?"
-    },
-    {
-      "id": "limite-temps",
-      "libelle": "Limite de temps",
-      "question": "Cet écran comporte-t-il une limite de temps (session qui expire, redirection ou rafraîchissement automatique) ?"
     }
   ],
   "criteres": {

@@ -21,9 +21,7 @@ L'état d'interface passager (fiche ouverte, filtre de la grille, confirmation e
 
 ## Écran
 
-`id`, `nom`, `contenus` (contenus de l'écran : formulaire, captcha... ; présent tant qu'il n'est pas à `false`, depuis la 2.52), `etapes` (étapes de test faites sur cet écran).
-
-À la racine, `contenusV: 2` marque une sauvegarde 2.52 ou plus. Sans lui, à l'ouverture, les 8 contenus d'avant la 2.52 non activés passent à `false` (statuts inchangés) ; les 3 ajoutés en 2.52 (survol ou focus, mouvement, limite de temps) restent présents.
+`id`, `nom`, `contenus` (contenus présents : formulaire, captcha...), `etapes` (étapes de test faites sur cet écran).
 
 ## Observation
 
