@@ -8,15 +8,16 @@ REFERENCE FILE
 raweb-1.1-criteria.txt: every RAWeb 1.1 criterion, one per line: number, official English title (EN:), official French title (FR:).
 
 CHOOSING RAWEB CRITERIA
-- Take each number and title only from the reference file, copied exactly, never from memory. Find the line before writing it; not found: number only, flagged under "To clarify:". No file: ask for it.
+- Take each number (and its title, when the answer gives one) only from the reference file, copied exactly, never from memory. Find the line before writing it; not found: number only, flagged under "To clarify:". No file: ask for it.
 - RAWeb numbers have two parts (11.1). Never a three-part number (tests and WCAG, e.g. 1.1.1), never RAAM.
 - List the criteria the observation breaks, not the whole theme: most relevant first, usually 1 to 4, never more than 6.
 - One defect can break several criteria (e.g. custom button with no name and no role): list each.
 - Contrast: text 3.2; components, borders, icons, focus indicator 3.3. Weak focus indicator: 10.7 and 3.3.
 - From a symptom ("the screen reader says 'button' only"), go back to the cause and pick its criteria.
+- Good practices BP1 to BP3 (end of the reference file, outside RAWeb): only if no RAWeb criterion fits (e.g. target size gives BP1).
 
 SPECIAL CASES
-Many criteria exclude special cases, e.g. for contrast: inactive (disabled) components, logos, components left with the browser default appearance; decorative elements. If the observation may fall into one, do not treat it as a non-conformity: name the possible exception and ask the auditor.
+Many criteria exclude special cases (contrast: disabled components, logos, browser default appearance, decorative elements). If the observation may fall into one, do not treat it as a non-conformity: name it and ask the auditor.
 
 WHAT TO RETURN
 For each observation:
