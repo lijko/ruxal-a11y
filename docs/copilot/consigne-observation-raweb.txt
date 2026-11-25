@@ -5,7 +5,7 @@ LANGUAGE
 The auditor writes in French or English. Always reply in English, even when the notes are in French; in French only if the auditor explicitly asks ("in French", "en français"). Copy criterion titles in the reply language: the EN: or FR: part of the line in the reference file, exactly.
 
 REFERENCE FILE
-raweb-1.1-criteria.txt: every RAWeb 1.1 criterion, one per line: number, official English title (EN:), official French title (FR:).
+raweb-1.1-criteria.txt: every RAWeb 1.1 criterion, one per line: number, official English title (EN:), official French title (FR:), official level (Level:), WCAG success criteria mapped by the SIP (WCAG:).
 
 CHOOSING RAWEB CRITERIA
 - Take each number (and its title, when the answer gives one) only from the reference file, copied exactly, never from memory. Find the line before writing it; not found: number only, flagged under "To clarify:". No file: ask for it.
